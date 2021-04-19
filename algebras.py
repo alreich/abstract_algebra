@@ -122,7 +122,19 @@ class Algebra:
 
 
 class Group(Algebra):
-    pass
+
+    def abelian(self):
+        """Return True if this is a commutative group."""
+        result = True
+        for e1 in self.elements:
+            for e2 in self.elements:
+                if not (self.add(e1, e2) == self.add(e2, e1)):
+                    result = False
+                    break
+        return result
+
+    def commutative(self):
+        return self.abelian()
 
 
 # Utilities

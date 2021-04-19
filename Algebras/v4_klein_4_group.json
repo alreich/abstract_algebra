@@ -1,6 +1,6 @@
 {"type": "Group",
  "name": "V4",
- "desc": "Klein-4 group",
+ "description": "Klein-4 group",
  "elements": ["e", "h", "v", "hv"],
  "addition_table": [[0, 1, 2, 3],
                     [1, 0, 3, 2],

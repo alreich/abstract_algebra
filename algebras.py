@@ -5,49 +5,51 @@ import json
 class Algebra:
     """An abstract algebra with a finite number of elements and an addition table.
 
+    name: a string
+    description: a string
+    elements: a list of numbers or a list of strings
+    addition_table: a list of lists of numbers (positions of items in the elements list)
+
     Regarding the format of the addition table, the row element is added on the
     left and the column element on the right. Assuming functions written on the
-    left, this means that the column element is applied first and the row element
-    is applied next.
+    left (permutations), this means that the column element is applied first and
+    the row element is applied next.
     """
+    def __init__(self, *args):
 
-    def __init__(self, name, description, element_names, addition_table):
-        self.name = name
-        self.desc = description
-        self.elements = element_names
-        self.addition_table = addition_table
+        if len(args) == 1:
+            if str(args[0]):
+                with open(args[0], 'r') as fin:
+                    # Assumes the single arg is a JSON file name string
+                    alg_dict = json.load(fin)
+            else:
+                # Assumes the single argument is a dictionary
+                alg_dict = args[0]
+        else:
+            # Assumes all fields were input
+            alg_dict = {'name': args[0],
+                        'description': args[1],
+                        'elements': args[2],
+                        'addition_table': args[3]
+                        }
+        self.name = alg_dict['name']
+        self.description = alg_dict['description']
+        self.elements = alg_dict['elements']
+        self.addition_table = alg_dict['addition_table']
         # For efficiency, calculate the headers up front
         self.col_header = self.addition_table[0]
         self.row_header = [row[0] for row in self.addition_table]
 
-    @classmethod
-    def make(cls, *args):
-        """Create an algebra from a JSON file or a Python dictionary."""
-
-        if str(args[0]):
-            print(args[0])
-            with open(args[0], 'r') as fin:
-                alg_dict = json.load(fin)
-        else:
-            alg_dict = args[0]
-
-        alg = cls(alg_dict['name'],
-                  alg_dict['desc'],
-                  alg_dict['elements'],
-                  alg_dict['addition_table'])
-
-        return alg
-
     def __str__(self):
-        return f"<{self.__class__.__name__}: {self.name}, {self.desc}>"
+        return f"<{self.__class__.__name__}: {self.name}, {self.description}>"
 
     def __repr__(self):
-        return f"{self.__class__.__name__}('{self.name}', '{self.desc}', {self.elements}, {self.addition_table})"
+        return f"{self.__class__.__name__}('{self.name}', '{self.description}', {self.elements}, {self.addition_table})"
 
     def to_dict(self):
         return {'type': self.__class__.__name__,
                 'name': self.name,
-                'desc': self.desc,
+                'description': self.description,
                 'elements': self.elements,
                 'addition_table': self.addition_table}
 
@@ -92,7 +94,7 @@ class Algebra:
     def __mul__(self, other):
         """Return the direct product of this algebra with the input algebra, other."""
         new_name = self.name + "_x_" + other.name
-        new_desc = "Direct product of " + self.name + " & " + other.name
+        new_description = "Direct product of " + self.name + " & " + other.name
         new_elements = list(it.product(self.elements, other.elements))
         new_table = list()
         for e in new_elements:
@@ -101,7 +103,7 @@ class Algebra:
                 new_row.append(new_elements.index((self.add(e[0], f[0]), other.add(e[1], f[1]))))
             new_table.append(new_row)
         return self.__class__(new_name,
-                              new_desc,
+                              new_description,
                               list([f"{c[0]},{c[1]}" for c in new_elements]),
                               new_table)
 

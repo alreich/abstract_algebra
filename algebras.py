@@ -122,6 +122,7 @@ class Algebra:
 
 
 class Group(Algebra):
+    """This algebra is a group."""
 
     def abelian(self):
         """Return True if this is a commutative group."""

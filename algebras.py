@@ -47,6 +47,7 @@ class Algebra:
         return f"{self.__class__.__name__}('{self.name}', '{self.description}', {self.elements}, {self.addition_table})"
 
     def to_dict(self):
+        """Return a dictionary that represents this group."""
         return {'type': self.__class__.__name__,
                 'name': self.name,
                 'description': self.description,
@@ -54,48 +55,33 @@ class Algebra:
                 'addition_table': self.addition_table}
 
     def inverse(self, element):
+        """Return the inverse of the input element."""
         elem_index = self.elements.index(element)
         row_index = self.row_header.index(elem_index)
         col_index = self.addition_table[row_index].index(0)
         return self.elements[self.col_header[col_index]]
 
     def addition_table_with_names(self):
-        return [[self.elements[x] for x in row] for row in self.addition_table]
+        """Return the addition table with element names rather than element positions."""
+        return [[self.elements[elem_pos] for elem_pos in row] for row in self.addition_table]
 
     def add(self, r, c):
-        """Return the sum of elements, r & c.
-        The inputs, r & c, can be numbers or strings, but if either
-        input is a number, then a number will be returned, otherwise
-        the sum's element name (a string) will be returned."""
-
-        # Table lookup requires numbers
-        r_ = r
-        c_ = c
-        str_result = False
-        if type(r) == str:
-            r_ = self.elements.index(r)
-            str_result = True
-        if type(c) == str:
-            c_ = self.elements.index(c)
-            str_result = True
-
+        """Return the sum of elements, r & c."""
+        # Find the positions of r & c in the list of elements
+        r_pos = self.elements.index(r)
+        c_pos = self.elements.index(c)
         # Lookup the product based on the row & column indices
-        row_index = self.row_header.index(r_)
-        col_index = self.col_header.index(c_)
+        row_index = self.row_header.index(r_pos)
+        col_index = self.col_header.index(c_pos)
         product = self.addition_table[row_index][col_index]
+        return self.elements[product]
 
-        # If either input value was a string, then return a string,
-        # otherwise return a number
-        if str_result:
-            return self.elements[product]
-        else:
-            return product
-
+    # Direct Product Definition
     def __mul__(self, other):
         """Return the direct product of this algebra with the input algebra, other."""
         new_name = self.name + "_x_" + other.name
         new_description = "Direct product of " + self.name + " & " + other.name
-        new_elements = list(it.product(self.elements, other.elements))
+        new_elements = list(it.product(self.elements, other.elements))  # Cross product
         new_table = list()
         for e in new_elements:
             new_row = list()
@@ -107,6 +93,7 @@ class Algebra:
                               list([f"{c[0]},{c[1]}" for c in new_elements]),
                               new_table)
 
+    # Written and tested, but not sure whether this is needed yet.
     def swap(self, a, b):
         """Change the algebra's definition by swapping the order of two elements, a & b."""
         elem = self.elements

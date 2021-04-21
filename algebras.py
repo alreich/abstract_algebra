@@ -5,15 +5,20 @@ import json
 class Algebra:
     """An abstract algebra with a finite number of elements and an addition table.
 
-    name: a string
-    description: a string
-    elements: a list of numbers or a list of strings
-    addition_table: a list of lists of numbers (positions of items in the elements list)
+    The arguments can consist of a single string, representing the path to a JSON
+    file that defines the algebra, or a single Python dictionary, that defines the
+    algebra, or the four quantities listed below:
+    name: A string name for the algebra;
+    description: A string describing the algebra;
+    elements: A list of strings that represent the names of algebra elements;
+    addition_table: a list of lists of numbers that represent positions of elements
+    in the elements list.
 
     Regarding the format of the addition table, the row element is added on the
-    left and the column element on the right. Assuming functions written on the
-    left (permutations), this means that the column element is applied first and
-    the row element is applied next.
+    left and the column element on the right, e.g., row + col.  Or, assuming
+    functions written on the left (such as permutations), this means that the
+    column element is applied first and the row element is applied next, e.g.,
+    row(col(x)).
     """
     def __init__(self, *args):
 
@@ -60,6 +65,15 @@ class Algebra:
                 'elements': self.elements,
                 'addition_table': self.addition_table}
 
+    def dumps(self):
+        """Write the algebra to a JSON string."""
+        return json.dumps(self.to_dict())
+
+    def dump(self, path):
+        """Write the algebra to a JSON file."""
+        with open(path, 'w') as fout:
+            json.dump(self.to_dict(), fout)
+
     def inverse(self, element):
         """Return the inverse of the input element."""
         elem_index = self.elements.index(element)
@@ -104,6 +118,9 @@ class Algebra:
         return [row[n] for row in self.addition_table]
 
     def addition_table_ok(self):
+        """Check that each row and column in the table has a unique number of elements equal to the
+        correct number of elements.  Basically, each element should appear exactly once in each row
+        and each column. Returns True if the table is OK."""
         num_elements = len(self.elements)
         result = True
         for row in self.addition_table:
@@ -135,7 +152,7 @@ class Group(Algebra):
     """This algebra is a group."""
 
     def abelian(self):
-        """Return True if this is a commutative group."""
+        """Returns True if this is a commutative group."""
         result = True
         for e1 in self.elements:
             for e2 in self.elements:

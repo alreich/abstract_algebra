@@ -37,14 +37,20 @@ class Algebra:
         self.elements = alg_dict['elements']
         self.addition_table = alg_dict['addition_table']
         # For efficiency, calculate the headers up front
-        self.col_header = self.addition_table[0]
-        self.row_header = [row[0] for row in self.addition_table]
+        self._col_header = self.addition_table[0]
+        self._row_header = [row[0] for row in self.addition_table]
+        self._dp_delimiter = ','
 
     def __str__(self):
         return f"<{self.__class__.__name__}: {self.name}, {self.description}>"
 
     def __repr__(self):
         return f"{self.__class__.__name__}('{self.name}', '{self.description}', {self.elements}, {self.addition_table})"
+
+    def set_direct_product_delimiter(self, delimiter=','):
+        """Change or reset the delimiter used to construct new elements of direct products.  Default is a comma."""
+        self._dp_delimiter = delimiter
+        return None
 
     def to_dict(self):
         """Return a dictionary that represents this group."""
@@ -57,9 +63,9 @@ class Algebra:
     def inverse(self, element):
         """Return the inverse of the input element."""
         elem_index = self.elements.index(element)
-        row_index = self.row_header.index(elem_index)
+        row_index = self._row_header.index(elem_index)
         col_index = self.addition_table[row_index].index(0)
-        return self.elements[self.col_header[col_index]]
+        return self.elements[self._col_header[col_index]]
 
     def addition_table_with_names(self):
         """Return the addition table with element names rather than element positions."""
@@ -71,27 +77,44 @@ class Algebra:
         r_pos = self.elements.index(r)
         c_pos = self.elements.index(c)
         # Lookup the product based on the row & column indices
-        row_index = self.row_header.index(r_pos)
-        col_index = self.col_header.index(c_pos)
+        row_index = self._row_header.index(r_pos)
+        col_index = self._col_header.index(c_pos)
         product = self.addition_table[row_index][col_index]
         return self.elements[product]
 
     # Direct Product Definition
     def __mul__(self, other):
         """Return the direct product of this algebra with the input algebra, other."""
-        new_name = self.name + "_x_" + other.name
-        new_description = "Direct product of " + self.name + " & " + other.name
-        new_elements = list(it.product(self.elements, other.elements))  # Cross product
-        new_table = list()
-        for e in new_elements:
-            new_row = list()
-            for f in new_elements:
-                new_row.append(new_elements.index((self.add(e[0], f[0]), other.add(e[1], f[1]))))
-            new_table.append(new_row)
-        return self.__class__(new_name,
-                              new_description,
-                              list([f"{c[0]},{c[1]}" for c in new_elements]),
-                              new_table)
+        dp_name = self.name + "_x_" + other.name
+        dp_description = "Direct product of " + self.name + " & " + other.name
+        dp_elements = list(it.product(self.elements, other.elements))  # Cross product
+        dp_table = list()
+        for a in dp_elements:
+            table_row = list()  # Start a new row in dp_table
+            for b in dp_elements:
+                table_row.append(dp_elements.index((self.add(a[0], b[0]), other.add(a[1], b[1]))))
+            dp_table.append(table_row)
+        return self.__class__(dp_name,
+                              dp_description,
+                              list([f"{elem[0]}{self._dp_delimiter}{elem[1]}" for elem in dp_elements]),
+                              dp_table)
+
+    def table_column(self, n):
+        """Return the n_th column of the addition table."""
+        return [row[n] for row in self.addition_table]
+
+    def addition_table_ok(self):
+        num_elements = len(self.elements)
+        result = True
+        for row in self.addition_table:
+            if not (num_elements == len(set(row))):
+                result = False
+                break
+        for col_num in range(num_elements):
+            if not (num_elements == len(set(self.table_column(col_num)))):
+                result = False
+                break
+        return result
 
     # Written and tested, but not sure whether this is needed yet.
     def swap(self, a, b):
@@ -104,8 +127,8 @@ class Algebra:
             row[k], row[m] = row[m], row[k]
         return None
 
-    def elements(self):
-        return self.addition_table[0]
+    # def elements(self):
+    #     return self.addition_table[0]
 
 
 class Group(Algebra):

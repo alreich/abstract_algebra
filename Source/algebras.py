@@ -8,11 +8,11 @@ class Algebra:
     The arguments can consist of a single string, representing the path to a JSON
     file that defines the algebra, or a single Python dictionary, that defines the
     algebra, or the four quantities listed below:
-    name: A string name for the algebra;
-    description: A string describing the algebra;
-    elements: A list of strings that represent the names of algebra elements;
-    addition_table: a list of lists of numbers that represent positions of elements
-    in the elements list.
+        name: A string name for the algebra;
+        description: A string describing the algebra;
+        elements: A list of strings that represent the names of algebra elements;
+        addition_table: a list of lists of numbers that represent positions of elements
+            in the elements list.
 
     Regarding the format of the addition table, the row element is added on the
     left and the column element on the right, e.g., row + col.  Or, assuming

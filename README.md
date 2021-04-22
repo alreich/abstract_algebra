@@ -1,2 +1,2 @@
 # abstract_algebra
-Experimental implementation of groups--for now--and maybe rings, fields, etc later.
+Experimental implementation of finit groups--for now--and maybe later rings, fields, etc.

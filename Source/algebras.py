@@ -87,7 +87,7 @@ class Algebra:
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.cayley_table]
 
     def add(self, r, c):
-        """Given element names, r & c, return their product, r*c, according the the Cayley table."""
+        """Given element names, r & c, return the sum, r + c, according the the Cayley table."""
         # Find the positions of r & c in the list of element names.
         r_pos = self.element_names.index(r)
         c_pos = self.element_names.index(c)

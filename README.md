@@ -20,11 +20,12 @@ alg_dir = os.path.join(aa_path, "Algebras")
 
 ## Store Group in JSON format
 
-* The <b>cayley_table</b> <u>must</u> reference group elements according to their index (position) in the <b>element_names</b> list.
+* The <b>addition_table</b> <u>must</u> reference group elements according to their index (position) in the <b>element_names</b> list.
 * <b>0</b> <u>must</u> always refer to the <b>identity element</b>.
 
 
 ```python
+# Path to a JSON file that defines the group V4
 v4_json = os.path.join(alg_dir, "v4_klein_4_group.json")
 
 !cat {v4_json}
@@ -34,7 +35,7 @@ v4_json = os.path.join(alg_dir, "v4_klein_4_group.json")
      "name": "V4",
      "description": "Klein-4 group",
      "element_names": ["e", "h", "v", "hv"],
-     "cayley_table": [[0, 1, 2, 3],
+     "addition_table": [[0, 1, 2, 3],
                       [1, 0, 3, 2],
                       [2, 3, 0, 1],
                       [3, 2, 1, 0]]
@@ -60,22 +61,20 @@ v4
 
 
 ```python
-v4x = alg.Group('V4x',
-                'Klein-4 group',
-                ['e',  'h',  'v', 'hv'],
-                [[0, 1, 2, 3],
-                 [1, 0, 3, 2],
-                 [2, 3, 0, 1],
-                 [3, 2, 1, 0]]
-               )
-
-v4x
+alg.Group('V4',
+          'Another way to construct V4',
+          ['e',  'h',  'v', 'hv'],
+          [[0, 1, 2, 3],
+           [1, 0, 3, 2],
+           [2, 3, 0, 1],
+           [3, 2, 1, 0]]
+         )
 ```
 
 
 
 
-    Group('V4x', 'Klein-4 group', ['e', 'h', 'v', 'hv'], [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
+    Group('V4', 'Another way to construct V4', ['e', 'h', 'v', 'hv'], [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
 
 
 
@@ -85,18 +84,17 @@ v4x
 ```python
 v4_dict = {'type': 'Group',
            'name': 'V4',
-           'description': 'Klein-4 group',
+           'description': 'Yet another way to define V4',
            'element_names': ['e', 'h', 'v', 'hv'],
-           'cayley_table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
+           'addition_table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
 
-v4y = alg.Group(v4_dict)
-v4y
+alg.Group(v4_dict)
 ```
 
 
 
 
-    Group('V4', 'Klein-4 group', ['e', 'h', 'v', 'hv'], [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
+    Group('V4', 'Yet another way to define V4', ['e', 'h', 'v', 'hv'], [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
 
 
 
@@ -128,11 +126,15 @@ v4.inverse('h')
 
 
 
-## View Cayley Table using Element Names
+## View Addition Table using Element Names
+
+The addition table is known as a [Cayley Table](https://en.wikipedia.org/wiki/Cayley_table).
+
+The group operation is referred to here as <i>addition</i> to distinguish it from ring or field <i>multiplication</i> operations.
 
 
 ```python
-v4.cayley_table_with_names()
+v4.addition_table_with_names()
 ```
 
 
@@ -150,6 +152,18 @@ v4.cayley_table_with_names()
 
 ```python
 v4.abelian()
+```
+
+
+
+
+    True
+
+
+
+
+```python
+v4.associative()
 ```
 
 
@@ -188,7 +202,7 @@ v4.to_dict()
      'name': 'V4',
      'description': 'Klein-4 group',
      'element_names': ['e', 'h', 'v', 'hv'],
-     'cayley_table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
+     'addition_table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
 
 
 
@@ -200,6 +214,6 @@ v4.dumps()
 
 
 
-    '{"type": "Group", "name": "V4", "description": "Klein-4 group", "element_names": ["e", "h", "v", "hv"], "cayley_table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
+    '{"type": "Group", "name": "V4", "description": "Klein-4 group", "element_names": ["e", "h", "v", "hv"], "addition_table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
 
 

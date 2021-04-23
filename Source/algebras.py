@@ -14,7 +14,7 @@ class Algebra:
         cayley_table: a list of lists of numbers that represent positions of elements
             in the elements list.
 
-    Regarding the format of the cayley table, the row element is added on the
+    Regarding the format of the Cayley table, the row element is added on the
     left and the column element on the right, e.g., row + col.  Or, assuming
     functions written on the left (such as permutations), this means that the
     column element is applied first and the row element is applied next, e.g.,
@@ -23,7 +23,7 @@ class Algebra:
     def __init__(self, *args):
 
         if len(args) == 1:
-            if str(args[0]):
+            if isinstance(args[0], str):
                 with open(args[0], 'r') as fin:
                     # Assumes the single arg is a JSON file name string
                     alg_dict = json.load(fin)
@@ -118,7 +118,7 @@ class Algebra:
         """Return the n_th column of the cayley table."""
         return [row[n] for row in self.cayley_table]
 
-    def cayley_table_ok(self):
+    def check_cayley_table(self):
         """Check that each row and column in the table has a unique number of elements equal to the
         expected number of elements.  Basically, each element should appear exactly once in each row
         and each column. Returns True if the table is OK."""

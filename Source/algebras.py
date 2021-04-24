@@ -86,15 +86,11 @@ class Algebra:
         """Return the addition table with element names rather than element positions."""
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.addition_table]
 
-    def add(self, r, c):
+    def add(self, a, b):
         """Given element names, r & c, return the sum, r + c, according the the addition table."""
-        # Find the positions of r & c in the list of element names.
-        r_pos = self.element_names.index(r)
-        c_pos = self.element_names.index(c)
-        # Lookup the product based on the row & column indices
-        row_index = self._row_header.index(r_pos)
-        col_index = self._col_header.index(c_pos)
-        product_index = self.addition_table[row_index][col_index]
+        a_pos = self.element_names.index(a)
+        b_pos = self.element_names.index(b)
+        product_index = self.addition_table[a_pos][b_pos]
         return self.element_names[product_index]
 
     def associative(self):
@@ -176,6 +172,18 @@ class Group(Algebra):
 
 
 # Utilities
+
+def values_in_order(seq):
+    starts_with_zero = (seq[0] == 0)
+    print(f"Starts with zero? {starts_with_zero}")
+    increasing_by_one = all([((seq[i + 1] - seq[i]) == 1) for i in range(len(seq) - 1)])
+    print(f"Increasing by one? {increasing_by_one}")
+    return starts_with_zero and increasing_by_one
+
+
+def first_column(table):
+    return [row[0] for row in table]
+
 
 def make_table(table_string):
     """This function helps turn the XML-based tables at Groupprops into a

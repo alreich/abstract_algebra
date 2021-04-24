@@ -22,6 +22,7 @@ alg_dir = os.path.join(aa_path, "Algebras")
 
 * The <b>addition_table</b> <u>must</u> reference group elements according to their index (position) in the <b>element_names</b> list.
 * <b>0</b> <u>must</u> always refer to the <b>identity element</b>.
+* The first row and first column of the addition table <u>must</u> be the integers, in order, 0, 1, 2, ..., n-1, where n is the number of element names.
 
 
 ```python
@@ -36,9 +37,9 @@ v4_json = os.path.join(alg_dir, "v4_klein_4_group.json")
      "description": "Klein-4 group",
      "element_names": ["e", "h", "v", "hv"],
      "addition_table": [[0, 1, 2, 3],
-                      [1, 0, 3, 2],
-                      [2, 3, 0, 1],
-                      [3, 2, 1, 0]]
+                        [1, 0, 3, 2],
+                        [2, 3, 0, 1],
+                        [3, 2, 1, 0]]
     }
 
 
@@ -217,3 +218,8 @@ v4.dumps()
     '{"type": "Group", "name": "V4", "description": "Klein-4 group", "element_names": ["e", "h", "v", "hv"], "addition_table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
 
 
+
+
+```python
+
+```

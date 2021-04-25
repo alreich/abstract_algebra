@@ -42,10 +42,8 @@ class Algebra:
         self.description = alg_dict['description']
         self.element_names = alg_dict['element_names']
         self.addition_table = np.array(alg_dict['addition_table'], dtype=np.int64)
-        # For efficiency, calculate the headers up front
-        self._col_header = self.addition_table[0]
-        self._row_header = [row[0] for row in self.addition_table]
-        self._dp_delimiter = ','  # name delimiter used when creating direct products
+        self.inverse_lookup_dict = self._make_inverse_lookup_dict()
+        self.dp_delimiter = ','  # name delimiter used when creating direct products
 
     def __str__(self):
         return f"<{self.__class__.__name__}: {self.name}, {self.description}>"
@@ -56,8 +54,15 @@ class Algebra:
     def set_direct_product_delimiter(self, delimiter=','):
         """Change or reset the delimiter used to construct new element names of direct products.
         The default delimiter is a comma."""
-        self._dp_delimiter = delimiter
+        self.dp_delimiter = delimiter
         return None
+
+    def _make_inverse_lookup_dict(self):
+        """Return a dictionary of element names and their inverse names."""
+        row_indices, col_indices = np.where(self.addition_table == 0)
+        return {self.element_names[elem_index]: self.element_names[elem_inv_index]
+                for (elem_index, elem_inv_index)
+                in zip(row_indices, col_indices)}
 
     def to_dict(self):
         """Return a dictionary that represents this group."""
@@ -65,7 +70,7 @@ class Algebra:
                 'name': self.name,
                 'description': self.description,
                 'element_names': self.element_names,
-                'addition_table': self.addition_table}
+                'addition_table': self.addition_table.tolist()}
 
     def dumps(self):
         """Write the algebra to a JSON string."""
@@ -77,15 +82,21 @@ class Algebra:
             json.dump(self.to_dict(), fout)
 
     def inverse(self, element_name):
-        """Return the inverse of the input element name."""
-        elem_index = self.element_names.index(element_name)
-        row_index = self._row_header.index(elem_index)
-        col_index = self.addition_table[row_index].index(0)
-        return self.element_names[self._col_header[col_index]]
+        """Return the inverse name of the input element name."""
+        return self.inverse_lookup_dict[element_name]
 
     def addition_table_with_names(self):
         """Return the addition table with element names rather than element positions."""
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.addition_table]
+
+    def pretty_print_addition_table(self, delimiter=' '):
+        """The method name says it all."""
+        field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
+        for elem1 in self.element_names:
+            row = ""
+            for elem2 in self.element_names:
+                row += delimiter + f"{self.add(elem1, elem2) :>{field_size}}"
+            print(row)
 
     def add(self, a, b):
         """Given element names, r & c, return the sum, r + c, according the the addition table."""
@@ -119,7 +130,7 @@ class Algebra:
             dp_addition_table.append(addition_table_row)  # Add the new row to the table
         return self.__class__(dp_name,
                               dp_description,
-                              list([f"{elem[0]}{self._dp_delimiter}{elem[1]}" for elem in dp_element_names]),
+                              list([f"{elem[0]}{self.dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_addition_table)
 
     def table_column(self, n):

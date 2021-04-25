@@ -1,4 +1,5 @@
 import itertools as it
+import numpy as np
 import json
 
 
@@ -40,7 +41,7 @@ class Algebra:
         self.name = alg_dict['name']
         self.description = alg_dict['description']
         self.element_names = alg_dict['element_names']
-        self.addition_table = alg_dict['addition_table']
+        self.addition_table = np.array(alg_dict['addition_table'], dtype=np.int64)
         # For efficiency, calculate the headers up front
         self._col_header = self.addition_table[0]
         self._row_header = [row[0] for row in self.addition_table]

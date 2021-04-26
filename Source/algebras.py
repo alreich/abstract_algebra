@@ -133,9 +133,9 @@ class Algebra:
                               list([f"{elem[0]}{self.dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_addition_table)
 
-    def table_column(self, n):
-        """Return the n_th column of the addition table."""
-        return [row[n] for row in self.addition_table]
+    # def table_column(self, n):
+    #     """Return the n_th column of the addition table."""
+    #     return [row[n] for row in self.addition_table]
 
     # Written and tested, but not sure whether this is needed yet.
     def swap(self, a, b):

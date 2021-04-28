@@ -231,7 +231,7 @@ if __name__ == '__main__':
                 Group(os.path.join(path, 'Algebras/z4_cyclic_group_of_order_4.json')),
                 Group(os.path.join(path, 'Algebras/s3_symmetric_group_on_3_letters.json'))
                 ]
-    
+
     algebras.append( algebras[2] * algebras[1] )
 
     # Add some algebras that are direct products of the algebras, above:

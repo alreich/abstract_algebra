@@ -1,6 +1,7 @@
 import itertools as it
 import numpy as np
 import json
+import os
 
 
 class Algebra:
@@ -215,3 +216,35 @@ def swap_list_items(lst, item1, item2):
     a, b = lst.index(item1), lst.index(item2)
     lst[b], lst[a] = lst[a], lst[b]
     return None
+
+if __name__ == '__main__':
+
+    print("\n=======================================================================")
+
+    print("\n--------------")
+    print("START OF TESTS")
+    print("--------------")
+
+    path = os.path.join(os.getenv('PYPROJ'), 'abstract_algebra')
+
+    algebras = [Group(os.path.join(path, 'Algebras/v4_klein_4_group.json')),
+                Group(os.path.join(path, 'Algebras/z4_cyclic_group_of_order_4.json')),
+                Group(os.path.join(path, 'Algebras/s3_symmetric_group_on_3_letters.json'))
+                ]
+    
+    algebras.append( algebras[2] * algebras[1] )
+
+    # Add some algebras that are direct products of the algebras, above:
+
+    for grp in algebras:
+        print(f"\n\n{grp.name} : {grp.description}")
+        print(f"Element Names: {grp.element_names}")
+        print(f"Is Abelian? {grp.abelian()}")
+        print(f"Is associative? {grp.associative()}")
+        print("Cayley Table:")
+        grp.pretty_print_addition_table()
+
+    print("\n------------")
+    print("END OF TESTS")
+    print("------------")
+

@@ -90,11 +90,11 @@ class Algebra:
         """Return the addition table with element names rather than element positions."""
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.addition_table]
 
-    def pretty_print_addition_table(self, delimiter=' '):
+    def pretty_print_addition_table(self, delimiter=' ', prefix=''):
         """The method name says it all."""
         field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
         for elem1 in self.element_names:
-            row = ""
+            row = f"{prefix}"
             for elem2 in self.element_names:
                 row += delimiter + f"{self.add(elem1, elem2) :>{field_size}}"
             print(row)
@@ -134,9 +134,31 @@ class Algebra:
                               list([f"{elem[0]}{self.dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_addition_table)
 
-    # def table_column(self, n):
-    #     """Return the n_th column of the addition table."""
-    #     return [row[n] for row in self.addition_table]
+    def get_addition_table_row(self, row_num):
+        return self.addition_table[row_num]
+
+    def get_addition_table_column(self, col_num):
+        return self.addition_table[ : , col_num]
+
+    def print_info(self, max_size=12, prefix='  '):
+        print(f"\n{self.__class__.__name__} : {self.name} : {self.description}")
+        print(f"{prefix}Element Names: {self.element_names}")
+        print(f"{prefix}Is Abelian? {self.abelian()}")
+        # Don't calculate/print the following info if the Group is greater than max_size
+        print(f"{prefix}Inverses:  (** - indicates that it is its own inverse)")
+        for elem in self.element_names:
+            footnote = ''
+            inv_elem = self.inverse(elem)
+            if elem == inv_elem:
+                footnote = '  **'
+            print(f"{prefix}  inv({elem}) = {self.inverse(elem)} {footnote}")
+        size = len(self.element_names)
+        if size <= max_size:
+            print(f"{prefix}Is associative? {self.associative()}")
+            print(f"{prefix}Cayley Table:")
+            self.pretty_print_addition_table(prefix=prefix)
+        else:
+            print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
     # Written and tested, but not sure whether this is needed yet.
     def swap(self, a, b):
@@ -229,7 +251,9 @@ if __name__ == '__main__':
 
     algebras = [Group(os.path.join(path, 'Algebras/v4_klein_4_group.json')),
                 Group(os.path.join(path, 'Algebras/z4_cyclic_group_of_order_4.json')),
-                Group(os.path.join(path, 'Algebras/s3_symmetric_group_on_3_letters.json'))
+                Group(os.path.join(path, 'Algebras/s3_symmetric_group_on_3_letters.json')),
+                Group(os.path.join(path, 'Algebras/s3x_symmetric_group_OTHER.json')),
+                Group(os.path.join(path, 'Algebras/Z2xZ2xZ2.json')),
                 ]
 
     algebras.append( algebras[2] * algebras[1] )
@@ -237,12 +261,7 @@ if __name__ == '__main__':
     # Add some algebras that are direct products of the algebras, above:
 
     for grp in algebras:
-        print(f"\n\n{grp.name} : {grp.description}")
-        print(f"Element Names: {grp.element_names}")
-        print(f"Is Abelian? {grp.abelian()}")
-        print(f"Is associative? {grp.associative()}")
-        print("Cayley Table:")
-        grp.pretty_print_addition_table()
+        grp.print_info()
 
     print("\n------------")
     print("END OF TESTS")

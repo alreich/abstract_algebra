@@ -90,21 +90,42 @@ class Algebra:
         """Return the addition table with element names rather than element positions."""
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.addition_table]
 
-    def pretty_print_addition_table(self, delimiter=' ', prefix=''):
-        """The method name says it all."""
-        field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
-        for elem1 in self.element_names:
-            row = f"{prefix}"
-            for elem2 in self.element_names:
-                row += delimiter + f"{self.add(elem1, elem2) :>{field_size}}"
-            print(row)
-
     def add(self, a, b):
         """Given element names, r & c, return the sum, r + c, according the the addition table."""
         a_pos = self.element_names.index(a)
         b_pos = self.element_names.index(b)
-        product_index = self.addition_table[a_pos][b_pos]
+        product_index = self.addition_table[a_pos, b_pos]
         return self.element_names[product_index]
+
+    # def pretty_print_addition_table_OLDER(self, delimiter=' ', prefix=''):
+    #     field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
+    #     for elem1 in self.element_names:
+    #         row = f"{prefix}"
+    #         for elem2 in self.element_names:
+    #             row += delimiter + f"{self.add(elem1, elem2) :>{field_size}}"
+    #         print(row)
+
+    # def pretty_print_addition_table_OLD(self, delimiter=' ', prefix=''):
+    #     """The method name says it all."""
+    #     field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
+    #     for elem1 in self.element_names:
+    #         idx1 = self.element_names.index(elem1)
+    #         row = f"{prefix}"
+    #         for elem2 in self.element_names:
+    #             idx2 = self.element_names.index(elem2)
+    #             prod = self.element_names[self.addition_table[idx1, idx2]]
+    #             row += delimiter + f"{prod :>{field_size}}"
+    #         print(row)
+
+    def pretty_print_addition_table(self, delimiter=' ', prefix=''):
+        field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
+        for row_index in self.addition_table[:, 0]:  # row index from first column
+            row_string = f"{prefix}"
+            for col_index in self.addition_table[0]:  # column index from first row
+                prod_index = self.addition_table[row_index, col_index]
+                prod_name = self.element_names[prod_index]
+                row_string += delimiter + f"{prod_name :>{field_size}}"
+            print(row_string)
 
     def associative(self):
         "A brute force test of associativity.  Returns True if the algebra is associative."
@@ -134,11 +155,11 @@ class Algebra:
                               list([f"{elem[0]}{self.dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_addition_table)
 
-    def get_addition_table_row(self, row_num):
-        return self.addition_table[row_num]
-
-    def get_addition_table_column(self, col_num):
-        return self.addition_table[ : , col_num]
+    # def addition_table_row(self, row_num):
+    #     return self.addition_table[row_num]
+    #
+    # def addition_table_column(self, col_num):
+    #     return self.addition_table[:, col_num]
 
     def print_info(self, max_size=12, prefix='  '):
         print(f"\n{self.__class__.__name__} : {self.name} : {self.description}")
@@ -256,7 +277,11 @@ if __name__ == '__main__':
                 Group(os.path.join(path, 'Algebras/Z2xZ2xZ2.json')),
                 ]
 
-    algebras.append( algebras[2] * algebras[1] )
+    # Create some direct products
+    v4_x_z4 = algebras[0] * algebras[1]
+    z4_x_s3 = algebras[1] * algebras[2]
+
+    algebras.extend([v4_x_z4, z4_x_s3])
 
     # Add some algebras that are direct products of the algebras, above:
 

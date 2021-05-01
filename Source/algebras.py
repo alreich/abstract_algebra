@@ -4,15 +4,18 @@ import json
 import os
 
 
-class Algebra:
-    """An abstract algebra with a finite number of elements and an addition (Cayley) table.
+class Group:
+    """This is a finite group (abstract algebra)
+
+    The group definition here is assumed to have a finite number of elements, along
+    with an addition table (Cayley table).
 
     The arguments can consist of a single string, representing the path to a JSON
-    file that defines the algebra, or a single Python dictionary, that defines the
-    algebra, or the four quantities listed below:
-        name: A string name for the algebra;
-        description: A string describing the algebra;
-        element_names: A list of strings that represent the names of algebra elements;
+    file that defines the group, or a single Python dictionary, that defines the
+    group, or the four quantities listed below:
+        name: A string name for the group;
+        description: A string describing the group;
+        element_names: A list of strings that represent the names of group elements;
         addition_table: a list of lists of numbers that represent positions of elements
             in the elements list.
 
@@ -28,21 +31,21 @@ class Algebra:
             if isinstance(args[0], str):
                 with open(args[0], 'r') as fin:
                     # Assumes the single arg is a JSON file name string
-                    alg_dict = json.load(fin)
+                    grp_dict = json.load(fin)
             else:
                 # Assumes the single argument is a dictionary
-                alg_dict = args[0]
+                grp_dict = args[0]
         else:
             # Assumes all fields were input
-            alg_dict = {'name': args[0],
+            grp_dict = {'name': args[0],
                         'description': args[1],
                         'element_names': args[2],
                         'addition_table': args[3]
                         }
-        self.name = alg_dict['name']
-        self.description = alg_dict['description']
-        self.element_names = alg_dict['element_names']
-        self.addition_table = np.array(alg_dict['addition_table'], dtype=np.int64)
+        self.name = grp_dict['name']
+        self.description = grp_dict['description']
+        self.element_names = grp_dict['element_names']
+        self.addition_table = np.array(grp_dict['addition_table'], dtype=np.int64)
         self.inverse_lookup_dict = self._make_inverse_lookup_dict()
         self.dp_delimiter = ','  # name delimiter used when creating direct products
 
@@ -74,11 +77,11 @@ class Algebra:
                 'addition_table': self.addition_table.tolist()}
 
     def dumps(self):
-        """Write the algebra to a JSON string."""
+        """Write the group to a JSON string."""
         return json.dumps(self.to_dict())
 
     def dump(self, path):
-        """Write the algebra to a JSON file."""
+        """Write the group to a JSON file."""
         with open(path, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
@@ -97,26 +100,6 @@ class Algebra:
         product_index = self.addition_table[a_pos, b_pos]
         return self.element_names[product_index]
 
-    # def pretty_print_addition_table_OLDER(self, delimiter=' ', prefix=''):
-    #     field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
-    #     for elem1 in self.element_names:
-    #         row = f"{prefix}"
-    #         for elem2 in self.element_names:
-    #             row += delimiter + f"{self.add(elem1, elem2) :>{field_size}}"
-    #         print(row)
-
-    # def pretty_print_addition_table_OLD(self, delimiter=' ', prefix=''):
-    #     """The method name says it all."""
-    #     field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
-    #     for elem1 in self.element_names:
-    #         idx1 = self.element_names.index(elem1)
-    #         row = f"{prefix}"
-    #         for elem2 in self.element_names:
-    #             idx2 = self.element_names.index(elem2)
-    #             prod = self.element_names[self.addition_table[idx1, idx2]]
-    #             row += delimiter + f"{prod :>{field_size}}"
-    #         print(row)
-
     def pretty_print_addition_table(self, delimiter=' ', prefix=''):
         field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
         for row_index in self.addition_table[:, 0]:  # row index from first column
@@ -128,7 +111,7 @@ class Algebra:
             print(row_string)
 
     def associative(self):
-        "A brute force test of associativity.  Returns True if the algebra is associative."
+        "A brute force test of associativity.  Returns True if the group is associative."
         result = True
         for a in self.element_names:
             for b in self.element_names:
@@ -140,7 +123,7 @@ class Algebra:
 
     # Direct Product Definition
     def __mul__(self, other):
-        """Return the direct product of this algebra with the input algebra, other."""
+        """Return the direct product of this group with the input group, other."""
         dp_name = self.name + "_x_" + other.name
         dp_description = "Direct product of " + self.name + " & " + other.name
         dp_element_names = list(it.product(self.element_names, other.element_names))  # Cross product
@@ -181,21 +164,6 @@ class Algebra:
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
-    # Written and tested, but not sure whether this is needed yet.
-    def swap(self, a, b):
-        """Change the algebra's definition by swapping the order of two elements, a & b."""
-        elem = self.element_names
-        i, j = elem.index(a), elem.index(b)
-        elem[j], elem[i] = elem[i], elem[j]
-        for row in self.addition_table:
-            k, m = row.index(i), row.index(j)
-            row[k], row[m] = row[m], row[k]
-        return None
-
-
-class Group(Algebra):
-    """This algebra is a group."""
-
     # TODO: Automatically check the addition table using check_addition_table, below.
     def check_addition_table(self):
         """Check that each row and column in the table has a unique number of elements equal to the
@@ -208,7 +176,7 @@ class Group(Algebra):
                 result = False
                 break
         for col_num in range(num_elements):
-            if not (num_elements == len(set(self.table_column(col_num)))):
+            if not (num_elements == len(set(self.addition_table[:, col_num]))):
                 result = False
                 break
         return result
@@ -225,6 +193,17 @@ class Group(Algebra):
 
     def commutative(self):
         return self.abelian()
+
+    # Written and tested, but not sure whether this is needed yet.
+    def swap(self, a, b):
+        """Change the group's definition by swapping the order of two elements, a & b."""
+        elem = self.element_names
+        i, j = elem.index(a), elem.index(b)
+        elem[j], elem[i] = elem[i], elem[j]
+        for row in self.addition_table:
+            k, m = row.index(i), row.index(j)
+            row[k], row[m] = row[m], row[k]
+        return None
 
 
 # Utilities

@@ -16,8 +16,14 @@ class Group:
         name: A string name for the group;
         description: A string describing the group;
         element_names: A list of strings that represent the names of group elements;
-        addition_table: a list of lists of numbers that represent positions of elements
-            in the elements list.
+        addition_table: a list of lists (2D array) of numbers that represent positions
+            of elements in the elements list. The following requirements on the array
+            must be adhered to:
+            (1) The elements of the array must be integers that reference the groups
+                elements according to their index (position) in the list, element_names.
+            (2) 0 must always refer to the identity element for the group operation (addition)
+            (3) The first row and first column must be the integers in order, 0, 1, 2,..., n-1,
+                where n is the number of elements.
 
     Regarding the format of the addition table, the row element is added on the
     left and the column element on the right, e.g., row + col.  Or, assuming
@@ -53,7 +59,11 @@ class Group:
         return f"<{self.__class__.__name__}: {self.name}, {self.description}>"
 
     def __repr__(self):
-        return f"{self.__class__.__name__}('{self.name}', '{self.description}', {self.element_names}, {self.addition_table})"
+        nm = self.name
+        desc = self.description
+        elems = self.element_names
+        tbl = self.addition_table
+        return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
 
     def set_direct_product_delimiter(self, delimiter=','):
         """Change or reset the delimiter used to construct new element names of direct products.
@@ -94,13 +104,14 @@ class Group:
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.addition_table]
 
     def add(self, a, b):
-        """Given element names, r & c, return the sum, r + c, according the the addition table."""
+        """Given element names, a & b, return the sum, a + b, according the the addition table."""
         a_pos = self.element_names.index(a)
         b_pos = self.element_names.index(b)
         product_index = self.addition_table[a_pos, b_pos]
         return self.element_names[product_index]
 
     def pretty_print_addition_table(self, delimiter=' ', prefix=''):
+        """Print the Cayley table for addition using element names."""
         field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
         for row_index in self.addition_table[:, 0]:  # row index from first column
             row_string = f"{prefix}"
@@ -138,12 +149,6 @@ class Group:
                               list([f"{elem[0]}{self.dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_addition_table)
 
-    # def addition_table_row(self, row_num):
-    #     return self.addition_table[row_num]
-    #
-    # def addition_table_column(self, col_num):
-    #     return self.addition_table[:, col_num]
-
     def print_info(self, max_size=12, prefix='  '):
         print(f"\n{self.__class__.__name__} : {self.name} : {self.description}")
         print(f"{prefix}Element Names: {self.element_names}")
@@ -169,8 +174,14 @@ class Group:
         """Check that each row and column in the table has a unique number of elements equal to the
         expected number of elements.  Basically, each element should appear exactly once in each row
         and each column. Returns True if the table is OK."""
-        num_elements = len(self.element_names)  # the expected number of elements
         result = True
+        num_elements = len(self.element_names)  # number of elements input
+        set_of_elements = set(self.element_names)  # elements as a set
+        # Check for duplicate element names
+        if not (len(set_of_elements == num_elements)):
+            if verbose:
+                print(f"ERROR: There appear to be duplicate element names.")
+            result = False
         for row in self.addition_table:
             if not (num_elements == len(set(row))):
                 result = False
@@ -196,13 +207,17 @@ class Group:
 
     # Written and tested, but not sure whether this is needed yet.
     def swap(self, a, b):
-        """Change the group's definition by swapping the order of two elements, a & b."""
+        """Change the struture of the group's definition by swapping the order of two elements, a & b."""
         elem = self.element_names
         i, j = elem.index(a), elem.index(b)
+        # Swap the two elements in the element_names list
         elem[j], elem[i] = elem[i], elem[j]
+        # Swap the corresponding rows
         for row in self.addition_table:
             k, m = row.index(i), row.index(j)
             row[k], row[m] = row[m], row[k]
+        # Swap the corresponding columns
+        # TODO: Actually swap the two columns here
         return None
 
 

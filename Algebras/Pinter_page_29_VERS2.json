@@ -1,0 +1,11 @@
+{"type": "Group",
+ "name": "Non-Abelian_Example VERSION 2",
+ "description": "Tests input of a table of element name strings and no element_names list",
+ "addition_table": [["I", "A", "B", "C", "D", "K"],
+                    ["A", "I", "C", "B", "K", "D"],
+                    ["B", "K", "D", "A", "I", "C"],
+                    ["C", "D", "K", "I", "A", "B"],
+                    ["D", "C", "I", "K", "B", "A"],
+                    ["K", "B", "A", "D", "C", "I"]]
+}
+

@@ -36,13 +36,27 @@ class Group:
         if len(args) == 1:
             if isinstance(args[0], str):
                 with open(args[0], 'r') as fin:
-                    # Assumes the single arg is a JSON file name string
+                    # Assumes the single argument is a JSON file name string
                     grp_dict = json.load(fin)
-            else:
+            elif isinstance(args[0], dict):
                 # Assumes the single argument is a dictionary
                 grp_dict = args[0]
+            else:
+                # TODO: Allow for just a table to be input (list of lists of element name strings)
+                # No other options for single input arguments
+                raise Exception("Single argument must be a string or a dictionary.")
+
+        # The following assumes that no element_names list is input, and the table is
+        # input using element names instead of indices of the elements.  So, the first
+        # row of the table acts as the element_names list.
+        elif len(args) == 3:
+            grp_dict = {'name': args[0],
+                        'description': args[1],
+                        'element_names': args[2][0],  # top row of table input
+                        'addition_table': index_table_from_name_table(args[2])
+                        }
         else:
-            # Assumes all fields were input
+            # Assumes all four possible fields were input
             grp_dict = {'name': args[0],
                         'description': args[1],
                         'element_names': args[2],
@@ -50,8 +64,19 @@ class Group:
                         }
         self.name = grp_dict['name']
         self.description = grp_dict['description']
-        self.element_names = grp_dict['element_names']
-        self.addition_table = np.array(grp_dict['addition_table'], dtype=np.int64)
+
+        if grp_dict.get('element_names'):
+            self.element_names = grp_dict['element_names']
+        else:
+            self.element_names = grp_dict['addition_table'][0]  # First row of table
+
+        tbl = grp_dict['addition_table']
+        if isinstance(tbl[0][0], str):
+            table = index_table_from_name_table(tbl)
+        else:
+            table = tbl
+        self.addition_table = np.array(table, dtype=np.int64)
+
         self.inverse_lookup_dict = self._make_inverse_lookup_dict()
         self.dp_delimiter = ','  # name delimiter used when creating direct products
 
@@ -134,7 +159,7 @@ class Group:
 
     # Direct Product Definition
     def __mul__(self, other):
-        """Return the direct product of this group with the input group, other."""
+        """Return the direct product of this group with an 'other' group."""
         dp_name = self.name + "_x_" + other.name
         dp_description = "Direct product of " + self.name + " & " + other.name
         dp_element_names = list(it.product(self.element_names, other.element_names))  # Cross product
@@ -170,7 +195,7 @@ class Group:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
     # TODO: Automatically check the addition table using check_addition_table, below.
-    def check_addition_table(self):
+    def check_addition_table(self, verbose=True):
         """Check that each row and column in the table has a unique number of elements equal to the
         expected number of elements.  Basically, each element should appear exactly once in each row
         and each column. Returns True if the table is OK."""
@@ -223,6 +248,13 @@ class Group:
 
 # Utilities
 
+def index_table_from_name_table(name_table):
+    """Given a Cayley table using element names, return a table that uses position indices.
+    Assumes that the first element in the first row of the table is the identity for the
+    table's algebra."""
+    top_row = name_table[0]
+    return [[top_row.index(elem_name) for elem_name in row] for row in name_table]
+
 def values_in_order(seq):
     starts_with_zero = (seq[0] == 0)
     print(f"Starts with zero? {starts_with_zero}")
@@ -269,6 +301,8 @@ if __name__ == '__main__':
                 Group(os.path.join(path, 'Algebras/s3_symmetric_group_on_3_letters.json')),
                 Group(os.path.join(path, 'Algebras/s3x_symmetric_group_OTHER.json')),
                 Group(os.path.join(path, 'Algebras/Z2xZ2xZ2.json')),
+                Group(os.path.join(path, "Algebras/Pinter_page_29.json")),
+                Group(os.path.join(path, "Algebras/Pinter_page_29_VERS2.json"))
                 ]
 
     # Create some direct products

@@ -2,6 +2,7 @@ import itertools as it
 import numpy as np
 import json
 import os
+from collections import Counter
 
 
 class Group:
@@ -260,9 +261,10 @@ def check_addition_table(element_names, addition_table, verbose=True):
     # Check for duplicate element names
     num_elements = len(element_names)  # number of elements input
     if not (num_elements == len(set(element_names))):
-        if verbose:
-            print("ERROR: There are duplicate element names.")
-        return False
+        raise ValueError("There are duplicate element names")
+        # if verbose:
+        #     print("ERROR: There are duplicate element names.")
+        # return False
 
     # Check that table is square and has same dimensions as elements list
     rows, cols = addition_table.shape

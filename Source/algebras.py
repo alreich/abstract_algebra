@@ -77,6 +77,8 @@ class Group:
             table = tbl
         self.addition_table = np.array(table, dtype=np.int64)
 
+        check_addition_table(self.element_names, self.addition_table, True)
+
         self.inverse_lookup_dict = self._make_inverse_lookup_dict()
         self.dp_delimiter = ','  # name delimiter used when creating direct products
 
@@ -194,28 +196,30 @@ class Group:
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
-    # TODO: Automatically check the addition table using check_addition_table, below.
-    def check_addition_table(self, verbose=True):
-        """Check that each row and column in the table has a unique number of elements equal to the
-        expected number of elements.  Basically, each element should appear exactly once in each row
-        and each column. Returns True if the table is OK."""
-        result = True
-        num_elements = len(self.element_names)  # number of elements input
-        set_of_elements = set(self.element_names)  # elements as a set
-        # Check for duplicate element names
-        if not (len(set_of_elements == num_elements)):
-            if verbose:
-                print(f"ERROR: There appear to be duplicate element names.")
-            result = False
-        for row in self.addition_table:
-            if not (num_elements == len(set(row))):
-                result = False
-                break
-        for col_num in range(num_elements):
-            if not (num_elements == len(set(self.addition_table[:, col_num]))):
-                result = False
-                break
-        return result
+    # # TODO: Automatically check the addition table using check_addition_table, below.
+    # def check_addition_table(self, verbose=True):
+    #     """Check that each row and column in the table has a unique number of elements equal to the
+    #     expected number of elements.  Basically, each element should appear exactly once in each row
+    #     and each column. Returns True if the table is OK."""
+    #     result = True
+    #     num_elements = len(self.element_names)  # number of elements input
+    #     elements_as_set = set(self.element_names)  # elements as a set
+    #     # Check for duplicate element names
+    #     if not (len(elements_as_set) == num_elements):
+    #         if verbose:
+    #             print("ERROR: There appear to be duplicate element names.")
+    #         result = False
+    #     for row in self.addition_table:
+    #         if not (num_elements == len(set(row))):
+    #             print("Incorrect number of elements in table row.")
+    #             result = False
+    #             break
+    #     for col_num in range(num_elements):
+    #         if not (num_elements == len(set(self.addition_table[:, col_num]))):
+    #             print("Incorrect number of elements in table column.")
+    #             result = False
+    #             break
+    #     return result
 
     def abelian(self):
         """Returns True if this is a commutative group."""
@@ -248,12 +252,52 @@ class Group:
 
 # Utilities
 
+def check_addition_table(element_names, addition_table, verbose=True):
+    """Check that each row and column in the table has a unique number of elements equal to the
+    expected number of elements.  Basically, each element should appear exactly once in each row
+    and each column. Returns True if the table is OK."""
+
+    # Check for duplicate element names
+    num_elements = len(element_names)  # number of elements input
+    if not (num_elements == len(set(element_names))):
+        if verbose:
+            print("ERROR: There are duplicate element names.")
+        return False
+
+    # Check that table is square and has same dimensions as elements list
+    rows, cols = addition_table.shape
+    if not (num_elements == rows == cols):
+        if verbose:
+            print(f"ERROR: Number of elements, {num_elements}, and table shape, {rows}x{cols}, don't match")
+        return False
+
+    # Check that each table row contains the correct values for a Cayley table
+    correct_indices = set(range(num_elements))  # {0, 1, 2, ..., n-1}
+    row_number = -1
+    for row in addition_table:
+        row_number += 1
+        if not (set(row) == correct_indices):
+            if verbose:
+                print(f"A row {row_number} does not contain the correct values for a Cayley table")
+            return False
+
+    # Check that each table col contains the correct values for a Cayley table
+    for col_number in range(num_elements):
+        if not (set(addition_table[:, col_number]) == correct_indices):
+            if verbose:
+                print(f"A column {col_number} does not contain the correct values for a Cayley table")
+            return False
+
+    return True
+
+
 def index_table_from_name_table(name_table):
     """Given a Cayley table using element names, return a table that uses position indices.
     Assumes that the first element in the first row of the table is the identity for the
     table's algebra."""
     top_row = name_table[0]
     return [[top_row.index(elem_name) for elem_name in row] for row in name_table]
+
 
 def values_in_order(seq):
     starts_with_zero = (seq[0] == 0)

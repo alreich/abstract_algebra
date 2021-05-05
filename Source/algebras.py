@@ -229,6 +229,7 @@ class Group:
 # Utilities
 
 def duplicates(lst):
+    """Return a list of the duplicate items in the input list."""
     return [item for item, count in Counter(lst).items() if count > 1]
 
 
@@ -293,10 +294,6 @@ def values_in_order(seq):
     increasing_by_one = all([((seq[i + 1] - seq[i]) == 1) for i in range(len(seq) - 1)])
     print(f"Increasing by one? {increasing_by_one}")
     return starts_with_zero and increasing_by_one
-
-
-def first_column(table):
-    return [row[0] for row in table]
 
 
 def make_table(table_string):

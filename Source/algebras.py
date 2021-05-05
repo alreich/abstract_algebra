@@ -78,10 +78,10 @@ class Group:
             table = tbl
         self.addition_table = np.array(table, dtype=np.int64)
 
-        check_addition_table(self.element_names, self.addition_table, True)
+        self.dp_delimiter = ':'  # name delimiter used when creating direct products
 
-        self.inverse_lookup_dict = self._make_inverse_lookup_dict()
-        self.dp_delimiter = ','  # name delimiter used when creating direct products
+        if check_inputs(self.element_names, self.addition_table):
+            self.inverse_lookup_dict = self._make_inverse_lookup_dict()
 
     def __str__(self):
         return f"<{self.__class__.__name__}: {self.name}, {self.description}>"
@@ -93,9 +93,9 @@ class Group:
         tbl = self.addition_table
         return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
 
-    def set_direct_product_delimiter(self, delimiter=','):
+    def set_direct_product_delimiter(self, delimiter=':'):
         """Change or reset the delimiter used to construct new element names of direct products.
-        The default delimiter is a comma."""
+        The default delimiter is a colon."""
         self.dp_delimiter = delimiter
         return None
 
@@ -118,9 +118,9 @@ class Group:
         """Write the group to a JSON string."""
         return json.dumps(self.to_dict())
 
-    def dump(self, path):
+    def dump(self, json_filename):
         """Write the group to a JSON file."""
-        with open(path, 'w') as fout:
+        with open(json_filename, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
     def inverse(self, element_name):
@@ -197,31 +197,6 @@ class Group:
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
-    # # TODO: Automatically check the addition table using check_addition_table, below.
-    # def check_addition_table(self, verbose=True):
-    #     """Check that each row and column in the table has a unique number of elements equal to the
-    #     expected number of elements.  Basically, each element should appear exactly once in each row
-    #     and each column. Returns True if the table is OK."""
-    #     result = True
-    #     num_elements = len(self.element_names)  # number of elements input
-    #     elements_as_set = set(self.element_names)  # elements as a set
-    #     # Check for duplicate element names
-    #     if not (len(elements_as_set) == num_elements):
-    #         if verbose:
-    #             print("ERROR: There appear to be duplicate element names.")
-    #         result = False
-    #     for row in self.addition_table:
-    #         if not (num_elements == len(set(row))):
-    #             print("Incorrect number of elements in table row.")
-    #             result = False
-    #             break
-    #     for col_num in range(num_elements):
-    #         if not (num_elements == len(set(self.addition_table[:, col_num]))):
-    #             print("Incorrect number of elements in table column.")
-    #             result = False
-    #             break
-    #     return result
-
     def abelian(self):
         """Returns True if this is a commutative group."""
         result = True
@@ -253,42 +228,53 @@ class Group:
 
 # Utilities
 
-def check_addition_table(element_names, addition_table, verbose=True):
-    """Check that each row and column in the table has a unique number of elements equal to the
-    expected number of elements.  Basically, each element should appear exactly once in each row
-    and each column. Returns True if the table is OK."""
+def duplicates(lst):
+    return [item for item, count in Counter(lst).items() if count > 1]
+
+
+def check_inputs(element_names, addition_table):
+    """Check that the element_list and addition_table have sizes and contents
+    that don't violate the attributes of a group."""
 
     # Check for duplicate element names
-    num_elements = len(element_names)  # number of elements input
-    if not (num_elements == len(set(element_names))):
-        raise ValueError("There are duplicate element names")
-        # if verbose:
-        #     print("ERROR: There are duplicate element names.")
-        # return False
+    # element_set = set(element_names)
+    dups = duplicates(element_names)
+    if len(dups) == 0:
+        pass
+    else:
+        raise ValueError(f"Duplicate element names: {dups}")
 
-    # Check that table is square and has same dimensions as elements list
+    # Check that table is square
     rows, cols = addition_table.shape
-    if not (num_elements == rows == cols):
-        if verbose:
-            print(f"ERROR: Number of elements, {num_elements}, and table shape, {rows}x{cols}, don't match")
-        return False
+    if rows == cols:
+        pass
+    else:
+        raise ValueError(f"The table is not square: {rows}x{cols}")
+
+    # Check that the row-col dimensions are the same as the number of elements
+
+    num_elements = len(element_names)
+    if rows == num_elements:
+        pass
+    else:
+        raise ValueError(f"Number of elements is {num_elements}, but table size is {rows}x{cols}")
 
     # Check that each table row contains the correct values for a Cayley table
     correct_indices = set(range(num_elements))  # {0, 1, 2, ..., n-1}
     row_number = -1
     for row in addition_table:
         row_number += 1
-        if not (set(row) == correct_indices):
-            if verbose:
-                print(f"A row {row_number} does not contain the correct values for a Cayley table")
-            return False
+        if set(row) == correct_indices:
+            pass
+        else:
+            raise ValueError(f"A row {row_number} does not contain the correct values")
 
     # Check that each table col contains the correct values for a Cayley table
     for col_number in range(num_elements):
-        if not (set(addition_table[:, col_number]) == correct_indices):
-            if verbose:
-                print(f"A column {col_number} does not contain the correct values for a Cayley table")
-            return False
+        if set(addition_table[:, col_number]) == correct_indices:
+            pass
+        else:
+            raise ValueError(f"Column {col_number} does not contain the correct values")
 
     return True
 

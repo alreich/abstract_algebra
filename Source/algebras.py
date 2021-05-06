@@ -26,11 +26,10 @@ class Group:
             (3) The first row and first column must be the integers in order, 0, 1, 2,..., n-1,
                 where n is the number of elements.
 
-    Regarding the format of the addition table, the row element is added on the
-    left and the column element on the right, e.g., row + col.  Or, assuming
-    functions written on the left (such as permutations), this means that the
-    column element is applied first and the row element is applied next, e.g.,
-    row(col(x)).
+    Regarding the interpretation of the addition table, the row element is added on
+    the left and the column element on the right, e.g., row + col.  Or, assuming
+    functions written on the left, such as permutations, this means that the column
+    element is applied first and the row element is applied next, e.g., row(col(x)).
     """
     def __init__(self, *args):
 

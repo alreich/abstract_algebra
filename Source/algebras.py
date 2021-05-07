@@ -16,7 +16,7 @@ class Group:
     """This is a finite group (abstract algebra)
 
     The group definition here is assumed to have a finite number of elements, along
-    with an addition table (Cayley table).
+    with a multiplication table (Cayley table).
 
     The arguments can consist of a single string, representing the path to a JSON
     file that defines the group, or a single Python dictionary, that defines the
@@ -24,16 +24,16 @@ class Group:
         name: A string name for the group;
         description: A string describing the group;
         element_names: A list of strings that represent the names of group elements;
-        addition_table: a list of lists (2D array) of numbers that represent positions
+        mult_table: a list of lists (2D array) of numbers that represent positions
             of elements in the elements list. The following requirements on the array
             must be adhered to:
             (1) The elements of the array must be integers that reference the groups
                 elements according to their index (position) in the list, element_names.
-            (2) 0 must always refer to the identity element for the group operation (addition)
+            (2) 0 must always refer to the identity element for the group operation (multiplication)
             (3) The first row and first column must be the integers in order, 0, 1, 2,..., n-1,
                 where n is the number of elements.
 
-    Regarding the interpretation of the addition table, the row element is added on
+    Regarding the interpretation of the multiplication table, the row element is multiplied on
     the left and the column element on the right, e.g., row + col.  Or, assuming
     functions written on the left, such as permutations, this means that the column
     element is applied first and the row element is applied next, e.g., row(col(x)).
@@ -60,14 +60,14 @@ class Group:
             grp_dict = {'name': args[0],
                         'description': args[1],
                         'element_names': args[2][0],  # top row of table input
-                        'addition_table': index_table_from_name_table(args[2])
+                        'mult_table': index_table_from_name_table(args[2])
                         }
         else:
             # Assumes all four possible fields were input
             grp_dict = {'name': args[0],
                         'description': args[1],
                         'element_names': args[2],
-                        'addition_table': args[3]
+                        'mult_table': args[3]
                         }
         self.name = grp_dict['name']
         self.description = grp_dict['description']
@@ -75,18 +75,18 @@ class Group:
         if grp_dict.get('element_names'):
             self.element_names = grp_dict['element_names']
         else:
-            self.element_names = grp_dict['addition_table'][0]  # First row of table
+            self.element_names = grp_dict['mult_table'][0]  # First row of table
 
-        tbl = grp_dict['addition_table']
+        tbl = grp_dict['mult_table']
         if isinstance(tbl[0][0], str):
             table = index_table_from_name_table(tbl)
         else:
             table = tbl
-        self.addition_table = np.array(table, dtype=np.int64)
+        self.mult_table = np.array(table, dtype=np.int64)
 
         self.dp_delimiter = ':'  # name delimiter used when creating direct products
 
-        if check_inputs(self.element_names, self.addition_table):
+        if check_inputs(self.element_names, self.mult_table):
             self.inverse_lookup_dict = self._make_inverse_lookup_dict()
 
     def __str__(self):
@@ -96,7 +96,7 @@ class Group:
         nm = self.name
         desc = self.description
         elems = self.element_names
-        tbl = self.addition_table
+        tbl = self.mult_table
         return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
 
     def set_direct_product_delimiter(self, delimiter=':'):
@@ -107,7 +107,7 @@ class Group:
 
     def _make_inverse_lookup_dict(self):
         """Return a dictionary of element names and their inverse names."""
-        row_indices, col_indices = np.where(self.addition_table == 0)
+        row_indices, col_indices = np.where(self.mult_table == 0)
         return {self.element_names[elem_index]: self.element_names[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
@@ -118,7 +118,7 @@ class Group:
                 'name': self.name,
                 'description': self.description,
                 'element_names': self.element_names,
-                'addition_table': self.addition_table.tolist()}
+                'mult_table': self.mult_table.tolist()}
 
     def dumps(self):
         """Write the group to a JSON string."""
@@ -133,41 +133,44 @@ class Group:
         """Return the inverse name of the input element name."""
         return self.inverse_lookup_dict[element_name]
 
-    def addition_table_with_names(self):
-        """Return the addition table with element names rather than element positions."""
-        return [[self.element_names[elem_pos] for elem_pos in row] for row in self.addition_table]
+    def mult_table_with_names(self):
+        """Return the multiplication table with element names rather than element positions."""
+        return [[self.element_names[elem_pos] for elem_pos in row] for row in self.mult_table]
 
     def mult(self, *args):
-        """Add zero or more elements using the addition table."""
+        """Multiply zero or more elements using the multiplication table."""
         # If no args, return the identity
         if len(args) == 0:
             return self.element_names[0]
-        # If one arg, just return it
+        # If one arg, and it's a valid element name, then just return it
         elif len(args) == 1:
-            return args[0]
-        # If two args, then look up their sum in the addition table
+            if args[0] in self.element_names:
+                return args[0]
+            else:
+                raise ValueError(f"{args[0]} is not a valid group element name")
+        # If two args, then look up their sum in the multiplication table
         elif len(args) == 2:
             row = self.element_names.index(args[0])
             col = self.element_names.index(args[1])
-            index = self.addition_table[row, col]
+            index = self.mult_table[row, col]
             return self.element_names[index]
-        # If more than two args, then add them all together
+        # If more than two args, then multiply them all together
         else:
             return reduce(lambda a, b: self.mult(a, b), args)
 
-    def pretty_print_addition_table(self, delimiter=' ', prefix=''):
-        """Print the Cayley table for addition using element names."""
+    def pretty_print_mult_table(self, delimiter=' ', prefix=''):
+        """Print the multiplication table (Cayley table) using element names."""
         field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
-        for row_index in self.addition_table[:, 0]:  # row index from first column
+        for row_index in self.mult_table[:, 0]:  # row index from first column
             row_string = f"{prefix}"
-            for col_index in self.addition_table[0]:  # column index from first row
-                prod_index = self.addition_table[row_index, col_index]
+            for col_index in self.mult_table[0]:  # column index from first row
+                prod_index = self.mult_table[row_index, col_index]
                 prod_name = self.element_names[prod_index]
                 row_string += delimiter + f"{prod_name :>{field_size}}"
             print(row_string)
 
     def associative(self):
-        "A brute force test of associativity.  Returns True if the group is associative."
+        """A brute force test of associativity.  Returns True if the group is associative."""
         result = True
         for a in self.element_names:
             for b in self.element_names:
@@ -179,23 +182,23 @@ class Group:
 
     # Direct Product Definition
     def __mul__(self, other):
-        """Return the direct product of this group with an 'other' group.
-        This is addition, rather than multiplication, because the group operation is called 'add'."""
+        """Return the direct product of this group with an 'other' group."""
         dp_name = f"{self.name}_x_{other.name}"
         dp_description = "Direct product of " + self.name + " & " + other.name
         dp_element_names = list(it.product(self.element_names, other.element_names))  # Cross product
-        dp_addition_table = list()
+        dp_mult_table = list()
         for a in dp_element_names:
-            addition_table_row = list()  # Start a new row
+            dp_mult_table_row = list()  # Start a new row
             for b in dp_element_names:
-                addition_table_row.append(dp_element_names.index((self.mult(a[0], b[0]), other.mult(a[1], b[1]))))
-            dp_addition_table.append(addition_table_row)  # Add the new row to the table
+                dp_mult_table_row.append(dp_element_names.index((self.mult(a[0], b[0]), other.mult(a[1], b[1]))))
+            dp_mult_table.append(dp_mult_table_row)  # Append the new row to the table
         return self.__class__(dp_name,
                               dp_description,
                               list([f"{elem[0]}{self.dp_delimiter}{elem[1]}" for elem in dp_element_names]),
-                              dp_addition_table)
+                              dp_mult_table)
 
     def print_info(self, max_size=12, prefix='  '):
+        """Pretty print information about the group."""
         print(f"\n{self.__class__.__name__} : {self.name} : {self.description}")
         print(f"{prefix}Element Names: {self.element_names}")
         print(f"{prefix}Is Abelian? {self.abelian()}")
@@ -211,7 +214,7 @@ class Group:
         if size <= max_size:
             print(f"{prefix}Is associative? {self.associative()}")
             print(f"{prefix}Cayley Table:")
-            self.pretty_print_addition_table(prefix=prefix)
+            self.pretty_print_mult_table(prefix=prefix)
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
@@ -230,13 +233,13 @@ class Group:
 
     # Written and tested, but not sure whether this is needed yet.
     def swap(self, a, b):
-        """Change the struture of the group's definition by swapping the order of two elements, a & b."""
+        """Change the structure of the group's definition by swapping the order of two elements, a & b."""
         elem = self.element_names
         i, j = elem.index(a), elem.index(b)
         # Swap the two elements in the element_names list
         elem[j], elem[i] = elem[i], elem[j]
         # Swap the corresponding rows
-        for row in self.addition_table:
+        for row in self.mult_table:
             k, m = row.index(i), row.index(j)
             row[k], row[m] = row[m], row[k]
         # Swap the corresponding columns
@@ -268,8 +271,8 @@ def duplicates(lst):
     return [item for item, count in Counter(lst).items() if count > 1]
 
 
-def check_inputs(element_names, addition_table):
-    """Check that the element_list and addition_table have sizes and contents
+def check_inputs(element_names, mult_table):
+    """Check that the element_list and mult_table have sizes and contents
     that don't violate the attributes of a group."""
 
     # Check for duplicate element names
@@ -281,7 +284,7 @@ def check_inputs(element_names, addition_table):
         raise ValueError(f"Duplicate element names: {dups}")
 
     # Check that table is square
-    rows, cols = addition_table.shape
+    rows, cols = mult_table.shape
     if rows == cols:
         pass
     else:
@@ -298,7 +301,7 @@ def check_inputs(element_names, addition_table):
     # Check that each table row contains the correct values for a Cayley table
     correct_indices = set(range(num_elements))  # {0, 1, 2, ..., n-1}
     row_number = -1
-    for row in addition_table:
+    for row in mult_table:
         row_number += 1
         if set(row) == correct_indices:
             pass
@@ -307,7 +310,7 @@ def check_inputs(element_names, addition_table):
 
     # Check that each table col contains the correct values for a Cayley table
     for col_number in range(num_elements):
-        if set(addition_table[:, col_number]) == correct_indices:
+        if set(mult_table[:, col_number]) == correct_indices:
             pass
         else:
             raise ValueError(f"Column {col_number} does not contain the correct values")
@@ -370,13 +373,13 @@ if __name__ == '__main__':
                 ]
 
     # Create some direct products
-    v4_x_z4 = algebras[0] + algebras[1]
-    z4_x_s3 = algebras[1] + algebras[2]
+    v4_x_z4 = algebras[0] * algebras[1]
+    z4_x_s3 = algebras[1] * algebras[2]
 
+    # Extend the list, above, with the direct products, just created:
     algebras.extend([v4_x_z4, z4_x_s3])
 
-    # Add some algebras that are direct products of the algebras, above:
-
+    # Show info for each algebra in the list
     for grp in algebras:
         grp.print_info()
 

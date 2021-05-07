@@ -1,8 +1,15 @@
+"""
+@author: Alfred J. Reich
+
+"""
+
+
 import itertools as it
 import numpy as np
 import json
 import os
 from collections import Counter
+from functools import reduce
 
 
 class Group:
@@ -130,12 +137,23 @@ class Group:
         """Return the addition table with element names rather than element positions."""
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.addition_table]
 
-    def add(self, a, b):
-        """Given element names, a & b, return the sum, a + b, according the the addition table."""
-        a_pos = self.element_names.index(a)
-        b_pos = self.element_names.index(b)
-        product_index = self.addition_table[a_pos, b_pos]
-        return self.element_names[product_index]
+    def add(self, *args):
+        """Add zero or more elements using the addition table."""
+        # If no args, return the identity
+        if len(args) == 0:
+            return self.element_names[0]
+        # If one arg, just return it
+        elif len(args) == 1:
+            return args[0]
+        # If two args, then look up their sum in the addition table
+        elif len(args) == 2:
+            row = self.element_names.index(args[0])
+            col = self.element_names.index(args[1])
+            index = self.addition_table[row, col]
+            return self.element_names[index]
+        # If more than two args, then add them all together
+        else:
+            return reduce(lambda a, b: self.add(a, b), args)
 
     def pretty_print_addition_table(self, delimiter=' ', prefix=''):
         """Print the Cayley table for addition using element names."""
@@ -227,7 +245,7 @@ class Group:
 
 # Group Generators
 
-def generate_cyclic_group(order, elem_name="a", name=None, description=None):
+def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, description=None):
     if name:
         nm = name
     else:
@@ -236,7 +254,7 @@ def generate_cyclic_group(order, elem_name="a", name=None, description=None):
         desc = description
     else:
         desc = f"Cyclic group of order {order}"
-    elements = ["e", elem_name] + [f"{elem_name}^" + str(i) for i in range(2, order)]
+    elements = [identity_name, elem_name] + [f"{elem_name}^" + str(i) for i in range(2, order)]
     table = [[((a + b) % order) for b in range(order)] for a in range(order)]
     return Group(nm, desc, elements, table)
 

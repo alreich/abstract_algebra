@@ -110,9 +110,8 @@ alg.Group(v4_dict)
 
 ## Add Elements
 
-
 ```python
-v4.add('h','v')
+v4.mult('h', 'v')
 ```
 
 

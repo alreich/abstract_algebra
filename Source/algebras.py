@@ -137,7 +137,7 @@ class Group:
         """Return the addition table with element names rather than element positions."""
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.addition_table]
 
-    def add(self, *args):
+    def mult(self, *args):
         """Add zero or more elements using the addition table."""
         # If no args, return the identity
         if len(args) == 0:
@@ -153,7 +153,7 @@ class Group:
             return self.element_names[index]
         # If more than two args, then add them all together
         else:
-            return reduce(lambda a, b: self.add(a, b), args)
+            return reduce(lambda a, b: self.mult(a, b), args)
 
     def pretty_print_addition_table(self, delimiter=' ', prefix=''):
         """Print the Cayley table for addition using element names."""
@@ -172,22 +172,23 @@ class Group:
         for a in self.element_names:
             for b in self.element_names:
                 for c in self.element_names:
-                    if not (self.add(self.add(a, b), c) == self.add(a, self.add(b, c))):
+                    if not (self.mult(self.mult(a, b), c) == self.mult(a, self.mult(b, c))):
                         result = False
                         break
         return result
 
     # Direct Product Definition
     def __mul__(self, other):
-        """Return the direct product of this group with an 'other' group."""
-        dp_name = self.name + "_x_" + other.name
+        """Return the direct product of this group with an 'other' group.
+        This is addition, rather than multiplication, because the group operation is called 'add'."""
+        dp_name = f"{self.name}_x_{other.name}"
         dp_description = "Direct product of " + self.name + " & " + other.name
         dp_element_names = list(it.product(self.element_names, other.element_names))  # Cross product
         dp_addition_table = list()
         for a in dp_element_names:
             addition_table_row = list()  # Start a new row
             for b in dp_element_names:
-                addition_table_row.append(dp_element_names.index((self.add(a[0], b[0]), other.add(a[1], b[1]))))
+                addition_table_row.append(dp_element_names.index((self.mult(a[0], b[0]), other.mult(a[1], b[1]))))
             dp_addition_table.append(addition_table_row)  # Add the new row to the table
         return self.__class__(dp_name,
                               dp_description,
@@ -219,7 +220,7 @@ class Group:
         result = True
         for e1 in self.element_names:
             for e2 in self.element_names:
-                if not (self.add(e1, e2) == self.add(e2, e1)):
+                if not (self.mult(e1, e2) == self.mult(e2, e1)):
                     result = False
                     break
         return result
@@ -369,8 +370,8 @@ if __name__ == '__main__':
                 ]
 
     # Create some direct products
-    v4_x_z4 = algebras[0] * algebras[1]
-    z4_x_s3 = algebras[1] * algebras[2]
+    v4_x_z4 = algebras[0] + algebras[1]
+    z4_x_s3 = algebras[1] + algebras[2]
 
     algebras.extend([v4_x_z4, z4_x_s3])
 

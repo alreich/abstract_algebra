@@ -225,7 +225,24 @@ class Group:
         return None
 
 
+# Group Generators
+
+def generate_cyclic_group(order, elem_name="a", name=None, description=None):
+    if name:
+        nm = name
+    else:
+        nm = "Z" + str(order)
+    if description:
+        desc = description
+    else:
+        desc = f"Cyclic group of order {order}"
+    elements = ["e", elem_name] + [f"{elem_name}^" + str(i) for i in range(2, order)]
+    table = [[((a + b) % order) for b in range(order)] for a in range(order)]
+    return Group(nm, desc, elements, table)
+
+
 # Utilities
+
 
 def duplicates(lst):
     """Return a list of the duplicate items in the input list."""

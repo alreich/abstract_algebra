@@ -231,6 +231,27 @@ class Group:
     def commutative(self):
         return self.abelian()
 
+    def compute_closure(self, subset_of_elements):
+        """Given a subset of this group's elements, find the smallest possible set
+        of elements that are closed under group multiplication of the subset."""
+
+        # Make sure inverses are considered
+        result = set(subset_of_elements)
+        for elem in subset_of_elements:
+            result.add(self.inverse(elem))
+
+        # Add the products of all possible pairs
+        for pair in it.product(result, result):
+            result.add(self.mult(*pair))
+
+        # If the input set of elements increased, recurse ...
+        if len(result) > len(subset_of_elements):
+            return self.compute_closure(result)
+
+        # ...otherwise, stop and return the result
+        else:
+            return list(result)
+
     # Written and tested, but not sure whether this is needed yet.
     def swap(self, a, b):
         """Change the structure of the group's definition by swapping the order of two elements, a & b."""

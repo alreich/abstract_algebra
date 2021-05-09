@@ -20,7 +20,7 @@ alg_dir = os.path.join(aa_path, "Algebras")
 
 ## Store Group in JSON format
 
-* The <b>addition_table</b> <u>must</u> reference group elements according to their index (position) in the <b>element_names</b> list.
+* The <b>mult_table</b> <u>must</u> reference group elements according to their index (position) in the <b>element_names</b> list.
 * <b>0</b> <u>must</u> always refer to the <b>identity element</b>.
 * The first row and first column must be the integers in order, (0, 1, 2, ..., n-1), where n is the number of elements
 
@@ -110,11 +110,9 @@ alg.Group(v4_dict)
 
 For other ways to create groups, see the Jupyter Notebook, <b>ways_to_create_a_group</b>.
 
-## View Addition Table using Element Names
+## View Multiplication Table using Element Names
 
-The addition table is known as a [Cayley Table](https://en.wikipedia.org/wiki/Cayley_table).
-
-The group operation is referred to here as <i>addition</i> to distinguish it from ring or field <i>multiplication</i> operations.
+The multiplication table is known as a [Cayley Table](https://en.wikipedia.org/wiki/Cayley_table).
 
 
 ```python
@@ -127,7 +125,7 @@ v4.pretty_print_mult_table()
       hv   v   h   e
 
 
-## Add Elements
+## Multiply Group Elements
 
 Group multiplication operation takes zero or more arguments and returns the product according to the group's multiplication table (mult_table):
 * If no argument, then the group's identity element is returned
@@ -296,6 +294,25 @@ v4.dumps()
 
 
 
+## Proper Subgroups
+
+
+```python
+v4.proper_subgroups()
+```
+
+
+
+
+    [Group('V4_subgroup_0', 'Subgroup of: Klein-4 group', ['e', 'h'], [[0 1]
+      [1 0]]) ,
+     Group('V4_subgroup_1', 'Subgroup of: Klein-4 group', ['e', 'hv'], [[0 1]
+      [1 0]]) ,
+     Group('V4_subgroup_2', 'Subgroup of: Klein-4 group', ['e', 'v'], [[0 1]
+      [1 0]]) ]
+
+
+
 ## Group Generators
 
 For now, there is only one generator, for cyclic groups of any finite order:
@@ -319,7 +336,7 @@ z7
 
 
 
-The printout above makes it hard to see the structure of the addition table, so here's the table by itself:
+The printout above makes it hard to see the structure of the multiplication table, so here's the table by itself:
 
 
 ```python

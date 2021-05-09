@@ -180,6 +180,12 @@ class Group:
                         break
         return result
 
+    def __len__(self):
+        return len(self.element_names)
+
+    def order(self):
+        return len(self.element_names)
+
     # Direct Product Definition
     def __mul__(self, other):
         """Return the direct product of this group with an 'other' group."""
@@ -231,9 +237,10 @@ class Group:
     def commutative(self):
         return self.abelian()
 
-    def compute_closure(self, subset_of_elements):
-        """Given a subset of this group's elements, find the smallest possible set
-        of elements that are closed under group multiplication of the subset."""
+    def closure(self, subset_of_elements):
+        """Given a elements of this group's elements, find the smallest possible set
+        of elements that are closed under group multiplication, with inverses, of
+        the elements."""
 
         # Make sure inverses are considered
         result = set(subset_of_elements)
@@ -246,11 +253,48 @@ class Group:
 
         # If the input set of elements increased, recurse ...
         if len(result) > len(subset_of_elements):
-            return self.compute_closure(result)
+            return self.closure(result)
 
         # ...otherwise, stop and return the result
         else:
             return list(result)
+
+    def closed_subsets_of_elements(self):
+        """Return all unique closed subsets of the group's elements.
+        This returns a list of lists. Each list represents the elements of a subgroup."""
+        closed = set()  # Build the result as a set of sets to avoid duplicates
+        all_elements = self.element_names
+        n = len(all_elements)
+        for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
+            # Look at all combinations of elements: pairs, triples, quadruples, etc.
+            for combo in it.combinations(all_elements, i):
+                clo = frozenset(self.closure(combo))  # freezing required to add a set to a set
+                if len(clo) < n:  # Don't include closures consisting of all elements
+                    closed.add(clo)
+        return list(map(lambda x: list(x), closed))
+
+    def subgroup(self, elements, name="No name", desc="No description"):
+        # Make sure the elements are sorted according to their order in the parent group (self)
+        elements_sorted = sorted(elements, key=lambda x: self.element_names.index(x))
+        table = []
+        for a in elements_sorted:
+            row = []
+            for b in elements_sorted:
+                # The table entry is the index of the product in the sorted elements list
+                row.append(elements_sorted.index(self.mult(a, b)))
+            table.append(row)
+        return Group(name, desc, elements_sorted, table)
+
+    def proper_subgroups(self):
+        """Return a list of proper subgroups of the group"""
+        desc = f"Subgroup of: {self.description}"
+        count = 0
+        list_of_subgroups = []
+        for closed_element_set in self.closed_subsets_of_elements():
+            name = f"{self.name}_subgroup_{count}"
+            count += 1
+            list_of_subgroups.append(self.subgroup(closed_element_set, name, desc))
+        return list_of_subgroups
 
     # Written and tested, but not sure whether this is needed yet.
     def swap(self, a, b):

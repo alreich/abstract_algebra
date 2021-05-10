@@ -127,10 +127,9 @@ v4.pretty_print_mult_table()
 
 ## Multiply Group Elements
 
-Group multiplication operation takes zero or more arguments and returns the product according to the group's multiplication table (mult_table):
-* If no argument, then the group's identity element is returned
-* If one argument, then that argument is returned, assuming it's a valid element name
-* If two or more arguments, then their combined product is returned
+Group multiplication operation takes zero or more arguments and returns the product according to the group's multiplication table (mult_table).
+
+#### If no argument is provided, then the group's identity element is returned
 
 
 ```python
@@ -144,6 +143,8 @@ v4.mult()
 
 
 
+#### If one argument is provided, then that argument is returned, assuming it's a valid element name.
+
 
 ```python
 v4.mult('h')
@@ -155,6 +156,8 @@ v4.mult('h')
     'h'
 
 
+
+#### If the one argument is not a valid element name, then an exception is raised.
 
 
 ```python
@@ -168,6 +171,8 @@ except ValueError as err:
     Caught Error:
       FOO is not a valid group element name
 
+
+#### If two or more arguments are provided, then their combined product is returned:
 
 
 ```python
@@ -306,9 +311,9 @@ v4.proper_subgroups()
 
     [Group('V4_subgroup_0', 'Subgroup of: Klein-4 group', ['e', 'h'], [[0 1]
       [1 0]]) ,
-     Group('V4_subgroup_1', 'Subgroup of: Klein-4 group', ['e', 'hv'], [[0 1]
+     Group('V4_subgroup_1', 'Subgroup of: Klein-4 group', ['e', 'v'], [[0 1]
       [1 0]]) ,
-     Group('V4_subgroup_2', 'Subgroup of: Klein-4 group', ['e', 'v'], [[0 1]
+     Group('V4_subgroup_2', 'Subgroup of: Klein-4 group', ['e', 'hv'], [[0 1]
       [1 0]]) ]
 
 

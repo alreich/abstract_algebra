@@ -99,6 +99,25 @@ class Group:
         tbl = self.mult_table
         return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
 
+    def __len__(self):
+        return len(self.element_names)
+
+    def order(self):
+        return len(self.element_names)
+
+    def __eq__(self, other):
+        """Return True if this group is identical to the other group."""
+        return (self.element_names == other.element_names) and np.array_equal(self.mult_table, other.mult_table)
+
+    def isomorphism(self, other):
+        """If this group is isomorphic to the other group, return the mapping, as dictionary,
+        between the element names of the two groups.  Otherwise, return False."""
+        if np.array_equal(self.mult_table, other.mult_table):
+            return {self.element_names[index]: other.element_names[index]
+                    for index in range(len(self.element_names))}
+        else:
+            return False
+
     def set_direct_product_delimiter(self, delimiter=':'):
         """Change or reset the delimiter used to construct new element names of direct products.
         The default delimiter is a colon."""
@@ -179,12 +198,6 @@ class Group:
                         result = False
                         break
         return result
-
-    def __len__(self):
-        return len(self.element_names)
-
-    def order(self):
-        return len(self.element_names)
 
     # Direct Product Definition
     def __mul__(self, other):

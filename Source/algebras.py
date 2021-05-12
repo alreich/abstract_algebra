@@ -109,14 +109,15 @@ class Group:
         """Return True if this group is identical to the other group."""
         return (self.element_names == other.element_names) and np.array_equal(self.mult_table, other.mult_table)
 
-    def isomorphism(self, other):
-        """If this group is isomorphic to the other group, return the mapping, as dictionary,
-        between the element names of the two groups.  Otherwise, return False."""
-        if np.array_equal(self.mult_table, other.mult_table):
-            return {self.element_names[index]: other.element_names[index]
-                    for index in range(len(self.element_names))}
-        else:
-            return False
+    # TODO: Write a correct isomorphism procedure
+    # def isomorphism(self, other):
+    #     """If this group is isomorphic to the other group, return the mapping, as dictionary,
+    #     between the element names of the two groups.  Otherwise, return False."""
+    #     if np.array_equal(self.mult_table, other.mult_table):
+    #         return {self.element_names[index]: other.element_names[index]
+    #                 for index in range(len(self.element_names))}
+    #     else:
+    #         return False
 
     def set_direct_product_delimiter(self, delimiter=':'):
         """Change or reset the delimiter used to construct new element names of direct products.
@@ -426,10 +427,28 @@ def make_table(table_string):
             for row in table_string.splitlines()]
 
 
-def swap_list_items(lst, item1, item2):
-    a, b = lst.index(item1), lst.index(item2)
-    lst[b], lst[a] = lst[a], lst[b]
-    return None
+# def swap_list_items(lst, item1, item2):
+#     a, b = lst.index(item1), lst.index(item2)
+#     lst[b], lst[a] = lst[a], lst[b]
+#     return None
+
+def swap_rows(arr, i, j):
+    """Swap the i_th and j_th rows of a numpy array."""
+    arr[[i, j], :] = arr[[j, i], :]
+    return arr
+
+
+def swap_cols(arr, i, j):
+    """Swap the i_th and j_th columns of a numpy array."""
+    arr[:, [i, j]] = arr[:, [j, i]]
+    return arr
+
+
+def swap_rows_cols(arr, i, j):
+    """Swap the i_th and j_th rows and columns of a numpy array."""
+    arr0 = swap_rows(arr, i, j)
+    return swap_cols(arr0, i, j)
+
 
 if __name__ == '__main__':
 

@@ -329,6 +329,7 @@ class Group:
 # Group Generators
 
 def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, description=None):
+    """Returns a cyclic group with the input order, where 'order' is a positive integer."""
     if name:
         nm = name
     else:

@@ -54,10 +54,10 @@ v4
 
 
 
-    Group('V4', 'Klein-4 group', ['e', 'h', 'v', 'hv'], [[0 1 2 3]
-     [1 0 3 2]
-     [2 3 0 1]
-     [3 2 1 0]]) 
+    Group('V4',
+    'Klein-4 group',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
 
 
 
@@ -78,10 +78,10 @@ alg.Group('V4',
 
 
 
-    Group('V4', 'Another way to construct V4', ['e', 'h', 'v', 'hv'], [[0 1 2 3]
-     [1 0 3 2]
-     [2 3 0 1]
-     [3 2 1 0]]) 
+    Group('V4',
+    'Another way to construct V4',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
 
 
 
@@ -101,28 +101,74 @@ alg.Group(v4_dict)
 
 
 
-    Group('V4', 'Yet another way to define V4', ['e', 'h', 'v', 'hv'], [[0 1 2 3]
-     [1 0 3 2]
-     [2 3 0 1]
-     [3 2 1 0]]) 
+    Group('V4',
+    'Yet another way to define V4',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
 
 
 
 For other ways to create groups, see the Jupyter Notebook, <b>ways_to_create_a_group</b>.
 
-## View Multiplication Table using Element Names
+## Pretty Printing a Group
 
-The multiplication table is known as a [Cayley Table](https://en.wikipedia.org/wiki/Cayley_table).
+A group can be pretty printed in two ways:
+
+The default way prints the table as it is represented internally using element indices.
 
 
 ```python
-v4.pretty_print_mult_table()
+v4.pprint()
 ```
 
-       e   h   v  hv
-       h   e  hv   v
-       v  hv   e   h
-      hv   v   h   e
+    Group('V4',
+    'Klein-4 group',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
+    )
+
+
+Or it can be printed using element names in the multiplication table.
+
+Note that, here, the element names list is omitted, since it is redundant to the first row of the table.
+
+
+```python
+v4.pprint(True)
+```
+
+    Group('V4',
+    'Klein-4 group',
+    [['e', 'h', 'v', 'hv'],
+     ['h', 'e', 'hv', 'v'],
+     ['v', 'hv', 'e', 'h'],
+     ['hv', 'v', 'h', 'e']]
+    )
+
+
+In either of the methods, above, the printed output can be evaluated to create a duplicate of the group.
+
+For example, copying the printout immediately above we obtain the following:
+
+
+```python
+alg.Group('V4',
+'Klein-4 group',
+[['e', 'h', 'v', 'hv'],
+ ['h', 'e', 'hv', 'v'],
+ ['v', 'hv', 'e', 'h'],
+ ['hv', 'v', 'h', 'e']]
+)
+```
+
+
+
+
+    Group('V4',
+    'Klein-4 group',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
+
 
 
 ## Multiply Group Elements
@@ -226,6 +272,8 @@ v4.abelian()
 
 
 
+## Check if Associative
+
 
 ```python
 v4.associative()
@@ -244,29 +292,29 @@ v4.associative()
 ```python
 v4.set_direct_product_delimiter('-')  # Default delimiter is ':'
 v4_x_v4 = v4 * v4
-v4_x_v4
+v4_x_v4.pprint()
 ```
 
-
-
-
-    Group('V4_x_V4', 'Direct product of V4 & V4', ['e-e', 'e-h', 'e-v', 'e-hv', 'h-e', 'h-h', 'h-v', 'h-hv', 'v-e', 'v-h', 'v-v', 'v-hv', 'hv-e', 'hv-h', 'hv-v', 'hv-hv'], [[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15]
-     [ 1  0  3  2  5  4  7  6  9  8 11 10 13 12 15 14]
-     [ 2  3  0  1  6  7  4  5 10 11  8  9 14 15 12 13]
-     [ 3  2  1  0  7  6  5  4 11 10  9  8 15 14 13 12]
-     [ 4  5  6  7  0  1  2  3 12 13 14 15  8  9 10 11]
-     [ 5  4  7  6  1  0  3  2 13 12 15 14  9  8 11 10]
-     [ 6  7  4  5  2  3  0  1 14 15 12 13 10 11  8  9]
-     [ 7  6  5  4  3  2  1  0 15 14 13 12 11 10  9  8]
-     [ 8  9 10 11 12 13 14 15  0  1  2  3  4  5  6  7]
-     [ 9  8 11 10 13 12 15 14  1  0  3  2  5  4  7  6]
-     [10 11  8  9 14 15 12 13  2  3  0  1  6  7  4  5]
-     [11 10  9  8 15 14 13 12  3  2  1  0  7  6  5  4]
-     [12 13 14 15  8  9 10 11  4  5  6  7  0  1  2  3]
-     [13 12 15 14  9  8 11 10  5  4  7  6  1  0  3  2]
-     [14 15 12 13 10 11  8  9  6  7  4  5  2  3  0  1]
-     [15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0]]) 
-
+    Group('V4_x_V4',
+    'Direct product of V4 & V4',
+    ['e-e', 'e-h', 'e-v', 'e-hv', 'h-e', 'h-h', 'h-v', 'h-hv', 'v-e', 'v-h', 'v-v', 'v-hv', 'hv-e', 'hv-h', 'hv-v', 'hv-hv'],
+    [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+     [1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14],
+     [2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13],
+     [3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12],
+     [4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11],
+     [5, 4, 7, 6, 1, 0, 3, 2, 13, 12, 15, 14, 9, 8, 11, 10],
+     [6, 7, 4, 5, 2, 3, 0, 1, 14, 15, 12, 13, 10, 11, 8, 9],
+     [7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8],
+     [8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7],
+     [9, 8, 11, 10, 13, 12, 15, 14, 1, 0, 3, 2, 5, 4, 7, 6],
+     [10, 11, 8, 9, 14, 15, 12, 13, 2, 3, 0, 1, 6, 7, 4, 5],
+     [11, 10, 9, 8, 15, 14, 13, 12, 3, 2, 1, 0, 7, 6, 5, 4],
+     [12, 13, 14, 15, 8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3],
+     [13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2],
+     [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1],
+     [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+    )
 
 
 ## Convert to Dictionary or JSON
@@ -303,62 +351,50 @@ v4.dumps()
 
 
 ```python
-v4.proper_subgroups()
+subs = v4.proper_subgroups()
+
+for sub in subs:
+    sub.pprint()
 ```
 
-
-
-
-    [Group('V4_subgroup_0', 'Subgroup of: Klein-4 group', ['e', 'v'], [[0 1]
-      [1 0]]) ,
-     Group('V4_subgroup_1', 'Subgroup of: Klein-4 group', ['e', 'h'], [[0 1]
-      [1 0]]) ,
-     Group('V4_subgroup_2', 'Subgroup of: Klein-4 group', ['e', 'hv'], [[0 1]
-      [1 0]]) ]
-
+    Group('V4_subgroup_0',
+    'Subgroup of: Klein-4 group',
+    ['e', 'h'],
+    [[0, 1], [1, 0]]
+    )
+    Group('V4_subgroup_1',
+    'Subgroup of: Klein-4 group',
+    ['e', 'v'],
+    [[0, 1], [1, 0]]
+    )
+    Group('V4_subgroup_2',
+    'Subgroup of: Klein-4 group',
+    ['e', 'hv'],
+    [[0, 1], [1, 0]]
+    )
 
 
 ## Group Generators
 
-For now, there is only one generator, for cyclic groups of any finite order:
+For now, there is only one group generator, for cyclic groups of any finite order:
 
 
 ```python
 z7 = alg.generate_cyclic_group(7)
-z7
+z7.pprint()
 ```
 
-
-
-
-    Group('Z7', 'Cyclic group of order 7', ['e', 'a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6'], [[0 1 2 3 4 5 6]
-     [1 2 3 4 5 6 0]
-     [2 3 4 5 6 0 1]
-     [3 4 5 6 0 1 2]
-     [4 5 6 0 1 2 3]
-     [5 6 0 1 2 3 4]
-     [6 0 1 2 3 4 5]]) 
-
-
-
-The printout above makes it hard to see the structure of the multiplication table, so here's the table by itself:
-
-
-```python
-z7.mult_table
-```
-
-
-
-
-    array([[0, 1, 2, 3, 4, 5, 6],
-           [1, 2, 3, 4, 5, 6, 0],
-           [2, 3, 4, 5, 6, 0, 1],
-           [3, 4, 5, 6, 0, 1, 2],
-           [4, 5, 6, 0, 1, 2, 3],
-           [5, 6, 0, 1, 2, 3, 4],
-           [6, 0, 1, 2, 3, 4, 5]])
-
+    Group('Z7',
+    'Cyclic group of order 7',
+    ['e', 'a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6'],
+    [[0, 1, 2, 3, 4, 5, 6],
+     [1, 2, 3, 4, 5, 6, 0],
+     [2, 3, 4, 5, 6, 0, 1],
+     [3, 4, 5, 6, 0, 1, 2],
+     [4, 5, 6, 0, 1, 2, 3],
+     [5, 6, 0, 1, 2, 3, 4],
+     [6, 0, 1, 2, 3, 4, 5]]
+    )
 
 
 ## Print Information about a Group
@@ -393,6 +429,7 @@ z7.print_info()
 
 ## Resources
 
+* <b>Book</b>: ["Visual Group Theory" by Nathan Carter](https://bookstore.ams.org/clrm-32)
 * [Group Explorer](https://nathancarter.github.io/group-explorer/index.html) -- Visualization software for the abstract algebra classroom
 * [Groupprops, The Group Properties Wiki (beta)](https://groupprops.subwiki.org/wiki/Main_Page)
 * [GroupNames](https://people.maths.bris.ac.uk/~matyd/GroupNames/index.html) -- "A database, under construction, of names, extensions, properties and character tables of finite groups of small order."

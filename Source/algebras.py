@@ -98,18 +98,49 @@ class Group:
         desc = self.description
         elems = self.element_names
         tbl = self.mult_table
-        #return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
+        # return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
         return f"{self.__class__.__name__}('{nm}',\n'{desc}',\n{elems},\n{tbl.tolist()}) "
 
     def __len__(self):
         return len(self.element_names)
 
     def order(self):
+        """Return the order of this group."""
         return len(self.element_names)
+
+    def element_order(self, element):
+        """Return the order of a particular element of this group."""
+        def order_aux(elem, prod, order):
+            if prod == self.identity:
+                return order
+            else:
+                return order_aux(elem, self.mult(prod, elem), order + 1)
+        return order_aux(element, element, 1)
+
+    def element_orders(self, reversed=False):
+        """Return a dictionary where the keys are element names and the values are
+        their orders.  If 'reversed' is True, return a dictionary where the keys are
+        the orders, and the values are list of element names with those orders.
+        EXAMPLE: If d4 is the dihedral group on 4 vertices, then
+        d4.element_orders() --> {'e': 1, 'r': 4, 'r^2': 2, 'r^3': 4, 'f': 2, ...}
+        d4.element_orders(True) --> {1: ['e'], 4: ['r', 'r^3'], 2: ['r^2', 'f', ...]}
+        """
+        order_dict = {elem: self.element_order(elem) for elem in self.element_names}
+        if reversed:
+            reverse_dict = {}
+            for key, val in order_dict.items():
+                reverse_dict.setdefault(val, []).append(key)
+            return reverse_dict
+        else:
+            return order_dict
 
     def __eq__(self, other):
         """Return True if this group is identical to the other group."""
         return (self.element_names == other.element_names) and np.array_equal(self.mult_table, other.mult_table)
+
+    @property
+    def identity(self):
+        return self.element_names[0]
 
     # TODO: Write a correct isomorphism procedure
     # def isomorphism(self, other):
@@ -181,15 +212,21 @@ class Group:
             return reduce(lambda a, b: self.mult(a, b), args)
 
     def pprint(self, use_element_names=False):
+        """Pretty print the group.  This method produces a readable representation of
+        the group because the output (strings) created by this method read back in to
+        create a copy of the group.  By default, the four basic components of the group
+        are printed: Name, Description, Element Names List, and Multiplication Table,
+        where the table contains the indices (integers) of elements according to the
+        element_names list.  If use_element_names is set to True, then the element names
+        list is omitted in the printout and the table is printed using element names."""
         print(f"{self.__class__.__name__}('{self.name}',")
         print(f"'{self.description}',")
         if use_element_names:
             pprint(self.mult_table_with_names())
-            print(")")
         else:
             print(f"{self.element_names},")
             pprint(self.mult_table.tolist())
-            print(")")
+        print(")")
         return None
 
     def pretty_print_mult_table(self, delimiter=' ', prefix=''):
@@ -498,4 +535,3 @@ if __name__ == '__main__':
     print("\n------------")
     print("END OF TESTS")
     print("------------")
-

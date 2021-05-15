@@ -10,6 +10,7 @@ import json
 import os
 from collections import Counter
 from functools import reduce
+from pprint import pprint
 
 
 class Group:
@@ -97,7 +98,8 @@ class Group:
         desc = self.description
         elems = self.element_names
         tbl = self.mult_table
-        return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
+        #return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
+        return f"{self.__class__.__name__}('{nm}',\n'{desc}',\n{elems},\n{tbl.tolist()}) "
 
     def __len__(self):
         return len(self.element_names)
@@ -177,6 +179,18 @@ class Group:
         # If more than two args, then multiply them all together
         else:
             return reduce(lambda a, b: self.mult(a, b), args)
+
+    def pprint(self, use_element_names=False):
+        print(f"{self.__class__.__name__}('{self.name}',")
+        print(f"'{self.description}',")
+        if use_element_names:
+            pprint(self.mult_table_with_names())
+            print(")")
+        else:
+            print(f"{self.element_names},")
+            pprint(self.mult_table.tolist())
+            print(")")
+        return None
 
     def pretty_print_mult_table(self, delimiter=' ', prefix=''):
         """Print the multiplication table (Cayley table) using element names."""

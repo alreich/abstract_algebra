@@ -281,6 +281,8 @@ class Group:
             if elem == inv_elem:
                 footnote = '  **'
             print(f"{prefix}  inv({elem}) = {self.inverse(elem)} {footnote}")
+        print(f"Element Orders:")
+        pprint(self.element_orders(True), indent=2)
         size = len(self.element_names)
         if size <= max_size:
             print(f"{prefix}Is associative? {self.associative()}")

@@ -416,6 +416,8 @@ z7.print_info()
         inv(a^4) = a^3 
         inv(a^5) = a^2 
         inv(a^6) = a 
+    Element Orders:
+    {1: ['e'], 7: ['a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6']}
       Is associative? True
       Cayley Table:
           e    a  a^2  a^3  a^4  a^5  a^6

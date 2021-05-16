@@ -518,7 +518,10 @@ if __name__ == '__main__':
                 Group(os.path.join(path, 'Algebras/s3x_symmetric_group_OTHER.json')),
                 Group(os.path.join(path, 'Algebras/Z2xZ2xZ2.json')),
                 Group(os.path.join(path, "Algebras/Pinter_page_29.json")),
-                Group(os.path.join(path, "Algebras/Pinter_page_29_VERS2.json"))
+                Group(os.path.join(path, "Algebras/Pinter_page_29_VERS2.json")),
+                Group(os.path.join(path, "Algebras/a4_alternating_group_on_4_letters.json")),
+                Group(os.path.join(path, "Algebras/d3_dihedral_group_of_order_6.json")),
+                Group(os.path.join(path, "Algebras/d4_dihedral_group_on_4_vertices.json"))
                 ]
 
     # Create some direct products

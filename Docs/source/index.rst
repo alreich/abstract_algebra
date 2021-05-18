@@ -10,7 +10,7 @@ Welcome to algebra's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   aa_doc
+   alg_doc
 
 Indices and tables
 ==================

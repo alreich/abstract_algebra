@@ -14,55 +14,41 @@ from pprint import pprint
 
 
 class Group:
+    """A finite group (abstract algebra)
 
-    """This is a finite group (abstract algebra)
+    Here, the definition of a group consists of four quantities:
 
-    The group definition here is assumed to have a finite number of elements, along
-    with a multiplication table (Cayley table).
+    - `name`: (string) A short name for the Group;
+    - `description`: (string) Any additional, useful information about the group;
+    - `element_names`: (list of strings) The Group's element names, where the first element in the list is the group's
+      identity element (usually denoted by 'e');
+    - `mult_table`: (list of lists of integers) The Group's multiplication table, where each list in the list
+      represents a row of the table, and each integer represents the position of an element in 'element_names'.
+      The table must be square, where the row or column length is the same as the number of elements (say, n).
+      The first row and column should be the [0, 1, 2, ..., n], in that exact order.  Every row and column should
+      contain the same integers, in a different order, as long as no row or column contains the same integer twice.
 
-    The arguments can consist of:
+    A Group object can be instantiated in several ways:
 
-    - The path to a JSON file (see NOTE1 below)
-    - Or a Python dictionary (see NOTE1 below)
-    - Or the quantities listed below:
+    1. Enter four values corresponding to the quantities described above, in the order shown above.
 
-      - Either three quantities:
+    2. Enter three values corresponding to `name`, `description`, and `mult_table`, where `mult_table` uses element
+       names (strings) instead of integer positions.  The string-based mult_table must follow rules, similar to those
+       described above: 1. identity element comes first in the first row and first column, 2. The names in the first
+       row and column should be in the same order, and 3. No row or column contains the same element name twice.
 
-        - `name` (string)
-        - `description` (string)
-        - `mult_table`, (list of lists of string) Element names in a square array,
-          where each array element represents the product of the corresponding elements
-          in the first column and first row.  Elements in the first row and column should
-          be in the same order, with the first element of both being the group's identity
-          element.
+    3. Enter a Python dictionary, with keys and values corresponding to either the four value or three value input
+       schemes, described above.
 
-      - Or four quantities:
+    4. Enter a string representing the path to a JSON file that corresponds to the dictionary described above in 3.
 
-        - `name`: A string
-        - `description`: A string
-        - `element_names`: A list of strings that represent the names of group elements.
-          The identity element must come first in the list.
-        - `mult_table`: a list of lists (square 2D array) of integers that represent positions
-          of elements in the elements list, where the i,j_th element in the table represents
-          the product of the first elements in the i_th row and j_th column, resp.
-          The following requirements on the array must be adhered to:
+    A final note: Regarding the interpretation of the multiplication table, the row element is multiplied on the left
+    and the column element on the right, e.g., row * col.  Or, assuming functions written on the left, such as permutations, this means that the column element is applied first and the row element is applied next, e.g., row(col(x)).
 
-          - The elements of the array must be integers that reference the group's elements
-            according to their index (position) in the list, element_names.
-          - Zero (0) must always refer to the identity element for the group operation (mult)
-          - The first row and first column must be the integers in order, 0, 1, 2,..., n-1,
-            where n is the number of elements.
-
-    NOTE1: A JSON file or Python dictionary, when used as inputs, should define the quantities
-    described above; either four quantities, where the table uses integers; or three quantities,
-    where the table uses element names (strings).
-
-    Regarding the interpretation of the multiplication table, the row element is multiplied on
-    the left and the column element on the right, e.g., row + col.  Or, assuming functions
-    written on the left, such as permutations, this means that the column element is applied
-    first and the row element is applied next, e.g., row(col(x)).
+    For examples of Group instantiation, see the Jupyter Notebook: `ways_to_create_a_group`.
 
     """
+
     def __init__(self, *args):
 
         if len(args) == 1:

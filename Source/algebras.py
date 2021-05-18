@@ -139,8 +139,10 @@ class Group:
 
     def element_orders(self, reversed=False):
         """Return a dictionary where the keys are element names and the values are
-        their orders.  If 'reversed' is True, return a dictionary where the keys are
-        the orders, and the values are list of element names with those orders.
+        their orders.
+
+        :param reversed: If True, then the dict has orders for keys and element sets for values; defaults to False.
+        :type reversed: boolean
         """
         order_dict = {elem: self.element_order(elem) for elem in self.element_names}
         if reversed:
@@ -162,7 +164,10 @@ class Group:
 
     def set_direct_product_delimiter(self, delimiter=':'):
         """Change or reset the delimiter used to construct new element names of direct products.
-        The default delimiter is a colon."""
+
+        :param delimiter: Default is ':'
+        :type delimiter: str
+        """
         self.dp_delimiter = delimiter
         return None
 
@@ -186,12 +191,20 @@ class Group:
         return json.dumps(self.to_dict())
 
     def dump(self, json_filename):
-        """Write the Group to a JSON file."""
+        """Write the Group to a JSON file.
+
+        :param json_filename: Complete path and file name of the JSON file to write to
+        :type json_filename: str
+        """
         with open(json_filename, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
     def inverse(self, element_name):
-        """Return the name of the inverse element for the input `element_name`."""
+        """Return the name of the inverse element for the input `element_name`.
+
+        :param element_name: An element name
+        :type element_name: str
+"""
         return self.inverse_lookup_dict[element_name]
 
     def mult_table_with_names(self):
@@ -199,7 +212,11 @@ class Group:
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.mult_table]
 
     def mult(self, *args):
-        """Multiply zero or more elements using the multiplication table."""
+        """Multiply zero or more elements using the multiplication table.
+
+        :param args: Zero or more element names separated by commas
+        :type args: str
+        """
         # If no args, return the identity
         if len(args) == 0:
             return self.element_names[0]

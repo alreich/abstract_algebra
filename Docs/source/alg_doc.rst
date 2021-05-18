@@ -7,7 +7,8 @@ Module API
 ----------
 
 .. automodule:: algebras
-.. autoclass:: Group
+   :members:
+   :special-members: __len__, __eq__, __mul__
 
 Quick Test
 ----------

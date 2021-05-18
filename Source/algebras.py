@@ -16,11 +16,11 @@ from pprint import pprint
 class Group:
     """A finite group (abstract algebra)
 
-    Here, the definition of a group consists of four quantities:
+    Here, the definition of a Group consists of four quantities:
 
     - `name`: (string) A short name for the Group;
-    - `description`: (string) Any additional, useful information about the group;
-    - `element_names`: (list of strings) The Group's element names, where the first element in the list is the group's
+    - `description`: (string) Any additional, useful information about the Group;
+    - `element_names`: (list of strings) The Group's element names, where the first element in the list is the Group's
       identity element (usually denoted by 'e');
     - `mult_table`: (list of lists of integers) The Group's multiplication table, where each list in the list
       represents a row of the table, and each integer represents the position of an element in 'element_names'.
@@ -101,9 +101,14 @@ class Group:
             self.inverse_lookup_dict = self._make_inverse_lookup_dict()
 
     def __str__(self):
+        """Return a string that identifies the object's class, name, and description."""
         return f"<{self.__class__.__name__}: {self.name}, {self.description}>"
 
     def __repr__(self):
+        """Return a readable representation of the Group.
+
+        NOTE: The method, `pprint`, also does this, but Pretty Prints the Group.
+        """
         nm = self.name
         desc = self.description
         elems = self.element_names
@@ -112,14 +117,19 @@ class Group:
         return f"{self.__class__.__name__}('{nm}',\n'{desc}',\n{elems},\n{tbl.tolist()}) "
 
     def __len__(self):
+        """Return the order of the Group, i.e., the number of elements in it."""
         return len(self.element_names)
 
     def order(self):
-        """Return the order of this group."""
+        """Return the order of the Group, i.e., the number of elements in it."""
         return len(self.element_names)
 
     def element_order(self, element):
-        """Return the order of a particular element of this group."""
+        """Return the order of a particular element of the Group.
+
+        :param element: An element name
+        :type element: str
+        """
         def order_aux(elem, prod, order):
             if prod == self.identity:
                 return order
@@ -131,9 +141,6 @@ class Group:
         """Return a dictionary where the keys are element names and the values are
         their orders.  If 'reversed' is True, return a dictionary where the keys are
         the orders, and the values are list of element names with those orders.
-        EXAMPLE: If d4 is the dihedral group on 4 vertices, then
-        d4.element_orders() --> {'e': 1, 'r': 4, 'r^2': 2, 'r^3': 4, 'f': 2, ...}
-        d4.element_orders(True) --> {1: ['e'], 4: ['r', 'r^3'], 2: ['r^2', 'f', ...]}
         """
         order_dict = {elem: self.element_order(elem) for elem in self.element_names}
         if reversed:
@@ -145,22 +152,13 @@ class Group:
             return order_dict
 
     def __eq__(self, other):
-        """Return True if this group is identical to the other group."""
+        """Return True if this Group is identical to the `other` Group."""
         return (self.element_names == other.element_names) and np.array_equal(self.mult_table, other.mult_table)
 
     @property
     def identity(self):
+        """Return the identity element of the Group"""
         return self.element_names[0]
-
-    # TODO: Write a correct isomorphism procedure
-    # def isomorphism(self, other):
-    #     """If this group is isomorphic to the other group, return the mapping, as dictionary,
-    #     between the element names of the two groups.  Otherwise, return False."""
-    #     if np.array_equal(self.mult_table, other.mult_table):
-    #         return {self.element_names[index]: other.element_names[index]
-    #                 for index in range(len(self.element_names))}
-    #     else:
-    #         return False
 
     def set_direct_product_delimiter(self, delimiter=':'):
         """Change or reset the delimiter used to construct new element names of direct products.
@@ -176,7 +174,7 @@ class Group:
                 in zip(row_indices, col_indices)}
 
     def to_dict(self):
-        """Return a dictionary that represents this group."""
+        """Return a dictionary that represents this Group."""
         return {'type': self.__class__.__name__,
                 'name': self.name,
                 'description': self.description,
@@ -184,16 +182,16 @@ class Group:
                 'mult_table': self.mult_table.tolist()}
 
     def dumps(self):
-        """Write the group to a JSON string."""
+        """Write the Group to a JSON string."""
         return json.dumps(self.to_dict())
 
     def dump(self, json_filename):
-        """Write the group to a JSON file."""
+        """Write the Group to a JSON file."""
         with open(json_filename, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
     def inverse(self, element_name):
-        """Return the inverse name of the input element name."""
+        """Return the name of the inverse element for the input `element_name`."""
         return self.inverse_lookup_dict[element_name]
 
     def mult_table_with_names(self):
@@ -210,7 +208,7 @@ class Group:
             if args[0] in self.element_names:
                 return args[0]
             else:
-                raise ValueError(f"{args[0]} is not a valid group element name")
+                raise ValueError(f"{args[0]} is not a valid Group element name")
         # If two args, then look up their sum in the multiplication table
         elif len(args) == 2:
             row = self.element_names.index(args[0])
@@ -222,9 +220,9 @@ class Group:
             return reduce(lambda a, b: self.mult(a, b), args)
 
     def pprint(self, use_element_names=False):
-        """Pretty print the group.  This method produces a readable representation of
-        the group because the output (strings) created by this method read back in to
-        create a copy of the group.  By default, the four basic components of the group
+        """Pretty print the Group.  This method produces a readable representation of
+        the Group because the output (strings) created by this method read back in to
+        create a copy of the Group.  By default, the four basic components of the Group
         are printed: Name, Description, Element Names List, and Multiplication Table,
         where the table contains the indices (integers) of elements according to the
         element_names list.  If use_element_names is set to True, then the element names
@@ -251,7 +249,7 @@ class Group:
             print(row_string)
 
     def associative(self):
-        """A brute force test of associativity.  Returns True if the group is associative."""
+        """A brute force test of associativity.  Returns True if the Group is associative."""
         result = True
         for a in self.element_names:
             for b in self.element_names:
@@ -263,7 +261,7 @@ class Group:
 
     # Direct Product Definition
     def __mul__(self, other):
-        """Return the direct product of this group with an 'other' group."""
+        """Return the direct product of this Group with the `other` Group."""
         dp_name = f"{self.name}_x_{other.name}"
         dp_description = "Direct product of " + self.name + " & " + other.name
         dp_element_names = list(it.product(self.element_names, other.element_names))  # Cross product
@@ -279,7 +277,7 @@ class Group:
                               dp_mult_table)
 
     def print_info(self, max_size=12, prefix='  '):
-        """Pretty print information about the group."""
+        """Pretty print information about the Group."""
         print(f"\n{self.__class__.__name__} : {self.name} : {self.description}")
         print(f"{prefix}Element Names: {self.element_names}")
         print(f"{prefix}Is Abelian? {self.abelian()}")
@@ -302,7 +300,7 @@ class Group:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
     def abelian(self):
-        """Returns True if this is a commutative group."""
+        """Returns True if this is a commutative Group."""
         result = True
         for e1 in self.element_names:
             for e2 in self.element_names:
@@ -315,9 +313,9 @@ class Group:
         return self.abelian()
 
     def closure(self, subset_of_elements):
-        """Given a elements of this group's elements, find the smallest possible set
-        of elements that are closed under group multiplication, with inverses, of
-        the elements."""
+        """Given a subset (in list form) of the Group's elements, find the smallest possible
+        set of elements, containing the subset, that is closed under Group multiplication,
+        with inverses."""
 
         # Make sure inverses are considered
         result = set(subset_of_elements)
@@ -337,7 +335,7 @@ class Group:
             return list(result)
 
     def closed_subsets_of_elements(self):
-        """Return all unique closed subsets of the group's elements.
+        """Return all unique closed subsets of the Group's elements.
         This returns a list of lists. Each list represents the elements of a subgroup."""
         closed = set()  # Build the result as a set of sets to avoid duplicates
         all_elements = self.element_names
@@ -351,7 +349,8 @@ class Group:
         return list(map(lambda x: list(x), closed))
 
     def subgroup(self, elements, name="No name", desc="No description"):
-        # Make sure the elements are sorted according to their order in the parent group (self)
+        """Return a Group that is constructed from the input elements."""
+        # Make sure the elements are sorted according to their order in the parent Group (self)
         elements_sorted = sorted(elements, key=lambda x: self.element_names.index(x))
         table = []
         for a in elements_sorted:
@@ -363,7 +362,7 @@ class Group:
         return Group(name, desc, elements_sorted, table)
 
     def proper_subgroups(self):
-        """Return a list of proper subgroups of the group"""
+        """Return a list of proper subgroups of the Group"""
         desc = f"Subgroup of: {self.description}"
         count = 0
         list_of_subgroups = []
@@ -373,26 +372,26 @@ class Group:
             list_of_subgroups.append(self.subgroup(closed_element_set, name, desc))
         return list_of_subgroups
 
-    # Written and tested, but not sure whether this is needed yet.
-    def swap(self, a, b):
-        """Change the structure of the group's definition by swapping the order of two elements, a & b."""
-        elem = self.element_names
-        i, j = elem.index(a), elem.index(b)
-        # Swap the two elements in the element_names list
-        elem[j], elem[i] = elem[i], elem[j]
-        # Swap the corresponding rows
-        for row in self.mult_table:
-            k, m = row.index(i), row.index(j)
-            row[k], row[m] = row[m], row[k]
-        # Swap the corresponding columns
-        # TODO: Actually swap the two columns here
-        return None
+    # # Written and tested, but not sure whether this is needed yet.
+    # def swap(self, a, b):
+    #     """Change the structure of the Group's definition by swapping the order of two elements, a & b."""
+    #     elem = self.element_names
+    #     i, j = elem.index(a), elem.index(b)
+    #     # Swap the two elements in the element_names list
+    #     elem[j], elem[i] = elem[i], elem[j]
+    #     # Swap the corresponding rows
+    #     for row in self.mult_table:
+    #         k, m = row.index(i), row.index(j)
+    #         row[k], row[m] = row[m], row[k]
+    #     # Swap the corresponding columns
+    #     # TODO: Actually swap the two columns here
+    #     return None
 
 
 # Group Generators
 
 def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, description=None):
-    """Returns a cyclic group with the input order, where 'order' is a positive integer."""
+    """Returns a cyclic Group with the input order, where 'order' is a positive integer."""
     if name:
         nm = name
     else:
@@ -410,13 +409,17 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
 
 
 def duplicates(lst):
-    """Return a list of the duplicate items in the input list."""
+    """Return a list of the duplicate items in the input list.
+
+    This function is used by `check_inputs`."""
     return [item for item, count in Counter(lst).items() if count > 1]
 
 
 def check_inputs(element_names, mult_table):
     """Check that the element_list and mult_table have sizes and contents
-    that don't violate the attributes of a group."""
+    that don't violate the attributes of a group.
+
+    This function is used by the Group constructor."""
 
     # Check for duplicate element names
     # element_set = set(element_names)
@@ -464,17 +467,19 @@ def check_inputs(element_names, mult_table):
 def index_table_from_name_table(name_table):
     """Given a Cayley table using element names, return a table that uses position indices.
     Assumes that the first element in the first row of the table is the identity for the
-    table's algebra."""
+    table's algebra.
+
+    This function is used by the Group constructor."""
     top_row = name_table[0]
     return [[top_row.index(elem_name) for elem_name in row] for row in name_table]
 
 
-def values_in_order(seq):
-    starts_with_zero = (seq[0] == 0)
-    print(f"Starts with zero? {starts_with_zero}")
-    increasing_by_one = all([((seq[i + 1] - seq[i]) == 1) for i in range(len(seq) - 1)])
-    print(f"Increasing by one? {increasing_by_one}")
-    return starts_with_zero and increasing_by_one
+# def values_in_order(seq):
+#     starts_with_zero = (seq[0] == 0)
+#     print(f"Starts with zero? {starts_with_zero}")
+#     increasing_by_one = all([((seq[i + 1] - seq[i]) == 1) for i in range(len(seq) - 1)])
+#     print(f"Increasing by one? {increasing_by_one}")
+#     return starts_with_zero and increasing_by_one
 
 
 def make_table(table_string):
@@ -497,19 +502,25 @@ def make_table(table_string):
 #     return None
 
 def swap_rows(arr, i, j):
-    """Swap the i_th and j_th rows of a numpy array."""
+    """Swap the i_th and j_th rows of a numpy array.
+
+    This function is not used yet."""
     arr[[i, j], :] = arr[[j, i], :]
     return arr
 
 
 def swap_cols(arr, i, j):
-    """Swap the i_th and j_th columns of a numpy array."""
+    """Swap the i_th and j_th columns of a numpy array.
+
+    This function is not used yet."""
     arr[:, [i, j]] = arr[:, [j, i]]
     return arr
 
 
 def swap_rows_cols(arr, i, j):
-    """Swap the i_th and j_th rows and columns of a numpy array."""
+    """Swap the i_th and j_th rows and columns of a numpy array.
+
+    This function is not used yet."""
     arr0 = swap_rows(arr, i, j)
     return swap_cols(arr0, i, j)
 

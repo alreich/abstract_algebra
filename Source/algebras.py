@@ -14,30 +14,54 @@ from pprint import pprint
 
 
 class Group:
+
     """This is a finite group (abstract algebra)
 
     The group definition here is assumed to have a finite number of elements, along
     with a multiplication table (Cayley table).
 
-    The arguments can consist of a single string, representing the path to a JSON
-    file that defines the group, or a single Python dictionary, that defines the
-    group, or the four quantities listed below:
-        name: A string name for the group;
-        description: A string describing the group;
-        element_names: A list of strings that represent the names of group elements;
-        mult_table: a list of lists (2D array) of numbers that represent positions
-            of elements in the elements list. The following requirements on the array
-            must be adhered to:
-            (1) The elements of the array must be integers that reference the groups
-                elements according to their index (position) in the list, element_names.
-            (2) 0 must always refer to the identity element for the group operation (multiplication)
-            (3) The first row and first column must be the integers in order, 0, 1, 2,..., n-1,
-                where n is the number of elements.
+    The arguments can consist of:
+
+    - The path to a JSON file (see NOTE1 below)
+    - Or a Python dictionary (see NOTE1 below)
+    - Or the quantities listed below:
+
+      - Either three quantities:
+
+        - `name` (string)
+        - `description` (string)
+        - `mult_table`, (list of lists of string) Element names in a square array,
+          where each array element represents the product of the corresponding elements
+          in the first column and first row.  Elements in the first row and column should
+          be in the same order, with the first element of both being the group's identity
+          element.
+
+      - Or four quantities:
+
+        - `name`: A string
+        - `description`: A string
+        - `element_names`: A list of strings that represent the names of group elements.
+          The identity element must come first in the list.
+        - `mult_table`: a list of lists (square 2D array) of integers that represent positions
+          of elements in the elements list, where the i,j_th element in the table represents
+          the product of the first elements in the i_th row and j_th column, resp.
+          The following requirements on the array must be adhered to:
+
+          - The elements of the array must be integers that reference the group's elements
+            according to their index (position) in the list, element_names.
+          - Zero (0) must always refer to the identity element for the group operation (mult)
+          - The first row and first column must be the integers in order, 0, 1, 2,..., n-1,
+            where n is the number of elements.
+
+    NOTE1: A JSON file or Python dictionary, when used as inputs, should define the quantities
+    described above; either four quantities, where the table uses integers; or three quantities,
+    where the table uses element names (strings).
 
     Regarding the interpretation of the multiplication table, the row element is multiplied on
-    the left and the column element on the right, e.g., row + col.  Or, assuming
-    functions written on the left, such as permutations, this means that the column
-    element is applied first and the row element is applied next, e.g., row(col(x)).
+    the left and the column element on the right, e.g., row + col.  Or, assuming functions
+    written on the left, such as permutations, this means that the column element is applied
+    first and the row element is applied next, e.g., row(col(x)).
+
     """
     def __init__(self, *args):
 

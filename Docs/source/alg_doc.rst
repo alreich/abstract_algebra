@@ -9,10 +9,12 @@ Module API
 .. automodule:: algebras
    :members:
    :special-members: __len__, __eq__, __mul__
+   :undoc-members:
+   :private-members:
 
 Quick Test
 ----------
 
-To quickly test *algebras*, execute: python algebras.py
+To quickly test *algebras*, execute: `python algebras.py`
 
-The output should end with the words "End of Tests".
+The output should end with the words "END OF TESTS".

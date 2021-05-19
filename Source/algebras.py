@@ -16,7 +16,7 @@ from pprint import pprint
 class Group:
     """A finite group (abstract algebra)
 
-    Here, the definition of a Group consists of four quantities:
+    Internally, the Group object consists of four quantities:
 
     - `name`: (string) A short name for the Group;
     - `description`: (string) Any additional, useful information about the Group;
@@ -42,10 +42,29 @@ class Group:
 
     4. Enter a string representing the path to a JSON file that corresponds to the dictionary described above in 3.
 
-    A final note: Regarding the interpretation of the multiplication table, the row element is multiplied on the left
-    and the column element on the right, e.g., row * col.  Or, assuming functions written on the left, such as permutations, this means that the column element is applied first and the row element is applied next, e.g., row(col(x)).
+    Examples:
 
-    For examples of Group instantiation, see the Jupyter Notebook: `ways_to_create_a_group`.
+    .. code-block:: python
+
+       Group('v_4',
+             'Klein-4 group',
+             ['e',  'h',  'v', 'hv'],
+             [[0, 1, 2, 3],
+              [1, 0, 3, 2],
+              [2, 3, 0, 1],
+              [3, 2, 1, 0]])
+
+       Group('v_4_VERSION2',
+             'Klein-4 group again -- defined using element names in the mult_table',
+             [[ 'e', 'h' ,  'v', 'hv'],
+              [ 'h', 'e' , 'hv', 'v' ],
+              [ 'v', 'hv',  'e', 'h' ],
+              ['hv', 'v' ,  'h', 'e' ]])
+
+    For more examples of Group instantiation, see the Jupyter Notebook: `ways_to_create_a_group`.
+
+    A final note regarding the interpretation of the multiplication table, the row element is multiplied on the left
+    and the column element on the right, e.g., row * col.  Or, assuming functions written on the left, such as permutations, this means that the column element is applied first and the row element is applied next, e.g., row(col(x)).
 
     """
 
@@ -137,15 +156,15 @@ class Group:
                 return order_aux(elem, self.mult(prod, elem), order + 1)
         return order_aux(element, element, 1)
 
-    def element_orders(self, reversed=False):
+    def element_orders(self, reverse=False):
         """Return a dictionary where the keys are element names and the values are
         their orders.
 
-        :param reversed: If True, then the dict has orders for keys and element sets for values; defaults to False.
-        :type reversed: boolean
+        :param reverse: If True, then the dict has orders for keys and element sets for values; defaults to False.
+        :type reverse: boolean
         """
         order_dict = {elem: self.element_order(elem) for elem in self.element_names}
-        if reversed:
+        if reverse:
             reverse_dict = {}
             for key, val in order_dict.items():
                 reverse_dict.setdefault(val, []).append(key)
@@ -193,7 +212,7 @@ class Group:
     def dump(self, json_filename):
         """Write the Group to a JSON file.
 
-        :param json_filename: Complete path and file name of the JSON file to write to
+        :param json_filename: Complete path to a JSON file
         :type json_filename: str
         """
         with open(json_filename, 'w') as fout:
@@ -204,7 +223,7 @@ class Group:
 
         :param element_name: An element name
         :type element_name: str
-"""
+        """
         return self.inverse_lookup_dict[element_name]
 
     def mult_table_with_names(self):
@@ -238,12 +257,13 @@ class Group:
 
     def pprint(self, use_element_names=False):
         """Pretty print the Group.  This method produces a readable representation of
-        the Group because the output (strings) created by this method read back in to
-        create a copy of the Group.  By default, the four basic components of the Group
+        the Group.  That is, the output (strings) created by this method can be read back in
+        to create a copy of the Group.  By default, the four basic components of the Group
         are printed: Name, Description, Element Names List, and Multiplication Table,
         where the table contains the indices (integers) of elements according to the
         element_names list.  If use_element_names is set to True, then the element names
-        list is omitted in the printout and the table is printed using element names."""
+        list is omitted in the printout and the table is printed using element names.
+        """
         print(f"{self.__class__.__name__}('{self.name}',")
         print(f"'{self.description}',")
         if use_element_names:
@@ -388,21 +408,6 @@ class Group:
             count += 1
             list_of_subgroups.append(self.subgroup(closed_element_set, name, desc))
         return list_of_subgroups
-
-    # # Written and tested, but not sure whether this is needed yet.
-    # def swap(self, a, b):
-    #     """Change the structure of the Group's definition by swapping the order of two elements, a & b."""
-    #     elem = self.element_names
-    #     i, j = elem.index(a), elem.index(b)
-    #     # Swap the two elements in the element_names list
-    #     elem[j], elem[i] = elem[i], elem[j]
-    #     # Swap the corresponding rows
-    #     for row in self.mult_table:
-    #         k, m = row.index(i), row.index(j)
-    #         row[k], row[m] = row[m], row[k]
-    #     # Swap the corresponding columns
-    #     # TODO: Actually swap the two columns here
-    #     return None
 
 
 # Group Generators

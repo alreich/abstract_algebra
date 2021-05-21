@@ -3,14 +3,16 @@
 
 """
 
-
-import itertools as it
-import numpy as np
-import json
-import os
+# Standard Library Imports
+from itertools import combinations, product
+from json import dump, dumps, load
+from os import getenv, path
 from collections import Counter
 from functools import reduce
 from pprint import pprint
+
+# Non-Standard Library Imports
+from numpy import array, array_equal, int64, where
 
 
 class Group:
@@ -74,7 +76,7 @@ class Group:
             if isinstance(args[0], str):
                 with open(args[0], 'r') as fin:
                     # Assumes the single argument is a JSON file name string
-                    grp_dict = json.load(fin)
+                    grp_dict = load(fin)
             elif isinstance(args[0], dict):
                 # Assumes the single argument is a dictionary
                 grp_dict = args[0]
@@ -112,7 +114,7 @@ class Group:
             table = index_table_from_name_table(tbl)
         else:
             table = tbl
-        self.mult_table = np.array(table, dtype=np.int64)
+        self.mult_table = array(table, dtype=int64)
 
         self.dp_delimiter = ':'  # name delimiter used when creating direct products
 
@@ -174,7 +176,7 @@ class Group:
 
     def __eq__(self, other):
         """Return True if this Group is identical to the `other` Group."""
-        return (self.element_names == other.element_names) and np.array_equal(self.mult_table, other.mult_table)
+        return (self.element_names == other.element_names) and array_equal(self.mult_table, other.mult_table)
 
     @property
     def identity(self):
@@ -192,7 +194,7 @@ class Group:
 
     def _make_inverse_lookup_dict(self):
         """Return a dictionary of element names and their inverse names."""
-        row_indices, col_indices = np.where(self.mult_table == 0)
+        row_indices, col_indices = where(self.mult_table == 0)
         return {self.element_names[elem_index]: self.element_names[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
@@ -207,7 +209,7 @@ class Group:
 
     def dumps(self):
         """Write the Group to a JSON string."""
-        return json.dumps(self.to_dict())
+        return dumps(self.to_dict())
 
     def dump(self, json_filename):
         """Write the Group to a JSON file.
@@ -216,7 +218,7 @@ class Group:
         :type json_filename: str
         """
         with open(json_filename, 'w') as fout:
-            json.dump(self.to_dict(), fout)
+            dump(self.to_dict(), fout)
 
     def inverse(self, element_name):
         """Return the name of the inverse element for the input `element_name`.
@@ -301,7 +303,7 @@ class Group:
         """Return the direct product of this Group with the `other` Group."""
         dp_name = f"{self.name}_x_{other.name}"
         dp_description = "Direct product of " + self.name + " & " + other.name
-        dp_element_names = list(it.product(self.element_names, other.element_names))  # Cross product
+        dp_element_names = list(product(self.element_names, other.element_names))  # Cross product
         dp_mult_table = list()
         for a in dp_element_names:
             dp_mult_table_row = list()  # Start a new row
@@ -360,7 +362,7 @@ class Group:
             result.add(self.inverse(elem))
 
         # Add the products of all possible pairs
-        for pair in it.product(result, result):
+        for pair in product(result, result):
             result.add(self.mult(*pair))
 
         # If the input set of elements increased, recurse ...
@@ -379,7 +381,7 @@ class Group:
         n = len(all_elements)
         for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
             # Look at all combinations of elements: pairs, triples, quadruples, etc.
-            for combo in it.combinations(all_elements, i):
+            for combo in combinations(all_elements, i):
                 clo = frozenset(self.closure(combo))  # freezing required to add a set to a set
                 if len(clo) < n:  # Don't include closures consisting of all elements
                     closed.add(clo)
@@ -555,18 +557,18 @@ if __name__ == '__main__':
     print("START OF TESTS")
     print("--------------")
 
-    path = os.path.join(os.getenv('PYPROJ'), 'abstract_algebra')
+    project_path = path.join(getenv('PYPROJ'), 'abstract_algebra')
 
-    algebras = [Group(os.path.join(path, 'Algebras/v4_klein_4_group.json')),
-                Group(os.path.join(path, 'Algebras/z4_cyclic_group_of_order_4.json')),
-                Group(os.path.join(path, 'Algebras/s3_symmetric_group_on_3_letters.json')),
-                Group(os.path.join(path, 'Algebras/s3x_symmetric_group_OTHER.json')),
-                Group(os.path.join(path, 'Algebras/Z2xZ2xZ2.json')),
-                Group(os.path.join(path, "Algebras/Pinter_page_29.json")),
-                Group(os.path.join(path, "Algebras/Pinter_page_29_VERS2.json")),
-                Group(os.path.join(path, "Algebras/a4_alternating_group_on_4_letters.json")),
-                Group(os.path.join(path, "Algebras/d3_dihedral_group_of_order_6.json")),
-                Group(os.path.join(path, "Algebras/d4_dihedral_group_on_4_vertices.json"))
+    algebras = [Group(path.join(project_path, 'Algebras/v4_klein_4_group.json')),
+                Group(path.join(project_path, 'Algebras/z4_cyclic_group_of_order_4.json')),
+                Group(path.join(project_path, 'Algebras/s3_symmetric_group_on_3_letters.json')),
+                Group(path.join(project_path, 'Algebras/s3x_symmetric_group_OTHER.json')),
+                Group(path.join(project_path, 'Algebras/Z2xZ2xZ2.json')),
+                Group(path.join(project_path, "Algebras/Pinter_page_29.json")),
+                Group(path.join(project_path, "Algebras/Pinter_page_29_VERS2.json")),
+                Group(path.join(project_path, "Algebras/a4_alternating_group_on_4_letters.json")),
+                Group(path.join(project_path, "Algebras/d3_dihedral_group_of_order_6.json")),
+                Group(path.join(project_path, "Algebras/d4_dihedral_group_on_4_vertices.json"))
                 ]
 
     # Create some direct products

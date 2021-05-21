@@ -10,7 +10,11 @@ Welcome to algebras's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+.. automodule:: algebras
+   :members:
+   :special-members: __len__, __eq__, __mul__
+   :undoc-members:
+   :private-members:
 
 Indices and tables
 ==================

@@ -12,7 +12,7 @@ Welcome to abstract_algebra's documentation!
 
    alg_doc
 
-Indices & tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`

@@ -15,6 +15,6 @@ Module API
 Quick Test
 ----------
 
-To quickly test *algebras*, execute: `python algebras.py`
+To quickly test *algebras*, execute: *`python algebras.py`*
 
 The output should end with the words "END OF TESTS".

@@ -8,7 +8,6 @@ Welcome to abstract_algebra's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    alg_doc
 

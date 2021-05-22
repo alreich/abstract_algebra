@@ -66,7 +66,9 @@ class Group:
     For more examples of Group instantiation, see the Jupyter Notebook: `ways_to_create_a_group`.
 
     A final note regarding the interpretation of the multiplication table, the row element is multiplied on the left
-    and the column element on the right, e.g., row * col.  Or, assuming functions written on the left, such as permutations, this means that the column element is applied first and the row element is applied next, e.g., row(col(x)).
+    and the column element on the right, e.g., row * col.  Or, assuming functions written on the left, such as
+    permutations, this means that the column element is applied first and the row element is applied next,
+    e.g., row(col(x)).
 
     """
 
@@ -116,10 +118,10 @@ class Group:
             table = tbl
         self.mult_table = array(table, dtype=int64)
 
-        self.dp_delimiter = ':'  # name delimiter used when creating direct products
+        self.__dp_delimiter = ':'  # name delimiter used when creating direct products
 
         if check_inputs(self.element_names, self.mult_table):
-            self.inverse_lookup_dict = self._make_inverse_lookup_dict()
+            self.__inverse_lookup_dict = self.__make_inverse_lookup_dict()
 
     def __str__(self):
         """Return a string that identifies the object's class, name, and description."""
@@ -183,17 +185,20 @@ class Group:
         """Return the identity element of the Group"""
         return self.element_names[0]
 
-    def set_direct_product_delimiter(self, delimiter=':'):
-        """Change or reset the delimiter used to construct new element names of direct products.
+    def direct_product_delimiter(self, delimiter=None):
+        """If no input, then return the current direct product element name delimiter, or set the new delimiter.
 
-        :param delimiter: Default is ':'
-        :type delimiter: str
+        :param delimiter: If None, return current delimiter; otherwise set new delimiter
+        :type delimiter: None or str
         """
-        self.dp_delimiter = delimiter
-        return None
+        if delimiter:
+            self.__dp_delimiter = delimiter
+            return self.__dp_delimiter
+        else:
+            return self.__dp_delimiter
 
-    def _make_inverse_lookup_dict(self):
-        """Return a dictionary of element names and their inverse names."""
+    def __make_inverse_lookup_dict(self):
+        """(Private Method) Return a dictionary of element names and their inverse names."""
         row_indices, col_indices = where(self.mult_table == 0)
         return {self.element_names[elem_index]: self.element_names[elem_inv_index]
                 for (elem_index, elem_inv_index)
@@ -226,7 +231,7 @@ class Group:
         :param element_name: An element name
         :type element_name: str
         """
-        return self.inverse_lookup_dict[element_name]
+        return self.__inverse_lookup_dict[element_name]
 
     def mult_table_with_names(self):
         """Return the multiplication table with element names rather than element positions."""
@@ -276,16 +281,16 @@ class Group:
         print(")")
         return None
 
-    def pretty_print_mult_table(self, delimiter=' ', prefix=''):
-        """Print the multiplication table (Cayley table) using element names."""
-        field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
-        for row_index in self.mult_table[:, 0]:  # row index from first column
-            row_string = f"{prefix}"
-            for col_index in self.mult_table[0]:  # column index from first row
-                prod_index = self.mult_table[row_index, col_index]
-                prod_name = self.element_names[prod_index]
-                row_string += delimiter + f"{prod_name :>{field_size}}"
-            print(row_string)
+    # def pretty_print_mult_table(self, delimiter=' ', prefix=''):
+    #     """Print the multiplication table (Cayley table) using element names."""
+    #     field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
+    #     for row_index in self.mult_table[:, 0]:  # row index from first column
+    #         row_string = f"{prefix}"
+    #         for col_index in self.mult_table[0]:  # column index from first row
+    #             prod_index = self.mult_table[row_index, col_index]
+    #             prod_name = self.element_names[prod_index]
+    #             row_string += delimiter + f"{prod_name :>{field_size}}"
+    #         print(row_string)
 
     def associative(self):
         """A brute force test of associativity.  Returns True if the Group is associative."""
@@ -312,7 +317,7 @@ class Group:
             dp_mult_table.append(dp_mult_table_row)  # Append the new row to the table
         return self.__class__(dp_name,
                               dp_description,
-                              list([f"{elem[0]}{self.dp_delimiter}{elem[1]}" for elem in dp_element_names]),
+                              list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_mult_table)
 
     def print_info(self, max_size=12, prefix='  '):
@@ -334,12 +339,13 @@ class Group:
         if size <= max_size:
             print(f"{prefix}Is associative? {self.associative()}")
             print(f"{prefix}Cayley Table:")
-            self.pretty_print_mult_table(prefix=prefix)
+            # self.pretty_print_mult_table(prefix=prefix)
+            pprint(self.mult_table_with_names())
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
     def abelian(self):
-        """Returns True if this is a commutative Group."""
+        """Returns True if the Group is commutative (abelian)."""
         result = True
         for e1 in self.element_names:
             for e2 in self.element_names:
@@ -349,6 +355,7 @@ class Group:
         return result
 
     def commutative(self):
+        """Returns True if the Group is commutative (abelian)."""
         return self.abelian()
 
     def closure(self, subset_of_elements):
@@ -387,10 +394,10 @@ class Group:
                     closed.add(clo)
         return list(map(lambda x: list(x), closed))
 
-    def subgroup(self, elements, name="No name", desc="No description"):
-        """Return a Group that is constructed from the input elements."""
+    def subgroup(self, closed_subset_of_elements, name="No name", desc="No description"):
+        """Return the Group constructed from the input, closed subset of elements."""
         # Make sure the elements are sorted according to their order in the parent Group (self)
-        elements_sorted = sorted(elements, key=lambda x: self.element_names.index(x))
+        elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.element_names.index(x))
         table = []
         for a in elements_sorted:
             row = []

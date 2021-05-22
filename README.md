@@ -1,6 +1,8 @@
 # Abstract Algebra
 
-#### Experimental implementation of finite groups--for now--and (maybe) later rings, fields, etc.
+#### An experimental implementation of finite groups.
+
+For API documentation see: https://abstract-algebra.readthedocs.io/en/latest/index.html
 
 
 ```python
@@ -215,7 +217,7 @@ except ValueError as err:
 ```
 
     Caught Error:
-      FOO is not a valid group element name
+      FOO is not a valid Group element name
 
 
 #### If two or more arguments are provided, then their combined product is returned:
@@ -290,7 +292,7 @@ v4.associative()
 
 
 ```python
-v4.set_direct_product_delimiter('-')  # Default delimiter is ':'
+v4.direct_product_delimiter('-')  # Default delimiter is ':'
 v4_x_v4 = v4 * v4
 v4_x_v4.pprint()
 ```
@@ -364,12 +366,12 @@ for sub in subs:
     )
     Group('V4_subgroup_1',
     'Subgroup of: Klein-4 group',
-    ['e', 'v'],
+    ['e', 'hv'],
     [[0, 1], [1, 0]]
     )
     Group('V4_subgroup_2',
     'Subgroup of: Klein-4 group',
-    ['e', 'hv'],
+    ['e', 'v'],
     [[0, 1], [1, 0]]
     )
 
@@ -420,13 +422,13 @@ z7.print_info()
     {1: ['e'], 7: ['a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6']}
       Is associative? True
       Cayley Table:
-          e    a  a^2  a^3  a^4  a^5  a^6
-          a  a^2  a^3  a^4  a^5  a^6    e
-        a^2  a^3  a^4  a^5  a^6    e    a
-        a^3  a^4  a^5  a^6    e    a  a^2
-        a^4  a^5  a^6    e    a  a^2  a^3
-        a^5  a^6    e    a  a^2  a^3  a^4
-        a^6    e    a  a^2  a^3  a^4  a^5
+    [['e', 'a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6'],
+     ['a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6', 'e'],
+     ['a^2', 'a^3', 'a^4', 'a^5', 'a^6', 'e', 'a'],
+     ['a^3', 'a^4', 'a^5', 'a^6', 'e', 'a', 'a^2'],
+     ['a^4', 'a^5', 'a^6', 'e', 'a', 'a^2', 'a^3'],
+     ['a^5', 'a^6', 'e', 'a', 'a^2', 'a^3', 'a^4'],
+     ['a^6', 'e', 'a', 'a^2', 'a^3', 'a^4', 'a^5']]
 
 
 ## Resources

@@ -12,7 +12,7 @@ from functools import reduce
 from pprint import pprint
 
 # Non-Standard Library Imports
-from numpy import array, array_equal, int64, where
+from numpy import array, array_equal, full, int64, where
 
 
 class Group:
@@ -143,6 +143,7 @@ class Group:
         """Return the order of the Group, i.e., the number of elements in it."""
         return len(self.element_names)
 
+    @property
     def order(self):
         """Return the order of the Group, i.e., the number of elements in it."""
         return len(self.element_names)
@@ -418,6 +419,18 @@ class Group:
             list_of_subgroups.append(self.subgroup(closed_element_set, name, desc))
         return list_of_subgroups
 
+    def reorder_elements(self, reordered_elements):
+        """Return a new group made from this one with the elements reordered."""
+        n = self.order
+        new_table = full((n, n), 0)
+        for row in range(n):
+            for col in range(n):
+                prod = self.mult(reordered_elements[row], reordered_elements[col])
+                new_table[row, col] = reordered_elements.index(prod)
+        new_name = str(self.name) + '_REORDERED'
+        new_desc = str(self.description) + ' (elements reordered)'
+        return Group(new_name, new_desc, reordered_elements, new_table)
+
 
 # Group Generators
 
@@ -532,28 +545,28 @@ def make_table(table_string):
 #     lst[b], lst[a] = lst[a], lst[b]
 #     return None
 
-def swap_rows(arr, i, j):
-    """Swap the i_th and j_th rows of a numpy array.
-
-    This function is not used yet."""
-    arr[[i, j], :] = arr[[j, i], :]
-    return arr
-
-
-def swap_cols(arr, i, j):
-    """Swap the i_th and j_th columns of a numpy array.
-
-    This function is not used yet."""
-    arr[:, [i, j]] = arr[:, [j, i]]
-    return arr
+# def swap_rows(arr, i, j):
+#     """Swap the i_th and j_th rows of a numpy array.
+#
+#     This function is not used yet."""
+#     arr[[i, j], :] = arr[[j, i], :]
+#     return arr
 
 
-def swap_rows_cols(arr, i, j):
-    """Swap the i_th and j_th rows and columns of a numpy array.
+# def swap_cols(arr, i, j):
+#     """Swap the i_th and j_th columns of a numpy array.
+#
+#     This function is not used yet."""
+#     arr[:, [i, j]] = arr[:, [j, i]]
+#     return arr
 
-    This function is not used yet."""
-    arr0 = swap_rows(arr, i, j)
-    return swap_cols(arr0, i, j)
+
+# def swap_rows_cols(arr, i, j):
+#     """Swap the i_th and j_th rows and columns of a numpy array.
+#
+#     This function is not used yet."""
+#     arr0 = swap_rows(arr, i, j)
+#     return swap_cols(arr0, i, j)
 
 
 if __name__ == '__main__':

@@ -540,32 +540,31 @@ def make_table(table_string):
             for row in table_string.splitlines()]
 
 
-def no_conflict(p1, p2):
+def _no_conflict(p1, p2):
     """Returns True only if no element of p1 equals the corresponding element of p2."""
     return all([p1[i] != p2[i] for i in range(len(p1))])
 
 
-def no_conflicts(items):
+def _no_conflicts(items):
     """Return True if each possible pair, from a list of items, has no conflicts."""
-    return all(no_conflict(combo[0], combo[1]) for combo in combinations(items, 2))
+    return all(_no_conflict(combo[0], combo[1]) for combo in combinations(items, 2))
 
 
-def filter_out_conflicts(perms, perm, n):
+def _filter_out_conflicts(perms, perm, n):
     """Filter out all permutations in perms that confict with perm,
     and don't have n as the first element."""
     nperms = [q for q in perms if q[0] == n]
-    return [p for p in nperms if no_conflict(p, perm)]
+    return [p for p in nperms if _no_conflict(p, perm)]
 
 
 def generate_all_group_tables(order):
     """Return a list of all arrays that correspond to multiplication tables for groups of a specific order """
     row0 = list(range(order))
-    all_perms = permutations(row0)
     row_candidates = [[row0]]
     for row_num in range(1, order):
-        row_candidates.append(filter_out_conflicts(permutations(row0), row0, row_num))
+        row_candidates.append(_filter_out_conflicts(permutations(row0), row0, row_num))
     table_candidates = list(product(*row_candidates))
-    return [tbl for tbl in table_candidates if no_conflicts(tbl)]
+    return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
 
 
 # def swap_list_items(lst, item1, item2):

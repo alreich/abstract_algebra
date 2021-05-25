@@ -438,6 +438,10 @@ z7.print_info()
 * [Groupprops, The Group Properties Wiki (beta)](https://groupprops.subwiki.org/wiki/Main_Page)
 * [GroupNames](https://people.maths.bris.ac.uk/~matyd/GroupNames/index.html) -- "A database, under construction, of names, extensions, properties and character tables of finite groups of small order."
 * [GAP](https://www.gap-system.org/#:~:text=What%20is%20GAP%3F,data%20libraries%20of%20algebraic%20objects.) -- "Groups, Algorithms, Programming - a System for Computational Discrete Algebra"
+* [Groups of small order](http://www.math.ucsd.edu/~atparris/small_groups.html): Compiled by John Pedersen, Dept of Mathematics, University of South Florida
+* [List of small groups](https://en.wikipedia.org/wiki/List_of_small_groups): Finite groups of small order up to group isomorphism
+* [Classification of Groups of Order n ≤ 8 (PDF)](http://www2.lawrence.edu/fast/corrys/Math300/8Groups.pdf)
+* [Subgroups of Order 4 (PDF)](http://newton.uor.edu/facultyfolder/beery/abstract_algebra/08_SbgrpsOrder4.pdf)
 * Klein four-group, V4
   * [Wikipedia](https://en.wikipedia.org/wiki/Klein_four-group)
   * [Group Explorer](https://github.com/nathancarter/group-explorer/blob/master/groups/V_4.group)

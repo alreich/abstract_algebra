@@ -431,6 +431,30 @@ class Group:
         new_desc = str(self.description) + ' (elements reordered)'
         return Group(new_name, new_desc, reordered_elements, new_table)
 
+    def element_mappings(self, other):
+        """Returns a list of mappings (dictionaries) of this group's elements to all possible permutations
+        of other's elements, where the identity of this group is always mapped to the identity of other."""
+        elems0 = self.element_names
+        elems1 = other.element_names
+        mappings = [dict(zip(elems0[1:], perm)) for perm in permutations(elems1[1:])]
+        for mapping in mappings:
+            mapping[elems0[0]] = elems1[0]
+        return mappings
+
+    def isomorphic_mapping(self, other, mapping):
+        """Returns True if the input mapping from this group to the other group is isomorphic."""
+        elems = self.element_names
+        return all([mapping[self.mult(x, y)] == other.mult(mapping[x], mapping[y]) for x in elems for y in elems])
+
+    def isomorphic(self, other):
+        """If there is a mapping from elements of this group to the other group's elements,
+        return it; otherwise return False."""
+        maps = self.element_mappings(other)
+        for mp in maps:
+            if self.isomorphic_mapping(other, mp):
+                return mp
+        return False
+
 
 # Group Generators
 
@@ -566,6 +590,17 @@ def generate_all_group_tables(order):
     table_candidates = list(product(*row_candidates))
     return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
 
+
+def tables_to_groups(tables, identity_name="e", elem_name="a"):
+    order = len(tables[0])
+    groups = []
+    for j in range(len(tables)):
+        gname = f"G{j}"
+        desc = f"Group {j} of order {order}"
+        ename = elem_name + str(j)
+        elements = [identity_name + str(j)] + [f"{ename}" + str(i) for i in range(1, order)]
+        groups.append(Group(gname, desc, elements, tables[j]))
+    return groups
 
 # def swap_list_items(lst, item1, item2):
 #     a, b = lst.index(item1), lst.index(item2)

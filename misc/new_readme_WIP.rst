@@ -8,34 +8,36 @@ are *isomorphic*.
 
 Internally, the (finite) Group object consists of four quantities:
 
-- **name**: (string) A short name for the Group;
-- **description**: (string) Any additional, useful information about the Group;
-- **element_names**: (list of strings) The Group’s element names, where the
-  first element in the list is the Group’s identity element (usually denoted by ‘e’);
-- **mult_table**: (list of lists of integers) The Group’s multiplication
+- **name**: (``str``) A short name for the Group;
+- **description**: (``str``) Any additional, useful information about the Group;
+- **element_names**: (``list`` of ``str``) The Group’s element names, where the
+  first element in the list is the Group’s identity element (usually denoted by ``e``);
+- **mult_table**: (``list`` of ``list`` of ``int``) The Group’s multiplication
   table, where each list in the list represents a row of the table, and
   each integer represents the position of an element in ‘element_names’.
-  The table must be square, where the row or column length is the same
-  as the number of elements (say, n). The first row and column should
-  be the [0, 1, 2, …, n], in that exact order. Every row and column
-  should contain the same integers, in a different order, as long as
-  no row or column contains the same integer twice.
+  The table must be:
+
+  - Square. The row & column length equal the number of elements, say, n;
+  - The first row and first column should be the [0, 1, 2, …, n-1], in that exact order;
+  - Every row and column should contain the same integers, in a different order,
+    so that no row or column contains the same integer twice.
 
 A Group object can be instantiated in several ways:
 
 1. Enter **four values** corresponding to the quantities described above, in
    the order shown above.
-2. Enter **three values** corresponding to name, description, and mult_table,
-   where mult_table uses element names (strings) instead of integer
-   positions. The string-based mult_table must follow rules, similar to
-   those described above:
+2. Enter **three values** corresponding to ``name``, ``description``, and ``mult_table``,
+   where ``mult_table`` uses element names (``str``) instead of ``int`` positions.
+   The string-based ``mult_table`` must follow rules, similar to those described
+   above:
+
    - The identity element comes first in the first row and first column;
    - The order of names in the first row and first column should be identical;
    - No row or column contains the same element name twice.
 3. Enter a **Python dictionary**, with keys and values corresponding to
    either the four value or three value input schemes, described above.
-4. Enter a string representing the **path to a JSON file** that corresponds
-   to the dictionary described above in 3.
+4. Enter the **path to a JSON file** (``str``) that corresponds to the
+   dictionary described above in 3.
 
 
 Links
@@ -48,7 +50,7 @@ Links
 Installation
 ------------
 
-This module runs under Python 3.7+ and requires numpy.
+This module runs under Python 3.7+ and requires **numpy**.
 
 Clone the github repository to install:
 
@@ -58,6 +60,10 @@ Clone the github repository to install:
 
 
 Add the *abstract_algebra* directory to your **PYTHONPATH**.
+
+If you want to use any of the pre-built groups in this module (in the **Algebras** directory) it is
+suggested that you define an environment variable (e.g., **PYPROJ**) that points to the directory
+containing the *abstract_algebra* directory. An example of how this is useful is depicted farther below.
 
 
 Quick Overview
@@ -83,7 +89,10 @@ Quick Overview
     [[0, 1, 2], [1, 2, 0], [2, 0, 1]]) 
 
 
-Instantiation of a group defined in JSON format, contained in the algebras directory, is depicted below, and assumes that there is an environment variable, **PYPROJ**, that points to the directory containing the abstract_algebra directory.
+Instantiation of a group defined in JSON format, contained in the algebras
+directory, is depicted below, and assumes that there is an environment
+variable, **PYPROJ**, that points to the directory containing the
+abstract_algebra directory.
 
 .. code:: python
 
@@ -102,7 +111,7 @@ Instantiation of a group defined in JSON format, contained in the algebras direc
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
 
 
-Calling the pretty-print method, **pprint**, with its single argument set to True will print the multiplication table using element names, rather than the positions of element names in the element name list:
+Calling the pretty-print method, ``pprint``, with its single argument set to ``True`` will print the multiplication table using element names, rather than the positions of element names in the element name list:
 
 .. code:: python
 
@@ -116,7 +125,7 @@ Calling the pretty-print method, **pprint**, with its single argument set to Tru
     )
 
 
-Algebra elements can be *multiplied* using the Group method, **mult**.
+Algebra elements can be *multiplied* using the Group method, ``mult``.
 
 .. code:: python
 
@@ -138,7 +147,7 @@ A group can be tested to determine if it's **abelian**:
     True
 
 
-An elements inverse can be obtained using the **inverse** method:
+An elements inverse can be obtained using the ``inverse`` method:
 
 .. code:: python
 
@@ -156,12 +165,12 @@ A **cyclic group** of any order can be automatically generated:
 
     >>> z4
     Group('Z4',
-    'Cyclic group of order 4',
+    'Autogenerated cyclic group of order 4',
     ['e', 'a', 'a^2', 'a^3'],
     [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]) 
 
 
-The **direct product** of two or more groups can be generated using Python's multiplication operator, '*':
+The **direct product** of two or more groups can be generated using Python's multiplication operator, ``*``:
 
 .. code:: python
 
@@ -189,8 +198,10 @@ The **direct product** of two or more groups can be generated using Python's mul
 Further reading
 ---------------
 
--- Book: "Visual Group Theory" by Nathan Carter (https://bookstore.ams.org/clrm-32)
--- Group Explorer -- Visualization software for the abstract algebra classroom (https://nathancarter.github.io/group-explorer/index.html)
+- Book: `"Visual Group Theory" <https://bookstore.ams.org/clrm-32>`_  by Nathan Carter
+
+- `Group Explorer <https://nathancarter.github.io/group-explorer/index.html>`_ \-- Visualization
+  software for the abstract algebra classroom
 
 
 License

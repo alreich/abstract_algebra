@@ -6,6 +6,11 @@
 Welcome to Abstract Algebra's documentation!
 ============================================
 
+This Python module is a work-in-progress. Currently it contains
+a representation of finite groups, along with related functionality,
+such as the computation of subgroups and whether two groups are
+isomorphic.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

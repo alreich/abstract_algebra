@@ -300,16 +300,20 @@ class Group:
     #             row_string += delimiter + f"{prod_name :>{field_size}}"
     #         print(row_string)
 
+    # def associative(self):
+    #     """A brute force test of associativity.  Returns True if the Group is associative."""
+    #     result = True
+    #     for a in self.element_names:
+    #         for b in self.element_names:
+    #             for c in self.element_names:
+    #                 if not (self.mult(self.mult(a, b), c) == self.mult(a, self.mult(b, c))):
+    #                     result = False
+    #                     break
+    #     return result
+
     def associative(self):
         """A brute force test of associativity.  Returns True if the Group is associative."""
-        result = True
-        for a in self.element_names:
-            for b in self.element_names:
-                for c in self.element_names:
-                    if not (self.mult(self.mult(a, b), c) == self.mult(a, self.mult(b, c))):
-                        result = False
-                        break
-        return result
+        return associative_table(self.mult_table)
 
     # Direct Product Definition
     def __mul__(self, other):
@@ -512,7 +516,6 @@ def check_inputs(element_names, mult_table):
         raise ValueError(f"The table is not square: {rows}x{cols}")
 
     # Check that the row-col dimensions are the same as the number of elements
-
     num_elements = len(element_names)
     if rows == num_elements:
         pass
@@ -535,6 +538,12 @@ def check_inputs(element_names, mult_table):
             pass
         else:
             raise ValueError(f"Column {col_number} does not contain the correct values")
+
+    # Check that the table supports associativity for multiplication
+    if associative_table(mult_table):
+        pass
+    else:
+        raise ValueError("Multiplication table is not associative.")
 
     return True
 
@@ -588,13 +597,23 @@ def _filter_out_conflicts(perms, perm, n):
     return [p for p in nperms if _no_conflict(p, perm)]
 
 
+# def generate_all_group_tables(order):
+#     """Return a list of all arrays that correspond to multiplication tables for groups of a specific order """
+#     row0 = list(range(order))
+#     row_candidates = [[row0]]
+#     for row_num in range(1, order):
+#         row_candidates.append(_filter_out_conflicts(permutations(row0), row0, row_num))
+#     table_candidates = list(product(*row_candidates))
+#     return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
+
+
 def generate_all_group_tables(order):
     """Return a list of all arrays that correspond to multiplication tables for groups of a specific order """
     row0 = list(range(order))
     row_candidates = [[row0]]
     for row_num in range(1, order):
         row_candidates.append(_filter_out_conflicts(permutations(row0), row0, row_num))
-    table_candidates = list(product(*row_candidates))
+    table_candidates = [cand for cand in product(*row_candidates) if associative_table(cand)]
     return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
 
 
@@ -608,6 +627,23 @@ def tables_to_groups(tables, identity_name="e", elem_name="a"):
         elements = [identity_name + str(j)] + [f"{ename}" + str(i) for i in range(1, order)]
         groups.append(Group(gname, desc, elements, tables[j]))
     return groups
+
+
+def associative_table(table):
+    """A brute force test of whether a table supports associativity.
+    Returns True if the table does support associativity."""
+    result = True
+    elements = table[0]  # The first row should correspond to the elements of a group
+    for a in elements:
+        for b in elements:
+            for c in elements:
+                ab = table[a][b]
+                bc = table[b][c]
+                if not (table[ab][c] == table[a][bc]):
+                    result = False
+                    break
+    return result
+
 
 # def swap_list_items(lst, item1, item2):
 #     a, b = lst.index(item1), lst.index(item2)

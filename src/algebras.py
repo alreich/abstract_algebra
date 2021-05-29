@@ -10,6 +10,7 @@ from os import getenv, path
 from collections import Counter
 from functools import reduce
 from pprint import pprint
+from copy import deepcopy
 
 # Non-Standard Library Imports
 from numpy import array, array_equal, full, int64, where
@@ -185,6 +186,12 @@ class Group:
     def identity(self):
         """Return the identity element of the Group"""
         return self.element_names[0]
+
+    def deepcopy(self):
+        return Group(deepcopy(self.name),
+                     deepcopy(self.description),
+                     deepcopy(self.element_names),
+                     deepcopy(self.mult_table))
 
     def direct_product_delimiter(self, delimiter=None):
         """If no input, then return the current direct product element name delimiter, or set the new delimiter.
@@ -597,7 +604,7 @@ def tables_to_groups(tables, identity_name="e", elem_name="a"):
     for j in range(len(tables)):
         gname = f"G{j}"
         desc = f"Group {j} of order {order}"
-        ename = elem_name + str(j)
+        ename = elem_name + str(j) + "_"
         elements = [identity_name + str(j)] + [f"{ename}" + str(i) for i in range(1, order)]
         groups.append(Group(gname, desc, elements, tables[j]))
     return groups

@@ -220,10 +220,18 @@ This will be "fixed", soon, in a future release.
     [[0, 1], [1, 0]]) ]
 
 
-Further reading
----------------
+Further study
+-------------
+
+
+- Video: `"Abstract Algebra" <https://youtube.com/playlist?list=PLi01XoE8jYoi3SgnnGorR_XOW3IcK-TP6>`_
+  by Socratica on YouTube
 
 - Book: `"Visual Group Theory" <https://bookstore.ams.org/clrm-32>`_  by Nathan Carter
+
+- Video: `"Visual Group Theory" <https://youtube.com/playlist?list=PLwV-9DG53NDxU337smpTwm6sef4x-SCLv>`_
+  by Professor Macauley on YouTube (uses Carter's book, but "supplemented with content and rigor" for an
+  undergraduate audience)
 
 - `Group Explorer <https://nathancarter.github.io/group-explorer/index.html>`_ \-- Visualization
   software for the abstract algebra classroom

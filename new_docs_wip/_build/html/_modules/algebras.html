@@ -1,0 +1,913 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>algebras &mdash; algebras 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> algebras
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">algebras</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>algebras</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for algebras</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@author: Alfred J. Reich</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Standard Library Imports</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">permutations</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">dump</span><span class="p">,</span> <span class="n">dumps</span><span class="p">,</span> <span class="n">load</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">getenv</span><span class="p">,</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="c1"># Non-Standard Library Imports</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">array_equal</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">int64</span><span class="p">,</span> <span class="n">where</span>
+
+
+<div class="viewcode-block" id="Group"><a class="viewcode-back" href="../api.html#algebras.Group">[docs]</a><span class="k">class</span> <span class="nc">Group</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A finite group (abstract algebra)</span>
+
+<span class="sd">    Internally, the Group object consists of four quantities:</span>
+
+<span class="sd">    - `name`: (string) A short name for the Group;</span>
+<span class="sd">    - `description`: (string) Any additional, useful information about the Group;</span>
+<span class="sd">    - `element_names`: (list of strings) The Group&#39;s element names, where the first element in the list is the Group&#39;s</span>
+<span class="sd">      identity element (usually denoted by &#39;e&#39;);</span>
+<span class="sd">    - `mult_table`: (list of lists of integers) The Group&#39;s multiplication table, where each list in the list</span>
+<span class="sd">      represents a row of the table, and each integer represents the position of an element in &#39;element_names&#39;.</span>
+<span class="sd">      The table must be square, where the row or column length is the same as the number of elements (say, n).</span>
+<span class="sd">      The first row and column should be the [0, 1, 2, ..., n], in that exact order.  Every row and column should</span>
+<span class="sd">      contain the same integers, in a different order, as long as no row or column contains the same integer twice.</span>
+
+<span class="sd">    A Group object can be instantiated in several ways:</span>
+
+<span class="sd">    1. Enter four values corresponding to the quantities described above, in the order shown above.</span>
+
+<span class="sd">    2. Enter three values corresponding to `name`, `description`, and `mult_table`, where `mult_table` uses element</span>
+<span class="sd">       names (strings) instead of integer positions.  The string-based mult_table must follow rules, similar to those</span>
+<span class="sd">       described above: 1. identity element comes first in the first row and first column, 2. The names in the first</span>
+<span class="sd">       row and column should be in the same order, and 3. No row or column contains the same element name twice.</span>
+
+<span class="sd">    3. Enter a Python dictionary, with keys and values corresponding to either the four value or three value input</span>
+<span class="sd">       schemes, described above.</span>
+
+<span class="sd">    4. Enter a string representing the path to a JSON file that corresponds to the dictionary described above in 3.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       Group(&#39;v_4&#39;,</span>
+<span class="sd">             &#39;Klein-4 group&#39;,</span>
+<span class="sd">             [&#39;e&#39;,  &#39;h&#39;,  &#39;v&#39;, &#39;hv&#39;],</span>
+<span class="sd">             [[0, 1, 2, 3],</span>
+<span class="sd">              [1, 0, 3, 2],</span>
+<span class="sd">              [2, 3, 0, 1],</span>
+<span class="sd">              [3, 2, 1, 0]])</span>
+
+<span class="sd">       Group(&#39;v_4_VERSION2&#39;,</span>
+<span class="sd">             &#39;Klein-4 group again -- defined using element names in the mult_table&#39;,</span>
+<span class="sd">             [[ &#39;e&#39;, &#39;h&#39; ,  &#39;v&#39;, &#39;hv&#39;],</span>
+<span class="sd">              [ &#39;h&#39;, &#39;e&#39; , &#39;hv&#39;, &#39;v&#39; ],</span>
+<span class="sd">              [ &#39;v&#39;, &#39;hv&#39;,  &#39;e&#39;, &#39;h&#39; ],</span>
+<span class="sd">              [&#39;hv&#39;, &#39;v&#39; ,  &#39;h&#39;, &#39;e&#39; ]])</span>
+
+<span class="sd">    For more examples of Group instantiation, see the Jupyter Notebook: `ways_to_create_a_group`.</span>
+
+<span class="sd">    A final note regarding the interpretation of the multiplication table, the row element is multiplied on the left</span>
+<span class="sd">    and the column element on the right, e.g., row * col.  Or, assuming functions written on the left, such as</span>
+<span class="sd">    permutations, this means that the column element is applied first and the row element is applied next,</span>
+<span class="sd">    e.g., row(col(x)).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+                    <span class="c1"># Assumes the single argument is a JSON file name string</span>
+                    <span class="n">grp_dict</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="c1"># Assumes the single argument is a dictionary</span>
+                <span class="n">grp_dict</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># TODO: Allow for just a table to be input (list of lists of element name strings)</span>
+                <span class="c1"># No other options for single input arguments</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Single argument must be a string or a dictionary.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># The following assumes that no element_names list is input, and the table is</span>
+        <span class="c1"># input using element names instead of indices of the elements.  So, the first</span>
+        <span class="c1"># row of the table acts as the element_names list.</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">grp_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="s1">&#39;element_names&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># top row of table input</span>
+                        <span class="s1">&#39;mult_table&#39;</span><span class="p">:</span> <span class="n">index_table_from_name_table</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                        <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Assumes all four possible fields were input</span>
+            <span class="n">grp_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="s1">&#39;element_names&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                        <span class="s1">&#39;mult_table&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">grp_dict</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">grp_dict</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">grp_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;element_names&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span> <span class="o">=</span> <span class="n">grp_dict</span><span class="p">[</span><span class="s1">&#39;element_names&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span> <span class="o">=</span> <span class="n">grp_dict</span><span class="p">[</span><span class="s1">&#39;mult_table&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># First row of table</span>
+
+        <span class="n">tbl</span> <span class="o">=</span> <span class="n">grp_dict</span><span class="p">[</span><span class="s1">&#39;mult_table&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tbl</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">index_table_from_name_table</span><span class="p">(</span><span class="n">tbl</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">tbl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">int64</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dp_delimiter</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span>  <span class="c1"># name delimiter used when creating direct products</span>
+
+        <span class="k">if</span> <span class="n">check_inputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__inverse_lookup_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__make_inverse_lookup_dict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a string that identifies the object&#39;s class, name, and description.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a readable representation of the Group.</span>
+
+<span class="sd">        NOTE: The method, `pprint`, also does this, but Pretty Prints the Group.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span>
+        <span class="n">elems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span>
+        <span class="n">tbl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span>
+        <span class="c1"># return f&quot;{self.__class__.__name__}(&#39;{nm}&#39;, &#39;{desc}&#39;, {elems}, {tbl}) &quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&#39;</span><span class="si">{</span><span class="n">nm</span><span class="si">}</span><span class="s2">&#39;,</span><span class="se">\n</span><span class="s2">&#39;</span><span class="si">{</span><span class="n">desc</span><span class="si">}</span><span class="s2">&#39;,</span><span class="se">\n</span><span class="si">{</span><span class="n">elems</span><span class="si">}</span><span class="s2">,</span><span class="se">\n</span><span class="si">{</span><span class="n">tbl</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">) &quot;</span>
+
+<div class="viewcode-block" id="Group.__len__"><a class="viewcode-back" href="../api.html#algebras.Group.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the order of the Group, i.e., the number of elements in it.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the order of the Group, i.e., the number of elements in it.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Group.element_order"><a class="viewcode-back" href="../api.html#algebras.Group.element_order">[docs]</a>    <span class="k">def</span> <span class="nf">element_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the order of a particular element of the Group.</span>
+
+<span class="sd">        :param element: An element name</span>
+<span class="sd">        :type element: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">order_aux</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">prod</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">identity</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">order</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">order_aux</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">prod</span><span class="p">,</span> <span class="n">elem</span><span class="p">),</span> <span class="n">order</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">order_aux</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.element_orders"><a class="viewcode-back" href="../api.html#algebras.Group.element_orders">[docs]</a>    <span class="k">def</span> <span class="nf">element_orders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary where the keys are element names and the values are</span>
+<span class="sd">        their orders.</span>
+
+<span class="sd">        :param reverse: If True, then the dict has orders for keys and element sets for values; defaults to False.</span>
+<span class="sd">        :type reverse: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">order_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">elem</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_order</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+            <span class="n">reverse_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">order_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">reverse_dict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">reverse_dict</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">order_dict</span></div>
+
+<div class="viewcode-block" id="Group.__eq__"><a class="viewcode-back" href="../api.html#algebras.Group.__eq__">[docs]</a>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if this Group is identical to the `other` Group.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">element_names</span><span class="p">)</span> <span class="ow">and</span> <span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">mult_table</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the identity element of the Group&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Group.deepcopy"><a class="viewcode-back" href="../api.html#algebras.Group.deepcopy">[docs]</a>    <span class="k">def</span> <span class="nf">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                     <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">),</span>
+                     <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">),</span>
+                     <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Group.direct_product_delimiter"><a class="viewcode-back" href="../api.html#algebras.Group.direct_product_delimiter">[docs]</a>    <span class="k">def</span> <span class="nf">direct_product_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;If no input, then return the current direct product element name delimiter, or set the new delimiter.</span>
+
+<span class="sd">        :param delimiter: If None, return current delimiter; otherwise set new delimiter</span>
+<span class="sd">        :type delimiter: None or str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">delimiter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__dp_delimiter</span> <span class="o">=</span> <span class="n">delimiter</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dp_delimiter</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dp_delimiter</span></div>
+
+    <span class="k">def</span> <span class="nf">__make_inverse_lookup_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;(Private Method) Return a dictionary of element names and their inverse names.&quot;&quot;&quot;</span>
+        <span class="n">row_indices</span><span class="p">,</span> <span class="n">col_indices</span> <span class="o">=</span> <span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">[</span><span class="n">elem_index</span><span class="p">]:</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">[</span><span class="n">elem_inv_index</span><span class="p">]</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">elem_index</span><span class="p">,</span> <span class="n">elem_inv_index</span><span class="p">)</span>
+                <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row_indices</span><span class="p">,</span> <span class="n">col_indices</span><span class="p">)}</span>
+
+<div class="viewcode-block" id="Group.to_dict"><a class="viewcode-back" href="../api.html#algebras.Group.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary that represents this Group.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
+                <span class="s1">&#39;element_names&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">,</span>
+                <span class="s1">&#39;mult_table&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span><span class="o">.</span><span class="n">tolist</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="Group.dumps"><a class="viewcode-back" href="../api.html#algebras.Group.dumps">[docs]</a>    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write the Group to a JSON string.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Group.dump"><a class="viewcode-back" href="../api.html#algebras.Group.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">json_filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write the Group to a JSON file.</span>
+
+<span class="sd">        :param json_filename: Complete path to a JSON file</span>
+<span class="sd">        :type json_filename: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+            <span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">fout</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.inverse"><a class="viewcode-back" href="../api.html#algebras.Group.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the name of the inverse element for the input `element_name`.</span>
+
+<span class="sd">        :param element_name: An element name</span>
+<span class="sd">        :type element_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__inverse_lookup_dict</span><span class="p">[</span><span class="n">element_name</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Group.mult_table_with_names"><a class="viewcode-back" href="../api.html#algebras.Group.mult_table_with_names">[docs]</a>    <span class="k">def</span> <span class="nf">mult_table_with_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the multiplication table with element names rather than element positions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">[</span><span class="n">elem_pos</span><span class="p">]</span> <span class="k">for</span> <span class="n">elem_pos</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Group.mult"><a class="viewcode-back" href="../api.html#algebras.Group.mult">[docs]</a>    <span class="k">def</span> <span class="nf">mult</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Multiply zero or more elements using the multiplication table.</span>
+
+<span class="sd">        :param args: Zero or more element names separated by commas</span>
+<span class="sd">        :type args: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If no args, return the identity</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># If one arg, and it&#39;s a valid element name, then just return it</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> is not a valid Group element name&quot;</span><span class="p">)</span>
+        <span class="c1"># If two args, then look up their sum in the multiplication table</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="c1"># If more than two args, then multiply them all together</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">args</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.pprint"><a class="viewcode-back" href="../api.html#algebras.Group.pprint">[docs]</a>    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_element_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pretty print the Group.  This method produces a readable representation of</span>
+<span class="sd">        the Group.  That is, the output (strings) created by this method can be read back in</span>
+<span class="sd">        to create a copy of the Group.  By default, the four basic components of the Group</span>
+<span class="sd">        are printed: Name, Description, Element Names List, and Multiplication Table,</span>
+<span class="sd">        where the table contains the indices (integers) of elements according to the</span>
+<span class="sd">        element_names list.  If use_element_names is set to True, then the element names</span>
+<span class="sd">        list is omitted in the printout and the table is printed using element names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;,&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&#39;,&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use_element_names</span><span class="p">:</span>
+            <span class="n">pprint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult_table_with_names</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="si">}</span><span class="s2">,&quot;</span><span class="p">)</span>
+            <span class="n">pprint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+    <span class="c1"># def pretty_print_mult_table(self, delimiter=&#39; &#39;, prefix=&#39;&#39;):</span>
+    <span class="c1">#     &quot;&quot;&quot;Print the multiplication table (Cayley table) using element names.&quot;&quot;&quot;</span>
+    <span class="c1">#     field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length</span>
+    <span class="c1">#     for row_index in self.mult_table[:, 0]:  # row index from first column</span>
+    <span class="c1">#         row_string = f&quot;{prefix}&quot;</span>
+    <span class="c1">#         for col_index in self.mult_table[0]:  # column index from first row</span>
+    <span class="c1">#             prod_index = self.mult_table[row_index, col_index]</span>
+    <span class="c1">#             prod_name = self.element_names[prod_index]</span>
+    <span class="c1">#             row_string += delimiter + f&quot;{prod_name :&gt;{field_size}}&quot;</span>
+    <span class="c1">#         print(row_string)</span>
+
+    <span class="c1"># def associative(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;A brute force test of associativity.  Returns True if the Group is associative.&quot;&quot;&quot;</span>
+    <span class="c1">#     result = True</span>
+    <span class="c1">#     for a in self.element_names:</span>
+    <span class="c1">#         for b in self.element_names:</span>
+    <span class="c1">#             for c in self.element_names:</span>
+    <span class="c1">#                 if not (self.mult(self.mult(a, b), c) == self.mult(a, self.mult(b, c))):</span>
+    <span class="c1">#                     result = False</span>
+    <span class="c1">#                     break</span>
+    <span class="c1">#     return result</span>
+
+<div class="viewcode-block" id="Group.associative"><a class="viewcode-back" href="../api.html#algebras.Group.associative">[docs]</a>    <span class="k">def</span> <span class="nf">associative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A brute force test of associativity.  Returns True if the Group is associative.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">associative_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult_table</span><span class="p">)</span></div>
+
+    <span class="c1"># Direct Product Definition</span>
+<div class="viewcode-block" id="Group.__mul__"><a class="viewcode-back" href="../api.html#algebras.Group.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the direct product of this Group with the `other` Group.&quot;&quot;&quot;</span>
+        <span class="n">dp_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_x_</span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">dp_description</span> <span class="o">=</span> <span class="s2">&quot;Direct product of &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; &amp; &quot;</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">dp_element_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">element_names</span><span class="p">))</span>  <span class="c1"># Cross product</span>
+        <span class="n">dp_mult_table</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">dp_element_names</span><span class="p">:</span>
+            <span class="n">dp_mult_table_row</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>  <span class="c1"># Start a new row</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">dp_element_names</span><span class="p">:</span>
+                <span class="n">dp_mult_table_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp_element_names</span><span class="o">.</span><span class="n">index</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">other</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]))))</span>
+            <span class="n">dp_mult_table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp_mult_table_row</span><span class="p">)</span>  <span class="c1"># Append the new row to the table</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">dp_name</span><span class="p">,</span>
+                              <span class="n">dp_description</span><span class="p">,</span>
+                              <span class="nb">list</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">elem</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">__dp_delimiter</span><span class="si">}{</span><span class="n">elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">dp_element_names</span><span class="p">]),</span>
+                              <span class="n">dp_mult_table</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.print_info"><a class="viewcode-back" href="../api.html#algebras.Group.print_info">[docs]</a>    <span class="k">def</span> <span class="nf">print_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;  &#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pretty print information about the Group.&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> : </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">Element Names: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">Is Abelian? </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">abelian</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Don&#39;t calculate/print the following info if the Group is greater than max_size</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">Inverses:  (** - indicates that it is its own inverse)&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">:</span>
+            <span class="n">footnote</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">inv_elem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">elem</span> <span class="o">==</span> <span class="n">inv_elem</span><span class="p">:</span>
+                <span class="n">footnote</span> <span class="o">=</span> <span class="s1">&#39;  **&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">  inv(</span><span class="si">{</span><span class="n">elem</span><span class="si">}</span><span class="s2">) = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">footnote</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Element Orders:&quot;</span><span class="p">)</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_orders</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&lt;=</span> <span class="n">max_size</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">Is associative? </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">associative</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">Cayley Table:&quot;</span><span class="p">)</span>
+            <span class="c1"># self.pretty_print_mult_table(prefix=prefix)</span>
+            <span class="n">pprint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult_table_with_names</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> order is </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="n">max_size</span><span class="si">}</span><span class="s2">, so no further info calculated/printed.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.abelian"><a class="viewcode-back" href="../api.html#algebras.Group.abelian">[docs]</a>    <span class="k">def</span> <span class="nf">abelian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if the Group is commutative (abelian).&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">e1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">e2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">e2</span><span class="p">,</span> <span class="n">e1</span><span class="p">)):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Group.commutative"><a class="viewcode-back" href="../api.html#algebras.Group.commutative">[docs]</a>    <span class="k">def</span> <span class="nf">commutative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if the Group is commutative (abelian).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abelian</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Group.closure"><a class="viewcode-back" href="../api.html#algebras.Group.closure">[docs]</a>    <span class="k">def</span> <span class="nf">closure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_of_elements</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Given a subset (in list form) of the Group&#39;s elements, find the smallest possible</span>
+<span class="sd">        set of elements, containing the subset, that is closed under Group multiplication,</span>
+<span class="sd">        with inverses.&quot;&quot;&quot;</span>
+
+        <span class="c1"># Make sure inverses are considered</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">subset_of_elements</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">subset_of_elements</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">elem</span><span class="p">))</span>
+
+        <span class="c1"># Add the products of all possible pairs</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="o">*</span><span class="n">pair</span><span class="p">))</span>
+
+        <span class="c1"># If the input set of elements increased, recurse ...</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">subset_of_elements</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">closure</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="c1"># ...otherwise, stop and return the result</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.closed_subsets_of_elements"><a class="viewcode-back" href="../api.html#algebras.Group.closed_subsets_of_elements">[docs]</a>    <span class="k">def</span> <span class="nf">closed_subsets_of_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return all unique closed subsets of the Group&#39;s elements.</span>
+<span class="sd">        This returns a list of lists. Each list represents the elements of a subgroup.&quot;&quot;&quot;</span>
+        <span class="n">closed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># Build the result as a set of sets to avoid duplicates</span>
+        <span class="n">all_elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_elements</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># avoids trivial closures, {&#39;e&#39;} &amp; set of all elements</span>
+            <span class="c1"># Look at all combinations of elements: pairs, triples, quadruples, etc.</span>
+            <span class="k">for</span> <span class="n">combo</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">all_elements</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+                <span class="n">clo</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">closure</span><span class="p">(</span><span class="n">combo</span><span class="p">))</span>  <span class="c1"># freezing required to add a set to a set</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clo</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>  <span class="c1"># Don&#39;t include closures consisting of all elements</span>
+                    <span class="n">closed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">clo</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">closed</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Group.subgroup"><a class="viewcode-back" href="../api.html#algebras.Group.subgroup">[docs]</a>    <span class="k">def</span> <span class="nf">subgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closed_subset_of_elements</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;No name&quot;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;No description&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the Group constructed from the input, closed subset of elements.&quot;&quot;&quot;</span>
+        <span class="c1"># Make sure the elements are sorted according to their order in the parent Group (self)</span>
+        <span class="n">elements_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">closed_subset_of_elements</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">elements_sorted</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">elements_sorted</span><span class="p">:</span>
+                <span class="c1"># The table entry is the index of the product in the sorted elements list</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elements_sorted</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)))</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">elements_sorted</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.proper_subgroups"><a class="viewcode-back" href="../api.html#algebras.Group.proper_subgroups">[docs]</a>    <span class="k">def</span> <span class="nf">proper_subgroups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of proper subgroups of the Group&quot;&quot;&quot;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Subgroup of: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">list_of_subgroups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">closed_element_set</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed_subsets_of_elements</span><span class="p">():</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_subgroup_</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">list_of_subgroups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subgroup</span><span class="p">(</span><span class="n">closed_element_set</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">desc</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">list_of_subgroups</span></div>
+
+<div class="viewcode-block" id="Group.reorder_elements"><a class="viewcode-back" href="../api.html#algebras.Group.reorder_elements">[docs]</a>    <span class="k">def</span> <span class="nf">reorder_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reordered_elements</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a new group made from this one with the elements reordered.&quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span>
+        <span class="n">new_table</span> <span class="o">=</span> <span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+                <span class="n">prod</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">reordered_elements</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">reordered_elements</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+                <span class="n">new_table</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">reordered_elements</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">prod</span><span class="p">)</span>
+        <span class="n">new_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_REORDERED&#39;</span>
+        <span class="n">new_desc</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; (elements reordered)&#39;</span>
+        <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">new_name</span><span class="p">,</span> <span class="n">new_desc</span><span class="p">,</span> <span class="n">reordered_elements</span><span class="p">,</span> <span class="n">new_table</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.element_mappings"><a class="viewcode-back" href="../api.html#algebras.Group.element_mappings">[docs]</a>    <span class="k">def</span> <span class="nf">element_mappings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list of mappings (dictionaries) of this group&#39;s elements to all possible permutations</span>
+<span class="sd">        of other&#39;s elements, where the identity of this group is always mapped to the identity of other.&quot;&quot;&quot;</span>
+        <span class="n">elems0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span>
+        <span class="n">elems1</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">element_names</span>
+        <span class="n">mappings</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">elems0</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">perm</span><span class="p">))</span> <span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">permutations</span><span class="p">(</span><span class="n">elems1</span><span class="p">[</span><span class="mi">1</span><span class="p">:])]</span>
+        <span class="k">for</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="n">mappings</span><span class="p">:</span>
+            <span class="n">mapping</span><span class="p">[</span><span class="n">elems0</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">elems1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">mappings</span></div>
+
+<div class="viewcode-block" id="Group.isomorphic_mapping"><a class="viewcode-back" href="../api.html#algebras.Group.isomorphic_mapping">[docs]</a>    <span class="k">def</span> <span class="nf">isomorphic_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">mapping</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if the input mapping from this group to the other group is isomorphic.&quot;&quot;&quot;</span>
+        <span class="n">elems</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_names</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">mapping</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="n">mapping</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">mapping</span><span class="p">[</span><span class="n">y</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">elems</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Group.isomorphic"><a class="viewcode-back" href="../api.html#algebras.Group.isomorphic">[docs]</a>    <span class="k">def</span> <span class="nf">isomorphic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;If there is a mapping from elements of this group to the other group&#39;s elements,</span>
+<span class="sd">        return it; otherwise return False.&quot;&quot;&quot;</span>
+        <span class="n">maps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_mappings</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">mp</span> <span class="ow">in</span> <span class="n">maps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isomorphic_mapping</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">mp</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">mp</span>
+        <span class="k">return</span> <span class="kc">False</span></div></div>
+
+
+<span class="c1"># Group Generators</span>
+
+<span class="k">def</span> <span class="nf">generate_cyclic_group</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">identity_name</span><span class="o">=</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="n">elem_name</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a cyclic Group with the input order, where &#39;order&#39; is a positive integer.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+        <span class="n">nm</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nm</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">description</span><span class="p">:</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">description</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Autogenerated cyclic group of order </span><span class="si">{</span><span class="n">order</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">identity_name</span><span class="p">,</span> <span class="n">elem_name</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">elem_name</span><span class="si">}</span><span class="s2">^&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">order</span><span class="p">)]</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[[((</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">order</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">nm</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+
+
+<span class="c1"># Utilities</span>
+
+
+<span class="k">def</span> <span class="nf">duplicates</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a list of the duplicate items in the input list.</span>
+
+<span class="sd">    This function is used by `check_inputs`.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">check_inputs</span><span class="p">(</span><span class="n">element_names</span><span class="p">,</span> <span class="n">mult_table</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check that the element_list and mult_table have sizes and contents</span>
+<span class="sd">    that don&#39;t violate the attributes of a group.</span>
+
+<span class="sd">    This function is used by the Group constructor.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Check for duplicate element names</span>
+    <span class="c1"># element_set = set(element_names)</span>
+    <span class="n">dups</span> <span class="o">=</span> <span class="n">duplicates</span><span class="p">(</span><span class="n">element_names</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dups</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate element names: </span><span class="si">{</span><span class="n">dups</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check that table is square</span>
+    <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">mult_table</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">rows</span> <span class="o">==</span> <span class="n">cols</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The table is not square: </span><span class="si">{</span><span class="n">rows</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">cols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check that the row-col dimensions are the same as the number of elements</span>
+    <span class="n">num_elements</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">element_names</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rows</span> <span class="o">==</span> <span class="n">num_elements</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of elements is </span><span class="si">{</span><span class="n">num_elements</span><span class="si">}</span><span class="s2">, but table size is </span><span class="si">{</span><span class="n">rows</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">cols</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check that each table row contains the correct values for a Cayley table</span>
+    <span class="n">correct_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">))</span>  <span class="c1"># {0, 1, 2, ..., n-1}</span>
+    <span class="n">row_number</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">mult_table</span><span class="p">:</span>
+        <span class="n">row_number</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="n">correct_indices</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A row </span><span class="si">{</span><span class="n">row_number</span><span class="si">}</span><span class="s2"> does not contain the correct values&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check that each table col contains the correct values for a Cayley table</span>
+    <span class="k">for</span> <span class="n">col_number</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">mult_table</span><span class="p">[:,</span> <span class="n">col_number</span><span class="p">])</span> <span class="o">==</span> <span class="n">correct_indices</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">col_number</span><span class="si">}</span><span class="s2"> does not contain the correct values&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check that the table supports associativity for multiplication</span>
+    <span class="k">if</span> <span class="n">associative_table</span><span class="p">(</span><span class="n">mult_table</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Multiplication table is not associative.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">index_table_from_name_table</span><span class="p">(</span><span class="n">name_table</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given a Cayley table using element names, return a table that uses position indices.</span>
+<span class="sd">    Assumes that the first element in the first row of the table is the identity for the</span>
+<span class="sd">    table&#39;s algebra.</span>
+
+<span class="sd">    This function is used by the Group constructor.&quot;&quot;&quot;</span>
+    <span class="n">top_row</span> <span class="o">=</span> <span class="n">name_table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="n">top_row</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">elem_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem_name</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">name_table</span><span class="p">]</span>
+
+
+<span class="c1"># def values_in_order(seq):</span>
+<span class="c1">#     starts_with_zero = (seq[0] == 0)</span>
+<span class="c1">#     print(f&quot;Starts with zero? {starts_with_zero}&quot;)</span>
+<span class="c1">#     increasing_by_one = all([((seq[i + 1] - seq[i]) == 1) for i in range(len(seq) - 1)])</span>
+<span class="c1">#     print(f&quot;Increasing by one? {increasing_by_one}&quot;)</span>
+<span class="c1">#     return starts_with_zero and increasing_by_one</span>
+
+
+<span class="k">def</span> <span class="nf">make_table</span><span class="p">(</span><span class="n">table_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This function helps turn the XML-based tables at Groupprops into a</span>
+<span class="sd">    list of lists for use here.</span>
+
+<span class="sd">    Instructions for use:</span>
+<span class="sd">    1. Copy the table from there and paste it here;</span>
+<span class="sd">    2. Find &amp; Replace the strings, &quot;&lt;row&gt;&quot; and &quot;&lt;/row&gt;&quot;, with nothing;</span>
+<span class="sd">    3. Place triple quotes around the result and give it a variable name;</span>
+<span class="sd">    4. Then run make_table on the variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[[</span><span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">table_string</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()]</span>
+
+
+<span class="k">def</span> <span class="nf">_no_conflict</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns True only if no element of p1 equals the corresponding element of p2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">p2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="p">))])</span>
+
+
+<span class="k">def</span> <span class="nf">_no_conflicts</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return True if each possible pair, from a list of items, has no conflicts.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">_no_conflict</span><span class="p">(</span><span class="n">combo</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">combo</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">combo</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_filter_out_conflicts</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span> <span class="n">perm</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Filter out all permutations in perms that confict with perm,</span>
+<span class="sd">    and don&#39;t have n as the first element.&quot;&quot;&quot;</span>
+    <span class="n">nperms</span> <span class="o">=</span> <span class="p">[</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">perms</span> <span class="k">if</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">nperms</span> <span class="k">if</span> <span class="n">_no_conflict</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">perm</span><span class="p">)]</span>
+
+
+<span class="c1"># def generate_all_group_tables(order):</span>
+<span class="c1">#     &quot;&quot;&quot;Return a list of all arrays that correspond to multiplication tables for groups of a specific order &quot;&quot;&quot;</span>
+<span class="c1">#     row0 = list(range(order))</span>
+<span class="c1">#     row_candidates = [[row0]]</span>
+<span class="c1">#     for row_num in range(1, order):</span>
+<span class="c1">#         row_candidates.append(_filter_out_conflicts(permutations(row0), row0, row_num))</span>
+<span class="c1">#     table_candidates = list(product(*row_candidates))</span>
+<span class="c1">#     return [tbl for tbl in table_candidates if _no_conflicts(tbl)]</span>
+
+
+<span class="k">def</span> <span class="nf">generate_all_group_tables</span><span class="p">(</span><span class="n">order</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a list of all arrays that correspond to multiplication tables for groups of a specific order &quot;&quot;&quot;</span>
+    <span class="n">row0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">))</span>
+    <span class="n">row_candidates</span> <span class="o">=</span> <span class="p">[[</span><span class="n">row0</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">row_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="n">row_candidates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_filter_out_conflicts</span><span class="p">(</span><span class="n">permutations</span><span class="p">(</span><span class="n">row0</span><span class="p">),</span> <span class="n">row0</span><span class="p">,</span> <span class="n">row_num</span><span class="p">))</span>
+    <span class="n">table_candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">cand</span> <span class="k">for</span> <span class="n">cand</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">row_candidates</span><span class="p">)</span> <span class="k">if</span> <span class="n">associative_table</span><span class="p">(</span><span class="n">cand</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">tbl</span> <span class="k">for</span> <span class="n">tbl</span> <span class="ow">in</span> <span class="n">table_candidates</span> <span class="k">if</span> <span class="n">_no_conflicts</span><span class="p">(</span><span class="n">tbl</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">tables_to_groups</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">identity_name</span><span class="o">=</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="n">elem_name</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">):</span>
+    <span class="n">order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tables</span><span class="p">)):</span>
+        <span class="n">gname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;G</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Group </span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2"> of order </span><span class="si">{</span><span class="n">order</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">ename</span> <span class="o">=</span> <span class="n">elem_name</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">identity_name</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ename</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="p">)]</span>
+        <span class="n">groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Group</span><span class="p">(</span><span class="n">gname</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">tables</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">groups</span>
+
+
+<span class="k">def</span> <span class="nf">associative_table</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A brute force test of whether a table supports associativity.</span>
+<span class="sd">    Returns True if the table does support associativity.&quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># The first row should correspond to the elements of a group</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
+                <span class="n">ab</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">b</span><span class="p">]</span>
+                <span class="n">bc</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">b</span><span class="p">][</span><span class="n">c</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">ab</span><span class="p">][</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="n">table</span><span class="p">[</span><span class="n">a</span><span class="p">][</span><span class="n">bc</span><span class="p">]):</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="c1"># def swap_list_items(lst, item1, item2):</span>
+<span class="c1">#     a, b = lst.index(item1), lst.index(item2)</span>
+<span class="c1">#     lst[b], lst[a] = lst[a], lst[b]</span>
+<span class="c1">#     return None</span>
+
+<span class="c1"># def swap_rows(arr, i, j):</span>
+<span class="c1">#     &quot;&quot;&quot;Swap the i_th and j_th rows of a numpy array.</span>
+<span class="c1">#</span>
+<span class="c1">#     This function is not used yet.&quot;&quot;&quot;</span>
+<span class="c1">#     arr[[i, j], :] = arr[[j, i], :]</span>
+<span class="c1">#     return arr</span>
+
+
+<span class="c1"># def swap_cols(arr, i, j):</span>
+<span class="c1">#     &quot;&quot;&quot;Swap the i_th and j_th columns of a numpy array.</span>
+<span class="c1">#</span>
+<span class="c1">#     This function is not used yet.&quot;&quot;&quot;</span>
+<span class="c1">#     arr[:, [i, j]] = arr[:, [j, i]]</span>
+<span class="c1">#     return arr</span>
+
+
+<span class="c1"># def swap_rows_cols(arr, i, j):</span>
+<span class="c1">#     &quot;&quot;&quot;Swap the i_th and j_th rows and columns of a numpy array.</span>
+<span class="c1">#</span>
+<span class="c1">#     This function is not used yet.&quot;&quot;&quot;</span>
+<span class="c1">#     arr0 = swap_rows(arr, i, j)</span>
+<span class="c1">#     return swap_cols(arr0, i, j)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=======================================================================&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">--------------&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;START OF TESTS&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------&quot;</span><span class="p">)</span>
+
+    <span class="n">project_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;PYPROJ&#39;</span><span class="p">),</span> <span class="s1">&#39;abstract_algebra&#39;</span><span class="p">)</span>
+
+    <span class="n">algebras</span> <span class="o">=</span> <span class="p">[</span><span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s1">&#39;Algebras/v4_klein_4_group.json&#39;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s1">&#39;Algebras/z4_cyclic_group_of_order_4.json&#39;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s1">&#39;Algebras/s3_symmetric_group_on_3_letters.json&#39;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s1">&#39;Algebras/s3x_symmetric_group_OTHER.json&#39;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s1">&#39;Algebras/Z2xZ2xZ2.json&#39;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;Algebras/Pinter_page_29.json&quot;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;Algebras/Pinter_page_29_VERS2.json&quot;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;Algebras/a4_alternating_group_on_4_letters.json&quot;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;Algebras/d3_dihedral_group_of_order_6.json&quot;</span><span class="p">)),</span>
+                <span class="n">Group</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="s2">&quot;Algebras/d4_dihedral_group_on_4_vertices.json&quot;</span><span class="p">))</span>
+                <span class="p">]</span>
+
+    <span class="c1"># Create some direct products</span>
+    <span class="n">v4_x_z4</span> <span class="o">=</span> <span class="n">algebras</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">algebras</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">z4_x_s3</span> <span class="o">=</span> <span class="n">algebras</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">algebras</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># Extend the list, above, with the direct products, just created:</span>
+    <span class="n">algebras</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">v4_x_z4</span><span class="p">,</span> <span class="n">z4_x_s3</span><span class="p">])</span>
+
+    <span class="c1"># Show info for each algebra in the list</span>
+    <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">algebras</span><span class="p">:</span>
+        <span class="n">grp</span><span class="o">.</span><span class="n">print_info</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">------------&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;END OF TESTS&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alfred J. Reich.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Abstract Algebras &mdash; algebras 0.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> algebras
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">algebras</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Abstract Algebras</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="abstract-algebras">
+<h1>Abstract Algebras<a class="headerlink" href="#abstract-algebras" title="Permalink to this headline">¶</a></h1>
+<p>This Python module is a work-in-progress. Currently it contains a
+representation of <strong>finite groups</strong>, along with related functionality,
+such as the computation of <em>subgroups</em> of a group and whether two groups
+are <em>isomorphic</em>.</p>
+<p>Internally, the (finite) Group object consists of four quantities:</p>
+<ul class="simple">
+<li><p><strong>name</strong>: (<code class="docutils literal notranslate"><span class="pre">str</span></code>) A short name for the Group;</p></li>
+<li><p><strong>description</strong>: (<code class="docutils literal notranslate"><span class="pre">str</span></code>) Any additional, useful information about the Group;</p></li>
+<li><p><strong>element_names</strong>: (<code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">str</span></code>) The Group’s element names, where the
+first element in the list is the Group’s identity element (usually denoted by <code class="docutils literal notranslate"><span class="pre">e</span></code>);</p></li>
+<li><p><strong>mult_table</strong>: (<code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">int</span></code>) The Group’s multiplication
+table, where each list in the list represents a row of the table, and
+each integer represents the position of an element in ‘element_names’.
+The table must be:</p>
+<ul>
+<li><p>Square. The row &amp; column length equal the number of elements, say, n;</p></li>
+<li><p>The first row and first column should be the [0, 1, 2, …, n-1], in that exact order;</p></li>
+<li><p>Every row and column should contain the same integers, in a different order,
+so that no row or column contains the same integer twice.</p></li>
+</ul>
+</li>
+</ul>
+<p>A Group object can be instantiated in several ways:</p>
+<ol class="arabic simple">
+<li><p>Enter <strong>four values</strong> corresponding to the quantities described above, in
+the order shown above.</p></li>
+<li><p>Enter <strong>three values</strong> corresponding to <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code>, and <code class="docutils literal notranslate"><span class="pre">mult_table</span></code>,
+where <code class="docutils literal notranslate"><span class="pre">mult_table</span></code> uses element names (<code class="docutils literal notranslate"><span class="pre">str</span></code>) instead of <code class="docutils literal notranslate"><span class="pre">int</span></code> positions.
+The string-based <code class="docutils literal notranslate"><span class="pre">mult_table</span></code> must follow rules, similar to those described
+above:</p>
+<ul class="simple">
+<li><p>The identity element comes first in the first row and first column;</p></li>
+<li><p>The order of names in the first row and first column should be identical;</p></li>
+<li><p>No row or column contains the same element name twice.</p></li>
+</ul>
+</li>
+<li><p>Enter a <strong>Python dictionary</strong>, with keys and values corresponding to
+either the four value or three value input schemes, described above.</p></li>
+<li><p>Enter the <strong>path to a JSON file</strong> (<code class="docutils literal notranslate"><span class="pre">str</span></code>) that corresponds to the
+dictionary described above in 3.</p></li>
+</ol>
+<section id="links">
+<h2>Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>GitHub: <a class="reference external" href="https://github.com/alreich/abstract_algebra">https://github.com/alreich/abstract_algebra</a></p></li>
+<li><p>Documentation: <a class="reference external" href="https://abstract-algebra.readthedocs.io">https://abstract-algebra.readthedocs.io</a></p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>This module runs under Python 3.7+ and requires <strong>numpy</strong>.</p>
+<p>Clone the github repository to install:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/alreich/abstract_algebra.git
+</pre></div>
+</div>
+<p>Add the <em>abstract_algebra</em> directory to your <strong>PYTHONPATH</strong>.</p>
+<p>If you want to use any of the pre-built groups in this module (in the <strong>Algebras</strong> directory) it is
+suggested that you define an environment variable (e.g., <strong>PYPROJ</strong>) that points to the directory
+containing the <em>abstract_algebra</em> directory. An example of how this is useful is depicted farther below.</p>
+</section>
+<section id="quick-overview">
+<h2>Quick Overview<a class="headerlink" href="#quick-overview" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">algebras</span> <span class="kn">import</span> <span class="n">Group</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z3</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="s1">&#39;Z3&#39;</span><span class="p">,</span>
+<span class="go">               &#39;Cyclic group of order 3&#39;,</span>
+<span class="go">               [[ &#39;e&#39; ,  &#39;a&#39; , &#39;a^2&#39;],</span>
+<span class="go">                [ &#39;a&#39; , &#39;a^2&#39;,  &#39;e&#39; ],</span>
+<span class="go">                [&#39;a^2&#39;,  &#39;e&#39; ,  &#39;a&#39; ]]</span>
+<span class="go">               )</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z3</span>
+<span class="go">Group(&#39;Z3&#39;,</span>
+<span class="go">&#39;Cyclic group of order 3&#39;,</span>
+<span class="go">[&#39;e&#39;, &#39;a&#39;, &#39;a^2&#39;],</span>
+<span class="go">[[0, 1, 2], [1, 2, 0], [2, 0, 1]])</span>
+</pre></div>
+</div>
+<p>Instantiation of a group defined in JSON format, contained in the algebras
+directory, is depicted below, and assumes that there is an environment
+variable, <strong>PYPROJ</strong>, that points to the directory containing the
+abstract_algebra directory.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aa_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;PYPROJ&#39;</span><span class="p">),</span> <span class="s1">&#39;abstract_algebra&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">alg_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">aa_path</span><span class="p">,</span> <span class="s2">&quot;Algebras&quot;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v4_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">alg_dir</span><span class="p">,</span> <span class="s2">&quot;v4_klein_4_group.json&quot;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">v4_json</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span>
+<span class="go">Group(&#39;V4&#39;,</span>
+<span class="go">&#39;Klein-4 group&#39;,</span>
+<span class="go">[&#39;e&#39;, &#39;h&#39;, &#39;v&#39;, &#39;hv&#39;],</span>
+<span class="go">[[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])</span>
+</pre></div>
+</div>
+<p>Calling the pretty-print method, <code class="docutils literal notranslate"><span class="pre">pprint</span></code>, with its single argument set to <code class="docutils literal notranslate"><span class="pre">True</span></code> will print the multiplication table using element names, rather than the positions of element names in the element name list:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">Group(&#39;V4&#39;,</span>
+<span class="go">&#39;Klein-4 group&#39;,</span>
+<span class="go">[[&#39;e&#39;, &#39;h&#39;, &#39;v&#39;, &#39;hv&#39;],</span>
+<span class="go"> [&#39;h&#39;, &#39;e&#39;, &#39;hv&#39;, &#39;v&#39;],</span>
+<span class="go"> [&#39;v&#39;, &#39;hv&#39;, &#39;e&#39;, &#39;h&#39;],</span>
+<span class="go"> [&#39;hv&#39;, &#39;v&#39;, &#39;h&#39;, &#39;e&#39;]]</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+<p>Algebra elements can be <em>multiplied</em> using the Group method, <code class="docutils literal notranslate"><span class="pre">mult</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span>
+<span class="go">&#39;hv&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="s1">&#39;hv&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">)</span>
+<span class="go">&#39;h&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span><span class="o">.</span><span class="n">mult</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;hv&#39;</span><span class="p">)</span>
+<span class="go">&#39;h&#39;</span>
+</pre></div>
+</div>
+<p>A group can be tested to determine if it’s <strong>abelian</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span><span class="o">.</span><span class="n">abelian</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>An elements inverse can be obtained using the <code class="docutils literal notranslate"><span class="pre">inverse</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="s1">&#39;hv&#39;</span><span class="p">)</span>
+<span class="go">&#39;hv&#39;</span>
+</pre></div>
+</div>
+<p>A <strong>cyclic group</strong> of any order can be automatically generated:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">algebras</span> <span class="kn">import</span> <span class="n">generate_cyclic_group</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z4</span> <span class="o">=</span> <span class="n">generate_cyclic_group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z4</span>
+<span class="go">Group(&#39;Z4&#39;,</span>
+<span class="go">&#39;Autogenerated cyclic group of order 4&#39;,</span>
+<span class="go">[&#39;e&#39;, &#39;a&#39;, &#39;a^2&#39;, &#39;a^3&#39;],</span>
+<span class="go">[[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]])</span>
+</pre></div>
+</div>
+<p>The <strong>direct product</strong> of two or more groups can be generated using Python’s multiplication operator, <code class="docutils literal notranslate"><span class="pre">*</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">z2</span> <span class="o">=</span> <span class="n">generate_cyclic_group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z2</span>
+<span class="go">Group(&#39;Z2&#39;,</span>
+<span class="go">&#39;Autogenerated cyclic group of order 2&#39;,</span>
+<span class="go">[&#39;e&#39;, &#39;a&#39;],</span>
+<span class="go">[[0, 1], [1, 0]])</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z2_x_z2</span> <span class="o">=</span> <span class="n">z2</span> <span class="o">*</span> <span class="n">z2</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z2_x_z2</span>
+<span class="go">Group(&#39;Z2_x_Z2&#39;,</span>
+<span class="go">&#39;Direct product of Z2 &amp; Z2&#39;,</span>
+<span class="go">[&#39;e:e&#39;, &#39;e:a&#39;, &#39;a:e&#39;, &#39;a:a&#39;],</span>
+<span class="go">[[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])</span>
+</pre></div>
+</div>
+<p>If two groups are isomorphic, then the mapping between their elements is returned as a dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v4</span><span class="o">.</span><span class="n">isomorphic</span><span class="p">(</span><span class="n">z2_x_z2</span><span class="p">)</span>
+<span class="go">{&#39;h&#39;: &#39;e:a&#39;, &#39;v&#39;: &#39;a:e&#39;, &#39;hv&#39;: &#39;a:a&#39;, &#39;e&#39;: &#39;e:e&#39;}</span>
+</pre></div>
+</div>
+<p>If two groups are not isomorphic, then <code class="docutils literal notranslate"><span class="pre">False</span></code> is returned.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">z4</span><span class="o">.</span><span class="n">isomorphic</span><span class="p">(</span><span class="n">z2_x_z2</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>The proper subgroups of a group can also be computed.
+<strong>WARNING</strong> Currently, this returns <em>ALL</em> subgroups, even ones that are isomorphic to each other.
+This will be “fixed”, soon, in a future release.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">z4</span><span class="o">.</span><span class="n">proper_subgroups</span><span class="p">()</span>
+<span class="go">[Group(&#39;Z4_subgroup_0&#39;,</span>
+<span class="go">&#39;Subgroup of: Autogenerated cyclic group of order 4&#39;,</span>
+<span class="go">[&#39;e&#39;, &#39;a^2&#39;],</span>
+<span class="go">[[0, 1], [1, 0]]) ]</span>
+</pre></div>
+</div>
+</section>
+<section id="further-study">
+<h2>Further study<a class="headerlink" href="#further-study" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Video: <a class="reference external" href="https://youtube.com/playlist?list=PLi01XoE8jYoi3SgnnGorR_XOW3IcK-TP6">“Abstract Algebra”</a>
+by Socratica on YouTube</p></li>
+<li><p>Book: <a class="reference external" href="https://bookstore.ams.org/clrm-32">“Visual Group Theory”</a>  by Nathan Carter</p></li>
+<li><p>Video: <a class="reference external" href="https://youtube.com/playlist?list=PLwV-9DG53NDxU337smpTwm6sef4x-SCLv">“Visual Group Theory”</a>
+by Professor Macauley on YouTube (uses Carter’s book, but “supplemented with content and rigor” for an
+undergraduate audience)</p></li>
+<li><p><a class="reference external" href="https://nathancarter.github.io/group-explorer/index.html">Group Explorer</a> -- Visualization
+software for the abstract algebra classroom</p></li>
+</ul>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p><em>abstract_algebras</em> is distributed under the <cite>MIT license</cite>.</p>
+</section>
+</section>
+<section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#group">Group</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#ring">Ring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#field">Field</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Alfred J. Reich.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -240,4 +240,4 @@ Further study
 License
 -------
 
-*abstract_algebras* is distributed under the `MIT license`_.
+*abstract_algebras* is distributed under the `MIT license`.

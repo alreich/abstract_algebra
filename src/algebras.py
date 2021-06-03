@@ -645,6 +645,82 @@ def associative_table(table):
     return result
 
 
+# PERMUTATIONS
+
+class Perm:  # Permutation
+
+    def __init__(self, permutation):
+        self.perm = permutation
+        self.base = min(self.perm)  # lowest value in perm
+        self.size = len(self.perm) + self.base
+        #
+        # MAPPING: A mapping of the consecutive integers, starting at the base value,
+        # to the integers in the permutation.
+        #   Examples:
+        #     0-based mapping: (0, 1, 2, 3) ==> {0: 0, 1: 1, 2: 2, 3: 3}
+        #     1-based mapping: (3,1,2) ==> {1: 3, 2: 1, 3: 2}
+        self.mapping = {i: self.perm[i - self.base] for i in range(self.base, self.size)}
+
+    def __eq__(self, other):
+        return self.perm == other.perm
+
+    def __hash__(self):
+        return hash(self.perm)
+
+    def __repr__(self):
+        return f'Perm({self.perm})'
+
+    def __len__(self):
+        return len(self.perm)
+
+    def __mul__(self, other):
+        """Compose this permutation with another, that is, self(other(id)),
+        where id is the identity permutation, (0,1,...,n-1) or (1,2,...,n).
+        Both permutations must use the same base and be of the same size,
+        otherwise an exception will be raised."""
+        if self.base == other.base:
+            if len(self) == len(other):
+                return Perm(tuple([self.mapping[other.mapping[i]] for i in range(self.base, self.size)]))
+            else:
+                raise Exception(f"Mixed lengths: {len(self)} != {len(other)}")
+        else:
+            raise Exception(f"Mixed bases: {self.base} != {other.base}")
+
+
+# def permutation_mapping(perm, base=0):
+#     """Return a mapping of the consecutive integers, starting at the base value,
+#     to the integers in the permutation, perm.
+#
+#     Examples:
+#
+#     >>> permutation_mapping((0, 1, 2, 3))  # (default) base = 0
+#     {0: 0, 1: 1, 2: 2, 3: 3}
+#
+#     >>> permutation_mapping((3,1,2), 1)
+#     {1: 3, 2: 1, 3: 2}
+#
+#     """
+#     return {i: perm[i - base] for i in range(base, len(perm) + base)}
+
+
+# def compose_perms(q, p, base=0):
+#     """Apply permutation q to permutation p.  That is q o p = q(p(id),
+#     where id is the identity permutation, e.g., (0,1,2,...) or (1,2,3,...).
+#
+#     Example: from Pinter, page 71
+#
+#     >>> alpha = (1, 3, 2)
+#     >>> beta = (3, 1, 2)
+#     >>> compose_perms(alpha, beta, 1)  # base = 1
+#     (2, 1, 3)
+#     # i.e., alpha(beta(1,2,3)) = alpha(3,1,2) = (2,1,3)
+#
+#     """
+#     qmap = permutation_mapping(q, base)
+#     pmap = permutation_mapping(p, base)
+#     return tuple([qmap[pmap[i]] for i in range(base, len(q) + base)])
+
+
 # def swap_list_items(lst, item1, item2):
 #     a, b = lst.index(item1), lst.index(item2)
 #     lst[b], lst[a] = lst[a], lst[b]

@@ -10,7 +10,7 @@ from os import getenv, path
 from collections import Counter
 from functools import reduce
 from pprint import pprint
-from copy import deepcopy
+from copy import copy, deepcopy
 
 # Non-Standard Library Imports
 from numpy import array, array_equal, full, int64, where
@@ -643,6 +643,14 @@ def associative_table(table):
                     result = False
                     break
     return result
+
+
+def remove_items(tup, items):
+    """Return a copy of the tuple, tup, with 'items' removed."""
+    lst_copy = list(copy(tup))
+    for item in items:
+        lst_copy.remove(item)
+    return tuple(lst_copy)
 
 
 # PERMUTATIONS

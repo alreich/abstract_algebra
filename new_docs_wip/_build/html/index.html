@@ -158,10 +158,16 @@
             
   <section id="abstract-algebras">
 <h1>Abstract Algebras<a class="headerlink" href="#abstract-algebras" title="Permalink to this headline">¶</a></h1>
-<p>This Python module is a work-in-progress. Currently it contains a
-representation of <strong>finite groups</strong>, along with related functionality,
-such as the computation of <em>subgroups</em> of a group and whether two groups
-are <em>isomorphic</em>.</p>
+<p>This Python module is a work-in-progress. Currently it contains a representation of <strong>finite groups</strong>,
+along with related functionality, such as:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>derivation of <em>proper subgroups</em> of a group;</p></li>
+<li><p>construction of direct products of two or more groups;</p></li>
+<li><p>determination of whether two groups are <em>isomorphic</em>, including the mapping, if they are;</p></li>
+<li><p>automatic generation of cyclic &amp; symmetric groups of any order.</p></li>
+</ul>
+</div></blockquote>
 <p>Internally, the (finite) Group object consists of four quantities:</p>
 <ul class="simple">
 <li><p><strong>name</strong>: (<code class="docutils literal notranslate"><span class="pre">str</span></code>) A short name for the Group;</p></li>
@@ -177,6 +183,7 @@ The table must be:</p>
 <li><p>The first row and first column should be the [0, 1, 2, …, n-1], in that exact order;</p></li>
 <li><p>Every row and column should contain the same integers, in a different order,
 so that no row or column contains the same integer twice.</p></li>
+<li><p>Capable of supporting associativity of the multiplication operator</p></li>
 </ul>
 </li>
 </ul>
@@ -197,7 +204,7 @@ above:</p>
 <li><p>Enter a <strong>Python dictionary</strong>, with keys and values corresponding to
 either the four value or three value input schemes, described above.</p></li>
 <li><p>Enter the <strong>path to a JSON file</strong> (<code class="docutils literal notranslate"><span class="pre">str</span></code>) that corresponds to the
-dictionary described above in 3.</p></li>
+dictionary described above.</p></li>
 </ol>
 <section id="links">
 <h2>Links<a class="headerlink" href="#links" title="Permalink to this headline">¶</a></h2>
@@ -345,8 +352,8 @@ This will be “fixed”, soon, in a future release.</p>
 <ul class="simple">
 <li><p>Video: <a class="reference external" href="https://youtube.com/playlist?list=PLi01XoE8jYoi3SgnnGorR_XOW3IcK-TP6">“Abstract Algebra”</a>
 by Socratica on YouTube</p></li>
-<li><p>Book: <a class="reference external" href="https://bookstore.ams.org/clrm-32">“Visual Group Theory”</a>  by Nathan Carter</p></li>
-<li><p>Video: <a class="reference external" href="https://youtube.com/playlist?list=PLwV-9DG53NDxU337smpTwm6sef4x-SCLv">“Visual Group Theory”</a>
+<li><p><a class="reference external" href="https://bookstore.ams.org/clrm-32">“Visual Group Theory” (Book)</a>  by Nathan Carter</p></li>
+<li><p><a class="reference external" href="https://youtube.com/playlist?list=PLwV-9DG53NDxU337smpTwm6sef4x-SCLv">“Visual Group Theory” (Video)</a>
 by Professor Macauley on YouTube (uses Carter’s book, but “supplemented with content and rigor” for an
 undergraduate audience)</p></li>
 <li><p><a class="reference external" href="https://nathancarter.github.io/group-explorer/index.html">Group Explorer</a> -- Visualization
@@ -364,6 +371,8 @@ software for the abstract algebra classroom</p></li>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#group">Group</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#group-generators">Group Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#permutation">Permutation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#ring">Ring</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#field">Field</a></li>
 </ul>

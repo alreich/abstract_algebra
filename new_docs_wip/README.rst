@@ -1,43 +1,48 @@
 Abstract Algebras
 =================
 
-This Python module is a work-in-progress. Currently it contains a
-representation of **finite groups**, along with related functionality,
-such as the computation of *subgroups* of a group and whether two groups
-are *isomorphic*.
+This Python module is a work-in-progress. Currently it contains a representation of **finite groups**,
+along with related functionality, such as:
+
+ * derivation of *proper subgroups* of a group;
+ * construction of direct products of two or more groups;
+ * determination of whether two groups are *isomorphic*, including the mapping, if they are;
+ * automatic generation of cyclic & symmetric groups of any order.
 
 Internally, the (finite) Group object consists of four quantities:
 
-- **name**: (``str``) A short name for the Group;
-- **description**: (``str``) Any additional, useful information about the Group;
-- **element_names**: (``list`` of ``str``) The Group’s element names, where the
+* **name**: (``str``) A short name for the Group;
+* **description**: (``str``) Any additional, useful information about the Group;
+* **element_names**: (``list`` of ``str``) The Group’s element names, where the
   first element in the list is the Group’s identity element (usually denoted by ``e``);
-- **mult_table**: (``list`` of ``list`` of ``int``) The Group’s multiplication
+* **mult_table**: (``list`` of ``list`` of ``int``) The Group’s multiplication
   table, where each list in the list represents a row of the table, and
   each integer represents the position of an element in ‘element_names’.
   The table must be:
 
-  - Square. The row & column length equal the number of elements, say, n;
-  - The first row and first column should be the [0, 1, 2, …, n-1], in that exact order;
-  - Every row and column should contain the same integers, in a different order,
+  * Square. The row & column length equal the number of elements, say, n;
+  * The first row and first column should be the [0, 1, 2, …, n-1], in that exact order;
+  * Every row and column should contain the same integers, in a different order,
     so that no row or column contains the same integer twice.
+  * Capable of supporting associativity of the multiplication operator
 
 A Group object can be instantiated in several ways:
 
-1. Enter **four values** corresponding to the quantities described above, in
+#. Enter **four values** corresponding to the quantities described above, in
    the order shown above.
-2. Enter **three values** corresponding to ``name``, ``description``, and ``mult_table``,
+#. Enter **three values** corresponding to ``name``, ``description``, and ``mult_table``,
    where ``mult_table`` uses element names (``str``) instead of ``int`` positions.
    The string-based ``mult_table`` must follow rules, similar to those described
    above:
 
-   - The identity element comes first in the first row and first column;
-   - The order of names in the first row and first column should be identical;
-   - No row or column contains the same element name twice.
-3. Enter a **Python dictionary**, with keys and values corresponding to
+   * The identity element comes first in the first row and first column;
+   * The order of names in the first row and first column should be identical;
+   * No row or column contains the same element name twice.
+
+#. Enter a **Python dictionary**, with keys and values corresponding to
    either the four value or three value input schemes, described above.
-4. Enter the **path to a JSON file** (``str``) that corresponds to the
-   dictionary described above in 3.
+#. Enter the **path to a JSON file** (``str``) that corresponds to the
+   dictionary described above.
 
 
 Links
@@ -227,9 +232,9 @@ Further study
 - Video: `"Abstract Algebra" <https://youtube.com/playlist?list=PLi01XoE8jYoi3SgnnGorR_XOW3IcK-TP6>`_
   by Socratica on YouTube
 
-- Book: `"Visual Group Theory" <https://bookstore.ams.org/clrm-32>`_  by Nathan Carter
+- `"Visual Group Theory" (Book) <https://bookstore.ams.org/clrm-32>`_  by Nathan Carter
 
-- Video: `"Visual Group Theory" <https://youtube.com/playlist?list=PLwV-9DG53NDxU337smpTwm6sef4x-SCLv>`_
+- `"Visual Group Theory" (Video) <https://youtube.com/playlist?list=PLwV-9DG53NDxU337smpTwm6sef4x-SCLv>`_
   by Professor Macauley on YouTube (uses Carter's book, but "supplemented with content and rigor" for an
   undergraduate audience)
 

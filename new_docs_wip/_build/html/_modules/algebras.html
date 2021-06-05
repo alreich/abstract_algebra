@@ -165,7 +165,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 
 <span class="c1"># Non-Standard Library Imports</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">array_equal</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">int64</span><span class="p">,</span> <span class="n">where</span>
@@ -301,14 +301,21 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the order of the Group, i.e., the number of elements in it.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the order of the group, ie., the number of elements in it.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_names</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Group.element_order"><a class="viewcode-back" href="../api.html#algebras.Group.element_order">[docs]</a>    <span class="k">def</span> <span class="nf">element_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the order of a particular element of the Group.</span>
+        <span class="sd">&quot;&quot;&quot;Return the order of the element.</span>
 
-<span class="sd">        :param element: An element name</span>
-<span class="sd">        :type element: str</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        element : str</span>
+<span class="sd">          An element of this group</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">          The element&#39;s order</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">order_aux</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">prod</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">prod</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">identity</span><span class="p">:</span>
@@ -624,8 +631,33 @@
 
 <span class="c1"># Group Generators</span>
 
-<span class="k">def</span> <span class="nf">generate_cyclic_group</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">identity_name</span><span class="o">=</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="n">elem_name</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns a cyclic Group with the input order, where &#39;order&#39; is a positive integer.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="generate_cyclic_group"><a class="viewcode-back" href="../api.html#algebras.generate_cyclic_group">[docs]</a><span class="k">def</span> <span class="nf">generate_cyclic_group</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">identity_name</span><span class="o">=</span><span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="n">elem_name</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a cyclic group with the given order.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    order : int</span>
+<span class="sd">      A positive integer</span>
+<span class="sd">    identity_name : str</span>
+<span class="sd">      The name of the group&#39;s identity element.</span>
+<span class="sd">      Defaults to &#39;e&#39;</span>
+<span class="sd">    elem_name : str</span>
+<span class="sd">      Prefix for all non-identity elements.</span>
+<span class="sd">      Default is a1, a2, a3, ...</span>
+<span class="sd">    name : str</span>
+<span class="sd">      The group&#39;s name.  Defaults to &#39;Zn&#39;,</span>
+<span class="sd">      where n is the order.</span>
+<span class="sd">    description : str</span>
+<span class="sd">      A description of the group. Defaults to</span>
+<span class="sd">      &#39;Autogenerated cyclic group of order n&#39;,</span>
+<span class="sd">      where n is the group&#39;s order.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Group</span>
+<span class="sd">      A cyclic group of the given order.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
         <span class="n">nm</span> <span class="o">=</span> <span class="n">name</span>
     <span class="k">else</span><span class="p">:</span>
@@ -636,7 +668,7 @@
         <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Autogenerated cyclic group of order </span><span class="si">{</span><span class="n">order</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">identity_name</span><span class="p">,</span> <span class="n">elem_name</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">elem_name</span><span class="si">}</span><span class="s2">^&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">order</span><span class="p">)]</span>
     <span class="n">table</span> <span class="o">=</span> <span class="p">[[((</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">%</span> <span class="n">order</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">nm</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">nm</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span></div>
 
 
 <span class="c1"># Utilities</span>
@@ -798,6 +830,140 @@
                     <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
                     <span class="k">break</span>
     <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">remove_items</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a copy of the tuple, tup, with &#39;items&#39; removed.&quot;&quot;&quot;</span>
+    <span class="n">lst_copy</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">tup</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+        <span class="n">lst_copy</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">lst_copy</span><span class="p">)</span>
+
+
+<span class="c1"># PERMUTATIONS</span>
+
+<div class="viewcode-block" id="Perm"><a class="viewcode-back" href="../api.html#algebras.Perm">[docs]</a><span class="k">class</span> <span class="nc">Perm</span><span class="p">:</span>  <span class="c1"># Permutation</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permutation</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perm</span> <span class="o">=</span> <span class="n">permutation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perm</span><span class="p">)</span>  <span class="c1"># lowest value in perm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perm</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span>
+        <span class="c1">#</span>
+        <span class="c1"># MAPPING: A mapping of the consecutive integers, starting at the base value,</span>
+        <span class="c1"># to the integers in the permutation.</span>
+        <span class="c1">#   Examples:</span>
+        <span class="c1">#     0-based mapping: (0, 1, 2, 3) ==&gt; {0: 0, 1: 1, 2: 2, 3: 3}</span>
+        <span class="c1">#     1-based mapping: (3,1,2) ==&gt; {1: 3, 2: 1, 3: 2}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">perm</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)}</span>
+
+<div class="viewcode-block" id="Perm.__eq__"><a class="viewcode-back" href="../api.html#algebras.Perm.__eq__">[docs]</a>    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if the other&#39;s enclosee permutation (`tuple`) is the same as this one&#39;s.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">perm</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">perm</span></div>
+
+<div class="viewcode-block" id="Perm.__hash__"><a class="viewcode-back" href="../api.html#algebras.Perm.__hash__">[docs]</a>    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Use the enclosed permutation `tuple` for hashing this object&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Perm.__repr__"><a class="viewcode-back" href="../api.html#algebras.Perm.__repr__">[docs]</a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A readable print representation of this permutation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Perm(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">perm</span><span class="si">}</span><span class="s1">)&#39;</span></div>
+
+<div class="viewcode-block" id="Perm.__len__"><a class="viewcode-back" href="../api.html#algebras.Perm.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the number of elements in the permutation.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Perm.__mul__"><a class="viewcode-back" href="../api.html#algebras.Perm.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compose this permutation with another, that is, self(other(id)),</span>
+<span class="sd">        where *id* is the identity permutation, (0,1,...,n-1) or (1,2,...,n).</span>
+<span class="sd">        Both permutations must use the same base and be of the same size,</span>
+<span class="sd">        otherwise an exception will be raised.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">base</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">Perm</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">other</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">)]))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mixed lengths: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mixed bases: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">base</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="generate_symmetric_group"><a class="viewcode-back" href="../api.html#algebras.generate_symmetric_group">[docs]</a><span class="k">def</span> <span class="nf">generate_symmetric_group</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a symmetric group with the given order.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    order : int</span>
+<span class="sd">      A positive integer</span>
+<span class="sd">    name : str</span>
+<span class="sd">      The group&#39;s name.  Defaults to &#39;Sn&#39;,</span>
+<span class="sd">      where n is the order.</span>
+<span class="sd">    description : str</span>
+<span class="sd">      A description of the group. Defaults to</span>
+<span class="sd">      &#39;Autogenerated symmetric group of order n&#39;,</span>
+<span class="sd">      where n is the group&#39;s order.</span>
+<span class="sd">    base : integer</span>
+<span class="sd">      A non-negative integer (typically, 0 or 1).</span>
+<span class="sd">      The default is 1, so permutations will be</span>
+<span class="sd">      on the tuple (1, 2, 3, ..., n), where n is</span>
+<span class="sd">      the order.  Base 0, on the other hand, would</span>
+<span class="sd">      produce permutations of (0, 1, 2, ..., n-1).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Group</span>
+<span class="sd">      A symmetric group of the given order. The elements will</span>
+<span class="sd">      be permutations with the given order and base.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+        <span class="n">nm</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nm</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">description</span><span class="p">:</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">description</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Autogenerated symmetric group of order </span><span class="si">{</span><span class="n">order</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">ident</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">order</span> <span class="o">+</span> <span class="n">base</span><span class="p">))</span>
+    <span class="n">perms</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">permutations</span><span class="p">(</span><span class="n">ident</span><span class="p">))</span>
+    <span class="n">elem_dict</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">):</span> <span class="n">Perm</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">perms</span><span class="p">}</span>
+    <span class="n">rev_elem_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">val</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">elem_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">mul_tbl</span> <span class="o">=</span> <span class="p">[[</span><span class="n">rev_elem_dict</span><span class="p">[</span><span class="n">elem_dict</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">*</span> <span class="n">elem_dict</span><span class="p">[</span><span class="n">b</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">elem_dict</span><span class="p">]</span>
+               <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">elem_dict</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">nm</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">mul_tbl</span><span class="p">)</span></div>
+
+
+<span class="c1"># def permutation_mapping(perm, base=0):</span>
+<span class="c1">#     &quot;&quot;&quot;Return a mapping of the consecutive integers, starting at the base value,</span>
+<span class="c1">#     to the integers in the permutation, perm.</span>
+<span class="c1">#</span>
+<span class="c1">#     Examples:</span>
+<span class="c1">#</span>
+<span class="c1">#     &gt;&gt;&gt; permutation_mapping((0, 1, 2, 3))  # (default) base = 0</span>
+<span class="c1">#     {0: 0, 1: 1, 2: 2, 3: 3}</span>
+<span class="c1">#</span>
+<span class="c1">#     &gt;&gt;&gt; permutation_mapping((3,1,2), 1)</span>
+<span class="c1">#     {1: 3, 2: 1, 3: 2}</span>
+<span class="c1">#</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     return {i: perm[i - base] for i in range(base, len(perm) + base)}</span>
+
+
+<span class="c1"># def compose_perms(q, p, base=0):</span>
+<span class="c1">#     &quot;&quot;&quot;Apply permutation q to permutation p.  That is q o p = q(p(id),</span>
+<span class="c1">#     where id is the identity permutation, e.g., (0,1,2,...) or (1,2,3,...).</span>
+<span class="c1">#</span>
+<span class="c1">#     Example: from Pinter, page 71</span>
+<span class="c1">#</span>
+<span class="c1">#     &gt;&gt;&gt; alpha = (1, 3, 2)</span>
+<span class="c1">#     &gt;&gt;&gt; beta = (3, 1, 2)</span>
+<span class="c1">#     &gt;&gt;&gt; compose_perms(alpha, beta, 1)  # base = 1</span>
+<span class="c1">#     (2, 1, 3)</span>
+<span class="c1">#     # i.e., alpha(beta(1,2,3)) = alpha(3,1,2) = (2,1,3)</span>
+<span class="c1">#</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     qmap = permutation_mapping(q, base)</span>
+<span class="c1">#     pmap = permutation_mapping(p, base)</span>
+<span class="c1">#     return tuple([qmap[pmap[i]] for i in range(base, len(q) + base)])</span>
 
 
 <span class="c1"># def swap_list_items(lst, item1, item2):</span>

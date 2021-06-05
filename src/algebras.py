@@ -31,6 +31,10 @@ class Group:
       The first row and column should be the [0, 1, 2, ..., n], in that exact order.  Every row and column should
       contain the same integers, in a different order, as long as no row or column contains the same integer twice.
 
+    The group constructor will enforce the `mult_table` conditions, described above.  It will also check the table to
+    see if it supports associativity.  If any of the conditions are violated, or if associativity is not supported,
+    then the group will not be instantiated.
+
     A Group object can be instantiated in several ways:
 
     1. Enter four values corresponding to the quantities described above, in the order shown above.
@@ -170,11 +174,19 @@ class Group:
         return order_aux(element, element, 1)
 
     def element_orders(self, reverse=False):
-        """Return a dictionary where the keys are element names and the values are
-        their orders.
+        """Return a dictionary where the keys are element names and the values are their orders.
 
-        :param reverse: If True, then the dict has orders for keys and element sets for values; defaults to False.
-        :type reverse: boolean
+        Parameters
+        ----------
+        reverse : boolean
+          If True, then the dict has orders for keys and sets of elements for values.
+          The default is False.
+
+        Returns
+        -------
+        dict
+          A dictionary to look up element order by element name; or, if reversed, then to look up
+          sets of elements with a given order.
         """
         order_dict = {elem: self.element_order(elem) for elem in self.element_names}
         if reverse:
@@ -186,7 +198,18 @@ class Group:
             return order_dict
 
     def __eq__(self, other):
-        """Return True if this Group is identical to the `other` Group."""
+        """Return True if this Group is identical to the `other` Group.
+
+        Parameters
+        ----------
+        other : Group
+          Another group to check equality with
+
+        Returns
+        -------
+        boolean
+          True if the element names and multiplication tables of the two groups are identical.
+        """
         return (self.element_names == other.element_names) and array_equal(self.mult_table, other.mult_table)
 
     @property
@@ -195,16 +218,28 @@ class Group:
         return self.element_names[0]
 
     def deepcopy(self):
+        """Returns a deep copy of this group."""
         return Group(deepcopy(self.name),
                      deepcopy(self.description),
                      deepcopy(self.element_names),
                      deepcopy(self.mult_table))
 
     def direct_product_delimiter(self, delimiter=None):
-        """If no input, then return the current direct product element name delimiter, or set the new delimiter.
+        """If no input, then the current direct product element name delimiter will be returned (default is ':').
+        Otherwise, if a string is input (e.g., "-") it will become the new delimiter for direct product element
+        names, and so it will be returned.
 
-        :param delimiter: If None, return current delimiter; otherwise set new delimiter
-        :type delimiter: None or str
+        Parameters
+        ----------
+        delimiter : str
+          A string that will be used to join group element names into new names when computing a direct product.
+          If no delimiter is entered, then this
+
+        Returns
+        -------
+        str
+          The current delimiter.
+
         """
         if delimiter:
             self.__dp_delimiter = delimiter
@@ -234,8 +269,11 @@ class Group:
     def dump(self, json_filename):
         """Write the Group to a JSON file.
 
-        :param json_filename: Complete path to a JSON file
-        :type json_filename: str
+        Parameters
+        ----------
+        json_filename : str
+          Complete path to a JSON file
+
         """
         with open(json_filename, 'w') as fout:
             dump(self.to_dict(), fout)

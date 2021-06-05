@@ -814,6 +814,20 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
     return Group(nm, desc, mul_tbl)
 
 
+# TODO: Implement rings
+
+class Ring:
+    """Not implemented yet"""
+    pass
+
+
+# TODO: Implement fields
+
+class Field:
+    """Not implemented yet"""
+    pass
+
+
 # def permutation_mapping(perm, base=0):
 #     """Return a mapping of the consecutive integers, starting at the base value,
 #     to the integers in the permutation, perm.

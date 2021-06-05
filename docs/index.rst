@@ -2,6 +2,29 @@
 
 .. include:: README.rst
 
+Introduction
+============
+
+.. toctree::
+    :maxdepth: 2
+
+    intro
+
+User Guide
+==========
+
+.. toctree::
+    :maxdepth: 2
+
+    guide
+
+Experimental Stuff
+==================
+
+.. toctree::
+    :maxdepth: 2
+
+    experimental
 
 API Reference
 =============

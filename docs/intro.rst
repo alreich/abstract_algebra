@@ -21,6 +21,6 @@ Fields
 Suspendisse consectetur sapien porta dui interdum ullamcorper. Nam quis finibus ligula, non faucibus elit.
 
 Resources
-=========
+---------
 
 Suspendisse consectetur sapien porta dui interdum ullamcorper. Nam quis finibus ligula, non faucibus elit.

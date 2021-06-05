@@ -1,9 +1,9 @@
 .. _experimental:
 
-Title
-=====
+Experimental Stuff
+==================
 
-What is a group?
+Please don't try this at home, boys and girls.
 
 Section
 -------

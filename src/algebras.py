@@ -723,6 +723,22 @@ def remove_items(tup, items):
     return tuple(lst_copy)
 
 
+# EXPERIMENTAL STUFF
+
+def get_integer_form(elem_list):
+    """For an element list like ['e1', 'a1_2', 'a1_1', 'a1_3'],
+    return the integer 213, i.e., the 'subscripts' of the elements that
+    follow the identity element."""
+    return int(''.join(map(lambda x: x.split("_")[1], elem_list[1:])))
+
+
+def get_int_forms(ref_group, isomorphisms):
+    """Return a list of integer forms ('permutations') for a list of isomorphisms,
+    i.e., mappings, based on a reference group."""
+    return [get_integer_form([iso[elem] for elem in ref_group.element_names])
+            for iso in isomorphisms]
+
+
 # PERMUTATIONS
 
 class Perm:  # Permutation

@@ -4,16 +4,16 @@
 """
 
 # Standard Library Imports
-from itertools import chain, combinations, permutations, product
-from json import dump, dumps, load
-from os import getenv, path
-from collections import Counter
-from functools import reduce
-from pprint import pprint
-from copy import copy, deepcopy
+import itertools as it
+import json
+import os
+import collections as co
+import functools as fnc
+import pprint as pp
+import copy
 
 # Non-Standard Library Imports
-from numpy import array, array_equal, full, int64, where
+import numpy as np
 
 
 class Group:
@@ -83,7 +83,7 @@ class Group:
             if isinstance(args[0], str):
                 with open(args[0], 'r') as fin:
                     # Assumes the single argument is a JSON file name string
-                    grp_dict = load(fin)
+                    grp_dict = json.load(fin)
             elif isinstance(args[0], dict):
                 # Assumes the single argument is a dictionary
                 grp_dict = args[0]
@@ -121,7 +121,7 @@ class Group:
             table = index_table_from_name_table(tbl)
         else:
             table = tbl
-        self.mult_table = array(table, dtype=int64)
+        self.mult_table = np.array(table, dtype=np.int64)
 
         self.__dp_delimiter = ':'  # name delimiter used when creating direct products
 
@@ -218,7 +218,7 @@ class Group:
         boolean
           True if the element names and multiplication tables of the two groups are identical.
         """
-        return (self.element_names == other.element_names) and array_equal(self.mult_table, other.mult_table)
+        return (self.element_names == other.element_names) and np.array_equal(self.mult_table, other.mult_table)
 
     @property
     def identity(self):
@@ -227,10 +227,10 @@ class Group:
 
     def deepcopy(self):
         """Returns a deep copy of this group."""
-        return Group(deepcopy(self.name),
-                     deepcopy(self.description),
-                     deepcopy(self.element_names),
-                     deepcopy(self.mult_table))
+        return Group(copy.deepcopy(self.name),
+                     copy.deepcopy(self.description),
+                     copy.deepcopy(self.element_names),
+                     copy.deepcopy(self.mult_table))
 
     def direct_product_delimiter(self, delimiter=None):
         """If no input, then the current direct product element name delimiter will be returned (default is ':').
@@ -257,7 +257,7 @@ class Group:
 
     def __make_inverse_lookup_dict(self):
         """(Private Method) Return a dictionary of element names and their inverse names."""
-        row_indices, col_indices = where(self.mult_table == 0)
+        row_indices, col_indices = np.where(self.mult_table == 0)
         return {self.element_names[elem_index]: self.element_names[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
@@ -272,7 +272,7 @@ class Group:
 
     def dumps(self):
         """Write the Group to a JSON string."""
-        return dumps(self.to_dict())
+        return json.dumps(self.to_dict())
 
     def dump(self, json_filename):
         """Write the Group to a JSON file.
@@ -284,7 +284,7 @@ class Group:
 
         """
         with open(json_filename, 'w') as fout:
-            dump(self.to_dict(), fout)
+            json.dump(self.to_dict(), fout)
 
     def inverse(self, element_name):
         """Return the name of the inverse element for the input `element_name`.
@@ -321,7 +321,7 @@ class Group:
             return self.element_names[index]
         # If more than two args, then multiply them all together
         else:
-            return reduce(lambda a, b: self.mult(a, b), args)
+            return fnc.reduce(lambda a, b: self.mult(a, b), args)
 
     def pprint(self, use_element_names=False):
         """Pretty print the Group.  This method produces a readable representation of
@@ -335,10 +335,10 @@ class Group:
         print(f"{self.__class__.__name__}('{self.name}',")
         print(f"'{self.description}',")
         if use_element_names:
-            pprint(self.mult_table_with_names())
+            pp.pprint(self.mult_table_with_names())
         else:
             print(f"{self.element_names},")
-            pprint(self.mult_table.tolist())
+            pp.pprint(self.mult_table.tolist())
         print(")")
         return None
 
@@ -373,7 +373,7 @@ class Group:
         """Return the direct product of this Group with the `other` Group."""
         dp_name = f"{self.name}_x_{other.name}"
         dp_description = "Direct product of " + self.name + " & " + other.name
-        dp_element_names = list(product(self.element_names, other.element_names))  # Cross product
+        dp_element_names = list(it.product(self.element_names, other.element_names))  # Cross product
         dp_mult_table = list()
         for a in dp_element_names:
             dp_mult_table_row = list()  # Start a new row
@@ -399,13 +399,13 @@ class Group:
                 footnote = '  **'
             print(f"{prefix}  inv({elem}) = {self.inverse(elem)} {footnote}")
         print(f"Element Orders:")
-        pprint(self.element_orders(True), indent=2)
+        pp.pprint(self.element_orders(True), indent=2)
         size = len(self.element_names)
         if size <= max_size:
             print(f"{prefix}Is associative? {self.associative()}")
             print(f"{prefix}Cayley Table:")
             # self.pretty_print_mult_table(prefix=prefix)
-            pprint(self.mult_table_with_names())
+            pp.pprint(self.mult_table_with_names())
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
@@ -434,7 +434,7 @@ class Group:
             result.add(self.inverse(elem))
 
         # Add the products of all possible pairs
-        for pair in product(result, result):
+        for pair in it.product(result, result):
             result.add(self.mult(*pair))
 
         # If the input set of elements increased, recurse ...
@@ -453,7 +453,7 @@ class Group:
         n = len(all_elements)
         for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
             # Look at all combinations of elements: pairs, triples, quadruples, etc.
-            for combo in combinations(all_elements, i):
+            for combo in it.combinations(all_elements, i):
                 clo = frozenset(self.closure(combo))  # freezing required to add a set to a set
                 if len(clo) < n:  # Don't include closures consisting of all elements
                     closed.add(clo)
@@ -486,7 +486,7 @@ class Group:
     def reorder_elements(self, reordered_elements):
         """Return a new group made from this one with the elements reordered."""
         n = self.order
-        new_table = full((n, n), 0)
+        new_table = np.full((n, n), 0)
         for row in range(n):
             for col in range(n):
                 prod = self.mult(reordered_elements[row], reordered_elements[col])
@@ -500,7 +500,7 @@ class Group:
         of other's elements, where the identity of this group is always mapped to the identity of other."""
         elems0 = self.element_names
         elems1 = other.element_names
-        mappings = [dict(zip(elems0[1:], perm)) for perm in permutations(elems1[1:])]
+        mappings = [dict(zip(elems0[1:], perm)) for perm in it.permutations(elems1[1:])]
         for mapping in mappings:
             mapping[elems0[0]] = elems1[0]
         return mappings
@@ -569,7 +569,7 @@ def duplicates(lst):
     """Return a list of the duplicate items in the input list.
 
     This function is used by `check_inputs`."""
-    return [item for item, count in Counter(lst).items() if count > 1]
+    return [item for item, count in co.Counter(lst).items() if count > 1]
 
 
 def check_inputs(element_names, mult_table):
@@ -665,7 +665,7 @@ def _no_conflict(p1, p2):
 
 def _no_conflicts(items):
     """Return True if each possible pair, from a list of items, has no conflicts."""
-    return all(_no_conflict(combo[0], combo[1]) for combo in combinations(items, 2))
+    return all(_no_conflict(combo[0], combo[1]) for combo in it.combinations(items, 2))
 
 
 def _filter_out_conflicts(perms, perm, n):
@@ -690,8 +690,8 @@ def generate_all_group_tables(order):
     row0 = list(range(order))
     row_candidates = [[row0]]
     for row_num in range(1, order):
-        row_candidates.append(_filter_out_conflicts(permutations(row0), row0, row_num))
-    table_candidates = [cand for cand in product(*row_candidates) if associative_table(cand)]
+        row_candidates.append(_filter_out_conflicts(it.permutations(row0), row0, row_num))
+    table_candidates = [cand for cand in it.product(*row_candidates) if associative_table(cand)]
     return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
 
 
@@ -725,7 +725,7 @@ def associative_table(table):
 
 def remove_items(tup, items):
     """Return a copy of the tuple, tup, with 'items' removed."""
-    lst_copy = list(copy(tup))
+    lst_copy = list(copy.copy(tup))
     for item in items:
         lst_copy.remove(item)
     return tuple(lst_copy)
@@ -735,7 +735,7 @@ def remove_items(tup, items):
 def powerset(iterable):
     """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
     s = list(iterable)
-    return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
+    return it.chain.from_iterable(it.combinations(s, r) for r in range(len(s)+1))
 
 
 # EXPERIMENTAL STUFF
@@ -836,7 +836,7 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
     else:
         desc = f"Autogenerated symmetric group on {n} elements"
     ident = tuple(range(base, n + base))
-    perms = list(permutations(ident))
+    perms = list(it.permutations(ident))
     elem_dict = {str(p): Perm(p) for p in perms}
     rev_elem_dict = {val: key for key, val in elem_dict.items()}
     mul_tbl = [[rev_elem_dict[elem_dict[a] * elem_dict[b]]
@@ -864,8 +864,8 @@ def generate_powerset_group(n, name=None, description=None):
 
 # TODO: Implement rings
 
-class Ring:
-    """Not implemented yet"""
+class Ring(Group):
+    """TBD"""
     pass
 
 
@@ -947,18 +947,18 @@ if __name__ == '__main__':
     print("START OF TESTS")
     print("--------------")
 
-    project_path = path.join(getenv('PYPROJ'), 'abstract_algebra')
+    project_path = os.path.join(os.getenv('PYPROJ'), 'abstract_algebra')
 
-    algebras = [Group(path.join(project_path, 'Algebras/v4_klein_4_group.json')),
-                Group(path.join(project_path, 'Algebras/z4_cyclic_group_of_order_4.json')),
-                Group(path.join(project_path, 'Algebras/s3_symmetric_group_on_3_letters.json')),
-                Group(path.join(project_path, 'Algebras/s3x_symmetric_group_OTHER.json')),
-                Group(path.join(project_path, 'Algebras/Z2xZ2xZ2.json')),
-                Group(path.join(project_path, "Algebras/Pinter_page_29.json")),
-                Group(path.join(project_path, "Algebras/Pinter_page_29_VERS2.json")),
-                Group(path.join(project_path, "Algebras/a4_alternating_group_on_4_letters.json")),
-                Group(path.join(project_path, "Algebras/d3_dihedral_group_of_order_6.json")),
-                Group(path.join(project_path, "Algebras/d4_dihedral_group_on_4_vertices.json"))
+    algebras = [Group(os.path.join(project_path, 'Algebras/v4_klein_4_group.json')),
+                Group(os.path.join(project_path, 'Algebras/z4_cyclic_group_of_order_4.json')),
+                Group(os.path.join(project_path, 'Algebras/s3_symmetric_group_on_3_letters.json')),
+                Group(os.path.join(project_path, 'Algebras/s3x_symmetric_group_OTHER.json')),
+                Group(os.path.join(project_path, 'Algebras/Z2xZ2xZ2.json')),
+                Group(os.path.join(project_path, "Algebras/Pinter_page_29.json")),
+                Group(os.path.join(project_path, "Algebras/Pinter_page_29_VERS2.json")),
+                Group(os.path.join(project_path, "Algebras/a4_alternating_group_on_4_letters.json")),
+                Group(os.path.join(project_path, "Algebras/d3_dihedral_group_of_order_6.json")),
+                Group(os.path.join(project_path, "Algebras/d4_dihedral_group_on_4_vertices.json"))
                 ]
 
     # Create some direct products

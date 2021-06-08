@@ -65,8 +65,6 @@ Usage
 
 .. code:: python
 
-    >>> import os
-
     >>> from algebras import Group
 
     >>> z3 = Group('Z3',
@@ -89,6 +87,8 @@ variable, **PYPROJ**, that points to the directory containing the
 abstract_algebra directory.
 
 .. code:: python
+
+    >>> import os
 
     >>> aa_path = os.path.join(os.getenv('PYPROJ'), 'abstract_algebra')
 

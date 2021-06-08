@@ -8,7 +8,7 @@ Group
 
 .. autoclass:: algebras.Group
     :members:
-    :special-members: __len__, __eq__, __mul__
+    :special-members: __contains__, __eq__, __getitem__, __len__, __mul__
     :undoc-members:
     :private-members:
 
@@ -17,6 +17,7 @@ Group Generators
 
 .. autofunction:: algebras.generate_cyclic_group
 .. autofunction:: algebras.generate_symmetric_group
+.. autofunction:: algebras.generate_powerset_group
 
 Permutation
 -----------

@@ -1,24 +1,5 @@
-.. _guide:
-
 User Guide
 ==========
-
-Internally, the (finite) Group object consists of four quantities:
-
-* **name**: (``str``) A short name for the Group;
-* **description**: (``str``) Any additional, useful information about the Group;
-* **element_names**: (``list`` of ``str``) The Group’s element names, where the
-  first element in the list is the Group’s identity element (usually denoted by ``e``);
-* **mult_table**: (``list`` of ``list`` of ``int``) The Group’s multiplication
-  table, where each list in the list represents a row of the table, and
-  each integer represents the position of an element in ‘element_names’.
-  The table must be:
-
-  * Square. The row & column length equal the number of elements, say, n;
-  * The first row and first column should be the [0, 1, 2, …, n-1], in that exact order;
-  * Every row and column should contain the same integers, in a different order,
-    so that no row or column contains the same integer twice.
-  * Capable of supporting associativity of the multiplication operator
 
 Installation
 ------------
@@ -29,87 +10,134 @@ Clone the github repository to install:
 
 .. code:: bash
 
-    $ git clone https://github.com/alreich/abstract_algebra.git
+::
 
+   $ git clone https://github.com/alreich/abstract_algebra.git
 
-Add the *abstract_algebra* directory to your **PYTHONPATH**.
+Add the *abstract_algebra* directory to your *PYTHONPATH*.
 
-If you want to use any of the pre-built groups in this module (in the **Algebras** directory) it is
-suggested that you define an environment variable (e.g., **PYPROJ**) that points to the directory
-containing the *abstract_algebra* directory. An example of how this is useful is depicted farther below.
+Note: In the examples, below, an environment variable, *PYPROJ*, points
+to the directory containing the *abstract_algebra* directory.
+
+Internal Representation of a Group
+----------------------------------
+
+Internally, the (finite) Group object consists of four quantities:
+
+-  **name**: (``str``) A short name for the Group;
+
+-  **description**: (``str``) Any additional, useful information about
+   the Group;
+
+-  **element_names**: (``list`` of ``str``) The Group’s element names,
+   where the first element in the list is the Group’s identity element
+   (usually denoted by ``e``);
+
+-  **mult_table**: (``list`` of ``list`` of ``int``) The Group’s
+   multiplication table, where each list in the list represents a row of
+   the table, and each integer represents the position of an element in
+   ‘element_names’. The table must be:
+
+   -  Square. The row & column length equal the number of elements, say,
+      n;
+   -  The first row and first column should be the [0, 1, 2, …, n-1], in
+      that exact order;
+   -  Every row and column should contain the same integers, in a
+      different order, so that no row or column contains the same
+      integer twice.
+   -  Capable of supporting associativity of the multiplication operator
 
 Group Constuction
 -----------------
 
 A Group object can be instantiated in several ways:
 
-#. Enter **four values** corresponding to the quantities described above, in
-   the order shown above.
-#. Enter **three values** corresponding to ``name``, ``description``, and ``mult_table``,
-   where ``mult_table`` uses element names (``str``) instead of ``int`` positions.
-   The string-based ``mult_table`` must follow rules, similar to those described
-   above:
+1. Enter **four values** corresponding to the quantities described
+   above, in the order shown above.
+2. Enter **three values** corresponding to ``name``, ``description``,
+   and ``mult_table``, where ``mult_table`` uses element names (``str``)
+   instead of ``int`` positions. The string-based ``mult_table`` must
+   follow rules, similar to those described above:
 
-   * The identity element comes first in the first row and first column;
-   * The order of names in the first row and first column should be identical;
-   * No row or column contains the same element name twice.
+   -  The identity element comes first in the first row and first
+      column;
+   -  The order of names in the first row and first column should be
+      identical;
+   -  No row or column contains the same element name twice.
 
-#. Enter a **Python dictionary**, with keys and values corresponding to
+3. Enter a **Python dictionary**, with keys and values corresponding to
    either the four value or three value input schemes, described above.
-#. Enter the **path to a JSON file** (``str``) that corresponds to the
+4. Enter the **path to a JSON file** (``str``) that corresponds to the
    dictionary described above.
-
 
 Usage
 -----
 
-.. code:: python
+.. code:: ipython3
 
-    >>> from algebras import Group
-
-    >>> z3 = Group('Z3',
-                   'Cyclic group of order 3',
-                   [[ 'e' ,  'a' , 'a^2'],
-                    [ 'a' , 'a^2',  'e' ],
-                    ['a^2',  'e' ,  'a' ]]
-                   )
-
+    >>> import algebras as alg
+    
+    >>> z3 = alg.Group('Z3',
+                       'Cyclic group of order 3',
+                       [[ 'e' ,  'a' , 'a^2'],
+                        [ 'a' , 'a^2',  'e' ],
+                        ['a^2',  'e' ,  'a' ]]
+                      )
     >>> z3
+
+
+
+
+.. parsed-literal::
+
     Group('Z3',
     'Cyclic group of order 3',
     ['e', 'a', 'a^2'],
-    [[0, 1, 2], [1, 2, 0], [2, 0, 1]])
+    [[0, 1, 2], [1, 2, 0], [2, 0, 1]]) 
 
 
-Instantiation of a group defined in JSON format, contained in the algebras
-directory, is depicted below, and assumes that there is an environment
-variable, **PYPROJ**, that points to the directory containing the
-abstract_algebra directory.
 
-.. code:: python
+Instantiation of a group defined in JSON format, contained in the
+algebras directory, is depicted below, and assumes that there is an
+environment variable, **PYPROJ**, that points to the directory
+containing the abstract_algebra directory.
+
+.. code:: ipython3
 
     >>> import os
-
-    >>> aa_path = os.path.join(os.getenv('PYPROJ'), 'abstract_algebra')
-
+    
+    # Setup some useful path variables
+    >>> aa_path = os.path.join(os.getenv("PYPROJ"), "abstract_algebra")
     >>> alg_dir = os.path.join(aa_path, "Algebras")
-
+    
+    # Load a group from it's definition in a JSON file
     >>> v4_json = os.path.join(alg_dir, "v4_klein_4_group.json")
-
-    >>> v4 = Group(v4_json)
-
+    >>> v4 = alg.Group(v4_json)
     >>> v4
+
+
+
+
+.. parsed-literal::
+
     Group('V4',
     'Klein-4 group',
     ['e', 'h', 'v', 'hv'],
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
 
 
-Calling the pretty-print method, ``pprint``, with its single argument set to ``True`` will print the multiplication table using element names, rather than the positions of element names in the element name list:
 
-.. code:: python
+Calling the pretty-print method, ``pprint``, with its single argument
+set to ``True`` will print the multiplication table using element names,
+rather than the positions of element names in the element name list:
+
+.. code:: ipython3
 
     >>> v4.pprint(True)
+
+
+.. parsed-literal::
+
     Group('V4',
     'Klein-4 group',
     [['e', 'h', 'v', 'hv'],
@@ -121,100 +149,184 @@ Calling the pretty-print method, ``pprint``, with its single argument set to ``T
 
 Algebra elements can be *multiplied* using the Group method, ``mult``.
 
-.. code:: python
+.. code:: ipython3
 
     >>> v4.mult('h', 'v')
+
+
+
+
+.. parsed-literal::
+
     'hv'
 
+
+
+.. code:: ipython3
+
     >>> v4.mult('hv', 'v')
+
+
+
+
+.. parsed-literal::
+
     'h'
+
+
+
+.. code:: ipython3
 
     >>> v4.mult('v', 'hv')
+
+
+
+
+.. parsed-literal::
+
     'h'
 
 
-A group can be tested to determine if it's **abelian**:
 
-.. code:: python
+A group can be tested to determine if it’s **abelian**:
+
+.. code:: ipython3
 
     >>> v4.abelian()
+
+
+
+
+.. parsed-literal::
+
     True
+
 
 
 An elements inverse can be obtained using the ``inverse`` method:
 
-.. code:: python
+.. code:: ipython3
 
     >>> v4.inverse('hv')
+
+
+
+
+.. parsed-literal::
+
     'hv'
+
 
 
 A **cyclic group** of any order can be automatically generated:
 
-.. code:: python
+.. code:: ipython3
 
-    >>> from algebras import generate_cyclic_group
-
-    >>> z4 = generate_cyclic_group(4)
-
+    >>> z4 = alg.generate_cyclic_group(4)
     >>> z4
+
+
+
+
+.. parsed-literal::
+
     Group('Z4',
     'Autogenerated cyclic group of order 4',
     ['e', 'a', 'a^2', 'a^3'],
-    [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]])
+    [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]) 
 
 
-The **direct product** of two or more groups can be generated using Python's multiplication operator, ``*``:
 
-.. code:: python
+The **direct product** of two or more groups can be generated using
+Python’s multiplication operator, ``*``:
 
-    >>> z2 = generate_cyclic_group(2)
+.. code:: ipython3
 
+    >>> z2 = alg.generate_cyclic_group(2)
     >>> z2
+
+
+
+
+.. parsed-literal::
+
     Group('Z2',
     'Autogenerated cyclic group of order 2',
     ['e', 'a'],
-    [[0, 1], [1, 0]])
+    [[0, 1], [1, 0]]) 
+
+
+
+.. code:: ipython3
 
     >>> z2_x_z2 = z2 * z2
-
     >>> z2_x_z2
+
+
+
+
+.. parsed-literal::
+
     Group('Z2_x_Z2',
     'Direct product of Z2 & Z2',
     ['e:e', 'e:a', 'a:e', 'a:a'],
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
 
 
-If two groups are isomorphic, then the mapping between their elements is returned as a dictionary.
 
-.. code:: python
+If two groups are isomorphic, then the mapping between their elements is
+returned as a dictionary.
+
+.. code:: ipython3
 
     >>> v4.isomorphic(z2_x_z2)
+
+
+
+
+.. parsed-literal::
+
     {'h': 'e:a', 'v': 'a:e', 'hv': 'a:a', 'e': 'e:e'}
+
 
 
 If two groups are not isomorphic, then ``False`` is returned.
 
-.. code:: python
+.. code:: ipython3
 
     >>> z4.isomorphic(z2_x_z2)
+
+
+
+
+.. parsed-literal::
+
     False
 
 
-The proper subgroups of a group can also be computed.
-**WARNING** Currently, this returns *ALL* subgroups, even ones that are isomorphic to each other.
-This will be "fixed", soon, in a future release.
 
-.. code:: python
+The proper subgroups of a group can also be computed. **WARNING**
+Currently, this returns *ALL* subgroups, even ones that are isomorphic
+to each other. This will be “fixed”, soon, in a future release.
+
+.. code:: ipython3
 
     >>> z4.proper_subgroups()
+
+
+
+
+.. parsed-literal::
+
     [Group('Z4_subgroup_0',
-    'Subgroup of: Autogenerated cyclic group of order 4',
-    ['e', 'a^2'],
-    [[0, 1], [1, 0]]) ]
+     'Subgroup of: Autogenerated cyclic group of order 4',
+     ['e', 'a^2'],
+     [[0, 1], [1, 0]]) ]
+
+
 
 Autogeneration of Groups
-^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-Aliquam convallis, magna id accumsan fermentum, felis eros volutpat est, ac tempor felis tortor a sapien. Duis vel nunc quis dui venenatis euismod in eget urna. Nulla id felis consequat, finibus nulla eu, consectetur sem. Suspendisse consectetur sapien porta dui interdum ullamcorper. Nam quis finibus ligula, non faucibus elit. Maecenas vitae euismod arcu, et luctus orci. Quisque ac auctor sapien, sit amet sodales libero. Aliquam varius libero sem. Maecenas lacinia placerat efficitur. Donec et tortor et lectus volutpat lacinia. Maecenas pretium massa in tristique sollicitudin. Phasellus eget magna et lorem dignissim ullamcorper in id nulla.
+TBD
 

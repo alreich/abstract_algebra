@@ -884,11 +884,96 @@ def generate_powerset_group(n, name=None, description=None):
     return Group(nm, desc, sets_as_tuples, table)
 
 
-# TODO: Implement rings
+def powerset_mult_table(n):
+    """Return the multiplication table for the powerset of {0, 1, 2, ..., n-1},
+    where intersection is the multiplication operation."""
+    set_of_n = set(list(range(n)))
+    pset = [set(x) for x in list(powerset(set_of_n))]
+    return [[pset.index(a & b) for b in pset] for a in pset]
+
 
 class Ring(Group):
-    """TBD"""
-    pass
+
+    def __init__(self, *args):
+
+        if len(args) == 5:
+            super().__init__(*args[:4])
+
+        self.rmult_table = np.array(args[4], dtype=np.int64)
+
+        # TODO: Check that this is an abelian group
+        # TODO: Check that distributivity holds true
+
+    def add(self, *args):
+        """Use the parent's (group) mult. operation as the ring's addition operator."""
+        return super().mult(*args)
+
+    def rmult(self, *args):
+        """The ring's multiplication operation."""
+        # If no args, return the identity
+        if len(args) == 0:
+            return self.element_names[0]
+        # If one arg, and it's a valid element name, then just return it
+        elif len(args) == 1:
+            if args[0] in self.element_names:
+                return args[0]
+            else:
+                raise ValueError(f"{args[0]} is not a valid Group element name")
+        # If two args, then look up their sum in the multiplication table
+        elif len(args) == 2:
+            row = self.element_names.index(args[0])
+            col = self.element_names.index(args[1])
+            index = self.rmult_table[row, col]
+            return self.element_names[index]
+        # If more than two args, then multiply them all together
+        else:
+            return fnc.reduce(lambda a, b: self.rmult(a, b), args)
+
+    def identity_element(self):
+        """If it exists, find the identity element for the given operation, op."""
+        result = None
+        for x in self:
+            xy = [self.rmult(x, y) for y in self]
+            if xy == self.element_names:
+                result = x
+        return result
+
+    def is_distributive(self, verbose=False):
+        """Check that a(b + c) = ab + ac for all elements, a, b, and c, in the Ring, rng."""
+        result = True
+        for a in self:
+            for b in self:
+                for c in self:
+                    b_plus_c = self.add(b, c)
+                    ab = self.rmult(a, b)
+                    ac = self.rmult(a, c)
+                    if self.rmult(a, b_plus_c) != self.add(ab, ac):
+                        if verbose:
+                            print(f"a = {a}; b = {b}; c = {c}")
+                            print(f"{a} x {b_plus_c} != {ab} + {ac}")
+                        result = False
+                        break
+        return result
+
+    def rmult_table_with_names(self):
+        return [[self.element_names[elem_pos]
+                 for elem_pos in row]
+                for row in self.rmult_table]
+
+    def pprint(self, use_element_names=False):
+        print(f"{self.__class__.__name__}('{self.name}',")
+        print(f"'{self.description}',")
+        if use_element_names:
+            pp.pprint(self.mult_table_with_names())
+            pp.pprint(self.rmult_table_with_names())
+        else:
+            print(f"{self.element_names},")
+            print("")
+            pp.pprint(self.mult_table.tolist())
+            print("")
+            pp.pprint(self.rmult_table.tolist())
+        print(")")
+        return None
 
 
 # TODO: Implement fields

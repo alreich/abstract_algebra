@@ -18,6 +18,8 @@ Group Generators
 .. autofunction:: algebras.generate_cyclic_group
 .. autofunction:: algebras.generate_symmetric_group
 .. autofunction:: algebras.generate_powerset_group
+.. autofunction:: algebras.powerset
+.. autofunction:: algebras.powerset_mult_table
 
 Permutation
 -----------
@@ -31,7 +33,11 @@ Permutation
 Ring
 ----
 
-.. TBD
+.. autoclass:: algebras.Ring
+    :members:
+    :special-members:
+    :undoc-members:
+    :private-members:
 
 
 Field

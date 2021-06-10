@@ -19,8 +19,8 @@ Add the *abstract_algebra* directory to your *PYTHONPATH*.
 Note: In the examples, below, an environment variable, *PYPROJ*, points
 to the directory containing the *abstract_algebra* directory.
 
-Internal Representation of a Group
-----------------------------------
+Internal Representations
+------------------------
 
 Internally, the (finite) Group object consists of four quantities:
 
@@ -45,10 +45,12 @@ Internally, the (finite) Group object consists of four quantities:
    -  Every row and column should contain the same integers, in a
       different order, so that no row or column contains the same
       integer twice.
-   -  Capable of supporting associativity of the multiplication operator
+   -  Capable of supporting associativity of the multiplication operator.
+      Support for associativity is checked automatically by the Group
+      constructor.
 
-Group Constuction
------------------
+Group Construction
+------------------
 
 A Group object can be instantiated in several ways:
 
@@ -56,14 +58,16 @@ A Group object can be instantiated in several ways:
    above, in the order shown above.
 2. Enter **three values** corresponding to ``name``, ``description``,
    and ``mult_table``, where ``mult_table`` uses element names (``str``)
-   instead of ``int`` positions. The string-based ``mult_table`` must
-   follow rules, similar to those described above:
+   instead of ``int`` positions. The element_names list is omitted.
+   The string-based ``mult_table`` must follow rules, similar to those
+   described above:
 
-   -  The identity element comes first in the first row and first
-      column;
-   -  The order of names in the first row and first column should be
-      identical;
-   -  No row or column contains the same element name twice.
+   - The identity element comes first in the first row and first
+     column;
+   - The order of names in the first row and first column should be
+     identical;
+   - No row or column contains the same element name twice.
+   - Support for associativity is checked automatically.
 
 3. Enter a **Python dictionary**, with keys and values corresponding to
    either the four value or three value input schemes, described above.

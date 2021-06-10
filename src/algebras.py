@@ -513,11 +513,14 @@ class Group:
     def isomorphic(self, other):
         """If there is a mapping from elements of this group to the other group's elements,
         return it; otherwise return False."""
-        maps = self.element_mappings(other)
-        for mp in maps:
-            if self.isomorphic_mapping(other, mp):
-                return mp
-        return False
+        if self.order == other.order:
+            maps = self.element_mappings(other)
+            for mp in maps:
+                if self.isomorphic_mapping(other, mp):
+                    return mp
+            return False
+        else:
+            return False
 
 
 # Group Generators

@@ -1,13 +1,13 @@
 Abstract Algebras
 =================
 
-This Python module is a work-in-progress. Currently it contains a representation of **finite groups**,
-along with related functionality, such as:
+This Python module is a work-in-progress. Currently it contains a representation of **finite algebras**,
+specifically, groups, rings, and fields, along with related functionality, such as:
 
  * derivation of *proper subgroups* of a group;
  * construction of direct products of two or more groups;
  * determination of whether two groups are *isomorphic*, including the mapping, if they are;
- * automatic generation of cyclic & symmetric groups of any order.
+ * automatic generation of cyclic, symmetric, and powerset groups of any order.
 
 Internally, the (finite) Group object consists of four quantities:
 

@@ -385,27 +385,54 @@ class Group:
                               list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_mult_table)
 
-    def print_info(self, max_size=12, prefix='  '):
-        """Pretty print information about the Group."""
-        print(f"\n{self.__class__.__name__} : {self.name} : {self.description}")
-        print(f"{prefix}Element Names: {self.element_names}")
-        print(f"{prefix}Is Abelian? {self.abelian()}")
-        # Don't calculate/print the following info if the Group is greater than max_size
-        print(f"{prefix}Inverses:  (** - indicates that it is its own inverse)")
-        for elem in self.element_names:
-            footnote = ''
+    # def about(self, max_size=12, prefix='  ', use_table_names=True):
+    #     """Pretty print information about the Group."""
+    #     print(f"\n{self.__class__.__name__} : {self.name} : {self.description}")
+    #     print(f"{prefix}Element Names: {self.element_names}")
+    #     print(f"{prefix}Is Abelian? {self.abelian()}")
+    #     # Don't calculate/print the following info if the Group is greater than max_size
+    #     print(f"{prefix}Inverses:  (** - indicates that it is its own inverse)")
+    #     for elem in self.element_names:
+    #         footnote = ''
+    #         inv_elem = self.inverse(elem)
+    #         if elem == inv_elem:
+    #             footnote = '  **'
+    #         print(f"{prefix}  inv({elem}) = {self.inverse(elem)} {footnote}")
+    #     print(f"Element Orders:")
+    #     pp.pprint(self.element_orders(True), indent=2)
+    #     size = len(self.element_names)
+    #     if size <= max_size:
+    #         # print(f"{prefix}Is associative? {self.associative()}")
+    #         # self.pretty_print_mult_table(prefix=prefix)
+    #         if use_table_names:
+    #             print(f"{prefix}Cayley Table (using element names):")
+    #             pp.pprint(self.mult_table_with_names())
+    #         else:
+    #             print(f"{prefix}Cayley Table (using element indices):")
+    #             pp.pprint(self.mult_table.tolist())
+    #     else:
+    #         print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+
+    def about(self, max_size=12, use_table_names=False):
+        """Print information about the Group."""
+        print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
+        print(f"Abelian? {self.abelian()}")
+        spc = 7
+        print("Elements:")
+        print("   Index   Name   Inverse  Order")
+        for elem in self:
+            idx_elem = self.element_names.index(elem)
             inv_elem = self.inverse(elem)
-            if elem == inv_elem:
-                footnote = '  **'
-            print(f"{prefix}  inv({elem}) = {self.inverse(elem)} {footnote}")
-        print(f"Element Orders:")
-        pp.pprint(self.element_orders(True), indent=2)
+            ord_elem = self.element_order(elem)
+            print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
         size = len(self.element_names)
         if size <= max_size:
-            print(f"{prefix}Is associative? {self.associative()}")
-            print(f"{prefix}Cayley Table:")
-            # self.pretty_print_mult_table(prefix=prefix)
-            pp.pprint(self.mult_table_with_names())
+            if use_table_names:
+                print(f"Cayley Table (showing names):")
+                pp.pprint(self.mult_table_with_names())
+            else:
+                print(f"Cayley Table (showing indices):")
+                pp.pprint(self.mult_table.tolist())
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
@@ -1080,7 +1107,7 @@ if __name__ == '__main__':
 
     # Show info for each algebra in the list
     for grp in algebras:
-        grp.print_info()
+        grp.about()
 
     print("\n------------")
     print("END OF TESTS")

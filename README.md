@@ -401,9 +401,8 @@ z7.pprint()
 
 ## Print Information about a Group
 
-
 ```python
-z7.print_info()
+z7.about()
 ```
 
     

@@ -276,9 +276,8 @@ v4.abelian()
 
 ## Check if Associative
 
-
 ```python
-v4.associative()
+v4.is_associative()
 ```
 
 
@@ -419,7 +418,7 @@ z7.about()
         inv(a^6) = a 
     Element Orders:
     {1: ['e'], 7: ['a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6']}
-      Is associative? True
+      Is is_associative? True
       Cayley Table:
     [['e', 'a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6'],
      ['a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6', 'e'],

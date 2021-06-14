@@ -141,7 +141,6 @@ class Group:
         desc = self.description
         elems = self.element_names
         tbl = self.mult_table
-        # return f"{self.__class__.__name__}('{nm}', '{desc}', {elems}, {tbl}) "
         return f"{self.__class__.__name__}('{nm}',\n'{desc}',\n{elems},\n{tbl.tolist()}) "
 
     def __len__(self):
@@ -257,6 +256,7 @@ class Group:
 
     def __make_inverse_lookup_dict(self):
         """(Private Method) Return a dictionary of element names and their inverse names."""
+        # A 0 index in the mult_table means that the row and col. are inverses
         row_indices, col_indices = np.where(self.mult_table == 0)
         return {self.element_names[elem_index]: self.element_names[elem_inv_index]
                 for (elem_index, elem_inv_index)
@@ -342,31 +342,9 @@ class Group:
         print(")")
         return None
 
-    # def pretty_print_mult_table(self, delimiter=' ', prefix=''):
-    #     """Print the multiplication table (Cayley table) using element names."""
-    #     field_size = 1 + len(max(self.element_names, key=len))  # 1 + Longest Name Length
-    #     for row_index in self.mult_table[:, 0]:  # row index from first column
-    #         row_string = f"{prefix}"
-    #         for col_index in self.mult_table[0]:  # column index from first row
-    #             prod_index = self.mult_table[row_index, col_index]
-    #             prod_name = self.element_names[prod_index]
-    #             row_string += delimiter + f"{prod_name :>{field_size}}"
-    #         print(row_string)
-
-    # def associative(self):
-    #     """A brute force test of associativity.  Returns True if the Group is associative."""
-    #     result = True
-    #     for a in self.element_names:
-    #         for b in self.element_names:
-    #             for c in self.element_names:
-    #                 if not (self.mult(self.mult(a, b), c) == self.mult(a, self.mult(b, c))):
-    #                     result = False
-    #                     break
-    #     return result
-
-    def associative(self):
-        """A brute force test of associativity.  Returns True if the Group is associative."""
-        return associative_table(self.mult_table)
+    def is_associative(self):
+        """A brute force test of associativity.  Returns True if the Group is is_associative."""
+        return is_table_associative(self.mult_table)
 
     # Direct Product Definition
     def __mul__(self, other):
@@ -384,34 +362,6 @@ class Group:
                               dp_description,
                               list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_mult_table)
-
-    # def about(self, max_size=12, prefix='  ', use_table_names=True):
-    #     """Pretty print information about the Group."""
-    #     print(f"\n{self.__class__.__name__} : {self.name} : {self.description}")
-    #     print(f"{prefix}Element Names: {self.element_names}")
-    #     print(f"{prefix}Is Abelian? {self.abelian()}")
-    #     # Don't calculate/print the following info if the Group is greater than max_size
-    #     print(f"{prefix}Inverses:  (** - indicates that it is its own inverse)")
-    #     for elem in self.element_names:
-    #         footnote = ''
-    #         inv_elem = self.inverse(elem)
-    #         if elem == inv_elem:
-    #             footnote = '  **'
-    #         print(f"{prefix}  inv({elem}) = {self.inverse(elem)} {footnote}")
-    #     print(f"Element Orders:")
-    #     pp.pprint(self.element_orders(True), indent=2)
-    #     size = len(self.element_names)
-    #     if size <= max_size:
-    #         # print(f"{prefix}Is associative? {self.associative()}")
-    #         # self.pretty_print_mult_table(prefix=prefix)
-    #         if use_table_names:
-    #             print(f"{prefix}Cayley Table (using element names):")
-    #             pp.pprint(self.mult_table_with_names())
-    #         else:
-    #             print(f"{prefix}Cayley Table (using element indices):")
-    #             pp.pprint(self.mult_table.tolist())
-    #     else:
-    #         print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Group."""
@@ -609,7 +559,6 @@ def check_inputs(element_names, mult_table):
     This function is used by the Group constructor."""
 
     # Check for duplicate element names
-    # element_set = set(element_names)
     dups = duplicates(element_names)
     if len(dups) == 0:
         pass
@@ -648,10 +597,10 @@ def check_inputs(element_names, mult_table):
             raise ValueError(f"Column {col_number} does not contain the correct values")
 
     # Check that the table supports associativity for multiplication
-    if associative_table(mult_table):
+    if is_table_associative(mult_table):
         pass
     else:
-        raise ValueError("Multiplication table is not associative.")
+        raise ValueError("Multiplication table is not is_associative.")
 
     return True
 
@@ -664,14 +613,6 @@ def index_table_from_name_table(name_table):
     This function is used by the Group constructor."""
     top_row = name_table[0]
     return [[top_row.index(elem_name) for elem_name in row] for row in name_table]
-
-
-# def values_in_order(seq):
-#     starts_with_zero = (seq[0] == 0)
-#     print(f"Starts with zero? {starts_with_zero}")
-#     increasing_by_one = all([((seq[i + 1] - seq[i]) == 1) for i in range(len(seq) - 1)])
-#     print(f"Increasing by one? {increasing_by_one}")
-#     return starts_with_zero and increasing_by_one
 
 
 def make_table(table_string):
@@ -705,23 +646,13 @@ def _filter_out_conflicts(perms, perm, n):
     return [p for p in nperms if _no_conflict(p, perm)]
 
 
-# def generate_all_group_tables(order):
-#     """Return a list of all arrays that correspond to multiplication tables for groups of a specific order """
-#     row0 = list(range(order))
-#     row_candidates = [[row0]]
-#     for row_num in range(1, order):
-#         row_candidates.append(_filter_out_conflicts(permutations(row0), row0, row_num))
-#     table_candidates = list(product(*row_candidates))
-#     return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
-
-
 def generate_all_group_tables(order):
     """Return a list of all arrays that correspond to multiplication tables for groups of a specific order """
     row0 = list(range(order))
     row_candidates = [[row0]]
     for row_num in range(1, order):
         row_candidates.append(_filter_out_conflicts(it.permutations(row0), row0, row_num))
-    table_candidates = [cand for cand in it.product(*row_candidates) if associative_table(cand)]
+    table_candidates = [cand for cand in it.product(*row_candidates) if is_table_associative(cand)]
     return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
 
 
@@ -737,7 +668,7 @@ def tables_to_groups(tables, identity_name="e", elem_name="a"):
     return groups
 
 
-def associative_table(table):
+def is_table_associative(table):
     """A brute force test of whether a table supports associativity.
     Returns True if the table does support associativity."""
     result = True

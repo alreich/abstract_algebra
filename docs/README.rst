@@ -1,126 +1,167 @@
-Abstract Algebras
-=================
+Abstract Algebra
+================
 
-This Python module is a work-in-progress. Currently it contains a representation of **finite algebras**,
-specifically, groups, rings, and fields, along with related functionality, such as:
+An experimental implementation of finite groups.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
- * derivation of *proper subgroups* of a group;
- * construction of direct products of two or more groups;
- * determination of whether two groups are *isomorphic*, including the mapping, if they are;
- * automatic generation of cyclic, symmetric, and powerset groups of any order.
+For API documentation see:
+https://abstract-algebra.readthedocs.io/en/latest/index.html
 
-Internally, the (finite) Group object consists of four quantities:
+.. code:: ipython3
 
-* **name**: (``str``) A short name for the Group;
-* **description**: (``str``) Any additional, useful information about the Group;
-* **element_names**: (``list`` of ``str``) The Group’s element names, where the
-  first element in the list is the Group’s identity element (usually denoted by ``e``);
-* **mult_table**: (``list`` of ``list`` of ``int``) The Group’s multiplication
-  table, where each list in the list represents a row of the table, and
-  each integer represents the position of an element in ‘element_names’.
-  The table must be:
+    import algebras as alg
+    import json
+    import os
 
-  * Square. The row & column length equal the number of elements, say, n;
-  * The first row and first column should be the [0, 1, 2, …, n-1], in that exact order;
-  * Every row and column should contain the same integers, in a different order,
-    so that no row or column contains the same integer twice.
-  * Capable of supporting associativity of the multiplication operator
+.. code:: ipython3
 
-A Group object can be instantiated in several ways:
+    # Path to this repo
+    aa_path = os.path.join(os.getenv('PYPROJ'), 'abstract_algebra')
+    
+    # Path to a directory containing Algebra definitions in JSON
+    alg_dir = os.path.join(aa_path, "Algebras")
 
-#. Enter **four values** corresponding to the quantities described above, in
-   the order shown above.
-#. Enter **three values** corresponding to ``name``, ``description``, and ``mult_table``,
-   where ``mult_table`` uses element names (``str``) instead of ``int`` positions.
-   The string-based ``mult_table`` must follow rules, similar to those described
-   above:
+Groups
+------
 
-   * The identity element comes first in the first row and first column;
-   * The order of names in the first row and first column should be identical;
-   * No row or column contains the same element name twice.
+Store Group in JSON format
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#. Enter a **Python dictionary**, with keys and values corresponding to
-   either the four value or three value input schemes, described above.
-#. Enter the **path to a JSON file** (``str``) that corresponds to the
-   dictionary described above.
+-  The mult_table must reference group elements according to their index
+   (position) in the element_names list.
+-  0 must always refer to the identity element.
+-  The first row and first column must be the integers in order, (0, 1,
+   2, …, n-1), where n is the number of elements
+
+.. code:: ipython3
+
+    # Path to a JSON file that defines the group V4
+    v4_json = os.path.join(alg_dir, "v4_klein_4_group.json")
+    
+    !cat {v4_json}
 
 
-Links
------
+.. parsed-literal::
 
-- GitHub: https://github.com/alreich/abstract_algebra
-- Documentation: https://abstract-algebra.readthedocs.io
-
-
-Installation
-------------
-
-This module runs under Python 3.7+ and requires **numpy**.
-
-Clone the github repository to install:
-
-.. code:: bash
-
-    $ git clone https://github.com/alreich/abstract_algebra.git
+    {"type": "Group",
+     "name": "V4",
+     "description": "Klein-4 group",
+     "element_names": ["e", "h", "v", "hv"],
+     "mult_table": [[0, 1, 2, 3],
+                    [1, 0, 3, 2],
+                    [2, 3, 0, 1],
+                    [3, 2, 1, 0]]
+    }
 
 
-Add the *abstract_algebra* directory to your **PYTHONPATH**.
+Read JSON Definition to Instantiate a Group Object
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you want to use any of the pre-built groups in this module (in the **Algebras** directory) it is
-suggested that you define an environment variable (e.g., **PYPROJ**) that points to the directory
-containing the *abstract_algebra* directory. An example of how this is useful is depicted farther below.
+.. code:: ipython3
 
-
-Quick Overview
---------------
-
-.. code:: python
-
-    >>> import os
-
-    >>> from algebras import Group
-
-    >>> z3 = Group('Z3',
-                   'Cyclic group of order 3',
-                   [[ 'e' ,  'a' , 'a^2'],
-                    [ 'a' , 'a^2',  'e' ],
-                    ['a^2',  'e' ,  'a' ]]
-                   )
-
-    >>> z3
-    Group('Z3',
-    'Cyclic group of order 3',
-    ['e', 'a', 'a^2'],
-    [[0, 1, 2], [1, 2, 0], [2, 0, 1]]) 
+    v4 = alg.Group(v4_json)
+    v4
 
 
-Instantiation of a group defined in JSON format, contained in the algebras
-directory, is depicted below, and assumes that there is an environment
-variable, **PYPROJ**, that points to the directory containing the
-abstract_algebra directory.
 
-.. code:: python
 
-    >>> aa_path = os.path.join(os.getenv('PYPROJ'), 'abstract_algebra')
+.. parsed-literal::
 
-    >>> alg_dir = os.path.join(aa_path, "Algebras")
-
-    >>> v4_json = os.path.join(alg_dir, "v4_klein_4_group.json")
-
-    >>> v4 = Group(v4_json)
-
-    >>> v4
     Group('V4',
     'Klein-4 group',
     ['e', 'h', 'v', 'hv'],
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
 
 
-Calling the pretty-print method, ``pprint``, with its single argument set to ``True`` will print the multiplication table using element names, rather than the positions of element names in the element name list:
 
-.. code:: python
+The group can also be created using the Group constuctor.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    >>> v4.pprint(True)
+.. code:: ipython3
+
+    alg.Group('V4',
+              'Another way to construct V4',
+              ['e',  'h',  'v', 'hv'],
+              [[0, 1, 2, 3],
+               [1, 0, 3, 2],
+               [2, 3, 0, 1],
+               [3, 2, 1, 0]]
+             )
+
+
+
+
+.. parsed-literal::
+
+    Group('V4',
+    'Another way to construct V4',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
+
+
+
+And the group can be created from a Python dictionary:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    v4_dict = {'type': 'Group',
+               'name': 'V4',
+               'description': 'Yet another way to define V4',
+               'element_names': ['e', 'h', 'v', 'hv'],
+               'mult_table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
+    
+    alg.Group(v4_dict)
+
+
+
+
+.. parsed-literal::
+
+    Group('V4',
+    'Yet another way to define V4',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
+
+
+
+For other ways to create groups, see the Jupyter Notebook,
+ways_to_create_a_group.
+
+Pretty Printing a Group
+~~~~~~~~~~~~~~~~~~~~~~~
+
+A group can be pretty printed in two ways:
+
+The default way prints the table as it is represented internally using
+element indices.
+
+.. code:: ipython3
+
+    v4.pprint()
+
+
+.. parsed-literal::
+
+    Group('V4',
+    'Klein-4 group',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
+    )
+
+
+Or it can be printed using element names in the multiplication table.
+
+Note that, here, the element names list is omitted, since it is
+redundant to the first row of the table.
+
+.. code:: ipython3
+
+    v4.pprint(True)
+
+
+.. parsed-literal::
+
     Group('V4',
     'Klein-4 group',
     [['e', 'h', 'v', 'hv'],
@@ -130,119 +171,383 @@ Calling the pretty-print method, ``pprint``, with its single argument set to ``T
     )
 
 
-Algebra elements can be *multiplied* using the Group method, ``mult``.
+In either of the methods, above, the printed output can be evaluated to
+create a duplicate of the group.
 
-.. code:: python
+For example, copying the printout immediately above we obtain the
+following:
 
-    >>> v4.mult('h', 'v')
+.. code:: ipython3
+
+    alg.Group('V4',
+    'Klein-4 group',
+    [['e', 'h', 'v', 'hv'],
+     ['h', 'e', 'hv', 'v'],
+     ['v', 'hv', 'e', 'h'],
+     ['hv', 'v', 'h', 'e']]
+    )
+
+
+
+
+.. parsed-literal::
+
+    Group('V4',
+    'Klein-4 group',
+    ['e', 'h', 'v', 'hv'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
+
+
+
+Multiply Group Elements
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Group multiplication operation takes zero or more arguments and returns
+the product according to the group’s multiplication table (mult_table).
+
+If no argument is provided, then the group’s identity element is returned
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    v4.mult()
+
+
+
+
+.. parsed-literal::
+
+    'e'
+
+
+
+If one argument is provided, then that argument is returned, assuming it’s a valid element name.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    v4.mult('h')
+
+
+
+
+.. parsed-literal::
+
+    'h'
+
+
+
+If the one argument is not a valid element name, then an exception is raised.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    try:
+        v4.mult('FOO')
+    except ValueError as err:
+        print("Caught Error:")
+        print(f"  {err}")
+
+
+.. parsed-literal::
+
+    Caught Error:
+      FOO is not a valid Group element name
+
+
+If two or more arguments are provided, then their combined product is returned:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: ipython3
+
+    v4.mult('h','v')  # h * v
+
+
+
+
+.. parsed-literal::
+
     'hv'
 
-    >>> v4.mult('hv', 'v')
+
+
+.. code:: ipython3
+
+    v4.mult('h', 'v', 'hv')  # h * v * hv
+
+
+
+
+.. parsed-literal::
+
+    'e'
+
+
+
+Inverse Elements
+~~~~~~~~~~~~~~~~
+
+.. code:: ipython3
+
+    v4.inverse('h')
+
+
+
+
+.. parsed-literal::
+
     'h'
 
-    >>> v4.mult('v', 'hv')
-    'h'
 
 
-A group can be tested to determine if it's **abelian**:
+That is, :math:`h * h^{-1} = e`
 
-.. code:: python
+.. code:: ipython3
 
-    >>> v4.abelian()
+    v4.mult('h', v4.inverse('h'))
+
+
+
+
+.. parsed-literal::
+
+    'e'
+
+
+
+Check if Abelian
+~~~~~~~~~~~~~~~~
+
+.. code:: ipython3
+
+    v4.abelian()
+
+
+
+
+.. parsed-literal::
+
     True
 
 
-An elements inverse can be obtained using the ``inverse`` method:
 
-.. code:: python
+Check if Associative
+~~~~~~~~~~~~~~~~~~~~
 
-    >>> v4.inverse('hv')
-    'hv'
+NOTE: A group must be is_associative, so this check is done
+automatically when a group object is instantiated.
 
+.. code:: ipython3
 
-A **cyclic group** of any order can be automatically generated:
-
-.. code:: python
-
-    >>> from algebras import generate_cyclic_group
-
-    >>> z4 = generate_cyclic_group(4)
-
-    >>> z4
-    Group('Z4',
-    'Autogenerated cyclic group of order 4',
-    ['e', 'a', 'a^2', 'a^3'],
-    [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]) 
+    v4.is_associative()
 
 
-The **direct product** of two or more groups can be generated using Python's multiplication operator, ``*``:
-
-.. code:: python
-
-    >>> z2 = generate_cyclic_group(2)
-
-    >>> z2
-    Group('Z2',
-    'Autogenerated cyclic group of order 2',
-    ['e', 'a'],
-    [[0, 1], [1, 0]])
-
-    >>> z2_x_z2 = z2 * z2
-
-    >>> z2_x_z2
-    Group('Z2_x_Z2',
-    'Direct product of Z2 & Z2',
-    ['e:e', 'e:a', 'a:e', 'a:a'],
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
 
 
-If two groups are isomorphic, then the mapping between their elements is returned as a dictionary.
+.. parsed-literal::
 
-.. code:: python
-
-    >>> v4.isomorphic(z2_x_z2)
-    {'h': 'e:a', 'v': 'a:e', 'hv': 'a:a', 'e': 'e:e'}
+    True
 
 
-If two groups are not isomorphic, then ``False`` is returned.
 
-.. code:: python
+Group Generators
+~~~~~~~~~~~~~~~~
 
-    >>> z4.isomorphic(z2_x_z2)
-    False
+For now, there is only one group generator, for cyclic groups of any
+finite order:
 
+.. code:: ipython3
 
-The proper subgroups of a group can also be computed.
-**WARNING** Currently, this returns *ALL* subgroups, even ones that are isomorphic to each other.
-This will be "fixed", soon, in a future release.
-
-.. code:: python
-
-    >>> z4.proper_subgroups()
-    [Group('Z4_subgroup_0',
-    'Subgroup of: Autogenerated cyclic group of order 4',
-    ['e', 'a^2'],
-    [[0, 1], [1, 0]]) ]
+    z7 = alg.generate_cyclic_group(7)
+    z7.pprint()
 
 
-Further study
--------------
+.. parsed-literal::
+
+    Group('Z7',
+    'Autogenerated cyclic group of order 7',
+    ['e', 'a', 'a^2', 'a^3', 'a^4', 'a^5', 'a^6'],
+    [[0, 1, 2, 3, 4, 5, 6],
+     [1, 2, 3, 4, 5, 6, 0],
+     [2, 3, 4, 5, 6, 0, 1],
+     [3, 4, 5, 6, 0, 1, 2],
+     [4, 5, 6, 0, 1, 2, 3],
+     [5, 6, 0, 1, 2, 3, 4],
+     [6, 0, 1, 2, 3, 4, 5]]
+    )
 
 
-- Video: `"Abstract Algebra" <https://youtube.com/playlist?list=PLi01XoE8jYoi3SgnnGorR_XOW3IcK-TP6>`_
-  by Socratica on YouTube
+Derive Direct Product
+~~~~~~~~~~~~~~~~~~~~~
 
-- `"Visual Group Theory" (Book) <https://bookstore.ams.org/clrm-32>`_  by Nathan Carter
+.. code:: ipython3
 
-- `"Visual Group Theory" (Video) <https://youtube.com/playlist?list=PLwV-9DG53NDxU337smpTwm6sef4x-SCLv>`_
-  by Professor Macauley on YouTube (uses Carter's book, but "supplemented with content and rigor" for an
-  undergraduate audience)
-
-- `Group Explorer <https://nathancarter.github.io/group-explorer/index.html>`_ \-- Visualization
-  software for the abstract algebra classroom
+    v4.direct_product_delimiter('-')  # Default delimiter is ':'
+    v4_x_v4 = v4 * v4
+    v4_x_v4.pprint()
 
 
-License
--------
+.. parsed-literal::
 
-*abstract_algebras* is distributed under the `MIT license`.
+    Group('V4_x_V4',
+    'Direct product of V4 & V4',
+    ['e-e', 'e-h', 'e-v', 'e-hv', 'h-e', 'h-h', 'h-v', 'h-hv', 'v-e', 'v-h', 'v-v', 'v-hv', 'hv-e', 'hv-h', 'hv-v', 'hv-hv'],
+    [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+     [1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14],
+     [2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13],
+     [3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12],
+     [4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11],
+     [5, 4, 7, 6, 1, 0, 3, 2, 13, 12, 15, 14, 9, 8, 11, 10],
+     [6, 7, 4, 5, 2, 3, 0, 1, 14, 15, 12, 13, 10, 11, 8, 9],
+     [7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8],
+     [8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7],
+     [9, 8, 11, 10, 13, 12, 15, 14, 1, 0, 3, 2, 5, 4, 7, 6],
+     [10, 11, 8, 9, 14, 15, 12, 13, 2, 3, 0, 1, 6, 7, 4, 5],
+     [11, 10, 9, 8, 15, 14, 13, 12, 3, 2, 1, 0, 7, 6, 5, 4],
+     [12, 13, 14, 15, 8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3],
+     [13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2],
+     [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1],
+     [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+    )
+
+
+Convert to Dictionary or JSON string
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: ipython3
+
+    v4.to_dict()
+
+
+
+
+.. parsed-literal::
+
+    {'type': 'Group',
+     'name': 'V4',
+     'description': 'Klein-4 group',
+     'element_names': ['e', 'h', 'v', 'hv'],
+     'mult_table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
+
+
+
+.. code:: ipython3
+
+    v4.dumps()
+
+
+
+
+.. parsed-literal::
+
+    '{"type": "Group", "name": "V4", "description": "Klein-4 group", "element_names": ["e", "h", "v", "hv"], "mult_table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
+
+
+
+Proper Subgroups
+~~~~~~~~~~~~~~~~
+
+.. code:: ipython3
+
+    subs = v4.proper_subgroups()
+    
+    for sub in subs:
+        sub.pprint()
+
+
+.. parsed-literal::
+
+    Group('V4_subgroup_0',
+    'Subgroup of: Klein-4 group',
+    ['e', 'v'],
+    [[0, 1], [1, 0]]
+    )
+    Group('V4_subgroup_1',
+    'Subgroup of: Klein-4 group',
+    ['e', 'h'],
+    [[0, 1], [1, 0]]
+    )
+    Group('V4_subgroup_2',
+    'Subgroup of: Klein-4 group',
+    ['e', 'hv'],
+    [[0, 1], [1, 0]]
+    )
+
+
+Print Information about a Group
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: ipython3
+
+    z7.about()
+
+
+.. parsed-literal::
+
+    
+    Group: Z7
+    Autogenerated cyclic group of order 7
+    Abelian? True
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1       a     a^6       7
+          2     a^2     a^5       7
+          3     a^3     a^4       7
+          4     a^4     a^3       7
+          5     a^5     a^2       7
+          6     a^6       a       7
+    Cayley Table (showing indices):
+    [[0, 1, 2, 3, 4, 5, 6],
+     [1, 2, 3, 4, 5, 6, 0],
+     [2, 3, 4, 5, 6, 0, 1],
+     [3, 4, 5, 6, 0, 1, 2],
+     [4, 5, 6, 0, 1, 2, 3],
+     [5, 6, 0, 1, 2, 3, 4],
+     [6, 0, 1, 2, 3, 4, 5]]
+
+
+Resources
+~~~~~~~~~
+
+-  Book: `“Visual Group Theory” by Nathan
+   Carter <https://bookstore.ams.org/clrm-32>`__
+-  `Group
+   Explorer <https://nathancarter.github.io/group-explorer/index.html>`__
+   – Visualization software for the abstract algebra classroom
+-  `Groupprops, The Group Properties Wiki
+   (beta) <https://groupprops.subwiki.org/wiki/Main_Page>`__
+-  `GroupNames <https://people.maths.bris.ac.uk/~matyd/GroupNames/index.html>`__
+   – “A database, under construction, of names, extensions, properties
+   and character tables of finite groups of small order.”
+-  `GAP <https://www.gap-system.org/#:~:text=What%20is%20GAP%3F,data%20libraries%20of%20algebraic%20objects.>`__
+   – “Groups, Algorithms, Programming - a System for Computational
+   Discrete Algebra”
+-  `Groups of small
+   order <http://www.math.ucsd.edu/~atparris/small_groups.html>`__:
+   Compiled by John Pedersen, Dept of Mathematics, University of South
+   Florida
+-  `List of small
+   groups <https://en.wikipedia.org/wiki/List_of_small_groups>`__:
+   Finite groups of small order up to group isomorphism
+-  `Classification of Groups of Order n ≤ 8
+   (PDF) <http://www2.lawrence.edu/fast/corrys/Math300/8Groups.pdf>`__
+-  `Subgroups of Order 4
+   (PDF) <http://newton.uor.edu/facultyfolder/beery/abstract_algebra/08_SbgrpsOrder4.pdf>`__
+-  Klein four-group, V4
+
+   -  `Wikipedia <https://en.wikipedia.org/wiki/Klein_four-group>`__
+   -  `Group
+      Explorer <https://github.com/nathancarter/group-explorer/blob/master/groups/V_4.group>`__
+
+-  Cyclic group
+
+   -  `Wikipedia <https://en.wikipedia.org/wiki/Cyclic_group>`__
+   -  `Z4, cyclic group of order
+      4 <https://github.com/nathancarter/group-explorer/blob/master/groups/Z_4.group>`__
+
+-  Symmetric group
+
+   -  `Symmetric group on 3
+      letters <https://github.com/nathancarter/group-explorer/blob/master/groups/S_3.group>`__.
+      Another name for this group is “Dihedral group on 3 vertices”

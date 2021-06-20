@@ -386,6 +386,7 @@ class Group:
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
+    # TODO: Rename this, is_abelian
     def abelian(self):
         """Returns True if the Group is commutative (abelian)."""
         result = True
@@ -422,8 +423,11 @@ class Group:
         else:
             return list(result)
 
-    def closed_subsets_of_elements(self):
-        """Return all unique closed subsets of the Group's elements.
+    # TODO: Write a method, is_closed, using closure, above.  Use this method in the
+    #       subgroup method, below.
+
+    def closed_proper_subsets_of_elements(self):
+        """Return all unique, closed, proper subsets of the Group's elements.
         This returns a list of lists. Each list represents the elements of a subgroup."""
         closed = set()  # Build the result as a set of sets to avoid duplicates
         all_elements = self.element_names
@@ -437,8 +441,10 @@ class Group:
         return list(map(lambda x: list(x), closed))
 
     def subgroup(self, closed_subset_of_elements, name="No name", desc="No description"):
-        """Return the Group constructed from the input, closed subset of elements."""
+        """Return the Group constructed from the given closed subset of elements."""
         # Make sure the elements are sorted according to their order in the parent Group (self)
+        # TODO: Check whether the input elements are indeed closed (make this check optional)
+        #       Use the is_closed method (To Be Written) defined, above.
         elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.element_names.index(x))
         table = []
         for a in elements_sorted:
@@ -454,7 +460,7 @@ class Group:
         desc = f"Subgroup of: {self.description}"
         count = 0
         list_of_subgroups = []
-        for closed_element_set in self.closed_subsets_of_elements():
+        for closed_element_set in self.closed_proper_subsets_of_elements():
             name = f"{self.name}_subgroup_{count}"
             count += 1
             list_of_subgroups.append(self.subgroup(closed_element_set, name, desc))

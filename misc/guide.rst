@@ -137,7 +137,11 @@ A group can be tested to determine if it's **abelian**:
 
 .. code:: python
 
-    >>> v4.abelian()
+    >>> v4.is_abelian()
+        True
+
+
+    An elements inverse can be obtained using the
     True
 
 

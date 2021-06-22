@@ -214,7 +214,7 @@ A group can be tested to determine if it’s **abelian**:
 
 .. code:: ipython3
 
-    >>> v4.abelian()
+    >>> v4.is_abelian()
 
 
 

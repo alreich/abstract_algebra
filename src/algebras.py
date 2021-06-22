@@ -11,7 +11,6 @@ import collections as co
 import functools as fnc
 import pprint as pp
 import copy
-import random  # Only used to generate group name when no name is input
 
 # Non-Standard Library Imports
 import numpy as np
@@ -90,7 +89,7 @@ class Group:
                 grp_dict = args[0]
             elif isinstance(args[0], list):
                 # Assumes input is a mult table (list of lists of element name strings)
-                grp_dict = {'name': random_name(),
+                grp_dict = {'name': "no name",
                             'description': "Constructed from multiplication table",
                             'element_names': args[0][0],
                             'mult_table': args[0]}
@@ -130,6 +129,8 @@ class Group:
         self.mult_table = np.array(table, dtype=np.int64)
 
         self.__dp_delimiter = ':'  # name delimiter used when creating direct products
+        self.__is_abelian = None  # Gets set the first time we run is_abelian()
+        self.__element_orders = {elem: None for elem in self.element_names}
 
         if check_inputs(self.element_names, self.mult_table):
             self.__inverse_lookup_dict = self.__make_inverse_lookup_dict()
@@ -166,6 +167,7 @@ class Group:
         """Return the order of the group, ie., the number of elements in it."""
         return len(self.element_names)
 
+    # TODO: Memoize element orders in a private/protected variable
     def element_order(self, element):
         """Return the order of the element.
 
@@ -186,29 +188,29 @@ class Group:
                 return order_aux(elem, self.mult(prod, elem), order + 1)
         return order_aux(element, element, 1)
 
-    def element_orders(self, reverse=False):
-        """Return a dictionary where the keys are element names and the values are their orders.
-
-        Parameters
-        ----------
-        reverse : boolean
-          If True, then the dict has orders for keys and sets of elements for values.
-          The default is False.
-
-        Returns
-        -------
-        dict
-          A dictionary to look up element order by element name; or, if reversed, then to look up
-          sets of elements with a given order.
-        """
-        order_dict = {elem: self.element_order(elem) for elem in self.element_names}
-        if reverse:
-            reverse_dict = {}
-            for key, val in order_dict.items():
-                reverse_dict.setdefault(val, []).append(key)
-            return reverse_dict
-        else:
-            return order_dict
+    # def element_orders(self, reverse=False):
+    #     """Return a dictionary where the keys are element names and the values are their orders.
+    #
+    #     Parameters
+    #     ----------
+    #     reverse : boolean
+    #       If True, then the dict has orders for keys and sets of elements for values.
+    #       The default is False.
+    #
+    #     Returns
+    #     -------
+    #     dict
+    #       A dictionary to look up element order by element name; or, if reversed, then to look up
+    #       sets of elements with a given order.
+    #     """
+    #     order_dict = {elem: self.element_order(elem) for elem in self.element_names}
+    #     if reverse:
+    #         reverse_dict = {}
+    #         for key, val in order_dict.items():
+    #             reverse_dict.setdefault(val, []).append(key)
+    #         return reverse_dict
+    #     else:
+    #         return order_dict
 
     def __eq__(self, other):
         """Return True if this Group is identical to the `other` Group.
@@ -372,7 +374,7 @@ class Group:
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Group."""
         print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
-        print(f"Abelian? {self.abelian()}")
+        print(f"Abelian? {self.is_abelian()}")
         spc = 7
         print("Elements:")
         print("   Index   Name   Inverse  Order")
@@ -392,20 +394,21 @@ class Group:
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
-    # TODO: Rename this, is_abelian
-    def abelian(self):
+    def is_abelian(self):
         """Returns True if the Group is commutative (abelian)."""
-        result = True
-        for e1 in self.element_names:
-            for e2 in self.element_names:
-                if not (self.mult(e1, e2) == self.mult(e2, e1)):
-                    result = False
-                    break
-        return result
+        if self.__is_abelian is None:  # Check for no cached value
+            result = True
+            for e1 in self.element_names:
+                for e2 in self.element_names:
+                    if not (self.mult(e1, e2) == self.mult(e2, e1)):
+                        result = False
+                        break
+            self.__is_abelian = result  # Cache this result
+        return self.__is_abelian
 
     def commutative(self):
         """Returns True if the Group is commutative (abelian)."""
-        return self.abelian()
+        return self.is_abelian()
 
     def closure(self, subset_of_elements):
         """Given a subset (in list form) of the Group's elements, find the smallest possible
@@ -557,7 +560,7 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
 # Utilities
 
 
-def duplicates(lst):
+def get_duplicates(lst):
     """Return a list of the duplicate items in the input list.
 
     This function is used by `check_inputs`."""
@@ -571,7 +574,7 @@ def check_inputs(element_names, mult_table):
     This function is used by the Group constructor."""
 
     # Check for duplicate element names
-    dups = duplicates(element_names)
+    dups = get_duplicates(element_names)
     if len(dups) == 0:
         pass
     else:
@@ -641,31 +644,36 @@ def make_table(table_string):
             for row in table_string.splitlines()]
 
 
-def _no_conflict(p1, p2):
+def __no_conflict(p1, p2):
     """Returns True only if no element of p1 equals the corresponding element of p2."""
     return all([p1[i] != p2[i] for i in range(len(p1))])
 
 
-def _no_conflicts(items):
+def __no_conflicts(items):
     """Return True if each possible pair, from a list of items, has no conflicts."""
-    return all(_no_conflict(combo[0], combo[1]) for combo in it.combinations(items, 2))
+    return all(__no_conflict(combo[0], combo[1]) for combo in it.combinations(items, 2))
 
 
-def _filter_out_conflicts(perms, perm, n):
+def __filter_out_conflicts(perms, perm, n):
     """Filter out all permutations in perms that confict with perm,
     and don't have n as the first element."""
     nperms = [q for q in perms if q[0] == n]
-    return [p for p in nperms if _no_conflict(p, perm)]
+    return [p for p in nperms if __no_conflict(p, perm)]
 
 
 def generate_all_group_tables(order):
-    """Return a list of all arrays that correspond to multiplication tables for groups of a specific order """
+    """Experimental Code: Return a list of all arrays that correspond to multiplication tables for groups
+    of a specific order.
+
+    WARNING: The algorithm here is not efficient, so even very small values of 'order' will result in very
+    long runtimes (e.g., order=6 ==> ~5-6 hrs runtime).
+    """
     row0 = list(range(order))
     row_candidates = [[row0]]
     for row_num in range(1, order):
-        row_candidates.append(_filter_out_conflicts(it.permutations(row0), row0, row_num))
+        row_candidates.append(__filter_out_conflicts(it.permutations(row0), row0, row_num))
     table_candidates = [cand for cand in it.product(*row_candidates) if is_table_associative(cand)]
-    return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
+    return [tbl for tbl in table_candidates if __no_conflicts(tbl)]
 
 
 def tables_to_groups(tables, identity_name="e", elem_name="a"):
@@ -696,12 +704,12 @@ def is_table_associative(table):
     return result
 
 
-def remove_items(tup, items):
-    """Return a copy of the tuple, tup, with 'items' removed."""
-    lst_copy = list(copy.copy(tup))
-    for item in items:
-        lst_copy.remove(item)
-    return tuple(lst_copy)
+# def remove_items(tup, items):
+#     """Return a copy of the tuple, tup, with 'items' removed."""
+#     lst_copy = list(copy.copy(tup))
+#     for item in items:
+#         lst_copy.remove(item)
+#     return tuple(lst_copy)
 
 
 # Source: https://docs.python.org/3/library/itertools.html#itertools-recipes"""
@@ -863,46 +871,6 @@ def powerset_mult_table(n):
     set_of_n = set(list(range(n)))
     pset = [set(x) for x in list(powerset(set_of_n))]
     return [[pset.index(a & b) for b in pset] for a in pset]
-
-
-def random_name():
-    """Whimsical first name, last name generator.
-    Used when no name is input for a group, ring, etc.
-    """
-    beginnings = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
-                  'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w',
-                  'x', 'z', 'bl', 'br', 'ch', 'cl', 'cr', 'dr',
-                  'fl', 'fr', 'gh', 'gl', 'gr', 'ph', 'pl',
-                  'pr', 'pt', 'qu', 'sc', 'sch', 'scr', 'sh',
-                  'shr', 'sk', 'sl', 'sm', 'sn', 'sp', 'spl',
-                  'spr', 'squ', 'st', 'str', 'sw', 'th', 'thr',
-                  'tr', 'wh', 'wr']
-    middles = ['a', 'e', 'i', 'o', 'u', 'ai', 'au', 'aw', 'ay',
-               'ea', 'ee', 'ei', 'eu', 'ew', 'ey', 'ie', 'oi',
-               'oo', 'ou', 'ow', 'oy']
-    endings = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
-               'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z',
-               'air', 'are', 'ch', 'ck', 'dge', 'ear', 'eer',
-               'gh', 'igh', 'ld', 'lf', 'lk', 'lt', 'mp', 'nd',
-               'ng', 'nk', 'nt', 'nth', 'ore', 'ph', 'rd', 'rk',
-               'sch', 'sh', 'sk', 'st', 'tch', 'th', 'ure']
-    consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
-                  'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w',
-                  'x', 'z']
-
-    beg = random.choice(beginnings)
-    mid = random.choice(middles)
-    end = random.choice(endings)
-    first_name = beg + mid + end
-
-    beg2 = random.choice(beginnings)
-    mid2a = random.choice(middles)
-    cons2 = random.choice(consonants)
-    mid2b = random.choice(middles)
-    end2 = random.choice(endings)
-    last_name = beg2 + mid2a + cons2 + mid2b + end2
-
-    return first_name.capitalize() + " " + last_name.capitalize()
 
 
 class Ring(Group):

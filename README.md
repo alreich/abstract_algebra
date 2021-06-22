@@ -278,9 +278,8 @@ v4.mult('h', v4.inverse('h'))
 
 ### Check if Abelian
 
-
 ```python
-v4.abelian()
+v4.is_abelian()
 ```
 
 

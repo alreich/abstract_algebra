@@ -11,6 +11,7 @@ import collections as co
 import functools as fnc
 import pprint as pp
 import copy
+import random  # Only used to generate group name when no name is input
 
 # Non-Standard Library Imports
 import numpy as np
@@ -87,8 +88,13 @@ class Group:
             elif isinstance(args[0], dict):
                 # Assumes the single argument is a dictionary
                 grp_dict = args[0]
+            elif isinstance(args[0], list):
+                # Assumes input is a mult table (list of lists of element name strings)
+                grp_dict = {'name': random_name(),
+                            'description': "Constructed from multiplication table",
+                            'element_names': args[0][0],
+                            'mult_table': args[0]}
             else:
-                # TODO: Allow for just a table to be input (list of lists of element name strings)
                 # No other options for single input arguments
                 raise Exception("Single argument must be a string or a dictionary.")
 
@@ -857,6 +863,46 @@ def powerset_mult_table(n):
     set_of_n = set(list(range(n)))
     pset = [set(x) for x in list(powerset(set_of_n))]
     return [[pset.index(a & b) for b in pset] for a in pset]
+
+
+def random_name():
+    """Whimsical first name, last name generator.
+    Used when no name is input for a group, ring, etc.
+    """
+    beginnings = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
+                  'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w',
+                  'x', 'z', 'bl', 'br', 'ch', 'cl', 'cr', 'dr',
+                  'fl', 'fr', 'gh', 'gl', 'gr', 'ph', 'pl',
+                  'pr', 'pt', 'qu', 'sc', 'sch', 'scr', 'sh',
+                  'shr', 'sk', 'sl', 'sm', 'sn', 'sp', 'spl',
+                  'spr', 'squ', 'st', 'str', 'sw', 'th', 'thr',
+                  'tr', 'wh', 'wr']
+    middles = ['a', 'e', 'i', 'o', 'u', 'ai', 'au', 'aw', 'ay',
+               'ea', 'ee', 'ei', 'eu', 'ew', 'ey', 'ie', 'oi',
+               'oo', 'ou', 'ow', 'oy']
+    endings = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
+               'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'z',
+               'air', 'are', 'ch', 'ck', 'dge', 'ear', 'eer',
+               'gh', 'igh', 'ld', 'lf', 'lk', 'lt', 'mp', 'nd',
+               'ng', 'nk', 'nt', 'nth', 'ore', 'ph', 'rd', 'rk',
+               'sch', 'sh', 'sk', 'st', 'tch', 'th', 'ure']
+    consonants = ['b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
+                  'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w',
+                  'x', 'z']
+
+    beg = random.choice(beginnings)
+    mid = random.choice(middles)
+    end = random.choice(endings)
+    first_name = beg + mid + end
+
+    beg2 = random.choice(beginnings)
+    mid2a = random.choice(middles)
+    cons2 = random.choice(consonants)
+    mid2b = random.choice(middles)
+    end2 = random.choice(endings)
+    last_name = beg2 + mid2a + cons2 + mid2b + end2
+
+    return first_name.capitalize() + " " + last_name.capitalize()
 
 
 class Ring(Group):

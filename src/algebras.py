@@ -121,6 +121,7 @@ class Group:
         else:
             self.element_names = grp_dict['mult_table'][0]  # First row of table
 
+        # Setup the group's multiplication table
         tbl = grp_dict['mult_table']
         if isinstance(tbl[0][0], str):
             table = index_table_from_name_table(tbl)
@@ -129,9 +130,13 @@ class Group:
         self.mult_table = np.array(table, dtype=np.int64)
 
         self.__dp_delimiter = ':'  # name delimiter used when creating direct products
-        self.__is_abelian = None  # Gets set the first time we run is_abelian()
+
+        # The following private members are for caching.
+        self.__is_abelian = None
+        self.__is_associative = None
         self.__element_orders = {elem: None for elem in self.element_names}
 
+        # Finally, check that the inputs represent a valid group
         if check_inputs(self.element_names, self.mult_table):
             self.__inverse_lookup_dict = self.__make_inverse_lookup_dict()
 
@@ -186,31 +191,10 @@ class Group:
                 return order
             else:
                 return order_aux(elem, self.mult(prod, elem), order + 1)
-        return order_aux(element, element, 1)
-
-    # def element_orders(self, reverse=False):
-    #     """Return a dictionary where the keys are element names and the values are their orders.
-    #
-    #     Parameters
-    #     ----------
-    #     reverse : boolean
-    #       If True, then the dict has orders for keys and sets of elements for values.
-    #       The default is False.
-    #
-    #     Returns
-    #     -------
-    #     dict
-    #       A dictionary to look up element order by element name; or, if reversed, then to look up
-    #       sets of elements with a given order.
-    #     """
-    #     order_dict = {elem: self.element_order(elem) for elem in self.element_names}
-    #     if reverse:
-    #         reverse_dict = {}
-    #         for key, val in order_dict.items():
-    #             reverse_dict.setdefault(val, []).append(key)
-    #         return reverse_dict
-    #     else:
-    #         return order_dict
+        # Memoize element orders:
+        if self.__element_orders[element] is None:  # Check for no cached value
+            self.__element_orders[element] = order_aux(element, element, 1)
+        return self.__element_orders[element]
 
     def __eq__(self, other):
         """Return True if this Group is identical to the `other` Group.
@@ -297,8 +281,15 @@ class Group:
     def inverse(self, element_name):
         """Return the name of the inverse element for the input `element_name`.
 
-        :param element_name: An element name
-        :type element_name: str
+        Parameters
+        ----------
+        element : str
+          An element name
+
+        Returns
+        -------
+        str
+          The name of the element's inverse
         """
         return self.__inverse_lookup_dict[element_name]
 
@@ -352,7 +343,9 @@ class Group:
 
     def is_associative(self):
         """A brute force test of associativity.  Returns True if the Group is is_associative."""
-        return is_table_associative(self.mult_table)
+        if self.__is_associative is None:  # Check for no cached value
+            self.__is_associative = is_table_associative(self.mult_table)
+        return self.__is_associative
 
     # Direct Product Definition
     def __mul__(self, other):
@@ -704,14 +697,6 @@ def is_table_associative(table):
     return result
 
 
-# def remove_items(tup, items):
-#     """Return a copy of the tuple, tup, with 'items' removed."""
-#     lst_copy = list(copy.copy(tup))
-#     for item in items:
-#         lst_copy.remove(item)
-#     return tuple(lst_copy)
-
-
 # Source: https://docs.python.org/3/library/itertools.html#itertools-recipes"""
 def powerset(iterable):
     """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
@@ -962,69 +947,6 @@ class Ring(Group):
 class Field(Ring):
     """Not implemented yet"""
     pass
-
-
-# def permutation_mapping(perm, base=0):
-#     """Return a mapping of the consecutive integers, starting at the base value,
-#     to the integers in the permutation, perm.
-#
-#     Examples:
-#
-#     >>> permutation_mapping((0, 1, 2, 3))  # (default) base = 0
-#     {0: 0, 1: 1, 2: 2, 3: 3}
-#
-#     >>> permutation_mapping((3,1,2), 1)
-#     {1: 3, 2: 1, 3: 2}
-#
-#     """
-#     return {i: perm[i - base] for i in range(base, len(perm) + base)}
-
-
-# def compose_perms(q, p, base=0):
-#     """Apply permutation q to permutation p.  That is q o p = q(p(id),
-#     where id is the identity permutation, e.g., (0,1,2,...) or (1,2,3,...).
-#
-#     Example: from Pinter, page 71
-#
-#     >>> alpha = (1, 3, 2)
-#     >>> beta = (3, 1, 2)
-#     >>> compose_perms(alpha, beta, 1)  # base = 1
-#     (2, 1, 3)
-#     # i.e., alpha(beta(1,2,3)) = alpha(3,1,2) = (2,1,3)
-#
-#     """
-#     qmap = permutation_mapping(q, base)
-#     pmap = permutation_mapping(p, base)
-#     return tuple([qmap[pmap[i]] for i in range(base, len(q) + base)])
-
-
-# def swap_list_items(lst, item1, item2):
-#     a, b = lst.index(item1), lst.index(item2)
-#     lst[b], lst[a] = lst[a], lst[b]
-#     return None
-
-# def swap_rows(arr, i, j):
-#     """Swap the i_th and j_th rows of a numpy array.
-#
-#     This function is not used yet."""
-#     arr[[i, j], :] = arr[[j, i], :]
-#     return arr
-
-
-# def swap_cols(arr, i, j):
-#     """Swap the i_th and j_th columns of a numpy array.
-#
-#     This function is not used yet."""
-#     arr[:, [i, j]] = arr[:, [j, i]]
-#     return arr
-
-
-# def swap_rows_cols(arr, i, j):
-#     """Swap the i_th and j_th rows and columns of a numpy array.
-#
-#     This function is not used yet."""
-#     arr0 = swap_rows(arr, i, j)
-#     return swap_cols(arr0, i, j)
 
 
 if __name__ == '__main__':

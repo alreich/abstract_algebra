@@ -172,7 +172,6 @@ class Group:
         """Return the order of the group, ie., the number of elements in it."""
         return len(self.element_names)
 
-    # TODO: Memoize element orders in a private/protected variable
     def element_order(self, element):
         """Return the order of the element.
 
@@ -283,7 +282,7 @@ class Group:
 
         Parameters
         ----------
-        element : str
+        element_name : str
           An element name
 
         Returns
@@ -388,7 +387,7 @@ class Group:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
     def is_abelian(self):
-        """Returns True if the Group is commutative (abelian)."""
+        """Returns True if the group is abelian (commutative)."""
         if self.__is_abelian is None:  # Check for no cached value
             result = True
             for e1 in self.element_names:
@@ -400,13 +399,25 @@ class Group:
         return self.__is_abelian
 
     def commutative(self):
-        """Returns True if the Group is commutative (abelian)."""
+        """Returns True if the group is commutative (abelian)."""
         return self.is_abelian()
 
     def closure(self, subset_of_elements):
-        """Given a subset (in list form) of the Group's elements, find the smallest possible
-        set of elements, containing the subset, that is closed under Group multiplication,
-        with inverses."""
+        """Given a subset (in list form) of the group's elements, return the smallest possible
+        set of elements, containing the subset, that is closed under group multiplication,
+        with inverses.
+
+        Parameters
+        ----------
+        subset_of_elements : list
+          A list of elements in the group
+
+        Returns
+        -------
+        list
+          The closure of the input list.  The elements of the closure can be used to form
+          a subgroup of the group.
+        """
 
         # Make sure inverses are considered
         result = set(subset_of_elements)
@@ -419,7 +430,7 @@ class Group:
 
         # If the input set of elements increased, recurse ...
         if len(result) > len(subset_of_elements):
-            return self.closure(result)
+            return self.closure(list(result))
 
         # ...otherwise, stop and return the result
         else:
@@ -437,13 +448,28 @@ class Group:
         for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
             # Look at all combinations of elements: pairs, triples, quadruples, etc.
             for combo in it.combinations(all_elements, i):
-                clo = frozenset(self.closure(combo))  # freezing required to add a set to a set
+                clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
                 if len(clo) < n:  # Don't include closures consisting of all elements
                     closed.add(clo)
         return list(map(lambda x: list(x), closed))
 
     def subgroup(self, closed_subset_of_elements, name="No name", desc="No description"):
-        """Return the Group constructed from the given closed subset of elements."""
+        """Return the Group constructed from the given closed subset of elements.
+
+        Parameters
+        ----------
+        closed_subset_of_elements : list
+          A list of elements in the group
+        name : str
+          The name of the subgroup to be generated
+        desc : str
+          A description of the subgroup to be generated
+
+        Returns
+        -------
+        Group
+          The subgroup defined by the input closed subset of elements
+        """
         # Make sure the elements are sorted according to their order in the parent Group (self)
         # TODO: Check whether the input elements are indeed closed (make this check optional)
         #       Use the is_closed method (To Be Written) defined, above.
@@ -518,10 +544,10 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
     order : int
       A positive integer
     identity_name : str
-      The name of the group's identity element.
+      The name of the group's identity element
       Defaults to 'e'
     elem_name : str
-      Prefix for all non-identity elements.
+      Prefix for all non-identity elements
       Default is a1, a2, a3, ...
     name : str
       The group's name.  Defaults to 'Zn',
@@ -534,7 +560,7 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
     Returns
     -------
     Group
-      A cyclic group of the given order.
+      A cyclic group of the given order
     """
 
     if name:
@@ -665,7 +691,7 @@ def generate_all_group_tables(order):
     row_candidates = [[row0]]
     for row_num in range(1, order):
         row_candidates.append(__filter_out_conflicts(it.permutations(row0), row0, row_num))
-    table_candidates = [cand for cand in it.product(*row_candidates) if is_table_associative(cand)]
+    table_candidates = [cand for cand in it.product(*row_candidates) if is_table_associative(list(cand))]  # ***
     return [tbl for tbl in table_candidates if __no_conflicts(tbl)]
 
 
@@ -682,8 +708,18 @@ def tables_to_groups(tables, identity_name="e", elem_name="a"):
 
 
 def is_table_associative(table):
-    """A brute force test of whether a table supports associativity.
-    Returns True if the table does support associativity."""
+    """Tests whether a table supports associativity
+
+    Parameters
+    ----------
+    table : np.array
+      A list of lists of ints, representing a group's table
+
+    Returns
+    -------
+    boolean
+      True if the table supports associativity; False, otherwise
+    """
     result = True
     elements = table[0]  # The first row should correspond to the elements of a group
     for a in elements:
@@ -699,7 +735,23 @@ def is_table_associative(table):
 
 # Source: https://docs.python.org/3/library/itertools.html#itertools-recipes"""
 def powerset(iterable):
-    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
+    """Returns the power set of the sequence of input items
+
+    Parameters
+    ----------
+    iterable : iterator
+      Any iterable type: list, str, tuple, etc.
+
+    Returns
+    -------
+    iterable of tuples
+      Represents the powerset of the input items
+
+    To Use
+    ------
+    >>> list(powerset([1,2,3]))
+    [(), (1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]
+    """
     s = list(iterable)
     return it.chain.from_iterable(it.combinations(s, r) for r in range(len(s)+1))
 
@@ -781,7 +833,7 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
       A description of the group. Defaults to
       'Autogenerated symmetric group on n elements',
       where n is the group's order.
-    base : integer
+    base : int
       A non-negative integer (typically, 0 or 1).
       The default is 1, so permutations will be
       on the tuple (1, 2, 3, ..., n), where n is
@@ -845,9 +897,10 @@ def generate_powerset_group(n, name=None, description=None):
         desc = f"Autogenerated group on the powerset of {n} elements, with symmetric difference operator"
     set_of_n = set(list(range(n)))
     pset = [set(x) for x in list(powerset(set_of_n))]
-    sets_as_tuples = [tuple(x) for x in pset]  # So that we can use the sets for indexing, below
     table = [[pset.index(a ^ b) for b in pset] for a in pset]
-    return Group(nm, desc, sets_as_tuples, table)
+    elements = [str(elem) for elem in pset]
+    elements[0] = "{}"  # Because otherwise it would be "set()"
+    return Group(nm, desc, elements, table)
 
 
 def powerset_mult_table(n):
@@ -957,6 +1010,8 @@ if __name__ == '__main__':
     print("START OF TESTS")
     print("--------------")
 
+    import pprint as pp
+
     project_path = os.path.join(os.getenv('PYPROJ'), 'abstract_algebra')
 
     algebras = [Group(os.path.join(project_path, 'Algebras/v4_klein_4_group.json')),
@@ -972,15 +1027,38 @@ if __name__ == '__main__':
                 ]
 
     # Create some direct products
-    v4_x_z4 = algebras[0] * algebras[1]
-    z4_x_s3 = algebras[1] * algebras[2]
+    z2 = generate_cyclic_group(2)
+    v4 = algebras[0]
+    z4 = algebras[1]
+    s3 = algebras[2]
+    v4_x_z4 = v4 * z4
+    z4_x_s3 = z4 * s3
+    z2_x_z2_x_z2 = z2 * z2 * z2
+
+    # Autogenerate some groups
+    z5 = generate_cyclic_group(5, 'E', 'A', 'Z5', 'Cyclic group')
+    s3_1 = generate_symmetric_group(3, 'S3_1', 'Symmetric group')
+    s3_0 = generate_symmetric_group(3, 'S3_0', 'Symmetric group', base=0)
+    p3 = generate_powerset_group(3, 'P3', 'Powerset group')
 
     # Extend the list, above, with the direct products, just created:
-    algebras.extend([v4_x_z4, z4_x_s3])
+    algebras.extend([v4_x_z4, z4_x_s3, z2_x_z2_x_z2, z5, s3_0, s3_1, p3])
 
     # Show info for each algebra in the list
     for grp in algebras:
         grp.about()
+
+    print("\n")
+    v4 = algebras[0]
+    subs = v4.proper_subgroups()
+    for sub in subs:
+        sub.pprint()
+
+    print(f"\nOrder of subgroups of {z2_x_z2_x_z2.name}:")
+    print([g.order for g in z2_x_z2_x_z2.proper_subgroups()])
+
+    print(f"\nTurning a group into dictionary:")
+    pp.pprint(z4.to_dict())
 
     print("\n------------")
     print("END OF TESTS")

@@ -639,6 +639,35 @@ def check_inputs(element_names, mult_table):
     return True
 
 
+def divide_groups_into_isomorphic_sets(list_of_groups):
+    """Divide the list of groups into sub-lists of groups that are isomorphic to each other.
+    The purpose of this function is operate on the proper subgroups of a group to determine
+    the unique subgroups, up to isomorphism.
+    """
+
+    def iso_and_not_iso(grp, grps):
+        iso_to_grp = []
+        not_iso_to_grp = []
+        for g in grps:
+            if grp.isomorphic(g):
+                iso_to_grp.append(g)
+            else:
+                not_iso_to_grp.append(g)
+        return iso_to_grp, not_iso_to_grp
+
+    def aux(result, remainder):
+        if len(remainder) == 0:
+            return result
+        else:
+            first = remainder[0]
+            rest = remainder
+            iso_to_first, not_iso_to_first = iso_and_not_iso(first, rest)
+            result.append(iso_to_first)
+            return aux(result, not_iso_to_first)
+
+    return aux([], list_of_groups)
+
+
 def index_table_from_name_table(name_table):
     """Given a Cayley table using element names, return a table that uses position indices.
     Assumes that the first element in the first row of the table is the identity for the

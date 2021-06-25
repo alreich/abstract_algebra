@@ -1,0 +1,388 @@
+
+=======================================================================
+
+--------------
+START OF TESTS
+--------------
+
+Group: V4
+Klein-4 group
+Abelian? True
+Elements:
+   Index   Name   Inverse  Order
+      0       e       e       1
+      1       h       h       2
+      2       v       v       2
+      3      hv      hv       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
+
+Group: Z4
+Cyclic group of order 4
+Abelian? True
+Elements:
+   Index   Name   Inverse  Order
+      0       e       e       1
+      1       a     a^3       4
+      2     a^2     a^2       2
+      3     a^3       a       4
+Cayley Table (showing indices):
+[[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
+
+Group: S3
+Symmetric group on 3 letters
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0       e       e       1
+      1       r     r^2       3
+      2     r^2       r       3
+      3       f       f       2
+      4      fr      fr       2
+      5      rf      rf       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5],
+ [1, 2, 0, 5, 3, 4],
+ [2, 0, 1, 4, 5, 3],
+ [3, 4, 5, 0, 1, 2],
+ [4, 5, 3, 2, 0, 1],
+ [5, 3, 4, 1, 2, 0]]
+
+Group: S3X
+Another version of the symmetric group on 3 letters
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0      ()      ()       1
+      1   (1,2)   (1,2)       2
+      2   (2,3)   (2,3)       2
+      3   (1,3)   (1,3)       2
+      4 (1,2,3) (1,3,2)       3
+      5 (1,3,2) (1,2,3)       3
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5],
+ [1, 0, 4, 5, 2, 3],
+ [2, 5, 0, 4, 3, 1],
+ [3, 4, 5, 0, 1, 2],
+ [4, 3, 1, 2, 5, 0],
+ [5, 2, 3, 1, 0, 4]]
+
+Group: Z_2 x Z_2 x Z_2
+no description
+Abelian? True
+Elements:
+   Index   Name   Inverse  Order
+      0     eee     eee       1
+      1     aee     aee       2
+      2     eae     eae       2
+      3     aae     aae       2
+      4     eea     eea       2
+      5     aea     aea       2
+      6     eaa     eaa       2
+      7     aaa     aaa       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5, 6, 7],
+ [1, 0, 3, 2, 5, 4, 7, 6],
+ [2, 3, 0, 1, 6, 7, 4, 5],
+ [3, 2, 1, 0, 7, 6, 5, 4],
+ [4, 5, 6, 7, 0, 1, 2, 3],
+ [5, 4, 7, 6, 1, 0, 3, 2],
+ [6, 7, 4, 5, 2, 3, 0, 1],
+ [7, 6, 5, 4, 3, 2, 1, 0]]
+
+Group: Non-Abelian_Example
+Example on page 29 of 'A Book of Abstract Algebra' by Charles C. Pinter
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0       I       I       1
+      1       A       A       2
+      2       B       D       3
+      3       C       C       2
+      4       D       B       3
+      5       K       K       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5],
+ [1, 0, 3, 2, 5, 4],
+ [2, 5, 4, 1, 0, 3],
+ [3, 4, 5, 0, 1, 2],
+ [4, 3, 0, 5, 2, 1],
+ [5, 2, 1, 4, 3, 0]]
+
+Group: Non-Abelian_Example VERSION 2
+Tests input of a table of element name strings and no element_names list
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0       I       I       1
+      1       A       A       2
+      2       B       D       3
+      3       C       C       2
+      4       D       B       3
+      5       K       K       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5],
+ [1, 0, 3, 2, 5, 4],
+ [2, 5, 4, 1, 0, 3],
+ [3, 4, 5, 0, 1, 2],
+ [4, 3, 0, 5, 2, 1],
+ [5, 2, 1, 4, 3, 0]]
+
+Group: A_4
+Alternating group on 4 letters (AKA Tetrahedral group)
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0      ()      ()       1
+      1 (1 3 2) (1 2 3)       3
+      2 (1 2 3) (1 3 2)       3
+      3 (0 1)(2 3) (0 1)(2 3)       2
+      4 (0 1 2) (0 2 1)       3
+      5 (0 1 3) (0 3 1)       3
+      6 (0 3 1) (0 1 3)       3
+      7 (0 3 2) (0 2 3)       3
+      8 (0 3)(1 2) (0 3)(1 2)       2
+      9 (0 2 3) (0 3 2)       3
+     10 (0 2 1) (0 1 2)       3
+     11 (0 2)(1 3) (0 2)(1 3)       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+ [1, 2, 0, 6, 7, 8, 10, 11, 9, 5, 3, 4],
+ [2, 0, 1, 10, 11, 9, 3, 4, 5, 8, 6, 7],
+ [3, 4, 5, 0, 1, 2, 9, 10, 11, 6, 7, 8],
+ [4, 5, 3, 9, 10, 11, 7, 8, 6, 2, 0, 1],
+ [5, 3, 4, 7, 8, 6, 0, 1, 2, 11, 9, 10],
+ [6, 7, 8, 1, 2, 0, 5, 3, 4, 10, 11, 9],
+ [7, 8, 6, 5, 3, 4, 11, 9, 10, 0, 1, 2],
+ [8, 6, 7, 11, 9, 10, 1, 2, 0, 4, 5, 3],
+ [9, 10, 11, 4, 5, 3, 2, 0, 1, 7, 8, 6],
+ [10, 11, 9, 2, 0, 1, 8, 6, 7, 3, 4, 5],
+ [11, 9, 10, 8, 6, 7, 4, 5, 3, 1, 2, 0]]
+
+Group: D3
+https://en.wikipedia.org/wiki/Dihedral_group_of_order_6
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0       e       e       1
+      1       a       a       2
+      2       b       b       2
+      3     aba     aba       2
+      4      ab      ba       3
+      5      ba      ab       3
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5],
+ [1, 0, 4, 5, 2, 3],
+ [2, 5, 0, 4, 3, 1],
+ [3, 4, 5, 0, 1, 2],
+ [4, 3, 1, 2, 5, 0],
+ [5, 2, 3, 1, 0, 4]]
+
+Group: D_4
+Dihedral group on four vertices
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0       e       e       1
+      1       r     r^3       4
+      2     r^2     r^2       2
+      3     r^3       r       4
+      4       f       f       2
+      5      fr      fr       2
+      6    r^2f    r^2f       2
+      7      rf      rf       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5, 6, 7],
+ [1, 2, 3, 0, 7, 4, 5, 6],
+ [2, 3, 0, 1, 6, 7, 4, 5],
+ [3, 0, 1, 2, 5, 6, 7, 4],
+ [4, 5, 6, 7, 0, 1, 2, 3],
+ [5, 6, 7, 4, 3, 0, 1, 2],
+ [6, 7, 4, 5, 2, 3, 0, 1],
+ [7, 4, 5, 6, 1, 2, 3, 0]]
+
+Group: V4_x_Z4
+Direct product of V4 & Z4
+Abelian? True
+Elements:
+   Index   Name   Inverse  Order
+      0     e:e     e:e       1
+      1     e:a   e:a^3       4
+      2   e:a^2   e:a^2       2
+      3   e:a^3     e:a       4
+      4     h:e     h:e       2
+      5     h:a   h:a^3       4
+      6   h:a^2   h:a^2       2
+      7   h:a^3     h:a       4
+      8     v:e     v:e       2
+      9     v:a   v:a^3       4
+     10   v:a^2   v:a^2       2
+     11   v:a^3     v:a       4
+     12    hv:e    hv:e       2
+     13    hv:a  hv:a^3       4
+     14  hv:a^2  hv:a^2       2
+     15  hv:a^3    hv:a       4
+Group order is 16 > 12, so no further info calculated/printed.
+
+Group: Z4_x_S3
+Direct product of Z4 & S3
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0     e:e     e:e       1
+      1     e:r   e:r^2       3
+      2   e:r^2     e:r       3
+      3     e:f     e:f       2
+      4    e:fr    e:fr       2
+      5    e:rf    e:rf       2
+      6     a:e   a^3:e       4
+      7     a:r a^3:r^2      12
+      8   a:r^2   a^3:r      12
+      9     a:f   a^3:f       4
+     10    a:fr  a^3:fr       4
+     11    a:rf  a^3:rf       4
+     12   a^2:e   a^2:e       2
+     13   a^2:r a^2:r^2       6
+     14 a^2:r^2   a^2:r       6
+     15   a^2:f   a^2:f       2
+     16  a^2:fr  a^2:fr       2
+     17  a^2:rf  a^2:rf       2
+     18   a^3:e     a:e       4
+     19   a^3:r   a:r^2      12
+     20 a^3:r^2     a:r      12
+     21   a^3:f     a:f       4
+     22  a^3:fr    a:fr       4
+     23  a^3:rf    a:rf       4
+Group order is 24 > 12, so no further info calculated/printed.
+
+Group: Z2_x_Z2_x_Z2
+Direct product of Z2_x_Z2 & Z2
+Abelian? True
+Elements:
+   Index   Name   Inverse  Order
+      0   e:e:e   e:e:e       1
+      1   e:e:a   e:e:a       2
+      2   e:a:e   e:a:e       2
+      3   e:a:a   e:a:a       2
+      4   a:e:e   a:e:e       2
+      5   a:e:a   a:e:a       2
+      6   a:a:e   a:a:e       2
+      7   a:a:a   a:a:a       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5, 6, 7],
+ [1, 0, 3, 2, 5, 4, 7, 6],
+ [2, 3, 0, 1, 6, 7, 4, 5],
+ [3, 2, 1, 0, 7, 6, 5, 4],
+ [4, 5, 6, 7, 0, 1, 2, 3],
+ [5, 4, 7, 6, 1, 0, 3, 2],
+ [6, 7, 4, 5, 2, 3, 0, 1],
+ [7, 6, 5, 4, 3, 2, 1, 0]]
+
+Group: Z5
+Cyclic group
+Abelian? True
+Elements:
+   Index   Name   Inverse  Order
+      0       E       E       1
+      1       A     A^4       5
+      2     A^2     A^3       5
+      3     A^3     A^2       5
+      4     A^4       A       5
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4],
+ [1, 2, 3, 4, 0],
+ [2, 3, 4, 0, 1],
+ [3, 4, 0, 1, 2],
+ [4, 0, 1, 2, 3]]
+
+Group: S3_0
+Symmetric group
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0 (0, 1, 2) (0, 1, 2)       1
+      1 (0, 2, 1) (0, 2, 1)       2
+      2 (1, 0, 2) (1, 0, 2)       2
+      3 (1, 2, 0) (2, 0, 1)       3
+      4 (2, 0, 1) (1, 2, 0)       3
+      5 (2, 1, 0) (2, 1, 0)       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5],
+ [1, 0, 4, 5, 2, 3],
+ [2, 3, 0, 1, 5, 4],
+ [3, 2, 5, 4, 0, 1],
+ [4, 5, 1, 0, 3, 2],
+ [5, 4, 3, 2, 1, 0]]
+
+Group: S3_1
+Symmetric group
+Abelian? False
+Elements:
+   Index   Name   Inverse  Order
+      0 (1, 2, 3) (1, 2, 3)       1
+      1 (1, 3, 2) (1, 3, 2)       2
+      2 (2, 1, 3) (2, 1, 3)       2
+      3 (2, 3, 1) (3, 1, 2)       3
+      4 (3, 1, 2) (2, 3, 1)       3
+      5 (3, 2, 1) (3, 2, 1)       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5],
+ [1, 0, 4, 5, 2, 3],
+ [2, 3, 0, 1, 5, 4],
+ [3, 2, 5, 4, 0, 1],
+ [4, 5, 1, 0, 3, 2],
+ [5, 4, 3, 2, 1, 0]]
+
+Group: P3
+Powerset group
+Abelian? True
+Elements:
+   Index   Name   Inverse  Order
+      0      {}      {}       1
+      1     {0}     {0}       2
+      2     {1}     {1}       2
+      3     {2}     {2}       2
+      4  {0, 1}  {0, 1}       2
+      5  {0, 2}  {0, 2}       2
+      6  {1, 2}  {1, 2}       2
+      7 {0, 1, 2} {0, 1, 2}       2
+Cayley Table (showing indices):
+[[0, 1, 2, 3, 4, 5, 6, 7],
+ [1, 0, 4, 5, 2, 3, 7, 6],
+ [2, 4, 0, 6, 1, 7, 3, 5],
+ [3, 5, 6, 0, 7, 1, 2, 4],
+ [4, 2, 1, 7, 0, 6, 5, 3],
+ [5, 3, 7, 1, 6, 0, 4, 2],
+ [6, 7, 3, 2, 5, 4, 0, 1],
+ [7, 6, 5, 4, 3, 2, 1, 0]]
+
+
+Group('V4_subgroup_0',
+'Subgroup of: Klein-4 group',
+['e', 'hv'],
+[[0, 1], [1, 0]]
+)
+Group('V4_subgroup_1',
+'Subgroup of: Klein-4 group',
+['e', 'h'],
+[[0, 1], [1, 0]]
+)
+Group('V4_subgroup_2',
+'Subgroup of: Klein-4 group',
+['e', 'v'],
+[[0, 1], [1, 0]]
+)
+
+Order of subgroups of Z2_x_Z2_x_Z2:
+[2, 4, 2, 4, 2, 2, 4, 4, 4, 4, 4, 2, 2, 2]
+
+Turning a group into dictionary:
+{'description': 'Cyclic group of order 4',
+ 'element_names': ['e', 'a', 'a^2', 'a^3'],
+ 'mult_table': [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]],
+ 'name': 'Z4',
+ 'type': 'Group'}
+
+------------
+END OF TESTS
+------------

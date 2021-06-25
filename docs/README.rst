@@ -320,7 +320,7 @@ Check if Abelian
 
 .. code:: ipython3
 
-    v4.abelian()
+    v4.is_abelian()
 
 
 
@@ -451,12 +451,17 @@ Proper Subgroups
 
     subs = v4.proper_subgroups()
     
+    print(f"\nAll {len(subs)} of these proper subgroups are, obviously, isomorphic to each other.\n")
+    
     for sub in subs:
         sub.pprint()
 
 
 .. parsed-literal::
 
+    
+    All 3 of these proper subgroups are, obviously, isomorphic to each other.
+    
     Group('V4_subgroup_0',
     'Subgroup of: Klein-4 group',
     ['e', 'v'],

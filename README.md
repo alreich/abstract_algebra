@@ -278,6 +278,7 @@ v4.mult('h', v4.inverse('h'))
 
 ### Check if Abelian
 
+
 ```python
 v4.is_abelian()
 ```
@@ -395,10 +396,15 @@ v4.dumps()
 ```python
 subs = v4.proper_subgroups()
 
+print(f"\nAll {len(subs)} of these proper subgroups are, obviously, isomorphic to each other.\n")
+
 for sub in subs:
     sub.pprint()
 ```
 
+    
+    All 3 of these proper subgroups are, obviously, isomorphic to each other.
+    
     Group('V4_subgroup_0',
     'Subgroup of: Klein-4 group',
     ['e', 'v'],

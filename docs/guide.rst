@@ -229,7 +229,7 @@ An elements inverse can be obtained using the ``inverse`` method:
 
 .. code:: ipython3
 
-    >>> v4.inverse('hv')
+    >>> v4.inv('hv')
 
 
 

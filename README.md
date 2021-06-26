@@ -250,9 +250,8 @@ v4.mult('h', 'v', 'hv')  # h * v * hv
 
 ### Inverse Elements
 
-
 ```python
-v4.inverse('h')
+v4.inv('h')
 ```
 
 
@@ -264,9 +263,8 @@ v4.inverse('h')
 
 That is, $h * h^{-1} = e$
 
-
 ```python
-v4.mult('h', v4.inverse('h'))
+v4.mult('h', v4.inv('h'))
 ```
 
 

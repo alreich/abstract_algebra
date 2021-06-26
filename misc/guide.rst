@@ -149,7 +149,11 @@ An elements inverse can be obtained using the ``inverse`` method:
 
 .. code:: python
 
-    >>> v4.inverse('hv')
+    >>> v4.inv('hv')
+        'hv'
+
+
+    A
     'hv'
 
 

@@ -391,6 +391,21 @@ class Group:
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
+    def about_proper_subgroups(self, unique=False, show_elements=True):
+        if unique:
+            subs = self.unique_proper_subgroups()
+        else:
+            subs = self.proper_subgroups()
+        print(f"\nSubgroups of {self.name}:")
+        for sub in subs:
+            print(f"\n  {sub.name}:")
+            print(f"       order: {sub.order}")
+            if show_elements:
+                print(f"    elements: {sub.element_names}")
+            print(f"    abelian?: {sub.is_abelian()}")
+            print(f"     normal?: {self.is_normal(sub)}")
+        return None
+
     def is_abelian(self):
         """Returns True if the group is abelian (commutative)."""
         if self.__is_abelian is None:  # Check for no cached value
@@ -468,7 +483,7 @@ class Group:
                     closed.add(clo)
         return list(map(lambda x: list(x), closed))
 
-    def subgroup(self, closed_subset_of_elements, name="No name", desc="No description"):
+    def subgroup_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
         """Return the Group constructed from the given closed subset of elements.
 
         Parameters
@@ -499,30 +514,63 @@ class Group:
         return Group(name, desc, elements_sorted, table)
 
     def proper_subgroups(self):
-        """Return a list of proper subgroups of the Group"""
+        """Return a list of proper subgroups of the group
+
+        Returns
+        -------
+        list
+          The list of proper subgroups of the group
+        """
         desc = f"Subgroup of: {self.description}"
         count = 0
         list_of_subgroups = []
         for closed_element_set in self.closed_proper_subsets_of_elements():
             name = f"{self.name}_subgroup_{count}"
             count += 1
-            list_of_subgroups.append(self.subgroup(closed_element_set, name, desc))
+            list_of_subgroups.append(self.subgroup_from_elements(closed_element_set, name, desc))
         return list_of_subgroups
 
     def trivial_subgroups(self):
-        """Return the two trivial subgroups."""
+        """Return the group's two trivial subgroups.
+
+        Returns
+        -------
+        list
+          A list containing the two trivial subgroups of the group
+        """
         name = f"Subgroup of {self.name}"
         desc = f"Trivial subgroup: {self.description}"
         trivial = Group(name, desc, [self.identity], [[0]])
         return [trivial, self]
 
     def subgroups(self):
-        """Return a list of all subgroups, including trivial subgroups."""
+        """Return a list of all subgroups, including trivial subgroups.
+
+        Returns
+        -------
+        list
+          A list of all subgroups of the group
+        """
         return self.proper_subgroups() + self.trivial_subgroups()
 
-    def unique_proper_subgroups(self):
-        """Return a list of proper subgroups that are unique, up to isomorphism."""
-        iso_sets_of_subs = divide_groups_into_isomorphic_sets(self.proper_subgroups())
+    def unique_proper_subgroups(self, subgroups=None):
+        """Return a list of proper subgroups that are unique, up to isomorphism.
+        If no subgroups are provided, then they will be derived.
+
+        Parameters
+        ----------
+        subgroups : list
+          A list of subgroups that have already been computed
+
+        Returns
+        -------
+        list
+          Returns a list of proper subgroups that are unique, up to isomorphism
+        """
+        if subgroups:
+            iso_sets_of_subs = divide_groups_into_isomorphic_sets(subgroups)
+        else:
+            iso_sets_of_subs = divide_groups_into_isomorphic_sets(self.proper_subgroups())
         # Return a list of the first subgroups from each sublist of proper subgroups
         return [iso_set[0] for iso_set in iso_sets_of_subs]
 

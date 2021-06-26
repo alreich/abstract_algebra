@@ -21,6 +21,14 @@ Group Generators
 .. autofunction:: algebras.powerset
 .. autofunction:: algebras.powerset_mult_table
 
+Utilities
+---------
+.. autofunction:: algebras.index_table_from_name_table
+.. autofunction:: algebras.powerset
+.. autofunction:: algebras.generate_all_group_tables
+.. autofunction:: algebras.tables_to_groups
+.. autofunction:: algebras.get_duplicates
+
 Permutation
 -----------
 

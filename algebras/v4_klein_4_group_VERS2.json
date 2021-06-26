@@ -1,8 +1,8 @@
 {"type": "Group",
  "name": "V4",
  "description": "Klein-4 group, Version 2",
- "mult_table": [[ "e",  "h",  "v", "hv"],
-                [ "h",  "e", "hv",  "v"],
-                [ "v", "hv",  "e",  "h"],
-                ["hv",  "v",  "h",  "e"]]
+ "mult_table": [["e", "h", "v", "r"],
+                ["h", "e", "r", "v"],
+                ["v", "r", "e", "h"],
+                ["r", "v", "h", "e"]]
 }

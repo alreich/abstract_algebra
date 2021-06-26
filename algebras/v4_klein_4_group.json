@@ -1,7 +1,7 @@
 {"type": "Group",
  "name": "V4",
  "description": "Klein-4 group",
- "element_names": ["e", "h", "v", "hv"],
+ "element_names": ["e", "h", "v", "r"],
  "mult_table": [[0, 1, 2, 3],
                 [1, 0, 3, 2],
                 [2, 3, 0, 1],

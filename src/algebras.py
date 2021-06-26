@@ -725,6 +725,8 @@ def generate_all_group_tables(order):
 
 
 def tables_to_groups(tables, identity_name="e", elem_name="a"):
+    """Given a list of multiplication tables, all of the same size, turn them into a list of groups.
+    """
     order = len(tables[0])
     groups = []
     for j in range(len(tables)):

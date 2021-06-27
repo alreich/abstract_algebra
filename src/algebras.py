@@ -175,6 +175,7 @@ class Group:
 
     def element_order(self, element):
         """Return the order of the element.
+        (Developer Note: The value returned is cached for future calls to this method.)
 
         Parameters
         ----------
@@ -206,14 +207,14 @@ class Group:
 
         Returns
         -------
-        boolean
+        bool
           True if the element names and multiplication tables of the two groups are identical.
         """
         return (self.element_names == other.element_names) and np.array_equal(self.mult_table, other.mult_table)
 
     @property
     def identity(self):
-        """Return the identity element of the Group"""
+        """Return the identity element of the Group.  Also known as the 'natural' element."""
         return self.element_names[0]
 
     def deepcopy(self):
@@ -226,19 +227,17 @@ class Group:
     def direct_product_delimiter(self, delimiter=None):
         """If no input, then the current direct product element name delimiter will be returned (default is ':').
         Otherwise, if a string is input (e.g., "-") it will become the new delimiter for direct product element
-        names, and so it will be returned.
+        names, and then it will be returned.
 
         Parameters
         ----------
-        delimiter : str
+        delimiter : str or None
           A string that will be used to join group element names into new names when computing a direct product.
-          If no delimiter is entered, then this
 
         Returns
         -------
         str
           The current delimiter.
-
         """
         if delimiter:
             self.__dp_delimiter = delimiter
@@ -294,7 +293,20 @@ class Group:
         return self.__inverse_lookup_dict[element_name]
 
     def conj(self, a, g):
-        """Return g * a * inv(g), the conjugate of a with respect to g."""
+        """Return g * a * inv(g), the conjugate of a with respect to g.
+
+        Parameters
+        ----------
+        a : str
+          An element name, e.g., a member of a subgroup when checking for normality w.r.t. a parent group
+        g : str
+          An element name, e.g., a member of the parent group when checking whether a subgroup is normal
+
+        Returns
+        -------
+        str
+          Returns g * a * inv(g), the conjugate of a with respect to g.
+        """
         return self.mult(g, self.mult(a, self.inv(g)))
 
     def mult_table_with_names(self):
@@ -302,10 +314,20 @@ class Group:
         return [[self.element_names[elem_pos] for elem_pos in row] for row in self.mult_table]
 
     def mult(self, *args):
-        """Multiply zero or more elements using the multiplication table.
+        """Multiply zero or more elements using the group's multiplication table.
 
-        :param args: Zero or more element names separated by commas
-        :type args: str
+        Parameters
+        ----------
+        args : Zero or more element names separated by commas
+          Elements of the group to be multiplied to each other, in the order given.
+          If no arg are input, then the identity/natural element for the group is returned.
+          If only one element name is input, then it is simply returned.
+          If two or more element names are input, then they are multiplied together in the order given.
+
+        Returns
+        -------
+        str
+          The element that represents the product of the input elements
         """
         # If no args, return the identity
         if len(args) == 0:
@@ -334,6 +356,16 @@ class Group:
         where the table contains the indices (integers) of elements according to the
         element_names list.  If use_element_names is set to True, then the element names
         list is omitted in the printout and the table is printed using element names.
+
+        Parameters
+        ----------
+        use_element_names : bool
+          If true the table output shows element names rather than element indices.
+          Default is False.
+
+        Returns
+        -------
+        None
         """
         print(f"{self.__class__.__name__}('{self.name}',")
         print(f"'{self.description}',")
@@ -346,7 +378,9 @@ class Group:
         return None
 
     def is_associative(self):
-        """A brute force test of associativity.  Returns True if the Group is is_associative."""
+        """Returns True if the Group is is_associative.
+        (Developer Note: The value returned is cached for future calls to this method.)
+        """
         if self.__is_associative is None:  # Check for no cached value
             self.__is_associative = is_table_associative(self.mult_table)
         return self.__is_associative
@@ -369,7 +403,20 @@ class Group:
                               dp_mult_table)
 
     def about(self, max_size=12, use_table_names=False):
-        """Print information about the Group."""
+        """Print information about the Group.
+
+        Parameters
+        ----------
+        max_size : int
+          Don't output table info for tables larger than this
+        use_table_names : bool
+          Set to True to see element names in table printout, instead of integer indices.
+          Default is False.
+
+        Returns
+        -------
+        None
+        """
         print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
         print(f"Abelian? {self.is_abelian()}")
         spc = 7
@@ -390,20 +437,21 @@ class Group:
                 pp.pprint(self.mult_table.tolist())
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+        return None
 
     def about_proper_subgroups(self, unique=False, show_elements=True):
         if unique:
-            subs = self.unique_proper_subgroups()
+            subgrps = self.unique_proper_subgroups()
         else:
-            subs = self.proper_subgroups()
+            subgrps = self.proper_subgroups()
         print(f"\nSubgroups of {self.name}:")
-        for sub in subs:
-            print(f"\n  {sub.name}:")
-            print(f"       order: {sub.order}")
+        for subgrp in subgrps:
+            print(f"\n  {subgrp.name}:")
+            print(f"       order: {subgrp.order}")
             if show_elements:
-                print(f"    elements: {sub.element_names}")
-            print(f"    abelian?: {sub.is_abelian()}")
-            print(f"     normal?: {self.is_normal(sub)}")
+                print(f"    elements: {subgrp.element_names}")
+            print(f"    abelian?: {subgrp.is_abelian()}")
+            print(f"     normal?: {self.is_normal(subgrp)}")
         return None
 
     def is_abelian(self):
@@ -433,9 +481,9 @@ class Group:
         return result
 
     def closure(self, subset_of_elements):
-        """Given a subset (in list form) of the group's elements, return the smallest possible
-        set of elements, containing the subset, that is closed under group multiplication,
-        with inverses.
+        """Given a subset (in list form) of the group's elements (name strings),
+        return the smallest possible set of elements, containing the subset,
+        that is closed under group multiplication, with inverses.
 
         Parameters
         ----------
@@ -575,35 +623,87 @@ class Group:
         return [iso_set[0] for iso_set in iso_sets_of_subs]
 
     def reorder_elements(self, reordered_elements):
-        """Return a new group made from this one with the elements reordered."""
+        """Return a new group made from this one with the elements reordered.
+
+        Parameters
+        ----------
+        reordered_elements : list
+          A reordered list of the group's element names (str)
+
+        Returns
+        -------
+        Group
+          A new group using the new element order, but with the same multiplication operation.
+        """
         n = self.order
-        new_table = np.full((n, n), 0)
-        for row in range(n):
-            for col in range(n):
-                prod = self.mult(reordered_elements[row], reordered_elements[col])
-                new_table[row, col] = reordered_elements.index(prod)
-        new_name = str(self.name) + '_REORDERED'
-        new_desc = str(self.description) + ' (elements reordered)'
-        return Group(new_name, new_desc, reordered_elements, new_table)
+        if n == len(reordered_elements):
+            new_table = np.full((n, n), 0)
+            for row in range(n):
+                for col in range(n):
+                    prod = self.mult(reordered_elements[row], reordered_elements[col])
+                    new_table[row, col] = reordered_elements.index(prod)
+            new_name = str(self.name) + '_REORDERED'
+            new_desc = str(self.description) + ' (elements reordered)'
+            return Group(new_name, new_desc, reordered_elements, new_table)
+        else:
+            raise Exception(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
 
     def element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this group's elements to all possible permutations
-        of other's elements, where the identity of this group is always mapped to the identity of other."""
-        elems0 = self.element_names
-        elems1 = other.element_names
-        mappings = [dict(zip(elems0[1:], perm)) for perm in it.permutations(elems1[1:])]
-        for mapping in mappings:
-            mapping[elems0[0]] = elems1[0]
-        return mappings
+        of other's elements, where the identity of this group is always mapped to the identity of other.
+
+        Parameters
+        ----------
+        other : Group
+          Another group to compare this group with, e.g., are they isomorphic?
+
+        Returns
+        -------
+        list
+          A list of dictionaries mapping this group's elements to the other group's elements.
+        """
+        if self.order == other.order:
+            elems0 = self.element_names
+            elems1 = other.element_names
+            mappings = [dict(zip(elems0[1:], perm)) for perm in it.permutations(elems1[1:])]
+            for mapping in mappings:
+                mapping[elems0[0]] = elems1[0]
+            return mappings
+        else:
+            raise Exception(f"Groups must be of the same order: {self.order} != {other.order}")
 
     def isomorphic_mapping(self, other, mapping):
-        """Returns True if the input mapping from this group to the other group is isomorphic."""
+        """Returns True if the input mapping from this group to the other group is isomorphic.
+
+        Parameters
+        ----------
+        other : Group
+          The other group this group is being compared with.
+        mapping: dict
+          A mapping between the elements of this group and the 'other' group.
+
+        Returns
+        -------
+        bool
+          Returns True if the mapping represents an isomorphism between the two groups; False, otherwise.
+        """
         elems = self.element_names
         return all([mapping[self.mult(x, y)] == other.mult(mapping[x], mapping[y]) for x in elems for y in elems])
 
     def isomorphic(self, other):
         """If there is a mapping from elements of this group to the other group's elements,
-        return it; otherwise return False."""
+        return it; otherwise return False.
+
+        Parameters
+        ----------
+        other : Group
+          Another group to compare this group with
+
+        Returns
+        -------
+        dict or bool
+          Returns the mapping if the two groups are isomorphic, otherwise, False is returned.
+        """
         if self.order == other.order:
             maps = self.element_mappings(other)
             for mp in maps:
@@ -723,19 +823,34 @@ def divide_groups_into_isomorphic_sets(list_of_groups):
     """Divide the list of groups into sub-lists of groups that are isomorphic to each other.
     The purpose of this function is operate on the proper subgroups of a group to determine
     the unique subgroups, up to isomorphism.
+
+    Parameters
+    ----------
+    list_of_groups : list
+      A list of groups, e.g., the list of subgroups of a group.
+
+    Returns
+    -------
+    list
+      A list of lists of groups, where each sublist represents groups that are isomorphic to each other.
     """
 
-    def iso_and_not_iso(grp, grps):
+    def iso_and_not_iso(gp, gps):
+        """Divide the list of groups, gps, into two lists, those that are isomorphic to gp
+        and those that are not."""
         iso_to_grp = []
         not_iso_to_grp = []
-        for g in grps:
-            if grp.isomorphic(g):
+        for g in gps:
+            if gp.isomorphic(g):
                 iso_to_grp.append(g)
             else:
                 not_iso_to_grp.append(g)
         return iso_to_grp, not_iso_to_grp
 
     def aux(result, remainder):
+        """Recursively subdivide 'remainder' into lists that are isomorphic to its first member of the
+        remainder list and those that are not.  Then, put those that are isomorphic to the first member
+        into the 'result' list, and recurse on the remainder."""
         if len(remainder) == 0:
             return result
         else:
@@ -753,7 +868,19 @@ def index_table_from_name_table(name_table):
     Assumes that the first element in the first row of the table is the identity for the
     table's algebra.
 
-    This function is used by the Group constructor."""
+    This function is used by the Group constructor.
+
+    Parameters
+    ----------
+    name_table : list
+      A square array (list of lists) that contains strings (names of group elements)
+      that represent a group's multiplication table.
+
+    Returns
+    -------
+    list
+      The same table using element position indices (int)
+    """
     top_row = name_table[0]
     return [[top_row.index(elem_name) for elem_name in row] for row in name_table]
 
@@ -767,6 +894,16 @@ def make_table(table_string):
     2. Find & Replace the strings, "<row>" and "</row>", with nothing;
     3. Place triple quotes around the result and give it a variable name;
     4. Then run make_table on the variable.
+
+    Parameters
+    ----------
+    table_string : str
+      XML-based table at Groupprops
+
+    Returns
+    -------
+    list
+      A list of lists of ints, representing a group's multiplication table.
     """
     return [[int(n) for n in row.strip().split(" ")]
             for row in table_string.splitlines()]
@@ -806,6 +943,16 @@ def generate_all_group_tables(order):
 
 def tables_to_groups(tables, identity_name="e", elem_name="a"):
     """Given a list of multiplication tables, all of the same size, turn them into a list of groups.
+
+    Parameters
+    ----------
+    tables : list
+      A list of multiplication tables (list of lists of ints) all of the same square size.
+
+    Returns
+    -------
+    list
+      A list of Groups based on the input tables.
     """
     order = len(tables[0])
     groups = []
@@ -828,7 +975,7 @@ def is_table_associative(table):
 
     Returns
     -------
-    boolean
+    bool
       True if the table supports associativity; False, otherwise
     """
     result = True
@@ -993,7 +1140,20 @@ def generate_powerset_group(n, name=None, description=None):
 
 def powerset_mult_table(n):
     """Return the multiplication table for the powerset of {0, 1, 2, ..., n-1},
-    where intersection is the multiplication operation."""
+    where intersection is the multiplication operation.
+
+    Parameters
+    ----------
+    n : int
+      Size of the set used to compute a powerset
+
+    Returns
+    -------
+    list
+      A list of lists of strings, representing the multiplication table for a group,
+      where intersection is the 'multiplication' operation of a ring based on sets
+      from a powerset.
+    """
     set_of_n = set(list(range(n)))
     pset = [set(x) for x in list(mit.powerset(set_of_n))]
     return [[pset.index(a & b) for b in pset] for a in pset]

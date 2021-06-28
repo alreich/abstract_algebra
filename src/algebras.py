@@ -947,7 +947,11 @@ def tables_to_groups(tables, identity_name="e", elem_name="a"):
     Parameters
     ----------
     tables : list
-      A list of multiplication tables (list of lists of ints) all of the same square size.
+      A list of tables (list of lists of ints) that represent group multiplication tables
+    identity_name : str
+      Root name to use for the identity element in all the groups
+    elem_name : str
+      Root name to use for the groups' elements
 
     Returns
     -------

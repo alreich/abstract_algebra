@@ -18,16 +18,14 @@ Group Generators
 .. autofunction:: algebras.generate_cyclic_group
 .. autofunction:: algebras.generate_symmetric_group
 .. autofunction:: algebras.generate_powerset_group
-.. autofunction:: algebras.powerset
-.. autofunction:: algebras.powerset_mult_table
 
 Utilities
 ---------
 .. autofunction:: algebras.index_table_from_name_table
-.. autofunction:: algebras.powerset
 .. autofunction:: algebras.generate_all_group_tables
 .. autofunction:: algebras.tables_to_groups
 .. autofunction:: algebras.get_duplicates
+.. autofunction:: algebras.powerset_mult_table
 
 Permutation
 -----------

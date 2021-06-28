@@ -179,7 +179,7 @@ alg.Group('V4',
 
 Group multiplication operation takes zero or more arguments and returns the product according to the group's multiplication table (mult_table).
 
-#### If no argument is provided, then the group's identity element is returned
+If no argument is provided, then the group's identity element is returned
 
 
 ```python
@@ -193,7 +193,7 @@ v4.mult()
 
 
 
-#### If one argument is provided, then that argument is returned, assuming it's a valid element name.
+If one argument is provided, then that argument is returned, assuming it's a valid element name.
 
 
 ```python
@@ -207,7 +207,7 @@ v4.mult('h')
 
 
 
-#### If the one argument is not a valid element name, then an exception is raised.
+If the one argument is not a valid element name, then an exception is raised.
 
 
 ```python
@@ -222,7 +222,7 @@ except ValueError as err:
       FOO is not a valid Group element name
 
 
-#### If two or more arguments are provided, then their combined product is returned:
+If two or more arguments are provided, then their combined product is returned:
 
 
 ```python
@@ -407,12 +407,12 @@ for sub in subs:
     
     Group('V4_subgroup_0',
     'Subgroup of: Klein-4 group',
-    ['e', 'v'],
+    ['e', 'h'],
     [[0, 1], [1, 0]]
     )
     Group('V4_subgroup_1',
     'Subgroup of: Klein-4 group',
-    ['e', 'h'],
+    ['e', 'v'],
     [[0, 1], [1, 0]]
     )
     Group('V4_subgroup_2',

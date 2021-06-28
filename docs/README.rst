@@ -202,8 +202,8 @@ Multiply Group Elements
 Group multiplication operation takes zero or more arguments and returns
 the product according to the group’s multiplication table (mult_table).
 
-If no argument is provided, then the group’s identity element is returned
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If no argument is provided, then the group’s identity element is
+returned
 
 .. code:: ipython3
 
@@ -218,8 +218,8 @@ If no argument is provided, then the group’s identity element is returned
 
 
 
-If one argument is provided, then that argument is returned, assuming it’s a valid element name.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If one argument is provided, then that argument is returned, assuming
+it’s a valid element name.
 
 .. code:: ipython3
 
@@ -234,8 +234,8 @@ If one argument is provided, then that argument is returned, assuming it’s a v
 
 
 
-If the one argument is not a valid element name, then an exception is raised.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If the one argument is not a valid element name, then an exception is
+raised.
 
 .. code:: ipython3
 
@@ -252,8 +252,8 @@ If the one argument is not a valid element name, then an exception is raised.
       FOO is not a valid Group element name
 
 
-If two or more arguments are provided, then their combined product is returned:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If two or more arguments are provided, then their combined product is
+returned:
 
 .. code:: ipython3
 
@@ -461,12 +461,12 @@ Proper Subgroups
     
     Group('V4_subgroup_0',
     'Subgroup of: Klein-4 group',
-    ['e', 'v'],
+    ['e', 'h'],
     [[0, 1], [1, 0]]
     )
     Group('V4_subgroup_1',
     'Subgroup of: Klein-4 group',
-    ['e', 'h'],
+    ['e', 'v'],
     [[0, 1], [1, 0]]
     )
     Group('V4_subgroup_2',

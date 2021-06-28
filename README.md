@@ -1,6 +1,6 @@
 # Abstract Algebra
 
-#### An experimental implementation of finite groups.
+An experimental implementation of finite groups.
 
 For API documentation see: https://abstract-algebra.readthedocs.io/en/latest/index.html
 
@@ -39,7 +39,7 @@ v4_json = os.path.join(alg_dir, "v4_klein_4_group.json")
     {"type": "Group",
      "name": "V4",
      "description": "Klein-4 group",
-     "element_names": ["e", "h", "v", "hv"],
+     "element_names": ["e", "h", "v", "r"],
      "mult_table": [[0, 1, 2, 3],
                     [1, 0, 3, 2],
                     [2, 3, 0, 1],
@@ -60,12 +60,12 @@ v4
 
     Group('V4',
     'Klein-4 group',
-    ['e', 'h', 'v', 'hv'],
+    ['e', 'h', 'v', 'r'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
 
 
 
-#### The group can also be created using the Group constuctor.
+The group can also be created using the Group constuctor.
 
 
 ```python
@@ -89,7 +89,7 @@ alg.Group('V4',
 
 
 
-#### And the group can be created from a Python dictionary:
+And the group can be created from a Python dictionary:
 
 
 ```python
@@ -114,7 +114,7 @@ alg.Group(v4_dict)
 
 For other ways to create groups, see the Jupyter Notebook, <b>ways_to_create_a_group</b>.
 
-### Pretty Printing a Group
+## Pretty Printing a Group
 
 A group can be pretty printed in two ways:
 
@@ -127,7 +127,7 @@ v4.pprint()
 
     Group('V4',
     'Klein-4 group',
-    ['e', 'h', 'v', 'hv'],
+    ['e', 'h', 'v', 'r'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
     )
 
@@ -143,10 +143,10 @@ v4.pprint(True)
 
     Group('V4',
     'Klein-4 group',
-    [['e', 'h', 'v', 'hv'],
-     ['h', 'e', 'hv', 'v'],
-     ['v', 'hv', 'e', 'h'],
-     ['hv', 'v', 'h', 'e']]
+    [['e', 'h', 'v', 'r'],
+     ['h', 'e', 'r', 'v'],
+     ['v', 'r', 'e', 'h'],
+     ['r', 'v', 'h', 'e']]
     )
 
 
@@ -175,7 +175,7 @@ alg.Group('V4',
 
 
 
-### Multiply Group Elements
+## Multiply Group Elements
 
 Group multiplication operation takes zero or more arguments and returns the product according to the group's multiplication table (mult_table).
 
@@ -232,13 +232,13 @@ v4.mult('h','v')  # h * v
 
 
 
-    'hv'
+    'r'
 
 
 
 
 ```python
-v4.mult('h', 'v', 'hv')  # h * v * hv
+v4.mult('h', 'v', 'r')  # h * v * hv
 ```
 
 
@@ -249,6 +249,7 @@ v4.mult('h', 'v', 'hv')  # h * v * hv
 
 
 ### Inverse Elements
+
 
 ```python
 v4.inv('h')
@@ -262,6 +263,7 @@ v4.inv('h')
 
 
 That is, $h * h^{-1} = e$
+
 
 ```python
 v4.mult('h', v4.inv('h'))
@@ -338,7 +340,7 @@ v4_x_v4.pprint()
 
     Group('V4_x_V4',
     'Direct product of V4 & V4',
-    ['e-e', 'e-h', 'e-v', 'e-hv', 'h-e', 'h-h', 'h-v', 'h-hv', 'v-e', 'v-h', 'v-v', 'v-hv', 'hv-e', 'hv-h', 'hv-v', 'hv-hv'],
+    ['e-e', 'e-h', 'e-v', 'e-r', 'h-e', 'h-h', 'h-v', 'h-r', 'v-e', 'v-h', 'v-v', 'v-r', 'r-e', 'r-h', 'r-v', 'r-r'],
     [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
      [1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14],
      [2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13],
@@ -371,7 +373,7 @@ v4.to_dict()
     {'type': 'Group',
      'name': 'V4',
      'description': 'Klein-4 group',
-     'element_names': ['e', 'h', 'v', 'hv'],
+     'element_names': ['e', 'h', 'v', 'r'],
      'mult_table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
 
 
@@ -384,7 +386,7 @@ v4.dumps()
 
 
 
-    '{"type": "Group", "name": "V4", "description": "Klein-4 group", "element_names": ["e", "h", "v", "hv"], "mult_table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
+    '{"type": "Group", "name": "V4", "description": "Klein-4 group", "element_names": ["e", "h", "v", "r"], "mult_table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
 
 
 
@@ -415,7 +417,7 @@ for sub in subs:
     )
     Group('V4_subgroup_2',
     'Subgroup of: Klein-4 group',
-    ['e', 'hv'],
+    ['e', 'r'],
     [[0, 1], [1, 0]]
     )
 

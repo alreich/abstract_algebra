@@ -2,7 +2,6 @@ Abstract Algebra
 ================
 
 An experimental implementation of finite groups.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For API documentation see:
 https://abstract-algebra.readthedocs.io/en/latest/index.html
@@ -46,7 +45,7 @@ Store Group in JSON format
     {"type": "Group",
      "name": "V4",
      "description": "Klein-4 group",
-     "element_names": ["e", "h", "v", "hv"],
+     "element_names": ["e", "h", "v", "r"],
      "mult_table": [[0, 1, 2, 3],
                     [1, 0, 3, 2],
                     [2, 3, 0, 1],
@@ -69,13 +68,12 @@ Read JSON Definition to Instantiate a Group Object
 
     Group('V4',
     'Klein-4 group',
-    ['e', 'h', 'v', 'hv'],
+    ['e', 'h', 'v', 'r'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]) 
 
 
 
 The group can also be created using the Group constuctor.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: ipython3
 
@@ -101,7 +99,6 @@ The group can also be created using the Group constuctor.
 
 
 And the group can be created from a Python dictionary:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: ipython3
 
@@ -129,7 +126,7 @@ For other ways to create groups, see the Jupyter Notebook,
 ways_to_create_a_group.
 
 Pretty Printing a Group
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 A group can be pretty printed in two ways:
 
@@ -145,7 +142,7 @@ element indices.
 
     Group('V4',
     'Klein-4 group',
-    ['e', 'h', 'v', 'hv'],
+    ['e', 'h', 'v', 'r'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
     )
 
@@ -164,10 +161,10 @@ redundant to the first row of the table.
 
     Group('V4',
     'Klein-4 group',
-    [['e', 'h', 'v', 'hv'],
-     ['h', 'e', 'hv', 'v'],
-     ['v', 'hv', 'e', 'h'],
-     ['hv', 'v', 'h', 'e']]
+    [['e', 'h', 'v', 'r'],
+     ['h', 'e', 'r', 'v'],
+     ['v', 'r', 'e', 'h'],
+     ['r', 'v', 'h', 'e']]
     )
 
 
@@ -200,7 +197,7 @@ following:
 
 
 Multiply Group Elements
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Group multiplication operation takes zero or more arguments and returns
 the product according to the group’s multiplication table (mult_table).
@@ -267,13 +264,13 @@ If two or more arguments are provided, then their combined product is returned:
 
 .. parsed-literal::
 
-    'hv'
+    'r'
 
 
 
 .. code:: ipython3
 
-    v4.mult('h', 'v', 'hv')  # h * v * hv
+    v4.mult('h', 'v', 'r')  # h * v * hv
 
 
 
@@ -289,7 +286,7 @@ Inverse Elements
 
 .. code:: ipython3
 
-    v4.inverse('h')
+    v4.inv('h')
 
 
 
@@ -304,7 +301,7 @@ That is, :math:`h * h^{-1} = e`
 
 .. code:: ipython3
 
-    v4.mult('h', v4.inverse('h'))
+    v4.mult('h', v4.inv('h'))
 
 
 
@@ -391,7 +388,7 @@ Derive Direct Product
 
     Group('V4_x_V4',
     'Direct product of V4 & V4',
-    ['e-e', 'e-h', 'e-v', 'e-hv', 'h-e', 'h-h', 'h-v', 'h-hv', 'v-e', 'v-h', 'v-v', 'v-hv', 'hv-e', 'hv-h', 'hv-v', 'hv-hv'],
+    ['e-e', 'e-h', 'e-v', 'e-r', 'h-e', 'h-h', 'h-v', 'h-r', 'v-e', 'v-h', 'v-v', 'v-r', 'r-e', 'r-h', 'r-v', 'r-r'],
     [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
      [1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14],
      [2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13],
@@ -426,7 +423,7 @@ Convert to Dictionary or JSON string
     {'type': 'Group',
      'name': 'V4',
      'description': 'Klein-4 group',
-     'element_names': ['e', 'h', 'v', 'hv'],
+     'element_names': ['e', 'h', 'v', 'r'],
      'mult_table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
 
 
@@ -440,7 +437,7 @@ Convert to Dictionary or JSON string
 
 .. parsed-literal::
 
-    '{"type": "Group", "name": "V4", "description": "Klein-4 group", "element_names": ["e", "h", "v", "hv"], "mult_table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
+    '{"type": "Group", "name": "V4", "description": "Klein-4 group", "element_names": ["e", "h", "v", "r"], "mult_table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
 
 
 
@@ -474,7 +471,7 @@ Proper Subgroups
     )
     Group('V4_subgroup_2',
     'Subgroup of: Klein-4 group',
-    ['e', 'hv'],
+    ['e', 'r'],
     [[0, 1], [1, 0]]
     )
 

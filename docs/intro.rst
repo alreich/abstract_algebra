@@ -37,7 +37,8 @@ Finally, when someone says that an element, :math:`a`, is in a group,
 :math:`G = \langle S, \otimes \rangle`, sometimes written,
 :math:`a \in G`, what is meant is that :math:`a \in S`.
 
-**MOTIVATION**
+Motivation for Group Definition
+-------------------------------
 
 A motivation for the specific group axioms, above, is provided by
 considering the assumptions required to solve the simplest equation:
@@ -100,7 +101,8 @@ The assumptions are exactly those that make up the group definition.
 
 Note that cummutability is not necessary.
 
-**FINITE GROUPS**
+Finite Groups
+-------------
 
 TBD
 
@@ -126,16 +128,7 @@ Isomorphisms
 
 TBD
 
-
 References
 ----------
 
 TBD
-
-
-==== =====
-This is
-==== =====
-a    table
-==== =====
-

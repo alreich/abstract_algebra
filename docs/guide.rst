@@ -8,11 +8,7 @@ This module runs under Python 3.7+ and requires **numpy**.
 
 Clone the github repository to install:
 
-.. code:: bash
-
-::
-
-   $ git clone https://github.com/alreich/abstract_algebra.git
+$ git clone https://github.com/alreich/abstract_algebra.git
 
 Add the *abstract_algebra* directory to your *PYTHONPATH*.
 

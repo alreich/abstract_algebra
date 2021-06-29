@@ -757,7 +757,17 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
 
 # Utilities
 
+# POWERSET
+#
 # From: https://docs.python.org/3/library/itertools.html#itertools-recipes
+#
+# NOTE: I tried to import this function from more-itertools but Sphinx
+# required extra configuration information in order to produce the API
+# documentation.  In the end, it was just easier to copy-paste this code.
+#
+# See the following two links for more info:
+# https://stackoverflow.com/questions/65487163/python-sphinx-autodoc-not-rendering-on-readthedocs
+# https://docs.readthedocs.io/en/stable/config-file/v2.html#requirements-file
 def powerset(iterable):
     "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
     s = list(iterable)

@@ -1,5 +1,5 @@
-Introduction
-============
+Introduction to Abstract Algebra
+================================
 
 Groups
 ------
@@ -23,29 +23,34 @@ The symbol, :math:`\otimes`, is used here to emphasize that it is not
 the same as numeric addition, :math:`+`, or multiplication,
 :math:`\times`. It can be more abstract…and sometimes not; it depends on
 which group is being discussed. For this reason, other symbols might be
-used to describe a group’s binary operation, even :math:`+` and
-:math:`\times`. Very often, no symbol at all is used, e.g., :math:`ab`
-instead of :math:`a \otimes b`. And, since groups are associative, there
-is no ambiquity in writing, :math:`abc` to denote
-:math:`a \otimes b \otimes c`.
+used to describe a group’s binary operation, often :math:`+`,
+:math:`\times`, and :math:`\cdot`. Very often, no symbol at all is used,
+e.g., :math:`ab` instead of :math:`a \otimes b`. That will be the case
+here
 
-With that in mind, we’ll define an abelian group to be a group where the
-binary operation is commutative. That is, if for all
-:math:`a,b \in S \Rightarrow ab = ba`.
-
-Finally, when someone says that an element, :math:`a`, is in a group,
-:math:`G = \langle S, \otimes \rangle`, sometimes written,
-:math:`a \in G`, what is meant is that :math:`a \in S`.
+Also, since groups are associative, there is no ambiquity in writing
+products like, :math:`abc`, without paretheses.
 
 Motivation for Group Definition
 -------------------------------
 
 A motivation for the specific group axioms, above, is provided by
-considering the assumptions required to solve the simplest equation:
+considering the assumptions required to solve the simplest equation.
 
-Let :math:`ax = b`, where :math:`a,b,x \in G`. Solve for :math:`x`:
+Let :math:`ax = b`, where :math:`a,b,x` are elements of a group,
+:math:`G`,
 
--  from assumption #1, all of the operations below make sense
+.. raw:: html
+
+   <p>
+
+and solve for :math:`x`:
+
+.. raw:: html
+
+   </p>
+
+-  from assumption #1, all of the operations here will be well-defined
 
 -  
 
@@ -101,10 +106,47 @@ The assumptions are exactly those that make up the group definition.
 
 Note that cummutability is not necessary.
 
+Groups and Geometric Symmetry
+-----------------------------
+
+TBD
+
+Abelian Groups
+--------------
+
+An abelian group is a group where the binary operation is commutative.
+
+That is, for all :math:`a,b \in S \Rightarrow ab = ba`.
+
+Abelian groups are also referred to as commutative groups.
+
 Finite Groups
 -------------
 
-TBD
+A finite group is a group, :math:`G = \langle S, \cdot \rangle`, where
+the number of elements is finite.
+
+So, for example, :math:`S = \{e, a_1, a_2, a_3, ... , a_{n-1}\}`. In
+this case, we say that the order of :math:`G` is :math:`n`.
+
+For infinite groups, the operator, :math:`\otimes`, is usually defined
+according to a rule or function. This can also be done for finite
+groups, however, in the finite case, it also possible to define the
+operator via a multiplication table, where each row and each column
+represents one of the finite number of elements.
+
+For example, if :math:`S = \{E, H, V, R\}`, where :math:`E` is the
+identity element, then a possible multiplication table would be as shown
+below (i.e., the Klein-4 Group):
+
+= = = = =
+. E H V R
+= = = = =
+E E H V R
+H H E R V
+V R R E H
+R E V H E
+= = = = =
 
 Subgroups
 ---------
@@ -117,7 +159,7 @@ forms a group itself, then :math:`H` is said to be a subgroup of
 There are two trivial subgroups of :math:`G`: the group consisting of
 just the identity element, :math:`\langle \{e\}, \otimes \rangle`, and
 entire group, :math:`G`, itself. All other subgroups are proper
-subgroups, denoted by :math:`H \lt G`.
+subgroups.
 
 A subgroup, :math:`H`, is a normal subgroup of a group G, if, for all
 elements :math:`g \in G` and for all

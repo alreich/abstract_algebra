@@ -2,6 +2,14 @@
 
 .. include:: README.rst
 
+Introduction
+============
+
+.. toctree::
+    :maxdepth: 2
+
+    intro
+
 User Guide
 ==========
 

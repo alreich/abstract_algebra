@@ -117,9 +117,9 @@ class Group:
         self.description = grp_dict['description']
 
         if grp_dict.get('element_names'):
-            self.element_names = grp_dict['element_names']
+            self.__element_names = grp_dict['element_names']
         else:
-            self.element_names = grp_dict['mult_table'][0]  # First row of table
+            self.__element_names = grp_dict['mult_table'][0]  # First row of table
 
         # Setup the group's multiplication table
         tbl = grp_dict['mult_table']
@@ -134,10 +134,10 @@ class Group:
         # The following private members are for caching.
         self.__is_abelian = None
         self.__is_associative = None
-        self.__element_orders = {elem: None for elem in self.element_names}
+        self.__element_orders = {elem: None for elem in self.__element_names}
 
         # Finally, check that the inputs represent a valid group
-        if check_inputs(self.element_names, self.mult_table):
+        if check_inputs(self.__element_names, self.mult_table):
             self.__inverse_lookup_dict = self.__make_inverse_lookup_dict()
 
     def __str__(self):
@@ -151,26 +151,57 @@ class Group:
         """
         nm = self.name
         desc = self.description
-        elems = self.element_names
+        elems = self.__element_names
         tbl = self.mult_table
         return f"{self.__class__.__name__}('{nm}',\n'{desc}',\n{elems},\n{tbl.tolist()}) "
 
     def __len__(self):
         """Return the order of the Group, i.e., the number of elements in it."""
-        return len(self.element_names)
+        return len(self.__element_names)
 
     def __contains__(self, element_name):
         """Return True if the element_name is in the group's list of element names."""
-        return element_name in self.element_names
+        return element_name in self.__element_names
 
     def __getitem__(self, index):
         """Allows for iteration over elements of the group"""
-        return self.element_names[index]
+        return self.__element_names[index]
+
+    @property
+    def elements(self):
+        """Return the list of element names"""
+        return self.__element_names
+
+    def set_elements(self, new_element_name_list):
+        """Replace the list of element names with new list of element names.  HANDLE WITH CARE.
+
+        Parameters
+        ----------
+        new_element_name_list : list
+          A list of strings.  Must be same length as the existing name list (group order)
+
+        Returns
+        -------
+        Group
+          This group with its new element names
+        """
+        n = len(new_element_name_list)
+        if all(isinstance(elem, str) for elem in new_element_name_list):
+            if self.order == n:
+                self.__element_names = new_element_name_list
+                self.__inverse_lookup_dict = self.__make_inverse_lookup_dict()  # Recalculate element inverses
+                self.__element_orders = {elem: None for elem in self.__element_names}  # Clear cached elem orders
+                return self
+            else:
+                raise Exception(f"The input list has {n} items, but there should be {self.order} items.")
+        else:
+            raise Exception("All element names should be strings.")
 
     @property
     def order(self):
         """Return the order of the group, ie., the number of elements in it."""
-        return len(self.element_names)
+        # return len(self.__element_names)
+        return len(self.__element_names)
 
     def element_order(self, element):
         """Return the order of the element.
@@ -209,18 +240,18 @@ class Group:
         bool
           True if the element names and multiplication tables of the two groups are identical.
         """
-        return (self.element_names == other.element_names) and np.array_equal(self.mult_table, other.mult_table)
+        return (self.__element_names == other.__element_names) and np.array_equal(self.mult_table, other.mult_table)
 
     @property
     def identity(self):
         """Return the identity element of the Group.  Also known as the 'natural' element."""
-        return self.element_names[0]
+        return self.__element_names[0]
 
     def deepcopy(self):
         """Returns a deep copy of this group."""
         return Group(copy.deepcopy(self.name),
                      copy.deepcopy(self.description),
-                     copy.deepcopy(self.element_names),
+                     copy.deepcopy(self.__element_names),
                      copy.deepcopy(self.mult_table))
 
     def direct_product_delimiter(self, delimiter=None):
@@ -248,7 +279,7 @@ class Group:
         """(Private Method) Return a dictionary of element names and their inverse names."""
         # A 0 index in the mult_table means that the row and col. are inverses
         row_indices, col_indices = np.where(self.mult_table == 0)
-        return {self.element_names[elem_index]: self.element_names[elem_inv_index]
+        return {self.__element_names[elem_index]: self.__element_names[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
 
@@ -257,7 +288,7 @@ class Group:
         return {'type': self.__class__.__name__,
                 'name': self.name,
                 'description': self.description,
-                'element_names': self.element_names,
+                'element_names': self.__element_names,
                 'mult_table': self.mult_table.tolist()}
 
     def dumps(self):
@@ -310,7 +341,7 @@ class Group:
 
     def mult_table_with_names(self):
         """Return the multiplication table with element names rather than element positions."""
-        return [[self.element_names[elem_pos] for elem_pos in row] for row in self.mult_table]
+        return [[self.__element_names[elem_pos] for elem_pos in row] for row in self.mult_table]
 
     def mult(self, *args):
         """Multiply zero or more elements using the group's multiplication table.
@@ -330,19 +361,19 @@ class Group:
         """
         # If no args, return the identity
         if len(args) == 0:
-            return self.element_names[0]
+            return self.__element_names[0]
         # If one arg, and it's a valid element name, then just return it
         elif len(args) == 1:
-            if args[0] in self.element_names:
+            if args[0] in self.__element_names:
                 return args[0]
             else:
                 raise ValueError(f"{args[0]} is not a valid Group element name")
         # If two args, then look up their sum in the multiplication table
         elif len(args) == 2:
-            row = self.element_names.index(args[0])
-            col = self.element_names.index(args[1])
+            row = self.__element_names.index(args[0])
+            col = self.__element_names.index(args[1])
             index = self.mult_table[row, col]
-            return self.element_names[index]
+            return self.__element_names[index]
         # If more than two args, then multiply them all together
         else:
             return fnc.reduce(lambda a, b: self.mult(a, b), args)
@@ -371,7 +402,7 @@ class Group:
         if use_element_names:
             pp.pprint(self.mult_table_with_names())
         else:
-            print(f"{self.element_names},")
+            print(f"{self.__element_names},")
             pp.pprint(self.mult_table.tolist())
         print(")")
         return None
@@ -389,7 +420,7 @@ class Group:
         """Return the direct product of this Group with the `other` Group."""
         dp_name = f"{self.name}_x_{other.name}"
         dp_description = "Direct product of " + self.name + " & " + other.name
-        dp_element_names = list(it.product(self.element_names, other.element_names))  # Cross product
+        dp_element_names = list(it.product(self.__element_names, other.__element_names))  # Cross product
         dp_mult_table = list()
         for a in dp_element_names:
             dp_mult_table_row = list()  # Start a new row
@@ -422,11 +453,11 @@ class Group:
         print("Elements:")
         print("   Index   Name   Inverse  Order")
         for elem in self:
-            idx_elem = self.element_names.index(elem)
+            idx_elem = self.__element_names.index(elem)
             inv_elem = self.inv(elem)
             ord_elem = self.element_order(elem)
             print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
-        size = len(self.element_names)
+        size = len(self.__element_names)
         if size <= max_size:
             if use_table_names:
                 print(f"Cayley Table (showing names):")
@@ -457,8 +488,8 @@ class Group:
         """Returns True if the group is abelian (commutative)."""
         if self.__is_abelian is None:  # Check for no cached value
             result = True
-            for e1 in self.element_names:
-                for e2 in self.element_names:
+            for e1 in self.__element_names:
+                for e2 in self.__element_names:
                     if not (self.mult(e1, e2) == self.mult(e2, e1)):
                         result = False
                         break
@@ -520,7 +551,7 @@ class Group:
         """Return all unique, closed, proper subsets of the Group's elements.
         This returns a list of lists. Each list represents the elements of a subgroup."""
         closed = set()  # Build the result as a set of sets to avoid duplicates
-        all_elements = self.element_names
+        all_elements = self.__element_names
         n = len(all_elements)
         for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
             # Look at all combinations of elements: pairs, triples, quadruples, etc.
@@ -550,7 +581,7 @@ class Group:
         # Make sure the elements are sorted according to their order in the parent Group (self)
         # TODO: Check whether the input elements are indeed closed (make this check optional)
         #       Use the is_closed method (To Be Written) defined, above.
-        elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.element_names.index(x))
+        elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.__element_names.index(x))
         table = []
         for a in elements_sorted:
             row = []
@@ -662,8 +693,8 @@ class Group:
           A list of dictionaries mapping this group's elements to the other group's elements.
         """
         if self.order == other.order:
-            elems0 = self.element_names
-            elems1 = other.element_names
+            elems0 = self.__element_names
+            elems1 = other.__element_names
             mappings = [dict(zip(elems0[1:], perm)) for perm in it.permutations(elems1[1:])]
             for mapping in mappings:
                 mapping[elems0[0]] = elems1[0]
@@ -686,7 +717,7 @@ class Group:
         bool
           Returns True if the mapping represents an isomorphism between the two groups; False, otherwise.
         """
-        elems = self.element_names
+        elems = self.__element_names
         return all([mapping[self.mult(x, y)] == other.mult(mapping[x], mapping[y]) for x in elems for y in elems])
 
     def isomorphic(self, other):
@@ -769,7 +800,7 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
 # https://stackoverflow.com/questions/65487163/python-sphinx-autodoc-not-rendering-on-readthedocs
 # https://docs.readthedocs.io/en/stable/config-file/v2.html#requirements-file
 def powerset(iterable):
-    "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
+    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
     s = list(iterable)
     return it.chain.from_iterable(it.combinations(s, r) for r in range(len(s)+1))
 
@@ -1198,19 +1229,19 @@ class Ring(Group):
         """The ring's multiplication operation."""
         # If no args, return the identity
         if len(args) == 0:
-            return self.element_names[0]
+            return self.__element_names[0]
         # If one arg, and it's a valid element name, then just return it
         elif len(args) == 1:
-            if args[0] in self.element_names:
+            if args[0] in self.__element_names:
                 return args[0]
             else:
                 raise ValueError(f"{args[0]} is not a valid Group element name")
         # If two args, then look up their sum in the multiplication table
         elif len(args) == 2:
-            row = self.element_names.index(args[0])
-            col = self.element_names.index(args[1])
+            row = self.__element_names.index(args[0])
+            col = self.__element_names.index(args[1])
             index = self.rmult_table[row, col]
-            return self.element_names[index]
+            return self.__element_names[index]
         # If more than two args, then multiply them all together
         else:
             return fnc.reduce(lambda a, b: self.rmult(a, b), args)
@@ -1220,7 +1251,7 @@ class Ring(Group):
         result = None
         for x in self:
             xy = [self.rmult(x, y) for y in self]
-            if xy == self.element_names:
+            if xy == self.__element_names:
                 result = x
         return result
 
@@ -1242,7 +1273,7 @@ class Ring(Group):
         return result
 
     def rmult_table_with_names(self):
-        return [[self.element_names[elem_pos]
+        return [[self.__element_names[elem_pos]
                  for elem_pos in row]
                 for row in self.rmult_table]
 
@@ -1253,7 +1284,7 @@ class Ring(Group):
             pp.pprint(self.mult_table_with_names())
             pp.pprint(self.rmult_table_with_names())
         else:
-            print(f"{self.element_names},")
+            print(f"{self.__element_names},")
             print("")
             pp.pprint(self.mult_table.tolist())
             print("")

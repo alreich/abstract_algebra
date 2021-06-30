@@ -138,7 +138,7 @@ class Group:
 
         # Finally, check that the inputs represent a valid group
         if check_inputs(self.__element_names, self.mult_table):
-            self.__inverse_lookup_dict = self.__make_inverse_lookup_dict()
+            self.__inverse_lookup_dict = self.calc_inverse_lookup_dict()
 
     def __str__(self):
         """Return a string that identifies the object's class, name, and description."""
@@ -189,7 +189,7 @@ class Group:
         if all(isinstance(elem, str) for elem in new_element_name_list):
             if self.order == n:
                 self.__element_names = new_element_name_list
-                self.__inverse_lookup_dict = self.__make_inverse_lookup_dict()  # Recalculate element inverses
+                self.__inverse_lookup_dict = self.calc_inverse_lookup_dict()  # Recalculate element inverses
                 self.__element_orders = {elem: None for elem in self.__element_names}  # Clear cached elem orders
                 return self
             else:
@@ -275,8 +275,16 @@ class Group:
         else:
             return self.__dp_delimiter
 
-    def __make_inverse_lookup_dict(self):
-        """(Private Method) Return a dictionary of element names and their inverse names."""
+    def calc_inverse_lookup_dict(self):
+        """Calculates a dictionary of element names and their inverse names.
+        DEV NOTE: This function should be anytime element names are set or changed.
+
+        Returns
+        -------
+        dict
+          A dictionary where each key is an element name (str), and value is the name
+          of its inverse (str).
+        """
         # A 0 index in the mult_table means that the row and col. are inverses
         row_indices, col_indices = np.where(self.mult_table == 0)
         return {self.__element_names[elem_index]: self.__element_names[elem_inv_index]

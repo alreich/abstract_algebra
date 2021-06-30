@@ -465,7 +465,7 @@ class Group:
             self.__is_abelian = result  # Cache this result
         return self.__is_abelian
 
-    def commutative(self):
+    def is_commutative(self):
         """Returns True if the group is commutative (abelian)."""
         return self.is_abelian()
 

@@ -25,7 +25,6 @@ Utilities
 .. autofunction:: algebras.generate_all_group_tables
 .. autofunction:: algebras.tables_to_groups
 .. autofunction:: algebras.get_duplicates
-.. autofunction:: algebras.powerset_mult_table
 
 Permutation
 -----------
@@ -45,6 +44,8 @@ Ring
     :undoc-members:
     :private-members:
 
+.. autofunction:: algebras.powerset_mult_table
+.. autofunction:: algebras.generate_powerset_ring
 
 Field
 -----

@@ -495,6 +495,7 @@ class Group:
         return None
 
     def about_proper_subgroups(self, unique=False, show_elements=True):
+        """TBD: Work in Progress"""
         if unique:
             subgrps = self.unique_proper_subgroups()
         else:
@@ -1241,81 +1242,162 @@ class Ring(Group):
         if len(args) == 5:
             super().__init__(*args[:4])
 
-        self.rmult_table = np.array(args[4], dtype=np.int64)
+        self.ring_mult_table = np.array(args[4], dtype=np.int64)
 
-        # TODO: Check that this is an abelian group
-        # TODO: Check that distributivity holds true
+        # A multiplicative identity may not exist.  The first time access is
+        # attempted, __has_mult_identity will be set to True or False.
+        self.__has_mult_identity = None
+
+        # If a multiplicative identity exists, then it will be found and cached
+        # the first time it is accessed.
+        self.__mult_identity = None
+
+        self.__is_distributive = None  # Cached on first access
+
+        if not super().is_abelian():
+            raise Exception("The ring addition operation is not abelian.")
+
+        if not self.is_distributive():
+            raise Exception("The ring addition operation does not distribute over multiplication.")
+
+    @property
+    def ring_elements(self):
+        return super().elements
+
+    @property
+    def add_identity(self):
+        return super().identity
 
     def add(self, *args):
         """Use the parent's (group) mult. operation as the ring's addition operator."""
         return super().mult(*args)
 
-    def rmult(self, *args):
+    def ring_mult(self, *args):
         """The ring's multiplication operation."""
         # If no args, return the identity
         if len(args) == 0:
-            return self.__element_names[0]
+            return self.ring_elements
         # If one arg, and it's a valid element name, then just return it
         elif len(args) == 1:
-            if args[0] in self.__element_names:
+            if args[0] in self.ring_elements:
                 return args[0]
             else:
                 raise ValueError(f"{args[0]} is not a valid Group element name")
         # If two args, then look up their sum in the multiplication table
         elif len(args) == 2:
-            row = self.__element_names.index(args[0])
-            col = self.__element_names.index(args[1])
-            index = self.rmult_table[row, col]
-            return self.__element_names[index]
+            row = self.ring_elements.index(args[0])
+            col = self.ring_elements.index(args[1])
+            index = self.ring_mult_table[row, col]
+            return self.ring_elements[index]
         # If more than two args, then multiply them all together
         else:
-            return fnc.reduce(lambda a, b: self.rmult(a, b), args)
+            return fnc.reduce(lambda a, b: self.ring_mult(a, b), args)
 
-    def identity_element(self):
-        """If it exists, find the identity element for the given operation, op."""
-        result = None
-        for x in self:
-            xy = [self.rmult(x, y) for y in self]
-            if xy == self.__element_names:
-                result = x
-        return result
+    @property
+    def mult_identity(self):
+        """If it exists, find the identity element for the given operation, op.
+        Developer Note: This value is computed, and if it exists, it is cached
+        the first time it is accessed."""
+        if self.__has_mult_identity is None:
+            # Look for a multiplicative identity
+            for x in self:
+                xy = [self.ring_mult(x, y) for y in self]
+                if xy == self.ring_elements:
+                    # Found one
+                    self.__has_mult_identity = True
+                    self.__mult_identity = x
+                    return self.__mult_identity
+            # Didn't find one
+            if self.__has_mult_identity is None:
+                self.__has_mult_identity = False
+                return self.__mult_identity
+        return self.__mult_identity
+
+    @property
+    def has_mult_identity(self):
+        return self.__has_mult_identity
 
     def is_distributive(self, verbose=False):
         """Check that a(b + c) = ab + ac for all elements, a, b, and c, in the Ring, rng."""
-        result = True
-        for a in self:
-            for b in self:
-                for c in self:
-                    b_plus_c = self.add(b, c)
-                    ab = self.rmult(a, b)
-                    ac = self.rmult(a, c)
-                    if self.rmult(a, b_plus_c) != self.add(ab, ac):
-                        if verbose:
-                            print(f"a = {a}; b = {b}; c = {c}")
-                            print(f"{a} x {b_plus_c} != {ab} + {ac}")
-                        result = False
-                        break
-        return result
+        if self.__is_distributive is None:
+            self.__is_distributive = True
+            for a in self:
+                for b in self:
+                    for c in self:
+                        b_plus_c = self.add(b, c)
+                        ab = self.ring_mult(a, b)
+                        ac = self.ring_mult(a, c)
+                        if self.ring_mult(a, b_plus_c) != self.add(ab, ac):
+                            if verbose:
+                                print(f"\na = {a}; b = {b}; c = {c}")
+                                print(f"{a} x {b_plus_c} != {ab} + {ac}")
+                            self.__is_distributive = False
+                            break
+            return self.__is_distributive
+        else:
+            return self.__is_distributive
 
-    def rmult_table_with_names(self):
-        return [[self.__element_names[elem_pos]
+    def ring_mult_table_with_names(self):
+        return [[self.ring_elements[elem_pos]
                  for elem_pos in row]
-                for row in self.rmult_table]
+                for row in self.ring_mult_table]
 
     def pprint(self, use_element_names=False):
         print(f"{self.__class__.__name__}('{self.name}',")
         print(f"'{self.description}',")
         if use_element_names:
             pp.pprint(self.mult_table_with_names())
-            pp.pprint(self.rmult_table_with_names())
+            pp.pprint(self.ring_mult_table_with_names())
         else:
-            print(f"{self.__element_names},")
+            print(f"{self.ring_elements},")
             print("")
             pp.pprint(self.mult_table.tolist())
             print("")
-            pp.pprint(self.rmult_table.tolist())
+            pp.pprint(self.ring_mult_table.tolist())
         print(")")
         return None
+
+
+def generate_powerset_ring(n, name=None, description=None):
+    """Generates a ring on the powerset of {0, 1, 2, ..., n-1},
+    where symmetric difference is the operator.
+
+    Parameters
+    ----------
+    n : int
+      A positive integer. The number of elements in the set, {0, 1, 2, ..., n-1},
+      from which the powerset will be created. The sets in the powerset will be
+      the ring's elements.
+    name : str
+      The rings's name.  Defaults to 'PSRingn',
+      where n is the order.
+    description : str
+      A description of the ring. Defaults to
+      'Autogenerated powerset ring on a set of n elements...'.
+      The ring's order will be 2^n.
+
+    Returns
+    -------
+    Ring
+      A ring on the powerset of {0, 1, 2, ..., n-1},
+      where symmetric difference is the ring's addition operator
+      and intersection is the ring's multiplication operator.
+    """
+    if name:
+        nm = name
+    else:
+        nm = "PSRing" + str(n)
+    if description:
+        desc = description
+    else:
+        desc = f"Autogenerated ring on powerset of {n} elements w/ ops: symm. diff. (+) & intersection (*)"
+    set_of_n = set(list(range(n)))
+    pset = [set(x) for x in list(powerset(set_of_n))]
+    addition_table = [[pset.index(a ^ b) for b in pset] for a in pset]
+    mult_table = powerset_mult_table(n)
+    elements = [str(elem) for elem in pset]
+    elements[0] = "{}"  # Because otherwise it would be "set()"
+    return Ring(nm, desc, elements, addition_table, mult_table)
 
 
 # TODO: Implement fields

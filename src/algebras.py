@@ -138,7 +138,7 @@ class Group:
 
         # Finally, check that the inputs represent a valid group
         if check_inputs(self.__element_names, self.mult_table):
-            self.__inverse_lookup_dict = self.calc_inverse_lookup_dict()
+            self.__inverse_lookup_dict = self.create_inverse_lookup_dict()
 
     def __str__(self):
         """Return a string that identifies the object's class, name, and description."""
@@ -167,35 +167,52 @@ class Group:
         """Allows for iteration over elements of the group"""
         return self.__element_names[index]
 
+    def make_empty_element_order_cache(self):
+        return {elem: None for elem in self.__element_names}
+
     @property
     def elements(self):
         """Return the list of element names"""
         return self.__element_names
 
-    def set_elements(self, new_element_name_list):
+    def set_elements(self, new_element_names):
         """Replace the list of element names with new list of element names.  HANDLE WITH CARE.
 
         Parameters
         ----------
-        new_element_name_list : list
-          A list of strings.  Must be same length as the existing name list (group order)
+        new_element_names : list or dict
+          A list of element names (str) or a dictionary of old element names (keys)
+          and new element names (values).  If it's a list, then the list needs to be
+          the same length as the order of the group.  If it's a dictionary, then the
+          keys need to include all of the old element names.  It can be greater, but
+          it can't be less.  It can be greater in situations where a mapping list for
+          a group is being used to change the element names of one of its subgroups.
 
         Returns
         -------
-        Group
-          This group with its new element names
+        dict
+          A mapping that can be used to restore the old element names.  That is, the
+          keys will be the new element names and the values will be the corresponding
+          old element names.
         """
-        n = len(new_element_name_list)
-        if all(isinstance(elem, str) for elem in new_element_name_list):
-            if self.order == n:
-                self.__element_names = new_element_name_list
-                self.__inverse_lookup_dict = self.calc_inverse_lookup_dict()  # Recalculate element inverses
-                self.__element_orders = {elem: None for elem in self.__element_names}  # Clear cached elem orders
-                return self
+        mapping = None
+        n = len(set(new_element_names))  # Note: converted to set to remove possible duplicates
+        if isinstance(new_element_names, list):
+            if n == self.order:
+                # mapping = {OldName1: NewName1, OldName2: NewName2, ...}
+                mapping = dict(zip(self.__element_names, new_element_names))
             else:
                 raise Exception(f"The input list has {n} items, but there should be {self.order} items.")
-        else:
-            raise Exception("All element names should be strings.")
+        elif isinstance(new_element_names, dict):
+            if n >= self.order:
+                mapping = new_element_names
+            else:
+                raise Exception(f"The input list has {n} items, but there should be at least {self.order} items.")
+        self.__element_names = [mapping[x] for x in self.__element_names]
+        self.__inverse_lookup_dict = self.create_inverse_lookup_dict()  # Recalculate the inverse lookup table
+        self.__element_orders = {elem: None for elem in self.__element_names}  # Reset the element orders cache
+        # return {value: key for key, value in mapping.items()}  # Return reverse mapping
+        return self
 
     @property
     def order(self):
@@ -275,8 +292,8 @@ class Group:
         else:
             return self.__dp_delimiter
 
-    def calc_inverse_lookup_dict(self):
-        """Calculates a dictionary of element names and their inverse names.
+    def create_inverse_lookup_dict(self):
+        """Create a dictionary of element names and their inverse names.
         DEV NOTE: This function should be anytime element names are set or changed.
 
         Returns

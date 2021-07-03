@@ -25,7 +25,7 @@ class Magma:
         return self.__elements[index]
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(\n{self.__elements}, \n{self.__table}\n)"
+        return f"{self.__class__.__name__}(\n{self.__elements},\n{self.__table.tolist()}\n)"
 
     @property
     def elements(self):
@@ -94,11 +94,10 @@ class Monoid(Semigroup):
 class Group(Monoid):
 
     def __init__(self, elems, tbl):
-        self.identity = table_utils.has_identity(tbl)
-        if self.identity:
+        if table_utils.has_inverses(tbl):
             super().__init__(elems, tbl)
         else:
-            raise ValueError("Table has no identity element")
+            raise ValueError("Table has insufficient inverses")
 
 
 if __name__ == '__main__':

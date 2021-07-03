@@ -3,6 +3,7 @@
 
 import numpy as np
 
+
 # Table Utilities
 
 def is_associative(table):
@@ -57,6 +58,10 @@ def has_identity(table):
         return left_id
     else:
         return None
+
+
+def has_inverses(table):
+    return False
 
 
 def inverse_lookup_dict(table, identity):

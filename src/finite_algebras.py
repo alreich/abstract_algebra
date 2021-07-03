@@ -87,6 +87,20 @@ class Monoid(Semigroup):
             raise ValueError("Table has no identity element")
 
 
+# =========
+#   Group
+# =========
+
+class Group(Monoid):
+
+    def __init__(self, elems, tbl):
+        self.identity = table_utils.has_identity(tbl)
+        if self.identity:
+            super().__init__(elems, tbl)
+        else:
+            raise ValueError("Table has no identity element")
+
+
 if __name__ == '__main__':
 
     print("\n=======================================================================")
@@ -95,8 +109,7 @@ if __name__ == '__main__':
     print("START OF TESTS")
     print("--------------")
 
-    # Magma tests
-
+    print("\n----------------------------------------------------------------------")
     print("\nMagma Tests:\n")
 
     # Rock-Paper-Scissors Magma
@@ -108,6 +121,7 @@ if __name__ == '__main__':
     rp_s = rps.op(rp, 's')
     print(f"    r(ps) = r{ps} = {r_ps}, \nbut (rp)s = {rp}s = {rp_s}")
 
+    print("\n----------------------------------------------------------------------")
     print("\nSemigroup Tests:\n")
 
     ex141_tbl = [[0, 3, 0, 3, 0, 3], [1, 4, 1, 4, 1, 4], [2, 5, 2, 5, 2, 5],

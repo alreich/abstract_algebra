@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import numpy as np
+
 # Table Utilities
 
 def is_associative(table):
@@ -55,6 +57,14 @@ def has_identity(table):
         return left_id
     else:
         return None
+
+
+def inverse_lookup_dict(table, identity):
+    elements = range(len(table))
+    row_indices, col_indices = np.where(table == identity)
+    return {elements[elem_index]: elements[elem_inv_index]
+            for (elem_index, elem_inv_index)
+            in zip(row_indices, col_indices)}
 
 
 if __name__ == '__main__':

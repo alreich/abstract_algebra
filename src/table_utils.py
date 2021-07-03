@@ -48,6 +48,15 @@ def has_right_identity(table):
     return identity
 
 
+def has_identity(table):
+    left_id = has_left_identity(table)
+    right_id = has_right_identity(table)
+    if (left_id is not None) and (right_id is not None):
+        return left_id
+    else:
+        return None
+
+
 if __name__ == '__main__':
 
     print("\n=======================================================================")
@@ -86,15 +95,16 @@ if __name__ == '__main__':
         pp.pprint(tbl)
         print()
 
-    print("   Table     Associative?  Commutative?   Left Id?   Right Id?")
-    print('-' * 65)
+    print("   Table     Associative?  Commutative?   Left Id?   Right Id?  Identity?")
+    print('-' * 75)
     for tbl in test_tables:
         i = test_tables.index(tbl) + 1
         is_assoc = str(is_associative(tbl))
         is_comm = str(is_commutative(tbl))
         lft_id = str(has_left_identity(tbl))
         rgt_id = str(has_right_identity(tbl))
-        print(f"{i :>{6}} {is_assoc :>{14}} {is_comm :>{12}} {lft_id :>{12}} {rgt_id :>{12}}")
+        ident = str(has_identity(tbl))
+        print(f"{i :>{6}} {is_assoc :>{14}} {is_comm :>{12}} {lft_id :>{12}} {rgt_id :>{12}} {ident :>{10}}")
 
     print("\n------------")
     print("END OF TESTS")

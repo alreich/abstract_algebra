@@ -4,8 +4,7 @@
 # New Object Hierarchy (WORK-IN-PROGRESS)
 
 import functools as fnc
-import numpy as np
-import table_utils
+from cayley_table import CayleyTable
 
 
 # =========
@@ -16,7 +15,8 @@ class Magma:
     
     def __init__(self, elems, tbl):
         self.__elements = elems
-        self.__table = np.array(tbl)
+        # self.__table = np.array(tbl)
+        self.__table = CayleyTable(tbl)
         
     def __contains__(self, element):
         return element in self.__elements
@@ -66,10 +66,15 @@ class Magma:
 
 class Semigroup(Magma):
 
+    # def __init__(self, elems, tbl):
+    #     if table_utils.is_associative(tbl):
+    #         super().__init__(elems, tbl)
+    #     else:
+    #         raise ValueError("Table does not support associativity")
+
     def __init__(self, elems, tbl):
-        if table_utils.is_associative(tbl):
-            super().__init__(elems, tbl)
-        else:
+        super().__init__(elems, tbl)
+        if not self.table.is_associative():
             raise ValueError("Table does not support associativity")
 
 
@@ -79,11 +84,16 @@ class Semigroup(Magma):
 
 class Monoid(Semigroup):
 
+    # def __init__(self, elems, tbl):
+    #     self.identity = table_utils.has_identity(tbl)
+    #     if self.identity:
+    #         super().__init__(elems, tbl)
+    #     else:
+    #         raise ValueError("Table has no identity element")
+
     def __init__(self, elems, tbl):
-        self.identity = table_utils.has_identity(tbl)
-        if self.identity:
-            super().__init__(elems, tbl)
-        else:
+        super().__init__(elems, tbl)
+        if not self.table.identity():
             raise ValueError("Table has no identity element")
 
 
@@ -94,9 +104,8 @@ class Monoid(Semigroup):
 class Group(Monoid):
 
     def __init__(self, elems, tbl):
-        if table_utils.has_inverses(tbl):
-            super().__init__(elems, tbl)
-        else:
+        super().__init__(elems, tbl)
+        if not self.has_inverses(tbl):
             raise ValueError("Table has insufficient inverses")
 
 
@@ -128,7 +137,7 @@ if __name__ == '__main__':
 
     ex141_sg = Semigroup(['a', 'b', 'c', 'd', 'e', 'f'], ex141_tbl)
     print(ex141_sg)
-    print(f"Commutative?: {table_utils.is_commutative(ex141_sg.table)}")
+    print(f"Commutative?: {ex141_sg.table.is_commutative()}")
 
     print("\n------------")
     print("END OF TESTS")

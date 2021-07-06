@@ -5,24 +5,35 @@ import numpy as np
 
 class CayleyTable:
 
-    def __init__(self, *args):
-        if len(args) == 1:
-            if isinstance(args[0], list):
-                if all(isinstance(row, list) for row in args[0]):
-                    self.order = len(args[0])
-                    if all(len(row) == self.order for row in args[0]):
-                        self.__table = np.array(args[0])
-                    else:
-                        raise Exception("Input must represent a square tabl")
-                else:
-                    raise Exception("All table rows must be lists")
+    def __init__(self, arr):
+        tmp = np.array(arr, dtype=int)
+        nrows, ncols = tmp.shape
+        if nrows == ncols:
+            if (tmp.min() >= 0) and (tmp.max() < nrows):
+                self.__order = nrows
+                self.__table = tmp
             else:
-                raise Exception(f"Single argument type, {type(args[0])}, not supported")
+                raise Exception(f"All integers must be between 0 and {nrows - 1}, inclusive.")
         else:
-            raise Exception(f"Incorrect number of arguments")
+            raise Exception(f"Input arrays must be square; this one is {nrows}x{ncols}.")
 
-    def __repr(self):
-        print(f"CayleyTable(\n{self.__table}\n)")
+    def __repr__(self):
+        return f"{self.__class__.__name__}(\n{pp.pformat(self.__table.tolist())}\n)"
+
+    def __getitem__(self, tup):
+        row, col = tup
+        return self.__table[row][col]
+
+    @property
+    def order(self):
+        return self.__order
+
+    @property
+    def table(self):
+        return self.__table
+
+    def tolist(self):
+        return self.__table.tolist()
 
     def is_associative(self):
         indices = range(len(self.__table))
@@ -30,44 +41,45 @@ class CayleyTable:
         for a in indices:
             for b in indices:
                 for c in indices:
-                    ab = self[a][b]
-                    bc = self[b][c]
-                    if not (self[ab][c] == self[a][bc]):
+                    ab = self.__table[a][b]
+                    bc = self.__table[b][c]
+                    if not (self.__table[ab][c] == self.__table[a][bc]):
                         result = False
                         break
         return result
 
     def is_commutative(self):
-        indices = range(len(self.__table))
+        n = self.__table.shape[0]
         result = True
-        for a in indices:
-            for b in indices:
-                if self[a][b] != self[b][a]:
+        # Loop over the table's upper off-diagonal elements
+        for a in range(n):
+            for b in range(a + 1, n):
+                if self.__table[a][b] != self.__table[b][a]:
                     result = False
                     break
         return result
 
-    def has_left_identity(self):
+    def left_identity(self):
         indices = range(len(self.__table))
         identity = None
         for x in indices:
-            if all(self[x][y] == y for y in indices):
+            if all(self.__table[x][y] == y for y in indices):
                 identity = x
                 break
         return identity
 
-    def has_right_identity(self):
+    def right_identity(self):
         indices = range(len(self.__table))
         identity = None
         for x in indices:
-            if all(self[y][x] == y for y in indices):
+            if all(self.__table[y][x] == y for y in indices):
                 identity = x
                 break
         return identity
 
-    def has_identity(self):
-        left_id = self.has_left_identity()
-        right_id = self.has_right_identity()
+    def identity(self):
+        left_id = self.left_identity()
+        right_id = self.right_identity()
         if (left_id is not None) and (right_id is not None):
             return left_id
         else:
@@ -78,10 +90,11 @@ class CayleyTable:
 
     def inverse_lookup_dict(self, identity):
         elements = range(len(self.__table))
-        row_indices, col_indices = np.where(self == identity)
+        row_indices, col_indices = np.where(self.__table == identity)
         return {elements[elem_index]: elements[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
+
 
 if __name__ == '__main__':
 
@@ -112,19 +125,20 @@ if __name__ == '__main__':
     test_cayley_tables = [CayleyTable(tbl) for tbl in test_arrays]
 
     for tbl in test_cayley_tables:
-        pp.pprint(tbl)
+        print(tbl)
         print()
 
-    print("   Table     Associative?  Commutative?   Left Id?   Right Id?  Identity?")
+    print("   Table  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?")
     print('-' * 75)
     for tbl in test_cayley_tables:
         i = test_cayley_tables.index(tbl) + 1
+        order = str(tbl.order)
         is_assoc = str(tbl.is_associative())
         is_comm = str(tbl.is_commutative())
-        lft_id = str(tbl.has_left_identity())
-        rgt_id = str(tbl.has_right_identity())
-        ident = str(tbl.has_identity())
-        print(f"{i :>{6}} {is_assoc :>{14}} {is_comm :>{12}} {lft_id :>{12}} {rgt_id :>{12}} {ident :>{10}}")
+        lft_id = str(tbl.left_identity())
+        rgt_id = str(tbl.right_identity())
+        ident = str(tbl.identity())
+        print(f"{i :>{6}} {order :>{6}} {is_assoc :>{11}} {is_comm :>{12}} {lft_id :>{12}} {rgt_id :>{9}} {ident :>{10}}")
 
     print("\n------------")
     print("END OF TESTS")

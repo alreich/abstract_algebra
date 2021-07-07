@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 import numpy as np
+import pprint as pp
 
 
 class CayleyTable:
@@ -19,6 +20,9 @@ class CayleyTable:
 
     def __repr__(self):
         return f"{self.__class__.__name__}(\n{pp.pformat(self.__table.tolist())}\n)"
+
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.__table.tolist()})"
 
     def __getitem__(self, tup):
         row, col = tup
@@ -85,8 +89,18 @@ class CayleyTable:
         else:
             return None
 
-    # def has_inverses(table):
-    #     return False
+    def has_inverses(self):
+        if self.identity:
+            row_indices, col_indices = np.where(self.__table == self.identity())
+            if set(row_indices) == set(col_indices):
+                if len(row_indices) == self.__order:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
 
     def inverse_lookup_dict(self, identity):
         elements = range(len(self.__table))
@@ -94,6 +108,27 @@ class CayleyTable:
         return {elements[elem_index]: elements[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
+
+    def about(self):
+        table_order = str(self.order)
+        is_associative = str(self.is_associative())
+        is_commutative = str(self.is_commutative())
+        left_id = str(self.left_identity())
+        right_id = str(self.right_identity())
+        id = str(self.identity())
+        has_inverses = str(self.has_inverses())
+        return table_order, is_associative, is_commutative, left_id, right_id, id, has_inverses
+
+
+# Utility
+
+def about_tables(list_of_cayley_tables):
+    print("   Table  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?")
+    print('-' * 85)
+    for tbl in list_of_cayley_tables:
+        i = list_of_cayley_tables.index(tbl) + 1
+        n, assoc, comm, lid, rid, id, invs = tbl.about()
+        print(f"{i :>{6}} {n :>{6}} {assoc :>{11}} {comm :>{12}} {lid :>{12}} {rid :>{9}} {id :>{10}} {invs :>{10}}")
 
 
 if __name__ == '__main__':
@@ -128,17 +163,7 @@ if __name__ == '__main__':
         print(tbl)
         print()
 
-    print("   Table  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?")
-    print('-' * 75)
-    for tbl in test_cayley_tables:
-        i = test_cayley_tables.index(tbl) + 1
-        order = str(tbl.order)
-        is_assoc = str(tbl.is_associative())
-        is_comm = str(tbl.is_commutative())
-        lft_id = str(tbl.left_identity())
-        rgt_id = str(tbl.right_identity())
-        ident = str(tbl.identity())
-        print(f"{i :>{6}} {order :>{6}} {is_assoc :>{11}} {is_comm :>{12}} {lft_id :>{12}} {rgt_id :>{9}} {ident :>{10}}")
+    about_tables(test_cayley_tables)
 
     print("\n------------")
     print("END OF TESTS")

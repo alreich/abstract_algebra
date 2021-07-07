@@ -7,6 +7,13 @@ import functools as fnc
 from cayley_table import CayleyTable
 
 
+# A useful pattern
+def get_cached_value(cached_value, accessor):
+    if cached_value is None:
+        cached_value = accessor()
+    return cached_value
+
+
 # =========
 #   Magma
 # =========
@@ -15,9 +22,12 @@ class Magma:
     
     def __init__(self, elems, tbl):
         self.__elements = elems
-        # self.__table = np.array(tbl)
         self.__table = CayleyTable(tbl)
-        
+        self.__is_associative = None
+        self.__is_commutative = None
+        self.__has_identity = None
+        self.__identity = None
+
     def __contains__(self, element):
         return element in self.__elements
 
@@ -57,7 +67,26 @@ class Magma:
             return fnc.reduce(lambda a, b: self.op(a, b), args)
     
     def table_with_names(self):
-        return [[self.__elements[index] for index in row] for row in self.__table]
+        return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
+
+    def is_associative(self):
+        return get_cached_value(self.__is_associative, self.__table.is_associative)
+
+    def is_commutative(self):
+        return get_cached_value(self.__is_commutative, self.__table.is_commutative)
+
+    def identity(self):
+        pass
+
+    # def is_associative(self):
+    #     if self.__is_associative is None:  # Check for no cached value
+    #         self.__is_associative = self.__table.is_associative()
+    #     return self.__is_associative
+    #
+    # def is_commutative(self):
+    #     if self.__is_commutative is None:  # Check for no cached value
+    #         self.__is_commutative = self.__table.is_commutative()
+    #     return self.__is_commutative
 
 
 # =============
@@ -65,12 +94,6 @@ class Magma:
 # =============
 
 class Semigroup(Magma):
-
-    # def __init__(self, elems, tbl):
-    #     if table_utils.is_associative(tbl):
-    #         super().__init__(elems, tbl)
-    #     else:
-    #         raise ValueError("Table does not support associativity")
 
     def __init__(self, elems, tbl):
         super().__init__(elems, tbl)
@@ -83,13 +106,6 @@ class Semigroup(Magma):
 # ==========
 
 class Monoid(Semigroup):
-
-    # def __init__(self, elems, tbl):
-    #     self.identity = table_utils.has_identity(tbl)
-    #     if self.identity:
-    #         super().__init__(elems, tbl)
-    #     else:
-    #         raise ValueError("Table has no identity element")
 
     def __init__(self, elems, tbl):
         super().__init__(elems, tbl)
@@ -105,7 +121,7 @@ class Group(Monoid):
 
     def __init__(self, elems, tbl):
         super().__init__(elems, tbl)
-        if not self.has_inverses(tbl):
+        if not self.table.has_inverses():
             raise ValueError("Table has insufficient inverses")
 
 
@@ -138,6 +154,13 @@ if __name__ == '__main__':
     ex141_sg = Semigroup(['a', 'b', 'c', 'd', 'e', 'f'], ex141_tbl)
     print(ex141_sg)
     print(f"Commutative?: {ex141_sg.table.is_commutative()}")
+
+    # print("\n----------------------------------------------------------------------")
+    # print("\nGroup Tests:\n")
+    #
+    # ex141_sg = Group(['a', 'b', 'c', 'd', 'e', 'f'], ex141_tbl)
+    # print(ex141_sg)
+    # print(f"Has inverses?: {ex141_sg.table.is_commutative()}")
 
     print("\n------------")
     print("END OF TESTS")

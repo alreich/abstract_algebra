@@ -131,40 +131,4 @@ def about_tables(list_of_cayley_tables):
         print(f"{i :>{6}} {n :>{6}} {assoc :>{11}} {comm :>{12}} {lid :>{12}} {rid :>{9}} {id :>{10}} {invs :>{10}}")
 
 
-if __name__ == '__main__':
-
-    import pprint as pp
-
-    print('=' * 75)
-
-    # not assoc; is comm; no identity -- the RPS magma table, above
-    tbl1 = [[0, 1, 0], [1, 1, 2], [0, 2, 2]]
-
-    # is assoc; not comm; has identity (0) --- the S3 group table
-    tbl2 = [[0, 1, 2, 3, 4, 5], [1, 2, 0, 5, 3, 4], [2, 0, 1, 4, 5, 3],
-            [3, 4, 5, 0, 1, 2], [4, 5, 3, 2, 0, 1], [5, 3, 4, 1, 2, 0]]
-
-    # is assoc; is comm; has identity (0) --- the Z4 group table
-    tbl3 = [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
-
-    # powerset(3) group table
-    tbl4 = [[0, 1, 2, 3, 4, 5, 6, 7], [1, 0, 4, 5, 2, 3, 7, 6], [2, 4, 0, 6, 1, 7, 3, 5],
-            [3, 5, 6, 0, 7, 1, 2, 4], [4, 2, 1, 7, 0, 6, 5, 3], [5, 3, 7, 1, 6, 0, 4, 2],
-            [6, 7, 3, 2, 5, 4, 0, 1], [7, 6, 5, 4, 3, 2, 1, 0]]
-
-    tbl5 = [[0, 3, 0, 3, 0, 3], [1, 4, 1, 4, 1, 4], [2, 5, 2, 5, 2, 5],
-            [3, 0, 3, 0, 3, 0], [4, 1, 4, 1, 4, 1], [5, 2, 5, 2, 5, 2]]
-
-    test_arrays = [tbl1, tbl2, tbl3, tbl4, tbl5]
-
-    test_cayley_tables = [CayleyTable(tbl) for tbl in test_arrays]
-
-    for tbl in test_cayley_tables:
-        print(tbl)
-        print()
-
-    about_tables(test_cayley_tables)
-
-    print("\n------------")
-    print("END OF TESTS")
-    print("------------")
+# END OF FILE

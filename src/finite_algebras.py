@@ -28,6 +28,15 @@ class Magma:
         self.__has_identity = None
         self.__identity = None
 
+    def __eq__(self, other):
+        if self.__elements == other.elements:  # Same elements in the same order
+            if self.__table == other.table:  # Same tables
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def __contains__(self, element):
         return element in self.__elements
 

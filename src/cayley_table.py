@@ -24,6 +24,10 @@ class CayleyTable:
     def __str__(self):
         return f"{self.__class__.__name__}({self.__table.tolist()})"
 
+    def __eq__(self, other):
+        compare = (self.__table == other.table)
+        return compare.all()
+
     def __getitem__(self, tup):
         row, col = tup
         return self.__table[row][col]
@@ -115,9 +119,9 @@ class CayleyTable:
         is_commutative = str(self.is_commutative())
         left_id = str(self.left_identity())
         right_id = str(self.right_identity())
-        id = str(self.identity())
+        ident = str(self.identity())
         has_inverses = str(self.has_inverses())
-        return table_order, is_associative, is_commutative, left_id, right_id, id, has_inverses
+        return table_order, is_associative, is_commutative, left_id, right_id, ident, has_inverses
 
 
 # Utility
@@ -127,8 +131,8 @@ def about_tables(list_of_cayley_tables):
     print('-' * 85)
     for tbl in list_of_cayley_tables:
         i = list_of_cayley_tables.index(tbl) + 1
-        n, assoc, comm, lid, rid, id, invs = tbl.about()
-        print(f"{i :>{6}} {n :>{6}} {assoc :>{11}} {comm :>{12}} {lid :>{12}} {rid :>{9}} {id :>{10}} {invs :>{10}}")
+        n, assoc, comm, lid, rid, ident, invs = tbl.about()
+        print(f"{i :>{6}} {n :>{6}} {assoc :>{11}} {comm :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}}")
 
 
 # END OF FILE

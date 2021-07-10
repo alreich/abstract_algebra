@@ -1,5 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
+"""
+@author: Alfred J. Reich
+
+"""
 
 # New Object Hierarchy (WORK-IN-PROGRESS)
 
@@ -20,11 +22,12 @@ def get_cached_value(cached_value, accessor):
 
 class Magma:
     
-    def __init__(self, elems, tbl):
-        self.__elements = elems
-        self.__table = CayleyTable(tbl)
-        self.__is_associative = None
-        self.__is_commutative = None
+    def __init__(self, elements, table, metadata=None):
+        self.__elements = elements
+        self.__table = CayleyTable(table)
+        self.metadata = metadata  # dictionary with, say, name, description, etc.
+        self.__is_associative = None  # Cached on first access
+        self.__is_commutative = None  # Cached on first access
         self.__has_identity = None
         self.__identity = None
 
@@ -46,10 +49,17 @@ class Magma:
     def __repr__(self):
         return f"{self.__class__.__name__}(\n{self.__elements},\n{self.__table.tolist()}\n)"
 
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.__elements}, {self.__table.tolist()})"
+
     @property
     def elements(self):
         return self.__elements
     
+    @property
+    def table(self):
+        return self.__table
+
     def set_elements(self, new_elements):
         if isinstance(new_elements, list):
             self.__elements = new_elements
@@ -57,10 +67,6 @@ class Magma:
             self.__elements = [new_elements[elem] for elem in self.__elements]
         return self
     
-    @property
-    def table(self):
-        return self.__table
-
     def op(self, *args):
         if len(args) == 1:
             if args[0] in self.__elements:
@@ -75,7 +81,7 @@ class Magma:
         else:
             return fnc.reduce(lambda a, b: self.op(a, b), args)
     
-    def table_with_names(self):
+    def table_as_list_with_names(self):
         return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
 
     def is_associative(self):
@@ -85,17 +91,10 @@ class Magma:
         return get_cached_value(self.__is_commutative, self.__table.is_commutative)
 
     def identity(self):
-        pass
+        return self.__table.identity()
 
-    # def is_associative(self):
-    #     if self.__is_associative is None:  # Check for no cached value
-    #         self.__is_associative = self.__table.is_associative()
-    #     return self.__is_associative
-    #
-    # def is_commutative(self):
-    #     if self.__is_commutative is None:  # Check for no cached value
-    #         self.__is_commutative = self.__table.is_commutative()
-    #     return self.__is_commutative
+    def has_inverses(self):
+        return self.__table.has_inverses()
 
 
 # =============

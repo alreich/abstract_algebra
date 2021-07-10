@@ -1,3 +1,8 @@
+"""
+@author: Alfred J. Reich
+
+"""
+
 from unittest import TestCase
 from cayley_table import CayleyTable
 

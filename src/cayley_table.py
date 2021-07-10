@@ -1,5 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
+"""
+@author: Alfred J. Reich
+
+"""
+
 import numpy as np
 import pprint as pp
 

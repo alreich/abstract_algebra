@@ -1,6 +1,6 @@
 # Abstract Algebra
 
-**NOTE: This code is being revised almost daily.  I'm in the process of moving from src/algebras.py to the 3 files: src/finite_algebras.py, src/cayley_tables.py, & src/permutations.py.**
+**NOTE: This code is being revised almost daily.  I'm in the process of moving from src/algebras.py to the 3 files: src/finite_algebras.py, src/cayley_tables.py, & src/permutations.py.  The documentation at ReadTheDocs is also currently outdated, but it will be updated.**
 
 An experimental implementation of finite groups.
 

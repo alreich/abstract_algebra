@@ -1,5 +1,7 @@
 # Abstract Algebra
 
+**NOTE: This code is being revised almost daily.  I'm in the process of moving from src/algebras.py to the 3 files: src/finite_algebras.py, src/cayley_tables.py, & src/permutations.py.**
+
 An experimental implementation of finite groups.
 
 For API documentation see: https://abstract-algebra.readthedocs.io/en/latest/index.html

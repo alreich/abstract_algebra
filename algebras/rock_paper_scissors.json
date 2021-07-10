@@ -1,0 +1,8 @@
+{"type": "Magma",
+ "name": "RPS",
+ "description": "Rock, Paper, Scissors Magma",
+ "element_names": ["r", "p", "s"],
+ "mult_table": [["r", "p", "r"],
+                ["p", "p", "s"],
+                ["r", "s", "s"]]
+}

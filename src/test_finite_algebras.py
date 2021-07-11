@@ -12,7 +12,7 @@ from finite_algebras import Magma, Semigroup
 class TestMagma(TestCase):
 
     def setUp(self) -> None:
-        self.rps = Magma(['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+        self.rps = Magma('RPS', "Rock, Paper, Scissors", ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
 
     def test_elements(self):
         self.assertEqual(self.rps.elements, ['r', 'p', 's'])
@@ -45,7 +45,8 @@ class TestMagma(TestCase):
     def test_set_elements(self):
         full_names = ['rock', 'paper', 'scissors']
         self.rps.set_elements(full_names)  # Changes the names used in rps
-        rps_copy_with_full_names = Magma(full_names, [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+        rps_copy_with_full_names = Magma('RPS', "Rock, Paper, Scissors",
+                                         full_names, [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
         self.assertEqual(self.rps, rps_copy_with_full_names)
 
 
@@ -56,7 +57,7 @@ class TestSemigroup(TestCase):
         self.ex141_tbl = [[0, 3, 0, 3, 0, 3], [1, 4, 1, 4, 1, 4], [2, 5, 2, 5, 2, 5],
                           [3, 0, 3, 0, 3, 0], [4, 1, 4, 1, 4, 1], [5, 2, 5, 2, 5, 2]]
 
-        self.ex141_sg = Semigroup(['a', 'b', 'c', 'd', 'e', 'f'], self.ex141_tbl)
+        self.ex141_sg = Semigroup('ex141', 'foobar', ['a', 'b', 'c', 'd', 'e', 'f'], self.ex141_tbl)
 
     def testIsAssocSG(self):
 
@@ -72,5 +73,5 @@ class TestSemigroup(TestCase):
     def test_createSG(self):
         """The RPS magma can't also be made into a semigroup."""
         with self.assertRaises(ValueError):
-            Semigroup(['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+            Semigroup('ex141', 'foobar', ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
 

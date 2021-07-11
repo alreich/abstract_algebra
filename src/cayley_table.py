@@ -116,15 +116,21 @@ class CayleyTable:
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
 
-    def about(self):
-        table_order = str(self.order)
-        is_associative = str(self.is_associative())
-        is_commutative = str(self.is_commutative())
-        left_id = str(self.left_identity())
-        right_id = str(self.right_identity())
+    def about(self, printout=False):
+        n = str(self.order)
+        ass = str(self.is_associative())
+        co = str(self.is_commutative())
+        lid = str(self.left_identity())
+        rid = str(self.right_identity())
         ident = str(self.identity())
-        has_inverses = str(self.has_inverses())
-        return table_order, is_associative, is_commutative, left_id, right_id, ident, has_inverses
+        invs = str(self.has_inverses())
+        if printout:
+            print("  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?")
+            print('-' * 85)
+            print(f"{n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}}")
+            return None
+        else:
+            return n, ass, co, lid, rid, ident, invs
 
 
 # Utility
@@ -134,8 +140,8 @@ def about_tables(list_of_cayley_tables):
     print('-' * 85)
     for tbl in list_of_cayley_tables:
         i = list_of_cayley_tables.index(tbl) + 1
-        n, assoc, comm, lid, rid, ident, invs = tbl.about()
-        print(f"{i :>{6}} {n :>{6}} {assoc :>{11}} {comm :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}}")
+        n, ass, co, lid, rid, ident, invs = tbl.about()
+        print(f"{i :>{6}} {n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}}")
 
 
 # END OF FILE

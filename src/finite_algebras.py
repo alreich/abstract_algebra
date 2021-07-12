@@ -28,12 +28,6 @@ class FiniteAlgebra:
         self.description = description
         self.__elements = elements
         self.__table = table
-        # The following values, if they exist, are cached on first access
-        self.__is_associative = None
-        self.__is_commutative = None
-        self.__has_identity = None
-        self.__identity = None
-        self.__inverses = None
 
     def __eq__(self, other):
         if self.__elements == other.elements:  # Same elements in the same order
@@ -97,10 +91,10 @@ class FiniteAlgebra:
         return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
 
     def is_associative(self):
-        return get_cached_value(self.__is_associative, self.__table.is_associative)
+        return self.__table.is_associative()
 
     def is_commutative(self):
-        return get_cached_value(self.__is_commutative, self.__table.is_commutative)
+        return self.__table.is_commutative()
 
     def identity(self):
         return self.__table.identity()

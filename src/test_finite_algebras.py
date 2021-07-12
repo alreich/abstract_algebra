@@ -18,7 +18,7 @@ class TestMagma(TestCase):
         self.assertEqual(self.rps.elements, ['r', 'p', 's'])
 
     def test_table(self):
-        self.assertEqual(self.rps.table, CayleyTable([[0, 1, 0], [1, 1, 2], [0, 2, 2]]))
+        self.assertEquals(self.rps.table, CayleyTable([[0, 1, 0], [1, 1, 2], [0, 2, 2]]))
 
     def test_op_1(self):
         ps = self.rps.op('p', 's')

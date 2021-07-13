@@ -139,10 +139,8 @@ class Semigroup(Magma):
     """A semigroup is an associative magma."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        print("*** Check for associativity ***")
         if not self.table.is_associative():
             raise ValueError("Table does not support associativity")
-        print("*** PASSED")
 
 
 # ==========
@@ -153,10 +151,8 @@ class Monoid(Semigroup):
     """A monoid is a semigroup with an identity element."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        print("*** Check for identity element ***")
-        if self.table.identity() is not None:
+        if self.table.identity() is None:
             raise ValueError("Table has no identity element")
-        print("*** PASSED")
 
 
 # =========
@@ -167,10 +163,8 @@ class Group(Monoid):
     """A group is a monoid with inverses."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        print("*** Check for inverses ***")
         if not self.table.has_inverses():
             raise ValueError("Table has insufficient inverses")
-        print("*** PASSED")
 
 
 # =====================
@@ -203,7 +197,7 @@ def finite_algebra_maker(*args):
     else:
         raise ValueError("Incorrect number of input arguments.")
 
-    nm = finalg_dict['name']
+    name = finalg_dict['name']
     desc = finalg_dict['description']
     elems = finalg_dict['element_names']
     tbl = finalg_dict['mult_table']
@@ -215,7 +209,6 @@ def finite_algebra_maker(*args):
         table = CayleyTable(tbl)
 
     is_assoc = table.is_associative()
-    # is_comm = table.is_commutative()
     has_id = table.identity()
     if has_id is not None:
         inverses = table.has_inverses()
@@ -223,21 +216,15 @@ def finite_algebra_maker(*args):
         inverses = None
 
     if is_assoc:
-        # print("Is associative")
         if has_id is not None:
-            # print("Has an identity element")
             if inverses:
-                # print("Has inverses")
-                return Group(nm, desc, elems, table)
+                return Group(name, desc, elems, table)
             else:
-                # print("Does NOT have inverses")
-                return Monoid(nm, desc, elems, table)
+                return Monoid(name, desc, elems, table)
         else:
-            # print("Does NOT have an identity element")
-            return Semigroup(nm, desc, elems, table)
+            return Semigroup(name, desc, elems, table)
     else:
-        # print("Is NOT associative")
-        return Magma(nm, desc, elems, table)
+        return Magma(name, desc, elems, table)
 
 
 def index_table_from_name_table(elements, name_table):

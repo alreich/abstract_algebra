@@ -22,7 +22,8 @@ class CayleyTable:
             raise Exception(f"Input arrays must be square; this one is {nrows}x{ncols}.")
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(\n{pp.pformat(self.__table.tolist())}\n)"
+        # return f"{self.__class__.__name__}(\n{pp.pformat(self.__table.tolist())}\n)"
+        return f"{self.__class__.__name__}({self.__table.tolist()})"
 
     def __str__(self):
         return f"{self.__class__.__name__}({self.__table.tolist()})"

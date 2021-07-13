@@ -18,7 +18,7 @@ class TestMagma(TestCase):
         self.assertEqual(self.rps.elements, ['r', 'p', 's'])
 
     def test_table(self):
-        self.assertEquals(self.rps.table, CayleyTable([[0, 1, 0], [1, 1, 2], [0, 2, 2]]))
+        self.assertEqual(self.rps.table, CayleyTable([[0, 1, 0], [1, 1, 2], [0, 2, 2]]))
 
     def test_op_1(self):
         ps = self.rps.op('p', 's')
@@ -54,17 +54,19 @@ class TestSemigroup(TestCase):
 
     def setUp(self) -> None:
 
-        self.ex141_tbl = [[0, 3, 0, 3, 0, 3], [1, 4, 1, 4, 1, 4], [2, 5, 2, 5, 2, 5],
-                          [3, 0, 3, 0, 3, 0], [4, 1, 4, 1, 4, 1], [5, 2, 5, 2, 5, 2]]
+        self.ex141_tbl = [[0, 3, 0, 3, 0, 3],
+                          [1, 4, 1, 4, 1, 4],
+                          [2, 5, 2, 5, 2, 5],
+                          [3, 0, 3, 0, 3, 0],
+                          [4, 1, 4, 1, 4, 1],
+                          [5, 2, 5, 2, 5, 2]]
 
         self.ex141_sg = Semigroup('ex141', 'foobar', ['a', 'b', 'c', 'd', 'e', 'f'], self.ex141_tbl)
 
     def testIsAssocSG(self):
-
         self.assertEqual(self.ex141_sg.is_associative(), True)
 
     def testIsCommSG(self):
-
         self.assertEqual(self.ex141_sg.is_commutative(), False)
 
     def test_identitySG(self):

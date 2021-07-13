@@ -27,7 +27,7 @@ class FiniteAlgebra:
         self.name = name
         self.description = description
         self.__elements = elements
-        self.__table = table
+        self.__table = CayleyTable(table)
 
     def __eq__(self, other):
         if self.__elements == other.elements:  # Same elements in the same order
@@ -133,11 +133,11 @@ class Magma(FiniteAlgebra):
 # =============
 
 class Semigroup(Magma):
-
+    """A semigroup is an associative magma."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        # if not self.table.is_associative():
-        #     raise ValueError("Table does not support associativity")
+        if not self.table.is_associative():
+            raise ValueError("Table does not support associativity")
 
 
 # ==========
@@ -145,11 +145,11 @@ class Semigroup(Magma):
 # ==========
 
 class Monoid(Semigroup):
-
+    """A monoid is a semigroup with an identity element."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        # if self.table.identity() is not None:
-        #     raise ValueError("Table has no identity element")
+        if self.table.identity() is not None:
+            raise ValueError("Table has no identity element")
 
 
 # =========
@@ -157,11 +157,11 @@ class Monoid(Semigroup):
 # =========
 
 class Group(Monoid):
-
+    """A group is a monoid with inverses."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        # if not self.table.has_inverses():
-        #     raise ValueError("Table has insufficient inverses")
+        if not self.table.has_inverses():
+            raise ValueError("Table has insufficient inverses")
 
 
 # =====================
@@ -169,6 +169,7 @@ class Group(Monoid):
 # =====================
 
 def finite_algebra_maker(*args):
+
     if len(args) == 1:
 
         # Create from a JSON file

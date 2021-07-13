@@ -6,7 +6,7 @@
 from unittest import TestCase
 
 from cayley_table import CayleyTable
-from finite_algebras import Magma, Semigroup
+from finite_algebras import make_finite_algebra, Magma, Semigroup, Monoid, Group
 
 
 class TestMagma(TestCase):
@@ -49,11 +49,15 @@ class TestMagma(TestCase):
                                          full_names, [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
         self.assertEqual(self.rps, rps_copy_with_full_names)
 
+    def test_make_finite_algebra_1(self):
+        rps2 = make_finite_algebra('RPS', "Rock, Paper, Scissors",
+                                   ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+        self.assertEquals(rps2, self.rps)
+
 
 class TestSemigroup(TestCase):
 
     def setUp(self) -> None:
-
         self.ex141_tbl = [[0, 3, 0, 3, 0, 3],
                           [1, 4, 1, 4, 1, 4],
                           [2, 5, 2, 5, 2, 5],
@@ -76,4 +80,3 @@ class TestSemigroup(TestCase):
         """The RPS magma can't also be made into a semigroup."""
         with self.assertRaises(ValueError):
             Semigroup('ex141', 'foobar', ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
-

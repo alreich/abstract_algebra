@@ -3,25 +3,23 @@
 
 """
 
-# New Object Hierarchy (WORK-IN-PROGRESS)
-
 import json
-import functools as fnc
+import functools
 from cayley_table import CayleyTable
 
 
 # A useful pattern
-def get_cached_value(cached_value, accessor):
-    if cached_value is None:
-        cached_value = accessor()
-    return cached_value
+# def get_cached_value(cached_value, accessor):
+#     if cached_value is None:
+#         cached_value = accessor()
+#     return cached_value
 
 
-# ================
-#   FiniteAlgebra
-# ================
+# =================
+#   __FiniteAlgebra
+# =================
 
-class FiniteAlgebra:
+class __FiniteAlgebra:
     
     def __init__(self, name, description, elements, table):
         self.name = name
@@ -88,7 +86,7 @@ class FiniteAlgebra:
             index = self.__table[row, col]
             return self.__elements[index]
         else:
-            return fnc.reduce(lambda a, b: self.op(a, b), args)
+            return functools.reduce(lambda a, b: self.op(a, b), args)
     
     def table_as_list_with_names(self):
         return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
@@ -98,6 +96,9 @@ class FiniteAlgebra:
 
     def is_commutative(self):
         return self.__table.is_commutative()
+
+    def is_abelian(self):
+        return self.is_commutative()
 
     def identity(self):
         return self.__table.identity()
@@ -121,11 +122,11 @@ class FiniteAlgebra:
             json.dump(self.to_dict(), fout)
 
 
-# ========
+# =========
 #   Magma
-# ========
+# =========
 
-class Magma(FiniteAlgebra):
+class Magma(__FiniteAlgebra):
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
@@ -168,10 +169,10 @@ class Group(Monoid):
 
 
 # =====================
-# Finite Algebra Maker
+# Make Finite Algebra
 # =====================
 
-def finite_algebra_maker(*args):
+def make_finite_algebra(*args):
 
     if len(args) == 1:
 

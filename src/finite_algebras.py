@@ -27,7 +27,10 @@ class FiniteAlgebra:
         self.name = name
         self.description = description
         self.__elements = elements
-        self.__table = CayleyTable(table)
+        if isinstance(table, CayleyTable):
+            self.__table = table
+        else:
+            self.__table = CayleyTable(table)
 
     def __eq__(self, other):
         if self.__elements == other.elements:  # Same elements in the same order
@@ -136,8 +139,10 @@ class Semigroup(Magma):
     """A semigroup is an associative magma."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
+        print("*** Check for associativity ***")
         if not self.table.is_associative():
             raise ValueError("Table does not support associativity")
+        print("*** PASSED")
 
 
 # ==========
@@ -148,8 +153,10 @@ class Monoid(Semigroup):
     """A monoid is a semigroup with an identity element."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
+        print("*** Check for identity element ***")
         if self.table.identity() is not None:
             raise ValueError("Table has no identity element")
+        print("*** PASSED")
 
 
 # =========
@@ -160,8 +167,10 @@ class Group(Monoid):
     """A group is a monoid with inverses."""
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
+        print("*** Check for inverses ***")
         if not self.table.has_inverses():
             raise ValueError("Table has insufficient inverses")
+        print("*** PASSED")
 
 
 # =====================

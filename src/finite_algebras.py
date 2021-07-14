@@ -21,6 +21,22 @@ from cayley_table import CayleyTable
 
 class FiniteAlgebra:
 
+    def __init__(self, name, description, elements, table):
+        self.name = name
+        self.description = description
+        self.__elements = elements
+        # if isinstance(table, CayleyTable):
+        #     self.__table = table
+        # else:
+        #     self.__table = CayleyTable(table)
+        if isinstance(table, CayleyTable):
+            self.__table = table
+        elif isinstance(table[0][0], str):
+            index_tbl = index_table_from_name_table(elements, table)
+            self.__table = CayleyTable(index_tbl)
+        else:
+            self.__table = CayleyTable(table)
+
     # def init(self, *args):
     #
     #     if len(args) == 1:
@@ -59,32 +75,33 @@ class FiniteAlgebra:
     #         self.__table = CayleyTable(tbl)
 
     # def __init__(self, name, description, elements, table):
-    def __init__(self, *args):
 
-        if len(args) == 1:
-            if isinstance(args[0], str):
-                with open(args[0], 'r') as fin:
-                    finalg_dict = json.load(fin)
-                    self.name = finalg_dict['name']
-                    self.description = finalg_dict['description']
-                    self.__elements = finalg_dict['element_names']
-                    self.__table = finalg_dict['mult_table']
-
-        if len(args) == 4:
-            name = args[0]
-            description = args[1]
-            elements = args[2]
-            table = args[3]
-            self.name = name
-            self.description = description
-            self.__elements = elements
-            if isinstance(table, CayleyTable):
-                self.__table = table
-            elif isinstance(table[0][0], str):
-                index_tbl = index_table_from_name_table(elements, table)
-                self.__table = CayleyTable(index_tbl)
-            else:
-                self.__table = CayleyTable(table)
+    # def __init__(self, *args):
+    #
+    #     if len(args) == 1:
+    #         if isinstance(args[0], str):
+    #             with open(args[0], 'r') as fin:
+    #                 finalg_dict = json.load(fin)
+    #                 self.name = finalg_dict['name']
+    #                 self.description = finalg_dict['description']
+    #                 self.__elements = finalg_dict['element_names']
+    #                 self.__table = finalg_dict['mult_table']
+    #
+    #     if len(args) == 4:
+    #         name = args[0]
+    #         description = args[1]
+    #         elements = args[2]
+    #         table = args[3]
+    #         self.name = name
+    #         self.description = description
+    #         self.__elements = elements
+    #         if isinstance(table, CayleyTable):
+    #             self.__table = table
+    #         elif isinstance(table[0][0], str):
+    #             index_tbl = index_table_from_name_table(elements, table)
+    #             self.__table = CayleyTable(index_tbl)
+    #         else:
+    #             self.__table = CayleyTable(table)
 
     def __eq__(self, other):
         if self.__elements == other.elements:  # Same elements in the same order
@@ -170,11 +187,11 @@ class FiniteAlgebra:
 
 class Magma(FiniteAlgebra):
 
-    # def __init__(self, name, description, elements, table):
-    #     super().__init__(name, description, elements, table)
+    def __init__(self, name, description, elements, table):
+        super().__init__(name, description, elements, table)
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    # def __init__(self, *args):
+    #     super().__init__(*args)
 
     def op(self, *args):
         if len(args) == 1:
@@ -197,10 +214,10 @@ class Magma(FiniteAlgebra):
 
 class Semigroup(Magma):
     """A semigroup is an associative magma."""
-    # def __init__(self, name, description, elements, table):
-    #     super().__init__(name, description, elements, table)
-    def __init__(self, *args):
-        super().__init__(*args)
+    # def __init__(self, *args):
+    #     super().__init__(*args)
+    def __init__(self, name, description, elements, table):
+        super().__init__(name, description, elements, table)
         if not self.table.is_associative():
             raise ValueError("Table does not support associativity")
 
@@ -211,10 +228,10 @@ class Semigroup(Magma):
 
 class Monoid(Semigroup):
     """A monoid is a semigroup with an identity element."""
-    # def __init__(self, name, description, elements, table):
-    #     super().__init__(name, description, elements, table)
-    def __init__(self, *args):
-        super().__init__(*args)
+    # def __init__(self, *args):
+    #     super().__init__(*args)
+    def __init__(self, name, description, elements, table):
+        super().__init__(name, description, elements, table)
         if self.table.identity() is None:
             raise ValueError("Table has no identity element")
 
@@ -225,10 +242,10 @@ class Monoid(Semigroup):
 
 class Group(Monoid):
     """A group is a monoid with inverses."""
-    # def __init__(self, name, description, elements, table):
-    #     super().__init__(name, description, elements, table)
-    def __init__(self, *args):
-        super().__init__(*args)
+    # def __init__(self, *args):
+    #     super().__init__(*args)
+    def __init__(self, name, description, elements, table):
+        super().__init__(name, description, elements, table)
         if not self.table.has_inverses():
             raise ValueError("Table has insufficient inverses")
 

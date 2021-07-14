@@ -52,7 +52,7 @@ class TestMagma(TestCase):
     def test_make_finite_algebra_1(self):
         rps2 = make_finite_algebra('RPS', "Rock, Paper, Scissors",
                                    ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
-        self.assertEquals(rps2, self.rps)
+        self.assertEqual(rps2, self.rps)
 
 
 class TestSemigroup(TestCase):

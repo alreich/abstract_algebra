@@ -16,19 +16,75 @@ from cayley_table import CayleyTable
 
 
 # =================
-#   __FiniteAlgebra
+#   FiniteAlgebra
 # =================
 
-class __FiniteAlgebra:
-    
-    def __init__(self, name, description, elements, table):
-        self.name = name
-        self.description = description
-        self.__elements = elements
-        if isinstance(table, CayleyTable):
-            self.__table = table
-        else:
-            self.__table = CayleyTable(table)
+class FiniteAlgebra:
+
+    # def init(self, *args):
+    #
+    #     if len(args) == 1:
+    #
+    #         # Create from a JSON file
+    #         if isinstance(args[0], str):
+    #             with open(args[0], 'r') as fin:
+    #                 finalg_dict = json.load(fin)
+    #
+    #         # Create from a dictionary
+    #         elif isinstance(args[0], dict):
+    #             finalg_dict = args[0]
+    #
+    #         else:
+    #             raise ValueError("If there's a single input, then it must be a string or a dictionary.")
+    #
+    #     elif len(args) == 4:
+    #
+    #         finalg_dict = {'name': args[0],
+    #                        'description': args[1],
+    #                        'element_names': args[2],
+    #                        'mult_table': args[3]
+    #                        }
+    #     else:
+    #         raise ValueError("Incorrect number of input arguments.")
+    #
+    #     self.name = finalg_dict['name']
+    #     self.description = finalg_dict['description']
+    #     self.__elements = finalg_dict['element_names']
+    #     tbl = finalg_dict['mult_table']
+    #     # Check if first element in table is a string
+    #     if isinstance(tbl[0][0], str):
+    #         index_tbl = index_table_from_name_table(self.elements, tbl)
+    #         self.__table = CayleyTable(index_tbl)
+    #     else:
+    #         self.__table = CayleyTable(tbl)
+
+    # def __init__(self, name, description, elements, table):
+    def __init__(self, *args):
+
+        if len(args) == 1:
+            if isinstance(args[0], str):
+                with open(args[0], 'r') as fin:
+                    finalg_dict = json.load(fin)
+                    self.name = finalg_dict['name']
+                    self.description = finalg_dict['description']
+                    self.__elements = finalg_dict['element_names']
+                    self.__table = finalg_dict['mult_table']
+
+        if len(args) == 4:
+            name = args[0]
+            description = args[1]
+            elements = args[2]
+            table = args[3]
+            self.name = name
+            self.description = description
+            self.__elements = elements
+            if isinstance(table, CayleyTable):
+                self.__table = table
+            elif isinstance(table[0][0], str):
+                index_tbl = index_table_from_name_table(elements, table)
+                self.__table = CayleyTable(index_tbl)
+            else:
+                self.__table = CayleyTable(table)
 
     def __eq__(self, other):
         if self.__elements == other.elements:  # Same elements in the same order
@@ -74,20 +130,6 @@ class __FiniteAlgebra:
             self.__elements = [new_elements[elem] for elem in self.__elements]
         return self
     
-    def op(self, *args):
-        if len(args) == 1:
-            if args[0] in self.__elements:
-                return args[0]
-            else:
-                raise ValueError(f"{args[0]} is not a valid element name")
-        elif len(args) == 2:
-            row = self.__elements.index(args[0])
-            col = self.__elements.index(args[1])
-            index = self.__table[row, col]
-            return self.__elements[index]
-        else:
-            return functools.reduce(lambda a, b: self.op(a, b), args)
-    
     def table_as_list_with_names(self):
         return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
 
@@ -126,10 +168,27 @@ class __FiniteAlgebra:
 #   Magma
 # =========
 
-class Magma(__FiniteAlgebra):
+class Magma(FiniteAlgebra):
 
-    def __init__(self, name, description, elements, table):
-        super().__init__(name, description, elements, table)
+    # def __init__(self, name, description, elements, table):
+    #     super().__init__(name, description, elements, table)
+
+    def __init__(self, *args):
+        super().__init__(*args)
+
+    def op(self, *args):
+        if len(args) == 1:
+            if args[0] in self.elements:
+                return args[0]
+            else:
+                raise ValueError(f"{args[0]} is not a valid element name")
+        elif len(args) == 2:
+            row = self.elements.index(args[0])
+            col = self.elements.index(args[1])
+            index = self.table[row, col]
+            return self.elements[index]
+        else:
+            return functools.reduce(lambda a, b: self.op(a, b), args)
 
 
 # =============
@@ -138,8 +197,10 @@ class Magma(__FiniteAlgebra):
 
 class Semigroup(Magma):
     """A semigroup is an associative magma."""
-    def __init__(self, name, description, elements, table):
-        super().__init__(name, description, elements, table)
+    # def __init__(self, name, description, elements, table):
+    #     super().__init__(name, description, elements, table)
+    def __init__(self, *args):
+        super().__init__(*args)
         if not self.table.is_associative():
             raise ValueError("Table does not support associativity")
 
@@ -150,8 +211,10 @@ class Semigroup(Magma):
 
 class Monoid(Semigroup):
     """A monoid is a semigroup with an identity element."""
-    def __init__(self, name, description, elements, table):
-        super().__init__(name, description, elements, table)
+    # def __init__(self, name, description, elements, table):
+    #     super().__init__(name, description, elements, table)
+    def __init__(self, *args):
+        super().__init__(*args)
         if self.table.identity() is None:
             raise ValueError("Table has no identity element")
 
@@ -162,8 +225,10 @@ class Monoid(Semigroup):
 
 class Group(Monoid):
     """A group is a monoid with inverses."""
-    def __init__(self, name, description, elements, table):
-        super().__init__(name, description, elements, table)
+    # def __init__(self, name, description, elements, table):
+    #     super().__init__(name, description, elements, table)
+    def __init__(self, *args):
+        super().__init__(*args)
         if not self.table.has_inverses():
             raise ValueError("Table has insufficient inverses")
 

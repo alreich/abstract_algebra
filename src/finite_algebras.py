@@ -75,6 +75,13 @@ class FiniteAlgebra:
     def table(self):
         return self.__table
 
+    @property
+    def identity(self):
+        if not None:
+            return self.__elements[self.__table.identity()]
+        else:
+            return None
+
     def set_elements(self, new_elements):
         if isinstance(new_elements, list):
             self.__elements = new_elements
@@ -97,9 +104,6 @@ class FiniteAlgebra:
 
     def is_abelian(self):
         return self.is_commutative()
-
-    def identity(self):
-        return self.__table.identity()
 
     def has_inverses(self):
         return self.__table.has_inverses()
@@ -327,6 +331,7 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
     """Generates a symmetric group on n elements. The 'base' is a non-negative integer
     (typically, 0 or 1), so permutations will be tuples, like (1, 2, 3, ..., n), where
     n is the order, or (0, 1, 2, ..., n-1)."""
+
     if name:
         nm = name
     else:
@@ -342,8 +347,8 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
     mul_tbl = [[rev_elem_dict[elem_dict[a] * elem_dict[b]]
                 for b in elem_dict]
                for a in elem_dict]
-    elems = index_table_from_name_table(list(elem_dict.keys()), mul_tbl)
-    return Group(nm, desc, elems, mul_tbl)
+    index_table = index_table_from_name_table(list(elem_dict.keys()), mul_tbl)
+    return Group(nm, desc, list(elem_dict.keys()), index_table)
 
 
 # See https://docs.python.org/3/library/itertools.html#itertools-recipes

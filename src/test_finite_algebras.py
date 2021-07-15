@@ -5,8 +5,7 @@
 
 from unittest import TestCase
 
-from cayley_table import CayleyTable
-from finite_algebras import make_finite_algebra, Magma, Semigroup, Monoid, Group
+from finite_algebras import *
 
 
 class TestMagma(TestCase):
@@ -40,7 +39,7 @@ class TestMagma(TestCase):
         self.assertEqual(self.rps.is_commutative(), True)
 
     def test_identity(self):
-        self.assertIsNone(self.rps.identity())
+        self.assertIsNone(self.rps.identity)
 
     def test_set_elements(self):
         full_names = ['rock', 'paper', 'scissors']
@@ -74,9 +73,31 @@ class TestSemigroup(TestCase):
         self.assertEqual(self.ex141_sg.is_commutative(), False)
 
     def test_identitySG(self):
-        self.assertIsNone(self.ex141_sg.identity())
+        self.assertIsNone(self.ex141_sg.identity)
 
     def test_createSG(self):
         """The RPS magma can't also be made into a semigroup."""
         with self.assertRaises(ValueError):
             Semigroup('ex141', 'foobar', ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+
+
+class TestGroup(TestCase):
+
+    def setUp(self) -> None:
+        self.z4 = generate_cyclic_group(4, name="Z4", description="Cyclic group")
+
+    def test_elements_z4(self):
+        self.assertEqual(self.z4.elements, ['e', 'a', 'a^2', 'a^3'])
+
+    def test_table_z4(self):
+        self.assertEqual(self.z4.table, CayleyTable([[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]))
+
+    def testIsAssociative_z4(self):
+        self.assertEqual(self.z4.is_associative(), True)
+
+    def testIsCommutative_z4(self):
+        self.assertEqual(self.z4.is_commutative(), True)
+
+    def test_identity_z4(self):
+        print(self.z4)
+        self.assertEqual(self.z4.identity, 'e')

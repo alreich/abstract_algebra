@@ -4,7 +4,6 @@
 """
 
 import numpy as np
-import pprint as pp
 
 
 class CayleyTable:
@@ -13,7 +12,8 @@ class CayleyTable:
         tmp = np.array(arr, dtype=int)
         nrows, ncols = tmp.shape
         if nrows == ncols:
-            if (tmp.min() >= 0) and (tmp.max() < nrows):
+            # if (tmp.min() >= 0) and (tmp.max() < nrows):
+            if (np.min(tmp) >= 0) and (np.max(tmp) < nrows):
                 self.__order = nrows
                 self.__table = tmp
             else:

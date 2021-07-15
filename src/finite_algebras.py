@@ -131,7 +131,7 @@ class FiniteAlgebra:
                 inv_elem = self.inv(elem)
             else:
                 inv_elem = "-"
-            ord_elem = self.elements(elem)
+            ord_elem = self.element_order(elem)
             print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
         size = len(self.elements)
         if size <= max_size:
@@ -195,12 +195,12 @@ class Magma(FiniteAlgebra):
         """Return direct product of this algebra with the `other` algebra."""
         dp_name = f"{self.name}_x_{other.name}"
         dp_description = "Direct product of " + self.name + " & " + other.name
-        dp_element_names = list(it.product(self.elements, other.__element_names))  # Cross product
+        dp_element_names = list(it.product(self.elements, other.elements))  # Cross product
         dp_mult_table = list()
         for a in dp_element_names:
             dp_mult_table_row = list()  # Start a new row
             for b in dp_element_names:
-                dp_mult_table_row.append(dp_element_names.index((self.op(a[0], b[0]), other.mult(a[1], b[1]))))
+                dp_mult_table_row.append(dp_element_names.index((self.op(a[0], b[0]), other.op(a[1], b[1]))))
             dp_mult_table.append(dp_mult_table_row)  # Append the new row to the table
         return self.__class__(dp_name,
                               dp_description,
@@ -249,7 +249,7 @@ class Monoid(Semigroup):
         of other's elements, where the identity of this algebra is always mapped to the identity of other."""
         if self.order == other.order:
             elems0 = self.elements
-            elems1 = other.__element_names
+            elems1 = other.elements
             mappings = [dict(zip(elems0[1:], perm)) for perm in it.permutations(elems1[1:])]
             for mapping in mappings:
                 mapping[elems0[0]] = elems1[0]

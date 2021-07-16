@@ -75,9 +75,13 @@ class FiniteAlgebra:
     def table(self):
         return self.__table
 
+    def identity_index(self):
+        if self.__table.identity() is not None:
+            return self.__table.identity()
+
     @property
     def identity(self):
-        if not None:
+        if self.__table.identity() is not None:
             return self.__elements[self.__table.identity()]
         else:
             return None
@@ -162,6 +166,8 @@ class Magma(FiniteAlgebra):
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
 
     def op(self, *args):
+        """Return the 'product' or 'sum' of 1 or more algebra elements as defined by the
+        algebra's CayleyTable."""
         if len(args) == 1:
             if args[0] in self.elements:
                 return args[0]
@@ -174,16 +180,6 @@ class Magma(FiniteAlgebra):
             return self.elements[index]
         else:
             return functools.reduce(lambda a, b: self.op(a, b), args)
-
-    def element_order(self, element):
-        def order_aux(elem, prod, order):
-            if prod == self.identity:
-                return order
-            else:
-                return order_aux(elem, self.op(prod, elem), order + 1)
-        if self.__element_orders[element] is None:
-            self.__element_orders[element] = order_aux(element, element, 1)
-        return self.__element_orders[element]
 
     def direct_product_delimiter(self, delimiter=None):
         """If no input, then the current direct product element name delimiter will be returned (default is ':').
@@ -234,13 +230,27 @@ class Monoid(Semigroup):
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        self.__identity = self.table.identity()
-        if self.__identity is None:
+        # self.__identity = self.table.identity()
+        if self.identity is None:
             raise ValueError("Table has no identity element")
 
-    @property
-    def identity(self):
-        return self.__identity
+    # @property
+    # def identity(self):
+    #     return self.__identity
+
+    # @property
+    # def identity(self):
+    #     return self.elements[self.table.identity()]
+
+    def element_order(self, element):
+        def order_aux(elem, prod, order):
+            if prod == self.identity:
+                return order
+            else:
+                return order_aux(elem, self.op(prod, elem), order + 1)
+        if self.__element_orders[element] is None:
+            self.__element_orders[element] = order_aux(element, element, 1)
+        return self.__element_orders[element]
 
     # ---------------------
     # Monoid Isomorphisms
@@ -294,7 +304,7 @@ class Group(Monoid):
             self.__inverses = self.create_inverse_lookup_dict()
 
     def create_inverse_lookup_dict(self):
-        row_indices, col_indices = np.where(self.table.table == self.identity)
+        row_indices, col_indices = np.where(self.table.table == self.identity_index())
         return {self.elements[elem_index]: self.elements[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}

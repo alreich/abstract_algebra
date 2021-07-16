@@ -317,6 +317,102 @@ class Group(Monoid):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
         return self.op(g, self.op(a, self.inv(g)))
 
+    def is_normal(self, subgrp):
+        """Return True if the subgroup is normal."""
+        result = True
+        for x in self:
+            for a in subgrp:
+                if not self.conj(a, x) in subgrp:
+                    result = False
+                    break
+        return result
+
+    def closure(self, subset_of_elements):
+        """Given a subset (in list form) of the group's elements (name strings),
+        return the smallest possible set of elements, containing the subset,
+        that is closed under group multiplication, with inverses."""
+
+        # Make sure inverses are considered
+        result = set(subset_of_elements)
+        for elem in subset_of_elements:
+            result.add(self.inv(elem))
+
+        # Add the products of all possible pairs
+        for pair in it.product(result, result):
+            result.add(self.op(*pair))
+
+        # If the input set of elements increased, recurse ...
+        if len(result) > len(subset_of_elements):
+            return self.closure(list(result))
+
+        # ...otherwise, stop and return the result
+        else:
+            return list(result)
+
+    # TODO: Write a method, is_closed, using closure, above.  Use this method in the
+    #       subgroup method, below.
+
+    def closed_proper_subsets_of_elements(self):
+        """Return all unique, closed, proper subsets of the Group's elements.
+        This returns a list of lists. Each list represents the elements of a subgroup."""
+        closed = set()  # Build the result as a set of sets to avoid duplicates
+        all_elements = self.elements
+        n = len(all_elements)
+        for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
+            # Look at all combinations of elements: pairs, triples, quadruples, etc.
+            for combo in it.combinations(all_elements, i):
+                clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
+                if len(clo) < n:  # Don't include closures consisting of all elements
+                    closed.add(clo)
+        return list(map(lambda x: list(x), closed))
+
+    def subgroup_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
+        """Return the Group constructed from the given closed subset of elements."""
+        # Make sure the elements are sorted according to their order in the parent Group (self)
+        # TODO: Check whether the input elements are indeed closed (make this check optional)
+        #       Use the is_closed method (To Be Written) defined, above.
+        elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.elements.index(x))
+        table = []
+        for a in elements_sorted:
+            row = []
+            for b in elements_sorted:
+                # The table entry is the index of the product in the sorted elements list
+                row.append(elements_sorted.index(self.op(a, b)))
+            table.append(row)
+        return Group(name, desc, elements_sorted, table)
+
+    def proper_subgroups(self):
+        """Return a list of proper subgroups of the group."""
+        desc = f"Subgroup of: {self.description}"
+        count = 0
+        list_of_subgroups = []
+        for closed_element_set in self.closed_proper_subsets_of_elements():
+            name = f"{self.name}_subgroup_{count}"
+            count += 1
+            list_of_subgroups.append(self.subgroup_from_elements(closed_element_set, name, desc))
+        return list_of_subgroups
+
+    def trivial_subgroups(self):
+        """Return the group's two trivial subgroups."""
+        name = f"Subgroup of {self.name}"
+        desc = f"Trivial subgroup: {self.description}"
+        trivial = Group(name, desc, [self.identity], [[0]])
+        return [trivial, self]
+
+    def subgroups(self):
+        """Return a list of all subgroups, including trivial subgroups."""
+        return self.proper_subgroups() + self.trivial_subgroups()
+
+    def unique_proper_subgroups(self, subgroups=None):
+        """Return a list of proper subgroups that are unique, up to isomorphism.
+        If no subgroups are provided, then they will be derived."""
+        if subgroups:
+            partitions = partition_into_isomorphic_lists(subgroups)
+        else:
+            partitions = partition_into_isomorphic_lists(self.proper_subgroups())
+        # Return a list of the first subgroups from each sublist of proper subgroups
+        return [partition[0] for partition in partitions]
+
 
 # -----------------
 # Group Generators
@@ -591,6 +687,39 @@ def make_finite_algebra(*args):
 
 def index_table_from_name_table(elements, name_table):
     return [[elements.index(elem_name) for elem_name in row] for row in name_table]
+
+
+def partition_into_isomorphic_lists(list_of_groups):
+    """Partition the list of groups into sub-lists of groups that are isomorphic to each other.
+    The purpose of this function is operate on the proper subgroups of a group to determine
+    the unique subgroups, up to isomorphism."""
+
+    def iso_and_not_iso(gp, gps):
+        """Partition the list of groups, gps, into two lists, those that are isomorphic to gp
+        and those that are not."""
+        iso_to_grp = []
+        not_iso_to_grp = []
+        for g in gps:
+            if gp.isomorphic(g):
+                iso_to_grp.append(g)
+            else:
+                not_iso_to_grp.append(g)
+        return iso_to_grp, not_iso_to_grp
+
+    def aux(result, remainder):
+        """Recursively partition 'remainder' into lists that are isomorphic to its first member of the
+        remainder list and those that are not.  Then, put those that are isomorphic to the first member
+        into the 'result' list, and recurse on the remainder."""
+        if len(remainder) == 0:
+            return result
+        else:
+            first = remainder[0]
+            rest = remainder
+            iso_to_first, not_iso_to_first = iso_and_not_iso(first, rest)
+            result.append(iso_to_first)
+            return aux(result, not_iso_to_first)
+
+    return aux([], list_of_groups)
 
 
 # End of File

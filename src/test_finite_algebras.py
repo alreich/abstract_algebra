@@ -89,6 +89,30 @@ class TestGroup(TestCase):
     def setUp(self) -> None:
         self.z4 = generate_cyclic_group(4, name="Z4", description="Cyclic group")
         self.s3 = generate_symmetric_group(3, name="S3", description="Symmetric group")
+        self.ps3 = generate_powerset_group(3, "PS3", "Powerset group")
+
+    def test_elements_accessor_ps3(self):
+        self.assertEqual(self.ps3.elements, ['{}', '{0}', '{1}', '{2}', '{0, 1}',
+                                             '{0, 2}', '{1, 2}', '{0, 1, 2}'])
+
+    def test_table_accessor_ps3(self):
+        self.assertEqual(self.ps3.table, CayleyTable([[0, 1, 2, 3, 4, 5, 6, 7],
+                                                      [1, 0, 4, 5, 2, 3, 7, 6],
+                                                      [2, 4, 0, 6, 1, 7, 3, 5],
+                                                      [3, 5, 6, 0, 7, 1, 2, 4],
+                                                      [4, 2, 1, 7, 0, 6, 5, 3],
+                                                      [5, 3, 7, 1, 6, 0, 4, 2],
+                                                      [6, 7, 3, 2, 5, 4, 0, 1],
+                                                      [7, 6, 5, 4, 3, 2, 1, 0]]))
+
+    def test_is_associative_ps3(self):
+        self.assertEqual(self.ps3.is_associative(), True)
+
+    def test_is_commutative_ps3(self):
+        self.assertEqual(self.ps3.is_commutative(), True)
+
+    def test_identity_accessor_ps3(self):
+        self.assertEqual(self.ps3.identity, '{}')
 
     def test_elements_accessor_z4(self):
         self.assertEqual(self.z4.elements, ['e', 'a', 'a^2', 'a^3'])
@@ -127,3 +151,38 @@ class TestGroup(TestCase):
     def test_identity_accessor_s3(self):
         self.assertEqual(self.s3.identity, '(1, 2, 3)')
 
+
+class TestRing(TestCase):
+
+    def setUp(self) -> None:
+        pass
+
+    def test_ring_elements(self):
+        self.fail()
+
+    def test_powerset_mult_table(self):
+        self.fail()
+
+    def test_add_identity(self):
+        self.fail()
+
+    def test_add(self):
+        self.fail()
+
+    def test_ring_op(self):
+        self.fail()
+
+    def test_mult_identity(self):
+        self.fail()
+
+    def test_has_mult_identity(self):
+        self.fail()
+
+    def test_is_distributive(self):
+        self.fail()
+
+    def test_ring_mult_table_with_names(self):
+        self.fail()
+
+    def test_pprint(self):
+        self.fail()

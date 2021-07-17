@@ -170,7 +170,6 @@ class Magma(FiniteAlgebra):
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        self.__element_orders = {elem: None for elem in self.elements}
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
 
     def op(self, *args):
@@ -253,17 +252,19 @@ class Monoid(Semigroup):
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
-        # self.__identity = self.table.identity()
-        if self.identity is None:
+        self.__element_orders = {elem: None for elem in self.elements}  # Cached on first access
+
+        # Establish the identity element
+        self.__identity = None
+        id_index = self.table.identity()
+        if id_index is None:
             raise ValueError("Table has no identity element")
+        else:
+            self.__identity = self.elements[id_index]
 
-    # @property
-    # def identity(self):
-    #     return self.__identity
-
-    # @property
-    # def identity(self):
-    #     return self.elements[self.table.identity()]
+    @property
+    def identity(self):
+        return self.__identity
 
     def element_order(self, element):
         def order_aux(elem, prod, order):
@@ -297,7 +298,7 @@ class Monoid(Semigroup):
     def isomorphic_mapping(self, other, mapping):
         """Returns True if the input mapping from this algebra to the other algebra is isomorphic."""
         elems = self.elements
-        return all([mapping[self.op(x, y)] == other.mult(mapping[x], mapping[y]) for x in elems for y in elems])
+        return all([mapping[self.op(x, y)] == other.op(mapping[x], mapping[y]) for x in elems for y in elems])
 
     def isomorphic(self, other):
         """If there is a mapping from elements of this algebra to the other algebra's elements,

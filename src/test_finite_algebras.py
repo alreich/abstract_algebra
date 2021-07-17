@@ -152,37 +152,37 @@ class TestGroup(TestCase):
         self.assertEqual(self.s3.identity, '(1, 2, 3)')
 
 
-class TestRing(TestCase):
-
-    def setUp(self) -> None:
-        pass
-
-    def test_ring_elements(self):
-        self.fail()
-
-    def test_powerset_mult_table(self):
-        self.fail()
-
-    def test_add_identity(self):
-        self.fail()
-
-    def test_add(self):
-        self.fail()
-
-    def test_ring_op(self):
-        self.fail()
-
-    def test_mult_identity(self):
-        self.fail()
-
-    def test_has_mult_identity(self):
-        self.fail()
-
-    def test_is_distributive(self):
-        self.fail()
-
-    def test_ring_mult_table_with_names(self):
-        self.fail()
-
-    def test_pprint(self):
-        self.fail()
+# class TestRing(TestCase):
+#
+#     def setUp(self) -> None:
+#         pass
+#
+#     def test_ring_elements(self):
+#         self.fail()
+#
+#     def test_powerset_mult_table(self):
+#         self.fail()
+#
+#     def test_add_identity(self):
+#         self.fail()
+#
+#     def test_add(self):
+#         self.fail()
+#
+#     def test_ring_op(self):
+#         self.fail()
+#
+#     def test_mult_identity(self):
+#         self.fail()
+#
+#     def test_has_mult_identity(self):
+#         self.fail()
+#
+#     def test_is_distributive(self):
+#         self.fail()
+#
+#     def test_ring_mult_table_with_names(self):
+#         self.fail()
+#
+#     def test_pprint(self):
+#         self.fail()

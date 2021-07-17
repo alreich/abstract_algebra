@@ -128,49 +128,27 @@ class FiniteAlgebra:
         with open(json_filename, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
-    # def about(self, max_size=12, use_table_names=False):
-    #     print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
-    #     print(f"Abelian? {yes_or_no(self.is_abelian())}")
-    #     spc = 7
-    #     print("Elements:")
-    #     print("   Index   Name   Inverse  Order")
-    #     for elem in self:
-    #         idx_elem = self.elements.index(elem)
-    #         if isinstance(self, Group):
-    #             inv_elem = self.inv(elem)
-    #         else:
-    #             inv_elem = "-"
-    #         ord_elem = self.element_order(elem)
-    #         print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
-    #     size = len(self.elements)
-    #     if size <= max_size:
-    #         if use_table_names:
-    #             print(f"Cayley Table (showing names):")
-    #             pp.pprint(self.table_as_list_with_names())
-    #         else:
-    #             print(f"Cayley Table (showing indices):")
-    #             pp.pprint(self.table.tolist())
-    #     else:
-    #         print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
-    #     return None
-
-
-def about(self, max_size=12, use_table_names=False):
-    print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
-    print(f"Elements:\n{self.elements}")
-    print(f"Associative? {yes_or_no(self.is_associative())}")
-    print(f"Commutative? {yes_or_no(self.is_commutative())}")
-    size = len(self.elements)
-    if size <= max_size:
-        if use_table_names:
-            print(f"Cayley Table (showing names):")
-            pp.pprint(self.table_as_list_with_names())
+    def about(self, max_size=12, use_table_names=False):
+        print(f"\n{self.__class__.__name__}: {self.name}")
+        print(f"Description: {self.description}")
+        print(f"Elements: {self.elements}")
+        if self.identity is None:
+            print("Identity: None")
         else:
-            print(f"Cayley Table (showing indices):")
-            pp.pprint(self.table.tolist())
-    else:
-        print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
-    return None
+            print(f"Identity: {self.identity}")
+        print(f"Associative? {yes_or_no(self.is_associative())}")
+        print(f"Commutative? {yes_or_no(self.is_commutative())}")
+        size = len(self.elements)
+        if size <= max_size:
+            if use_table_names:
+                print(f"Cayley Table (showing names):")
+                pp.pprint(self.table_as_list_with_names())
+            else:
+                print(f"Cayley Table (showing indices):")
+                pp.pprint(self.table.tolist())
+        else:
+            print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+        return None
 
 
 # =========
@@ -450,8 +428,11 @@ class Group(Monoid):
 
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Group."""
-        print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
-        print(f"Abelian? {self.is_abelian()}")
+        print(f"\n{self.__class__.__name__}: {self.name}")
+        print(f"Description: {self.description}")
+        print(f"Identity: {self.identity}")
+        print(f"Associative? {yes_or_no(self.is_associative())}")
+        print(f"Commutative? {yes_or_no(self.is_commutative())}")
         spc = 7
         print("Elements:")
         print("   Index   Name   Inverse  Order")

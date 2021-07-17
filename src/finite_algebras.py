@@ -8,6 +8,7 @@ import functools
 import pprint as pp
 import numpy as np
 import itertools as it
+import copy
 
 from cayley_table import CayleyTable
 from permutations import Perm
@@ -66,6 +67,13 @@ class FiniteAlgebra:
         elems = self.__elements
         tbl = self.__table.tolist()
         return f"{self.__class__.__name__}({nm}, {desc}, {elems}, {tbl})"
+
+    def deepcopy(self):
+        """Returns a deep copy of this algebra."""
+        return self.__class__(copy.deepcopy(self.name),
+                              copy.deepcopy(self.description),
+                              copy.deepcopy(self.elements),
+                              copy.deepcopy(self.table.tolist()))
 
     @property
     def elements(self):
@@ -206,6 +214,21 @@ class Magma(FiniteAlgebra):
                               dp_description,
                               list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                               dp_mult_table)
+
+    def reorder_elements(self, reordered_elements):
+        """Return a new group made from this one with the elements reordered."""
+        n = self.order
+        if n == len(reordered_elements):
+            new_table = np.full((n, n), 0)
+            for row in range(n):
+                for col in range(n):
+                    prod = self.op(reordered_elements[row], reordered_elements[col])
+                    new_table[row, col] = reordered_elements.index(prod)
+            new_name = str(self.name) + '_REORDERED'
+            new_desc = str(self.description) + ' (elements reordered)'
+            return self.__class__(new_name, new_desc, reordered_elements, new_table)
+        else:
+            raise Exception(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
 
 
 # =============
@@ -413,6 +436,80 @@ class Group(Monoid):
         # Return a list of the first subgroups from each sublist of proper subgroups
         return [partition[0] for partition in partitions]
 
+    def about(self, max_size=12, use_table_names=False):
+        """Print information about the Group."""
+        print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
+        print(f"Abelian? {self.is_abelian()}")
+        spc = 7
+        print("Elements:")
+        print("   Index   Name   Inverse  Order")
+        for elem in self:
+            idx_elem = self.elements.index(elem)
+            inv_elem = self.inv(elem)
+            ord_elem = self.element_order(elem)
+            print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
+        size = len(self.elements)
+        if size <= max_size:
+            if use_table_names:
+                print(f"Cayley Table (showing names):")
+                pp.pprint(self.table_as_list_with_names())
+            else:
+                print(f"Cayley Table (showing indices):")
+                pp.pprint(self.table.tolist())
+        else:
+            print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+        return None
+
+    def about_proper_subgroups(self, unique=False, show_elements=True):
+        """TBD: Work in Progress"""
+        if unique:
+            subgrps = self.unique_proper_subgroups()
+        else:
+            subgrps = self.proper_subgroups()
+        print(f"\nSubgroups of {self.name}:")
+        for subgrp in subgrps:
+            print(f"\n  {subgrp.name}:")
+            print(f"       order: {subgrp.order}")
+            if show_elements:
+                print(f"    elements: {subgrp.elements}")
+            print(f"    abelian?: {subgrp.is_abelian()}")
+            print(f"     normal?: {self.is_normal(subgrp)}")
+        return None
+
+
+# TODO: See if this can be applied higher up in the class hierarchy (e.g., to Magmas, perhaps)
+def partition_into_isomorphic_lists(list_of_groups):
+    """Partition the list of groups into sub-lists of groups that are isomorphic to each other.
+    The purpose of this function is operate on the proper subgroups of a group to determine
+    the unique subgroups, up to isomorphism."""
+
+    def iso_and_not_iso(gp, gps):
+        """Partition the list of groups, gps, into two lists, those that are isomorphic to gp
+        and those that are not."""
+        iso_to_grp = []
+        not_iso_to_grp = []
+        for g in gps:
+            if gp.isomorphic(g):
+                iso_to_grp.append(g)
+            else:
+                not_iso_to_grp.append(g)
+        return iso_to_grp, not_iso_to_grp
+
+    def aux(result, remainder):
+        """Recursively partition 'remainder' into lists that are isomorphic to its first member of the
+        remainder list and those that are not.  Then, put those that are isomorphic to the first member
+        into the 'result' list, and recurse on the remainder."""
+        if len(remainder) == 0:
+            return result
+        else:
+            first = remainder[0]
+            rest = remainder
+            iso_to_first, not_iso_to_first = iso_and_not_iso(first, rest)
+            result.append(iso_to_first)
+            return aux(result, not_iso_to_first)
+
+    return aux([], list_of_groups)
+
 
 # -----------------
 # Group Generators
@@ -455,13 +552,6 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
                for a in elem_dict]
     index_table = index_table_from_name_table(list(elem_dict.keys()), mul_tbl)
     return Group(nm, desc, list(elem_dict.keys()), index_table)
-
-
-# See https://docs.python.org/3/library/itertools.html#itertools-recipes
-def powerset(iterable):
-    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
-    s = list(iterable)
-    return it.chain.from_iterable(it.combinations(s, r) for r in range(len(s)+1))
 
 
 def generate_powerset_group(n, name=None, description=None):
@@ -511,6 +601,7 @@ class Ring(Group):
 
     @property
     def add_identity(self):
+        """Return the additive identity"""
         return super().identity
 
     def add(self, *args):
@@ -534,9 +625,9 @@ class Ring(Group):
 
     @property
     def mult_identity(self):
-        """If it exists, find the identity element for the given operation, op.
-        Developer Note: This value is computed, and if it exists, it is cached
-        the first time it is accessed."""
+        """If it exists, find and return the multiplicative identity element for
+        the given operation, op. This value is computed, and if it exists, it is
+        cached the first time it is accessed."""
         if self.__has_mult_identity is None:
             # Look for a multiplicative identity
             for x in self:
@@ -625,6 +716,121 @@ def generate_powerset_ring(n, name=None, description=None):
     return Ring(nm, desc, elements, addition_table, mult_table)
 
 
+# ---------------------------------
+#         EXPERIMENTAL
+# Find all groups of a given order
+# ---------------------------------
+
+def __no_conflict(p1, p2):
+    """Returns True only if no element of p1 equals the corresponding element of p2."""
+    return all([p1[i] != p2[i] for i in range(len(p1))])
+
+
+def __no_conflicts(items):
+    """Return True if each possible pair, from a list of items, has no conflicts."""
+    return all(__no_conflict(combo[0], combo[1]) for combo in it.combinations(items, 2))
+
+
+def __filter_out_conflicts(perms, perm, n):
+    """Filter out all permutations in perms that confict with perm,
+    and don't have n as the first element."""
+    nperms = [q for q in perms if q[0] == n]
+    return [p for p in nperms if __no_conflict(p, perm)]
+
+
+def generate_all_group_tables(order):
+    """Experimental Code: Return a list of all arrays that correspond to multiplication tables for groups
+    of a specific order.
+
+    WARNING: The algorithm here is not efficient, so even very small values of 'order' will result in very
+    long runtimes (e.g., order=6 ==> ~5-6 hrs runtime).
+    """
+    row0 = list(range(order))
+    row_candidates = [[row0]]
+    for row_num in range(1, order):
+        row_candidates.append(__filter_out_conflicts(it.permutations(row0), row0, row_num))
+    table_candidates = [cand for cand in it.product(*row_candidates) if is_table_associative(list(cand))]  # ***
+    return [tbl for tbl in table_candidates if __no_conflicts(tbl)]
+
+
+def is_table_associative(table):
+    """Tests whether a table supports associativity
+
+    Parameters
+    ----------
+    table : np.array
+      A list of lists of ints, representing a group's table
+
+    Returns
+    -------
+    bool
+      True if the table supports associativity; False, otherwise
+    """
+    result = True
+    elements = table[0]  # The first row should correspond to the elements of a group
+    for a in elements:
+        for b in elements:
+            for c in elements:
+                ab = table[a][b]
+                bc = table[b][c]
+                if not (table[ab][c] == table[a][bc]):
+                    result = False
+                    break
+    return result
+
+
+def tables_to_groups(tables, identity_name="e", elem_name="a"):
+    """Given a list of multiplication tables, all of the same size, turn them into a list of groups.
+
+    Parameters
+    ----------
+    tables : list
+      A list of tables (list of lists of ints) that represent group multiplication tables
+    identity_name : str
+      Root name to use for the identity element in all the groups
+    elem_name : str
+      Root name to use for the groups' elements
+
+    Returns
+    -------
+    list
+      A list of Groups based on the input tables.
+    """
+    order = len(tables[0])
+    groups = []
+    for j in range(len(tables)):
+        gname = f"G{j}"
+        desc = f"Group {j} of order {order}"
+        ename = elem_name + str(j) + "_"
+        elements = [identity_name + str(j)] + [f"{ename}" + str(i) for i in range(1, order)]
+        groups.append(Group(gname, desc, elements, tables[j]))
+    return groups
+
+
+def get_integer_form(elem_list):
+    """For an element list like ['e1', 'a1_2', 'a1_1', 'a1_3'],
+    return the integer 213, i.e., the 'subscripts' of the elements that
+    follow the identity element."""
+    return int(''.join(map(lambda x: x.split("_")[1], elem_list[1:])))
+
+
+def get_int_forms(ref_group, isomorphisms):
+    """Return a list of integer forms ('permutations') for a list of isomorphisms,
+    i.e., mappings, based on a reference group."""
+    return [get_integer_form([iso[elem] for elem in ref_group.element_names])
+            for iso in isomorphisms]
+
+
+# =========
+#   Field
+# =========
+
+# TODO: Implement Field
+class Field(Ring):
+    """Not implemented yet"""
+    pass
+
+
 # =====================
 # Make Finite Algebra
 # =====================
@@ -685,41 +891,43 @@ def make_finite_algebra(*args):
         return Magma(name, desc, elems, table)
 
 
+# ==========
+# Utilities
+# ==========
+
 def index_table_from_name_table(elements, name_table):
     return [[elements.index(elem_name) for elem_name in row] for row in name_table]
 
 
-def partition_into_isomorphic_lists(list_of_groups):
-    """Partition the list of groups into sub-lists of groups that are isomorphic to each other.
-    The purpose of this function is operate on the proper subgroups of a group to determine
-    the unique subgroups, up to isomorphism."""
+# See https://docs.python.org/3/library/itertools.html#itertools-recipes
+def powerset(iterable):
+    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
+    s = list(iterable)
+    return it.chain.from_iterable(it.combinations(s, r) for r in range(len(s)+1))
 
-    def iso_and_not_iso(gp, gps):
-        """Partition the list of groups, gps, into two lists, those that are isomorphic to gp
-        and those that are not."""
-        iso_to_grp = []
-        not_iso_to_grp = []
-        for g in gps:
-            if gp.isomorphic(g):
-                iso_to_grp.append(g)
-            else:
-                not_iso_to_grp.append(g)
-        return iso_to_grp, not_iso_to_grp
 
-    def aux(result, remainder):
-        """Recursively partition 'remainder' into lists that are isomorphic to its first member of the
-        remainder list and those that are not.  Then, put those that are isomorphic to the first member
-        into the 'result' list, and recurse on the remainder."""
-        if len(remainder) == 0:
-            return result
-        else:
-            first = remainder[0]
-            rest = remainder
-            iso_to_first, not_iso_to_first = iso_and_not_iso(first, rest)
-            result.append(iso_to_first)
-            return aux(result, not_iso_to_first)
+def make_table(table_string):
+    """This function helps turn the XML-based tables at Groupprops into a
+    list of lists for use here.
 
-    return aux([], list_of_groups)
+    Instructions for use:
+    1. Copy the table from there and paste it here;
+    2. Find & Replace the strings, "<row>" and "</row>", with nothing;
+    3. Place triple quotes around the result and give it a variable name;
+    4. Then run make_table on the variable.
+
+    Parameters
+    ----------
+    table_string : str
+      XML-based table at Groupprops
+
+    Returns
+    -------
+    list
+      A list of lists of ints, representing a group's multiplication table.
+    """
+    return [[int(n) for n in row.strip().split(" ")]
+            for row in table_string.splitlines()]
 
 
 # End of File

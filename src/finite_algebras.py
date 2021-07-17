@@ -14,13 +14,6 @@ from cayley_table import CayleyTable
 from permutations import Perm
 
 
-# A useful pattern
-# def get_cached_value(cached_value, accessor):
-#     if cached_value is None:
-#         cached_value = accessor()
-#     return cached_value
-
-
 # =================
 #   FiniteAlgebra
 # =================
@@ -124,8 +117,8 @@ class FiniteAlgebra:
         return {'type': self.__class__.__name__,
                 'name': self.name,
                 'description': self.description,
-                'element_names': self.__elements,
-                'mult_table': self.__table.tolist()
+                'elements': self.__elements,
+                'table': self.__table.tolist()
                 }
 
     def dumps(self):
@@ -135,31 +128,49 @@ class FiniteAlgebra:
         with open(json_filename, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
-    def about(self, max_size=12, use_table_names=False):
-        print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
-        print(f"Abelian? {self.is_abelian()}")
-        spc = 7
-        print("Elements:")
-        print("   Index   Name   Inverse  Order")
-        for elem in self:
-            idx_elem = self.elements.index(elem)
-            if isinstance(self, Group):
-                inv_elem = self.inv(elem)
-            else:
-                inv_elem = "-"
-            ord_elem = self.element_order(elem)
-            print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
-        size = len(self.elements)
-        if size <= max_size:
-            if use_table_names:
-                print(f"Cayley Table (showing names):")
-                pp.pprint(self.table_as_list_with_names())
-            else:
-                print(f"Cayley Table (showing indices):")
-                pp.pprint(self.table.tolist())
+    # def about(self, max_size=12, use_table_names=False):
+    #     print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
+    #     print(f"Abelian? {yes_or_no(self.is_abelian())}")
+    #     spc = 7
+    #     print("Elements:")
+    #     print("   Index   Name   Inverse  Order")
+    #     for elem in self:
+    #         idx_elem = self.elements.index(elem)
+    #         if isinstance(self, Group):
+    #             inv_elem = self.inv(elem)
+    #         else:
+    #             inv_elem = "-"
+    #         ord_elem = self.element_order(elem)
+    #         print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
+    #     size = len(self.elements)
+    #     if size <= max_size:
+    #         if use_table_names:
+    #             print(f"Cayley Table (showing names):")
+    #             pp.pprint(self.table_as_list_with_names())
+    #         else:
+    #             print(f"Cayley Table (showing indices):")
+    #             pp.pprint(self.table.tolist())
+    #     else:
+    #         print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+    #     return None
+
+
+def about(self, max_size=12, use_table_names=False):
+    print(f"\n{self.__class__.__name__}: {self.name}\n{self.description}")
+    print(f"Elements:\n{self.elements}")
+    print(f"Associative? {yes_or_no(self.is_associative())}")
+    print(f"Commutative? {yes_or_no(self.is_commutative())}")
+    size = len(self.elements)
+    if size <= max_size:
+        if use_table_names:
+            print(f"Cayley Table (showing names):")
+            pp.pprint(self.table_as_list_with_names())
         else:
-            print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
-        return None
+            print(f"Cayley Table (showing indices):")
+            pp.pprint(self.table.tolist())
+    else:
+        print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+    return None
 
 
 # =========
@@ -856,16 +867,16 @@ def make_finite_algebra(*args):
 
         finalg_dict = {'name': args[0],
                        'description': args[1],
-                       'element_names': args[2],
-                       'mult_table': args[3]
+                       'elements': args[2],
+                       'table': args[3]
                        }
     else:
         raise ValueError("Incorrect number of input arguments.")
 
     name = finalg_dict['name']
     desc = finalg_dict['description']
-    elems = finalg_dict['element_names']
-    tbl = finalg_dict['mult_table']
+    elems = finalg_dict['elements']
+    tbl = finalg_dict['table']
     # Check if first element in table is a string
     if isinstance(tbl[0][0], str):
         index_tbl = index_table_from_name_table(elems, tbl)
@@ -895,6 +906,12 @@ def make_finite_algebra(*args):
 # ==========
 # Utilities
 # ==========
+
+def yes_or_no(true_or_false):
+    if true_or_false:
+        return "Yes"
+    else:
+        return "No"
 
 def index_table_from_name_table(elements, name_table):
     return [[elements.index(elem_name) for elem_name in row] for row in name_table]

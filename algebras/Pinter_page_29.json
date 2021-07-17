@@ -1,12 +1,11 @@
-{"type": "Group",
- "name": "Non-Abelian_Example",
+{"name": "Non-Abelian_Example",
  "description": "Example on page 29 of 'A Book of Abstract Algebra' by Charles C. Pinter",
- "element_names": ["I", "A", "B", "C", "D", "K"],
- "mult_table": [[0, 1, 2, 3, 4, 5],
-                [1, 0, 3, 2, 5, 4],
-                [2, 5, 4, 1, 0, 3],
-                [3, 4, 5, 0, 1, 2],
-                [4, 3, 0, 5, 2, 1],
-                [5, 2, 1, 4, 3, 0]]
+ "elements": ["I", "A", "B", "C", "D", "K"],
+ "table": [[0, 1, 2, 3, 4, 5],
+           [1, 0, 3, 2, 5, 4],
+           [2, 5, 4, 1, 0, 3],
+           [3, 4, 5, 0, 1, 2],
+           [4, 3, 0, 5, 2, 1],
+           [5, 2, 1, 4, 3, 0]]
 }
 

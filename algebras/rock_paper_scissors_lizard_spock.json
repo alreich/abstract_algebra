@@ -1,10 +1,9 @@
-{"type": "Magma",
-  "name": "RPSZK",
-  "description": "Rock, Paper, Scissors, Lizard, Spock",
-  "element_names": ["r", "p", "s", "z", "k"],
-  "mult_table": [[0, 1, 2, 3, 4],
-                 [1, 1, 2, 3, 1],
-                 [2, 2, 2, 2, 4],
-                 [3, 3, 2, 3, 3],
-                 [4, 1, 4, 3, 4]]
+{"name": "RPSZK",
+ "description": "The Big Bang Theory: Rock, Paper, Scissors, Lizard, Spock",
+ "elements": ["r", "p", "s", "z", "k"],
+ "table": [[0, 1, 2, 3, 4],
+           [1, 1, 2, 3, 1],
+           [2, 2, 2, 2, 4],
+           [3, 3, 2, 3, 3],
+           [4, 1, 4, 3, 4]]
 }

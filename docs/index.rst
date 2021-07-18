@@ -18,14 +18,6 @@ User Guide
 
     guide
 
-Experimental Stuff
-==================
-
-.. toctree::
-    :maxdepth: 2
-
-    experimental
-
 API Reference
 =============
 
@@ -33,3 +25,11 @@ API Reference
     :maxdepth: 2
 
     api
+
+Experimental
+============
+
+.. toctree::
+    :maxdepth: 2
+
+    experimental

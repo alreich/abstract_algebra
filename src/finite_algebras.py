@@ -15,10 +15,10 @@ from permutations import Perm
 
 
 # =================
-#   FiniteAlgebra
+#   __FiniteAlgebra
 # =================
 
-class FiniteAlgebra:
+class __FiniteAlgebra:
     """A top-level container class for functionality that is common to all finite algebras.
     This class is not intended to be instantiated."""
 
@@ -176,7 +176,7 @@ class FiniteAlgebra:
 #   Magma
 # =========
 
-class Magma(FiniteAlgebra):
+class Magma(__FiniteAlgebra):
     """A finite algebra with a binary operation that returns a unique value in the algebra for all pairs
     in the cross-product of the algebra's set of elements with itself."""
 

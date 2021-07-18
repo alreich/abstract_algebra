@@ -19,6 +19,8 @@ from permutations import Perm
 # =================
 
 class FiniteAlgebra:
+    """A top-level container class for functionality that is common to all finite algebras.
+    This class is not intended to be instantiated."""
 
     def __init__(self, name, description, elements, table):
         self.name = name
@@ -70,24 +72,31 @@ class FiniteAlgebra:
 
     @property
     def elements(self):
+        """Returns a list of strings, the algebra's element names.  If an identity element exists, it
+        should typically come first in the list."""
         return self.__elements
     
     @property
     def table(self):
+        """Returns the algebra's Cayley Table ('multiplication' table)."""
         return self.__table
 
     def identity_index(self):
+        """Returns the position of the identity element's name in the list of elements.  Should typically
+        be 0."""
         if self.__table.identity() is not None:
             return self.__table.identity()
 
     @property
     def identity(self):
+        """Returns the algebra's identity element name (str)."""
         if self.__table.identity() is not None:
             return self.__elements[self.__table.identity()]
         else:
             return None
 
     def set_elements(self, new_elements):
+        """Replaces the algebra's existing element names with the list of new element names."""
         if isinstance(new_elements, list):
             self.__elements = new_elements
         elif isinstance(new_elements, dict):
@@ -96,24 +105,33 @@ class FiniteAlgebra:
     
     @property
     def order(self):
+        """Returns the order of the algebra."""
         return len(self.__elements)
 
     def table_as_list_with_names(self):
+        """Returns the Cayley Table as a regular Python array where the element indices have been
+        replaces by the element names (str)."""
         return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
 
     def is_associative(self):
+        """Returns True if the algebra is associative; returns False otherwise."""
         return self.__table.is_associative()
 
     def is_commutative(self):
+        """Returns True if the algebra is commutative; returns False otherwise."""
         return self.__table.is_commutative()
 
     def is_abelian(self):
+        """Returns True if the algebra is abelian; returns False otherwise."""
         return self.is_commutative()
 
     def has_inverses(self):
+        """Returns True if every element in the algebra has an inverse that is also in the algebra;
+        returns False otherwise."""
         return self.__table.has_inverses()
 
     def to_dict(self):
+        """Returns a Python dictionary that represents the algebra."""
         return {'type': self.__class__.__name__,
                 'name': self.name,
                 'description': self.description,
@@ -122,13 +140,16 @@ class FiniteAlgebra:
                 }
 
     def dumps(self):
+        """Returns a JSON string that represents the algebra."""
         return json.dumps(self.to_dict())
 
     def dump(self, json_filename):
+        """Writes the algebra to the given filename in JSON format."""
         with open(json_filename, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
     def about(self, max_size=12, use_table_names=False):
+        """Prints out information about the algebra."""
         print(f"\n{self.__class__.__name__}: {self.name}")
         print(f"Description: {self.description}")
         print(f"Elements: {self.elements}")
@@ -156,6 +177,8 @@ class FiniteAlgebra:
 # =========
 
 class Magma(FiniteAlgebra):
+    """A finite algebra with a binary operation that returns a unique value in the algebra for all pairs
+    in the cross-product of the algebra's set of elements with itself."""
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
@@ -253,9 +276,11 @@ class Monoid(Semigroup):
 
     @property
     def identity(self):
+        """Returns the algebras identity element."""
         return self.__identity
 
     def element_order(self, element):
+        """Returns the order of the given element within the algebra."""
         def order_aux(elem, prod, order):
             if prod == self.identity:
                 return order
@@ -317,6 +342,7 @@ class Group(Monoid):
             self.__inverses = self.create_inverse_lookup_dict()
 
     def create_inverse_lookup_dict(self):
+        """Returns a dictionary that maps each of the algebra's elements to its inverse element."""
         row_indices, col_indices = np.where(self.table.table == self.identity_index())
         return {self.elements[elem_index]: self.elements[elem_inv_index]
                 for (elem_index, elem_inv_index)

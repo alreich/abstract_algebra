@@ -1,6 +1,7 @@
 Abstract Algebra Docs Outline
 
-Overview ("Readme")
+
+README
 
 * Brief Description
 * Link to ReadTheDocs
@@ -9,24 +10,8 @@ Overview ("Readme")
 * Repo Description
 * References
 
-Definitions of Algebraic Structures
 
-* Group
-  - Axioms
-  - Motivation for Axioms
-  - Application to Geometric Symmetry
-  - Abelian Groups
-  - Finite Groups
-  - Subgroups
-  - Normal Subgroups
-  - Isomorphisms
-  - References
-* Magmas, Semigroups, and Monoids
-  - Axioms for Each
-* Ring
-* Field
-
-Overview of Python Implementation
+Python Implementation
 
 * Object Hierarchy
 * Cayley Table
@@ -38,6 +23,7 @@ Overview of Python Implementation
   - Ring
   - Field
 * Permutations
+
 
 Usage
 
@@ -59,18 +45,35 @@ Usage
   - Is Normal (subgroup)
 
 * Binary Operation
-  - 
+  - Conjugation
 
 * Identity Element(s)
 
 * Inverses
   - Left/Right Inverse
 
-Serialization
+* Serialization
 
 * Saving Finite Algebras in JSON Format
 
-Experimental Stuff
+* Experimental Stuff
+
+
+Definitions of Algebraic Structures
+
+* Group
+  - Axioms
+  - Motivation for Axioms
+  - Application to Geometric Symmetry
+  - Abelian Groups
+  - Finite Groups
+  - Subgroups
+  - Normal Subgroups
+  - Isomorphisms
+  - References
+* Magmas, Semigroups, and Monoids
+  - Axioms for Each
+* Ring
+* Field
 
 Resources
-

@@ -1,0 +1,76 @@
+Abstract Algebra Docs Outline
+
+Overview ("Readme")
+
+* Brief Description
+* Link to ReadTheDocs
+* Setup
+* Selected Examples
+* Repo Description
+* References
+
+Definitions of Algebraic Structures
+
+* Group
+  - Axioms
+  - Motivation for Axioms
+  - Application to Geometric Symmetry
+  - Abelian Groups
+  - Finite Groups
+  - Subgroups
+  - Normal Subgroups
+  - Isomorphisms
+  - References
+* Magmas, Semigroups, and Monoids
+  - Axioms for Each
+* Ring
+* Field
+
+Overview of Python Implementation
+
+* Object Hierarchy
+* Cayley Table
+* Finite Algebra
+  - Magma
+  - Semigroup
+  - Monoid
+  - Group
+  - Ring
+  - Field
+* Permutations
+
+Usage
+
+* Creating Finite Algebras
+  - From Command-Line Arguments
+  - From JSON File
+  - From Python Dictionary
+  - Autogenerate Groups
+  - Derive Subgroups
+  - Compute Direct Products
+
+* Saving a Finite Algebra
+
+* Checking for Properties
+  - Has Identity
+  - Has Inverses
+  - Is Associative
+  - Is Commutative
+  - Is Normal (subgroup)
+
+* Binary Operation
+  - 
+
+* Identity Element(s)
+
+* Inverses
+  - Left/Right Inverse
+
+Serialization
+
+* Saving Finite Algebras in JSON Format
+
+Experimental Stuff
+
+Resources
+

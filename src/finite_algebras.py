@@ -19,8 +19,12 @@ from permutations import Perm
 # =================
 
 class __FiniteAlgebra:
-    """A top-level container class for functionality that is common to all finite algebras.
-    This class is not intended to be instantiated."""
+    """A top-level container class for functionality that is common to all finite algebras:
+    THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
+
+    Class Hierarchy:
+       __FiniteAlgebra --> Magma --> Semigroup --> Monoid --> Group --> Ring --> Field
+    """
 
     def __init__(self, name, description, elements, table):
         self.name = name
@@ -187,7 +191,9 @@ class Magma(__FiniteAlgebra):
     def op(self, *args):
         """Return the 'product' or 'sum' of 1 or more algebra elements as defined by the
         algebra's CayleyTable."""
-        if len(args) == 1:
+        if len(args) == 0:
+            return None
+        elif len(args) == 1:
             if args[0] in self.elements:
                 return args[0]
             else:
@@ -273,6 +279,14 @@ class Monoid(Semigroup):
             raise ValueError("Table has no identity element")
         else:
             self.__identity = self.elements[id_index]
+
+    def op(self, *args):
+        """Return the 'product' or 'sum' of 0 or more algebra elements as defined by the
+        algebra's CayleyTable.  If no args, then the identity element is returned."""
+        if len(args) == 0:
+            return self.identity
+        else:
+            return super().op(*args)
 
     @property
     def identity(self):

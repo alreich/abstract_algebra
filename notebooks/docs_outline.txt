@@ -1,7 +1,7 @@
 Abstract Algebra Docs Outline
 
 
-README
+readme
 
 * Brief Description
 * Link to ReadTheDocs
@@ -11,7 +11,7 @@ README
 * References
 
 
-Python Implementation
+intro
 
 * Object Hierarchy
 * Cayley Table
@@ -25,7 +25,7 @@ Python Implementation
 * Permutations
 
 
-Usage
+guide
 
 * Creating Finite Algebras
   - From Command-Line Arguments
@@ -59,7 +59,7 @@ Usage
 * Experimental Stuff
 
 
-Definitions of Algebraic Structures
+theory
 
 * Group
   - Axioms
@@ -76,4 +76,5 @@ Definitions of Algebraic Structures
 * Ring
 * Field
 
-Resources
+
+resources

@@ -3,6 +3,14 @@
 API Reference
 =============
 
+__FiniteAlgebra
+---------------
+
+.. autoclass:: finite_algebras.__FiniteAlgebra
+    :members:
+    :undoc-members:
+    :private-members:
+
 Magma
 -----
 
@@ -46,24 +54,6 @@ Group Generators
 .. autofunction:: finite_algebras.generate_symmetric_group
 .. autofunction:: finite_algebras.generate_powerset_group
 
-Utilities
----------
-.. autofunction:: finite_algebras.index_table_from_name_table
-.. autofunction:: finite_algebras.generate_all_group_tables
-.. autofunction:: finite_algebras.tables_to_groups
-
-Cayley Table
-------------
-
-.. autoclass:: cayley_table.CayleyTable
-    :members:
-    :special-members: __eq__, __repr__, __str__, __getitem__
-    :undoc-members:
-    :private-members:
-
-.. autofunction:: cayley_table.get_duplicates
-.. autofunction:: cayley_table.check_inputs
-
 Permutations
 ------------
 
@@ -88,4 +78,27 @@ Ring
 Field
 -----
 
-.. TBD
+.. autoclass:: finite_algebras.Field
+    :members:
+    :special-members:
+    :undoc-members:
+    :private-members:
+
+Cayley Table
+------------
+
+.. autoclass:: cayley_table.CayleyTable
+    :members:
+    :special-members: __eq__, __repr__, __str__, __getitem__
+    :undoc-members:
+    :private-members:
+
+.. autofunction:: cayley_table.get_duplicates
+.. autofunction:: cayley_table.check_inputs
+
+Utilities
+---------
+.. autofunction:: finite_algebras.index_table_from_name_table
+.. autofunction:: finite_algebras.generate_all_group_tables
+.. autofunction:: finite_algebras.tables_to_groups
+

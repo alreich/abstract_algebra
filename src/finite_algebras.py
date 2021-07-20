@@ -494,7 +494,6 @@ class Group(Monoid):
         return None
 
     def about_proper_subgroups(self, unique=False, show_elements=True):
-        """TBD: Work in Progress"""
         if unique:
             subgrps = self.unique_proper_subgroups()
         else:

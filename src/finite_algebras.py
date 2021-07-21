@@ -4,6 +4,7 @@
 """
 
 import json
+import os
 import functools
 import pprint as pp
 import numpy as np
@@ -966,6 +967,38 @@ def make_table(table_string):
     """
     return [[int(n) for n in row.strip().split(" ")]
             for row in table_string.splitlines()]
+
+
+class Examples:
+    """A convenience class for accessing some of the example algebras in the algebras
+    directory.  To add or subtract algebras to its default list, see the file,
+    'examples.json', in the algebras directory."""
+
+    def __init__(self, algebras_dir, filenames_json='examples.json'):
+        examples_path = os.path.join(algebras_dir, filenames_json)
+        with open(examples_path, 'r') as fin:
+            self.filenames_list = json.load(fin)
+        self.algebras = [make_finite_algebra(os.path.join(algebras_dir, filename))
+                         for filename in self.filenames_list]
+        self.about()
+
+    def get_example(self, index):
+        return self.algebras[index]
+
+    def about(self):
+        n = 70
+        print("=" * n)
+        print(" " * (int(n / 2) - 8) + "Example Algebras")  # centered
+        print("-" * n)
+        print(f"  {len(self.algebras)} example algebras are available.")
+        print("  Use \"get_example(INDEX)\" to get a specific example,")
+        print("  where INDEX is the first number on each line below:")
+        print("-" * n)
+        index = 0
+        for alg in self.algebras:
+            print(f"{index}: {alg.name} -- {alg.description}")
+            index += 1
+        print("=" * n)
 
 
 # End of File

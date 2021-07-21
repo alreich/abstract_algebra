@@ -1,5 +1,5 @@
-{"name": "Non-Abelian_Example",
- "description": "Example on page 29 of 'A Book of Abstract Algebra' by Charles C. Pinter",
+{"name": "Pinter29",
+ "description": "Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter",
  "elements": ["I", "A", "B", "C", "D", "K"],
  "table": [[0, 1, 2, 3, 4, 5],
            [1, 0, 3, 2, 5, 4],

@@ -1,5 +1,5 @@
-{"name": "Non-Abelian_Example VERSION 2",
- "description": "Tests input of a table of element name strings and no element_names list",
+{"name": "Pinter29 VERSION 2",
+ "description": "For testing input of table of element name strings",
  "elements": ["I", "A", "B", "C", "D", "K"],
  "table": [["I", "A", "B", "C", "D", "K"],
            ["A", "I", "C", "B", "K", "D"],

@@ -786,6 +786,7 @@ def generate_all_group_tables(order):
     return [tbl for tbl in table_candidates if __no_conflicts(tbl)]
 
 
+# TODO: Reconcile this version with the similar method in CayleyTable.
 def is_table_associative(table):
     """Tests whether a table supports associativity
 

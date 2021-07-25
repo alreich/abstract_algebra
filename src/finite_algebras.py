@@ -22,7 +22,8 @@ from permutations import Perm
 
 class FiniteAlgebra:
     """A top-level container class for functionality that is common to all finite algebras:
-    THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
+    THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.  (It is not actually an algebra; it lacks
+    a binary operation -- that first appears in Magma.)
 
     Class Hierarchy:
        FiniteAlgebra --> Magma --> Semigroup --> Monoid --> Group --> Ring --> Field
@@ -78,8 +79,7 @@ class FiniteAlgebra:
 
     @property
     def elements(self):
-        """Returns a list of strings, the algebra's element names.  If an identity element exists, it
-        should typically come first in the list."""
+        """Returns a list of strings, the algebra's element names."""
         return self.__elements
     
     @property
@@ -88,8 +88,7 @@ class FiniteAlgebra:
         return self.__table
 
     def identity_index(self):
-        """Returns the position of the identity element's name in the list of elements.  Should typically
-        be 0."""
+        """Returns the position of the identity element's name in the list of elements."""
         if self.__table.identity() is not None:
             return self.__table.identity()
 
@@ -102,7 +101,7 @@ class FiniteAlgebra:
             return None
 
     def set_elements(self, new_elements):
-        """Replaces the algebra's existing element names with the list of new element names."""
+        """Replace the existing element names with the list of new element names."""
         if isinstance(new_elements, list):
             self.__elements = new_elements
         elif isinstance(new_elements, dict):
@@ -167,7 +166,7 @@ class FiniteAlgebra:
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
         print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
         size = len(self.elements)
-        if size <= max_size:
+        if size <= max_size:  # Don't print table if too large
             if use_table_names:
                 print(f"Cayley Table (showing names):")
                 pp.pprint(self.table_as_list_with_names())
@@ -175,7 +174,7 @@ class FiniteAlgebra:
                 print(f"Cayley Table (showing indices):")
                 pp.pprint(self.table.tolist())
         else:
-            print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+            print(f"{self.__class__.__name__} order is {size} > {max_size}, so the table is not output.")
         return None
 
 
@@ -191,6 +190,12 @@ class Magma(FiniteAlgebra):
         super().__init__(name, description, elements, table)
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
 
+    def binary_operation(self, elem1, elem2):
+        row = self.elements.index(elem1)
+        col = self.elements.index(elem2)
+        index = self.table[row, col]
+        return self.elements[index]
+
     def op(self, *args):
         """Return the 'product' or 'sum' of 1 or more algebra elements as defined by the
         algebra's CayleyTable."""
@@ -202,10 +207,11 @@ class Magma(FiniteAlgebra):
             else:
                 raise ValueError(f"{args[0]} is not a valid element name")
         elif len(args) == 2:
-            row = self.elements.index(args[0])
-            col = self.elements.index(args[1])
-            index = self.table[row, col]
-            return self.elements[index]
+            # row = self.elements.index(args[0])
+            # col = self.elements.index(args[1])
+            # index = self.table[row, col]
+            # return self.elements[index]
+            return self.binary_operation(args[0], args[1])
         else:
             return functools.reduce(lambda a, b: self.op(a, b), args)
 
@@ -230,7 +236,6 @@ class Magma(FiniteAlgebra):
             for b in dp_element_names:
                 dp_mult_table_row.append(dp_element_names.index((self.op(a[0], b[0]), other.op(a[1], b[1]))))
             dp_mult_table.append(dp_mult_table_row)  # Append the new row to the table
-        # return self.__class__(dp_name,
         return make_finite_algebra(dp_name,
                                    dp_description,
                                    list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
@@ -249,7 +254,7 @@ class Magma(FiniteAlgebra):
             new_desc = str(self.description) + ' (elements reordered)'
             return self.__class__(new_name, new_desc, reordered_elements, new_table)
         else:
-            raise Exception(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
+            raise ValueError(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
 
 
 # =============
@@ -304,28 +309,52 @@ class Monoid(Semigroup):
                 return order
             else:
                 return order_aux(elem, self.op(prod, elem), order + 1)
-        if self.__element_orders[element] is None:
+        if self.__element_orders[element] is None:  # If not cached yet...
             self.__element_orders[element] = order_aux(element, element, 1)
         return self.__element_orders[element]
+
+    def set_elements(self, new_elements):
+        """Replace the existing element names with the list of new element names.
+        And then recalculate the inverse lookup dictionary."""
+        super().set_elements(new_elements)
+        self.__element_orders = {elem: None for elem in self.elements}  # Reset cached values
 
     # ---------------------
     # Monoid Isomorphisms
     # ---------------------
-    # Assumes that the identity is the first element in the elements list
-    # TODO: Remove this assumption
+
+    # def element_mappings(self, other):
+    #     """Returns a list of mappings (dictionaries) of this algebra's elements to all possible permutations
+    #     of other's elements, where the identity of this algebra is always mapped to the identity of other."""
+    #     if self.order == other.order:
+    #         elems0 = self.elements
+    #         elems1 = other.elements
+    #         mappings = [dict(zip(elems0[1:], perm)) for perm in it.permutations(elems1[1:])]
+    #         for mapping in mappings:
+    #             mapping[elems0[0]] = elems1[0]
+    #         return mappings
+    #     else:
+    #         raise Exception(f"Algebras must be of the same order: {self.order} != {other.order}")
 
     def element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this algebra's elements to all possible permutations
         of other's elements, where the identity of this algebra is always mapped to the identity of other."""
         if self.order == other.order:
-            elems0 = self.elements
-            elems1 = other.elements
-            mappings = [dict(zip(elems0[1:], perm)) for perm in it.permutations(elems1[1:])]
+            # Identities map to identities, so remove them
+            id0 = self.identity
+            id1 = other.identity
+            elems0 = self.elements.copy()
+            elems1 = other.elements.copy()
+            elems0.remove(id0)
+            elems1.remove(id1)
+            # Compute all possible mappings
+            mappings = [dict(zip(elems0, perm)) for perm in it.permutations(elems1)]
+            # Add the identities back in
             for mapping in mappings:
-                mapping[elems0[0]] = elems1[0]
+                mapping[id0] = id1
             return mappings
         else:
-            raise Exception(f"Algebras must be of the same order: {self.order} != {other.order}")
+            raise ValueError(f"Algebras must be of the same order: {self.order} != {other.order}")
 
     def isomorphic_mapping(self, other, mapping):
         """Returns True if the input mapping from this algebra to the other algebra is isomorphic."""
@@ -374,6 +403,12 @@ class Group(Monoid):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
         return self.op(g, self.op(a, self.inv(g)))
 
+    def set_elements(self, new_elements):
+        """Replace the existing element names with the list of new element names.
+        And then recalculate the inverse lookup dictionary."""
+        super().set_elements(new_elements)
+        self.__inverses = self.create_inverse_lookup_dict()
+
     def is_normal(self, subgrp):
         """Return True if the subgroup is normal."""
         result = True
@@ -383,6 +418,8 @@ class Group(Monoid):
                     result = False
                     break
         return result
+
+    # TODO: Look into pushing closure and related functionality up the hierarchy
 
     def closure(self, subset_of_elements):
         """Given a subset (in list form) of the group's elements (name strings),
@@ -437,6 +474,8 @@ class Group(Monoid):
                 row.append(elements_sorted.index(self.op(a, b)))
             table.append(row)
         return Group(name, desc, elements_sorted, table)
+
+    # TODO: Generalize the concept of subgroups to subalgebras and move it up the hierarchy.
 
     def proper_subgroups(self):
         """Return a list of proper subgroups of the group."""
@@ -496,6 +535,8 @@ class Group(Monoid):
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
         return None
+
+    # TODO: about_proper_subgroups is still a work-in-progress.  Finish it.
 
     def about_proper_subgroups(self, unique=False, show_elements=True):
         """Print info about proper subgroups of this group."""
@@ -564,7 +605,8 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
         desc = f"Autogenerated cyclic group of order {order}"
     elements = [identity_name, elem_name] + [f"{elem_name}^" + str(i) for i in range(2, order)]
     table = [[((a + b) % order) for b in range(order)] for a in range(order)]
-    return Group(nm, desc, elements, table)
+    # return Group(nm, desc, elements, table)
+    return make_finite_algebra(nm, desc, elements, table)
 
 
 def generate_symmetric_group(n, name=None, description=None, base=1):
@@ -607,7 +649,8 @@ def generate_powerset_group(n, name=None, description=None):
     table = [[pset.index(a ^ b) for b in pset] for a in pset]
     elements = [str(elem) for elem in pset]
     elements[0] = "{}"  # Because otherwise it would be "set()"
-    return Group(nm, desc, elements, table)
+    # return Group(nm, desc, elements, table)
+    return make_finite_algebra(nm, desc, elements, table)
 
 
 def generate_commutative_monoid(order, elem_name='a', name=None, description=None):
@@ -622,12 +665,15 @@ def generate_commutative_monoid(order, elem_name='a', name=None, description=Non
         desc = f"Autogenerated commutative monoid of order {order}"
     elements = [elem_name + str(i) for i in range(order)]
     table = [[(a * b) % order for b in range(order)] for a in range(order)]
-    return Monoid(nm, desc, elements, table)
+    # return Monoid(nm, desc, elements, table)
+    return make_finite_algebra(nm, desc, elements, table)
 
 
 # ========
 #   Ring
 # ========
+
+# TODO: Finish Ring implementation
 
 class Ring(Group):
 
@@ -636,6 +682,7 @@ class Ring(Group):
         if len(args) == 5:
             super().__init__(*args[:4])
 
+        # TODO: The ring_mult_table should be a CayleyTable
         self.ring_mult_table = np.array(args[4], dtype=np.int64)
         self.__has_mult_identity = None
         self.__mult_identity = None
@@ -652,7 +699,7 @@ class Ring(Group):
         return super().elements
 
     @property
-    def add_identity(self):
+    def additive_identity(self):
         """Return the additive identity"""
         return super().identity
 
@@ -660,21 +707,25 @@ class Ring(Group):
         """Use the parent's (group) mult. operation as the ring's addition operator."""
         return super().op(*args)
 
-    def ring_op(self, *args):
+    def mult(self, *args):
+        """Ring multiplication"""
 
+        # TODO: Return None or Ring identity, if 0 args
         if len(args) == 1:
             if args[0] in self.ring_elements:
                 return args[0]
             else:
                 raise ValueError(f"{args[0]} is not a valid Group element name")
         elif len(args) == 2:
-            row = self.ring_elements.index(args[0])
-            col = self.ring_elements.index(args[1])
-            index = self.ring_mult_table[row, col]
-            return self.ring_elements[index]
+            # row = self.ring_elements.index(args[0])
+            # col = self.ring_elements.index(args[1])
+            # index = self.ring_mult_table[row, col]
+            # return self.ring_elements[index]
+            return self.binary_operation(args[0], args[1])
         else:
-            return functools.reduce(lambda a, b: self.ring_op(a, b), args)
+            return functools.reduce(lambda a, b: self.mult(a, b), args)
 
+    # TODO: Need to consider left & right identities; Also delegate this to CayleyTable
     @property
     def mult_identity(self):
         """If it exists, find and return the multiplicative identity element for
@@ -683,7 +734,7 @@ class Ring(Group):
         if self.__has_mult_identity is None:
             # Look for a multiplicative identity
             for x in self:
-                xy = [self.ring_op(x, y) for y in self]
+                xy = [self.mult(x, y) for y in self]
                 if xy == self.ring_elements:
                     # Found one
                     self.__has_mult_identity = True
@@ -707,9 +758,9 @@ class Ring(Group):
                 for b in self:
                     for c in self:
                         b_plus_c = self.add(b, c)
-                        ab = self.ring_op(a, b)
-                        ac = self.ring_op(a, c)
-                        if self.ring_op(a, b_plus_c) != self.add(ab, ac):
+                        ab = self.mult(a, b)
+                        ac = self.mult(a, c)
+                        if self.mult(a, b_plus_c) != self.add(ab, ac):
                             if verbose:
                                 print(f"\na = {a}; b = {b}; c = {c}")
                                 print(f"{a} x {b_plus_c} != {ab} + {ac}")
@@ -724,6 +775,7 @@ class Ring(Group):
                  for elem_pos in row]
                 for row in self.ring_mult_table]
 
+    # TODO: Turn pprint, below, into and 'about' method
     def pprint(self, use_element_names=False):
         print(f"{self.__class__.__name__}('{self.name}',")
         print(f"'{self.description}',")
@@ -748,9 +800,11 @@ def powerset_mult_table(n):
     return [[pset.index(a & b) for b in pset] for a in pset]
 
 
+# TODO: The tables here should be CayleyTables
 def generate_powerset_ring(n, name=None, description=None):
     """Generates a ring on the powerset of {0, 1, 2, ..., n-1},
-    where symmetric difference is the operator."""
+    where symmetric difference is the addition operator and intersection is the
+    multiplication operator."""
     if name:
         nm = name
     else:

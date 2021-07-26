@@ -630,7 +630,8 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
                 for b in elem_dict]
                for a in elem_dict]
     index_table = index_table_from_name_table(list(elem_dict.keys()), mul_tbl)
-    return Group(nm, desc, list(elem_dict.keys()), index_table)
+    # return Group(nm, desc, list(elem_dict.keys()), index_table)
+    return make_finite_algebra(nm, desc, list(elem_dict.keys()), index_table)
 
 
 def generate_powerset_group(n, name=None, description=None):
@@ -819,6 +820,11 @@ def generate_powerset_ring(n, name=None, description=None):
     mult_table = powerset_mult_table(n)
     elements = [str(elem) for elem in pset]
     elements[0] = "{}"  # Because otherwise it would be "set()"
+    # print(nm)
+    # print(desc)
+    # print(elements)
+    # print(addition_table)
+    # print(mult_table)
     return Ring(nm, desc, elements, addition_table, mult_table)
 
 

@@ -70,6 +70,31 @@ class CayleyTable:
                     break
         return result
 
+    def distributes_over(self, other, verbose=False):
+        """This method determines whether this CayleyTable distributes over an
+        'other', equal-sized CayleyTable.  Think of 'self' as multiplication and
+        'other' as addition.
+        """
+        n = self.__order
+        m = other.order
+        if n != m:
+            raise ValueError(f"{n} != {m}, but table sizes must be the same.")
+        else:
+            is_distributive = True
+            for a in range(n):
+                for b in range(n):
+                    for c in range(n):
+                        other_bc = other[b, c]  # e.g., b + c
+                        ab = self[a, b]  # e.g., a * b
+                        ac = self[a, c]  # e.g., a * c
+                        if self[a, other_bc] != other[ab, ac]:  # a(b + c) != ab + ac
+                            if verbose:
+                                print(f"\na = {a}; b = {b}; c = {c}")
+                                print(f"{a} x {other_bc} != {ab} + {ac}")
+                            is_distributive = False
+                            break
+        return is_distributive
+
     def left_identity(self):
         indices = range(len(self.__table))
         identity = None

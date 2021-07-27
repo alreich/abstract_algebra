@@ -188,8 +188,10 @@ class FiniteAlgebra:
 # =========
 
 class Magma(FiniteAlgebra):
-    """A finite algebra with a binary operation that returns a unique value in the algebra for all pairs
-    in the cross-product of the algebra's set of elements with itself."""
+    """A magma is a finite algebra with a binary operation that returns a unique value, in the algebra,
+    for all pairs in the cross-product of the algebra's set of elements with itself.  With a binary
+    operation we can compute the direct product of two or more algebras.  Also, we can check to see
+    if two Magmas are isomorphic."""
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
@@ -212,10 +214,6 @@ class Magma(FiniteAlgebra):
             else:
                 raise ValueError(f"{args[0]} is not a valid element name")
         elif len(args) == 2:
-            # row = self.elements.index(args[0])
-            # col = self.elements.index(args[1])
-            # index = self.table[row, col]
-            # return self.elements[index]
             return self.binary_operation(args[0], args[1])
         else:
             return functools.reduce(lambda a, b: self.op(a, b), args)
@@ -261,13 +259,37 @@ class Magma(FiniteAlgebra):
         else:
             raise ValueError(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
 
+    def element_mappings(self, other):
+        """Returns a list of mappings (dictionaries) of this algebra's elements to all
+        possible permutations of other's elements.
+        """
+        return [dict(zip(self.elements, perm)) for perm in it.permutations(other.elements)]
+
+    def isomorphic_mapping(self, other, mapping):
+        """Returns True if the input mapping from this algebra to the other algebra is isomorphic."""
+        return all([mapping[self.op(x, y)] == other.op(mapping[x], mapping[y])
+                    for x in self.elements for y in self.elements])
+
+    def isomorphic(self, other):
+        """If there is a mapping from elements of this algebra to the other algebra's elements,
+        return it; otherwise return False."""
+        if self.order == other.order:
+            maps = self.element_mappings(other)
+            for mp in maps:
+                if self.isomorphic_mapping(other, mp):
+                    return mp
+            return False
+        else:
+            return False
+
 
 # =============
 #   Semigroup
 # =============
 
 class Semigroup(Magma):
-    """A semigroup is an associative magma."""
+    """A semigroup is an associative magma.  Not much else happens here.  But still,
+    associativity is a pretty big deal."""
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
@@ -280,7 +302,8 @@ class Semigroup(Magma):
 # ==========
 
 class Monoid(Semigroup):
-    """A monoid is a semigroup with an identity element."""
+    """A monoid is a semigroup with an identity element.  With an identity element
+    we can compute element orders.  So, that happens here."""
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
@@ -293,14 +316,6 @@ class Monoid(Semigroup):
             raise ValueError("Table has no identity element")
         else:
             self.__identity = self.elements[id_index]
-
-    def op(self, *args):
-        """Return the 'product' or 'sum' of 0 or more algebra elements as defined by the
-        algebra's CayleyTable.  If no args, then the identity element is returned."""
-        if len(args) == 0:
-            return self.identity
-        else:
-            return super().op(*args)
 
     @property
     def identity(self):
@@ -328,19 +343,6 @@ class Monoid(Semigroup):
     # Monoid Isomorphisms
     # ---------------------
 
-    # def element_mappings(self, other):
-    #     """Returns a list of mappings (dictionaries) of this algebra's elements to all possible permutations
-    #     of other's elements, where the identity of this algebra is always mapped to the identity of other."""
-    #     if self.order == other.order:
-    #         elems0 = self.elements
-    #         elems1 = other.elements
-    #         mappings = [dict(zip(elems0[1:], perm)) for perm in it.permutations(elems1[1:])]
-    #         for mapping in mappings:
-    #             mapping[elems0[0]] = elems1[0]
-    #         return mappings
-    #     else:
-    #         raise Exception(f"Algebras must be of the same order: {self.order} != {other.order}")
-
     def element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this algebra's elements to all possible permutations
         of other's elements, where the identity of this algebra is always mapped to the identity of other."""
@@ -360,23 +362,6 @@ class Monoid(Semigroup):
             return mappings
         else:
             raise ValueError(f"Algebras must be of the same order: {self.order} != {other.order}")
-
-    def isomorphic_mapping(self, other, mapping):
-        """Returns True if the input mapping from this algebra to the other algebra is isomorphic."""
-        elems = self.elements
-        return all([mapping[self.op(x, y)] == other.op(mapping[x], mapping[y]) for x in elems for y in elems])
-
-    def isomorphic(self, other):
-        """If there is a mapping from elements of this algebra to the other algebra's elements,
-        return it; otherwise return False."""
-        if self.order == other.order:
-            maps = self.element_mappings(other)
-            for mp in maps:
-                if self.isomorphic_mapping(other, mp):
-                    return mp
-            return False
-        else:
-            return False
 
 
 # =========
@@ -542,7 +527,6 @@ class Group(Monoid):
         return None
 
     # TODO: about_proper_subgroups is still a work-in-progress.  Finish it.
-
     def about_proper_subgroups(self, unique=False, show_elements=True):
         """Print info about proper subgroups of this group."""
         if unique:

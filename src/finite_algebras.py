@@ -38,6 +38,8 @@ class FiniteAlgebra:
         self.name = name
         self.description = description
         self.__elements = elements
+
+        # Setup the multiplication table
         if isinstance(table, CayleyTable):
             self.__table = table
         elif isinstance(table[0][0], str):
@@ -45,6 +47,13 @@ class FiniteAlgebra:
             self.__table = CayleyTable(index_tbl)
         else:
             self.__table = CayleyTable(table)
+
+        # If it exists, setup the algebra's identity element
+        id_index = self.table.identity()
+        if id_index is not None:
+            self.__identity = self.elements[id_index]
+        else:
+            self.__identity = None
 
     def __eq__(self, other):
         if self.__elements == other.elements:  # Same elements in the same order
@@ -84,7 +93,7 @@ class FiniteAlgebra:
 
     @property
     def elements(self):
-        """Returns a list of strings, the algebra's element names."""
+        """Returns the algebra's element names."""
         return self.__elements
     
     @property
@@ -92,18 +101,23 @@ class FiniteAlgebra:
         """Returns the algebra's Cayley Table ('multiplication' table)."""
         return self.__table
 
-    def identity_index(self):
-        """Returns the position of the identity element's name in the list of elements."""
-        if self.__table.identity() is not None:
-            return self.__table.identity()
-
     @property
     def identity(self):
-        """Returns the algebra's identity element name (str)."""
-        if self.__table.identity() is not None:
-            return self.__elements[self.__table.identity()]
-        else:
-            return None
+        """Returns the algebra's identity element."""
+        return self.__identity
+
+    # def identity_index(self):
+    #     """Returns the position of the identity element's name in the list of elements."""
+    #     if self.__table.identity() is not None:
+    #         return self.__table.identity()
+    #
+    # @property
+    # def identity(self):
+    #     """Returns the algebra's identity element name (str)."""
+    #     if self.__table.identity() is not None:
+    #         return self.__elements[self.__table.identity()]
+    #     else:
+    #         return None
 
     def set_elements(self, new_elements):
         """Replace the existing element names with the list of new element names."""
@@ -207,7 +221,7 @@ class Magma(FiniteAlgebra):
         """Return the 'product' or 'sum' of 1 or more algebra elements as defined by the
         algebra's CayleyTable."""
         if len(args) == 0:
-            return None
+            return self.identity
         elif len(args) == 1:
             if args[0] in self.elements:
                 return args[0]
@@ -308,19 +322,9 @@ class Monoid(Semigroup):
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
         self.__element_orders = {elem: None for elem in self.elements}  # Cached on first access
-
-        # Establish the identity element
-        self.__identity = None
-        id_index = self.table.identity()
-        if id_index is None:
-            raise ValueError("Table has no identity element")
-        else:
-            self.__identity = self.elements[id_index]
-
-    @property
-    def identity(self):
-        """Returns the algebras identity element."""
-        return self.__identity
+        # Double check to make sure that the identity element is set
+        if self.identity is None:
+            raise ValueError("A monoid must have an identity element")
 
     def element_order(self, element):
         """Returns the order of the given element within the algebra."""
@@ -380,7 +384,7 @@ class Group(Monoid):
 
     def create_inverse_lookup_dict(self):
         """Returns a dictionary that maps each of the algebra's elements to its inverse element."""
-        row_indices, col_indices = np.where(self.table.table == self.identity_index())
+        row_indices, col_indices = np.where(self.table.table == self.table.identity())
         return {self.elements[elem_index]: self.elements[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}

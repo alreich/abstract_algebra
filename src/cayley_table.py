@@ -97,21 +97,21 @@ class CayleyTable:
 
     def left_identity(self):
         indices = range(len(self.__table))
-        identity = None
+        lid = None
         for x in indices:
             if all(self.__table[x][y] == y for y in indices):
-                identity = x
+                lid = x
                 break
-        return identity
+        return lid
 
     def right_identity(self):
         indices = range(len(self.__table))
-        identity = None
+        rid = None
         for x in indices:
             if all(self.__table[y][x] == y for y in indices):
-                identity = x
+                rid = x
                 break
-        return identity
+        return rid
 
     def identity(self):
         left_id = self.left_identity()

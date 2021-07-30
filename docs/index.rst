@@ -1,14 +1,6 @@
-.. Abstract Algebra's documentation master file
+.. Abstract Algebra documentation master file
 
 .. include:: README.rst
-
-Introduction
-============
-
-.. toctree::
-    :maxdepth: 2
-
-    intro
 
 User Guide
 ==========

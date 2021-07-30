@@ -923,7 +923,7 @@ def get_integer_form(elem_list):
 def get_int_forms(ref_group, isomorphisms):
     """Return a list of integer forms ('permutations') for a list of isomorphisms,
     i.e., mappings, based on a reference group."""
-    return [get_integer_form([iso[elem] for elem in ref_group.element_names])
+    return [get_integer_form([iso[elem] for elem in ref_group.elements])
             for iso in isomorphisms]
 
 

@@ -3,10 +3,15 @@
 API Reference
 =============
 
-__FiniteAlgebra
+Algebra Constructor
+-------------------
+
+.. autofunction:: finite_algebras.make_finite_algebra
+
+FiniteAlgebra
 ---------------
 
-.. autoclass:: finite_algebras.__FiniteAlgebra
+.. autoclass:: finite_algebras.FiniteAlgebra
     :members:
     :undoc-members:
     :private-members:
@@ -16,7 +21,7 @@ Magma
 
 .. autoclass:: finite_algebras.Magma
     :members:
-    :special-members:
+    :special-members: __contains__, __eq__, __getitem__, __len__, __mul__
     :undoc-members:
     :private-members:
 
@@ -38,17 +43,16 @@ Monoid
     :undoc-members:
     :private-members:
 
+.. autofunction:: finite_algebras.generate_commutative_monoid
+
 Group
 -----
 
 .. autoclass:: finite_algebras.Group
     :members:
-    :special-members: __contains__, __eq__, __getitem__, __len__, __mul__
+    :special-members:
     :undoc-members:
     :private-members:
-
-Group Generators
-----------------
 
 .. autofunction:: finite_algebras.generate_cyclic_group
 .. autofunction:: finite_algebras.generate_symmetric_group
@@ -94,11 +98,27 @@ Cayley Table
     :private-members:
 
 .. autofunction:: cayley_table.get_duplicates
-.. autofunction:: cayley_table.check_inputs
 
-Utilities
----------
-.. autofunction:: finite_algebras.index_table_from_name_table
+Examples
+--------
+
+.. autoclass:: finite_algebras.Examples
+    :members:
+    :special-members: __init__
+    :undoc-members:
+    :private-members:
+
+Misc Utilities
+--------------
+
 .. autofunction:: finite_algebras.generate_all_group_tables
+.. autofunction:: finite_algebras.get_duplicates
+.. autofunction:: finite_algebras.get_int_forms
+.. autofunction:: finite_algebras.get_integer_form
+.. autofunction:: finite_algebras.index_table_from_name_table
+.. autofunction:: finite_algebras.is_table_associative
+.. autofunction:: finite_algebras.make_table
+.. autofunction:: finite_algebras.partition_into_isomorphic_lists
+.. autofunction:: finite_algebras.powerset
 .. autofunction:: finite_algebras.tables_to_groups
-
+.. autofunction:: finite_algebras.yes_or_no

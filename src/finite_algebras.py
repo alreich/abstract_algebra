@@ -784,12 +784,12 @@ class Ring(Group):
         return None
 
 
-def powerset_mult_table(n):
-    """Return the multiplication table for the powerset of {0, 1, 2, ..., n-1},
-    where intersection is the multiplication operation."""
-    set_of_n = set(list(range(n)))
-    pset = [set(x) for x in list(powerset(set_of_n))]
-    return [[pset.index(a & b) for b in pset] for a in pset]
+# def powerset_mult_table(n):
+#     """Return the multiplication table for the powerset of {0, 1, 2, ..., n-1},
+#     where intersection is the multiplication operation."""
+#     set_of_n = set(list(range(n)))
+#     pset = [set(x) for x in list(powerset(set_of_n))]
+#     return [[pset.index(a & b) for b in pset] for a in pset]
 
 
 # TODO: The tables here should be CayleyTables
@@ -808,14 +808,10 @@ def generate_powerset_ring(n, name=None, description=None):
     set_of_n = set(list(range(n)))
     pset = [set(x) for x in list(powerset(set_of_n))]
     addition_table = [[pset.index(a ^ b) for b in pset] for a in pset]
-    mult_table = powerset_mult_table(n)
+    # mult_table = powerset_mult_table(n)
+    mult_table = [[pset.index(a & b) for b in pset] for a in pset]
     elements = [str(elem) for elem in pset]
     elements[0] = "{}"  # Because otherwise it would be "set()"
-    # print(nm)
-    # print(desc)
-    # print(elements)
-    # print(addition_table)
-    # print(mult_table)
     return Ring(nm, desc, elements, addition_table, mult_table)
 
 

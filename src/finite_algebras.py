@@ -677,8 +677,7 @@ class Ring(Group):
         if len(args) == 5:
             super().__init__(*args[:4])
 
-        # TODO: The ring_mult_table should be a CayleyTable
-        self.ring_mult_table = np.array(args[4], dtype=np.int64)
+        self.ring_mult_table = CayleyTable(args[4])
         self.__has_mult_identity = None
         self.__mult_identity = None
         self.__is_distributive = None
@@ -686,8 +685,8 @@ class Ring(Group):
         if not super().is_abelian():
             raise Exception("The ring addition operation is not abelian.")
 
-        if not self.is_distributive():
-            raise Exception("The ring addition operation does not distribute over multiplication.")
+        if not self.ring_mult_table.distributes_over(self.table):
+            raise Exception("Addition does not distribute over multiplication.")
 
     @property
     def ring_elements(self):
@@ -712,10 +711,6 @@ class Ring(Group):
             else:
                 raise ValueError(f"{args[0]} is not a valid Group element name")
         elif len(args) == 2:
-            # row = self.ring_elements.index(args[0])
-            # col = self.ring_elements.index(args[1])
-            # index = self.ring_mult_table[row, col]
-            # return self.ring_elements[index]
             return self.__binary_operation(args[0], args[1])
         else:
             return functools.reduce(lambda a, b: self.mult(a, b), args)
@@ -746,25 +741,25 @@ class Ring(Group):
         return self.__has_mult_identity
 
     # TODO: Replace this method with the one in CayleyTable
-    def is_distributive(self, verbose=False):
-        """Check that a(b + c) = ab + ac for all elements, in the Ring."""
-        if self.__is_distributive is None:
-            self.__is_distributive = True
-            for a in self:
-                for b in self:
-                    for c in self:
-                        b_plus_c = self.add(b, c)
-                        ab = self.mult(a, b)
-                        ac = self.mult(a, c)
-                        if self.mult(a, b_plus_c) != self.add(ab, ac):
-                            if verbose:
-                                print(f"\na = {a}; b = {b}; c = {c}")
-                                print(f"{a} x {b_plus_c} != {ab} + {ac}")
-                            self.__is_distributive = False
-                            break
-            return self.__is_distributive
-        else:
-            return self.__is_distributive
+    # def is_distributive(self, verbose=False):
+    #     """Check that a(b + c) = ab + ac for all elements, in the Ring."""
+    #     if self.__is_distributive is None:
+    #         self.__is_distributive = True
+    #         for a in self:
+    #             for b in self:
+    #                 for c in self:
+    #                     b_plus_c = self.add(b, c)
+    #                     ab = self.mult(a, b)
+    #                     ac = self.mult(a, c)
+    #                     if self.mult(a, b_plus_c) != self.add(ab, ac):
+    #                         if verbose:
+    #                             print(f"\na = {a}; b = {b}; c = {c}")
+    #                             print(f"{a} x {b_plus_c} != {ab} + {ac}")
+    #                         self.__is_distributive = False
+    #                         break
+    #         return self.__is_distributive
+    #     else:
+    #         return self.__is_distributive
 
     # TODO: Combine this with the one that does the same thing for Groups and such.
     def ring_mult_table_with_names(self):
@@ -945,7 +940,17 @@ class Field(Ring):
 # =====================
 
 def make_finite_algebra(*args):
-    """Analyzes the input table and returns the appropriate finite algebra."""
+    """Analyzes the input table and returns the appropriate finite algebra.
+
+    A finite algebra consists of four items: name (str), description (str),
+    elements (list of str), and table (list of lists of int/str).
+
+    This function either takes all four items in the order described, above,
+    or a single JSON file name, or a single Python dictionary, where the latter
+    two contain definitions of the four items.
+
+    See the examples in the documentation.
+    """
 
     if len(args) == 1:
 

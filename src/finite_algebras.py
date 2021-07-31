@@ -28,7 +28,7 @@ from permutations import Perm
 class FiniteAlgebra:
     """A top-level container class for functionality that is common to all finite algebras:
     THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.  (It is not actually an algebra; it lacks
-    a binary operation -- that first appears in Magma.)
+    a binary operation.)
 
     Class Hierarchy:
        FiniteAlgebra --> Magma --> Semigroup --> Monoid --> Group --> Ring --> Field
@@ -93,7 +93,7 @@ class FiniteAlgebra:
 
     @property
     def elements(self):
-        """Returns the algebra's element names."""
+        """Returns the algebra's element names (list of strings)."""
         return self.__elements
     
     @property
@@ -103,7 +103,7 @@ class FiniteAlgebra:
 
     @property
     def identity(self):
-        """Returns the algebra's identity element."""
+        """Returns the algebra's identity element, if it exists; otherwise, it returns None."""
         return self.__identity
 
     # def identity_index(self):
@@ -211,7 +211,8 @@ class Magma(FiniteAlgebra):
         super().__init__(name, description, elements, table)
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
 
-    def binary_operation(self, elem1, elem2):
+    def __binary_operation(self, elem1, elem2):
+        """Returns the 'sum' of exactly two elements."""
         row = self.elements.index(elem1)
         col = self.elements.index(elem2)
         index = self.table[row, col]
@@ -228,7 +229,7 @@ class Magma(FiniteAlgebra):
             else:
                 raise ValueError(f"{args[0]} is not a valid element name")
         elif len(args) == 2:
-            return self.binary_operation(args[0], args[1])
+            return self.__binary_operation(args[0], args[1])
         else:
             return functools.reduce(lambda a, b: self.op(a, b), args)
 
@@ -715,7 +716,7 @@ class Ring(Group):
             # col = self.ring_elements.index(args[1])
             # index = self.ring_mult_table[row, col]
             # return self.ring_elements[index]
-            return self.binary_operation(args[0], args[1])
+            return self.__binary_operation(args[0], args[1])
         else:
             return functools.reduce(lambda a, b: self.mult(a, b), args)
 
@@ -744,6 +745,7 @@ class Ring(Group):
     def has_mult_identity(self):
         return self.__has_mult_identity
 
+    # TODO: Replace this method with the one in CayleyTable
     def is_distributive(self, verbose=False):
         """Check that a(b + c) = ab + ac for all elements, in the Ring."""
         if self.__is_distributive is None:
@@ -764,6 +766,7 @@ class Ring(Group):
         else:
             return self.__is_distributive
 
+    # TODO: Combine this with the one that does the same thing for Groups and such.
     def ring_mult_table_with_names(self):
         return [[self.ring_elements[elem_pos]
                  for elem_pos in row]
@@ -933,7 +936,7 @@ def get_int_forms(ref_group, isomorphisms):
 
 # TODO: Implement Field
 class Field(Ring):
-    """Not implemented yet"""
+    """WRITE ME"""
     pass
 
 
@@ -942,7 +945,7 @@ class Field(Ring):
 # =====================
 
 def make_finite_algebra(*args):
-    """TODO: WRITE ME"""
+    """Analyzes the input table and returns the appropriate finite algebra."""
 
     if len(args) == 1:
 

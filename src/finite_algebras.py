@@ -714,9 +714,8 @@ class Ring(Group):
             super().__init__(*args[:4])
 
         self.ring_mult_table = CayleyTable(args[4])
-        self.__has_mult_identity = None
-        self.__mult_identity = None
-        self.__is_distributive = None
+        self.__mult_identity = self.ring_mult_table.identity()
+        self.__ring_op = Operator(self.elements, self.identity, self.table)
 
         if not super().is_commutative():
             raise Exception("The ring addition operation is not abelian.")
@@ -738,43 +737,46 @@ class Ring(Group):
         return super().op(*args)
 
     def mult(self, *args):
-        """Ring multiplication"""
+        return self.__ring_op(*args)
 
-        # TODO: Return None or Ring identity, if 0 args
-        if len(args) == 1:
-            if args[0] in self.ring_elements:
-                return args[0]
-            else:
-                raise ValueError(f"{args[0]} is not a valid Group element name")
-        elif len(args) == 2:
-            return self.__binary_operation(args[0], args[1])
-        else:
-            return functools.reduce(lambda a, b: self.mult(a, b), args)
+    # def mult(self, *args):
+    #     """Ring multiplication"""
+    #
+    #     # TODO: Return None or Ring identity, if 0 args
+    #     if len(args) == 1:
+    #         if args[0] in self.ring_elements:
+    #             return args[0]
+    #         else:
+    #             raise ValueError(f"{args[0]} is not a valid Group element name")
+    #     elif len(args) == 2:
+    #         return self.__binary_operation(args[0], args[1])
+    #     else:
+    #         return functools.reduce(lambda a, b: self.mult(a, b), args)
 
     # TODO: Need to consider left & right identities; Also delegate this to CayleyTable
-    @property
-    def mult_identity(self):
-        """If it exists, find and return the multiplicative identity element for
-        the given operation, op. This value is computed, and if it exists, it is
-        cached the first time it is accessed."""
-        if self.__has_mult_identity is None:
-            # Look for a multiplicative identity
-            for x in self:
-                xy = [self.mult(x, y) for y in self]
-                if xy == self.ring_elements:
-                    # Found one
-                    self.__has_mult_identity = True
-                    self.__mult_identity = x
-                    return self.__mult_identity
-            # Didn't find one
-            if self.__has_mult_identity is None:
-                self.__has_mult_identity = False
-                return self.__mult_identity
-        return self.__mult_identity
+    # @property
+    # def mult_identity(self):
+    #     """If it exists, find and return the multiplicative identity element for
+    #     the given operation, op. This value is computed, and if it exists, it is
+    #     cached the first time it is accessed."""
+    #     if self.__has_mult_identity is None:
+    #         # Look for a multiplicative identity
+    #         for x in self:
+    #             xy = [self.mult(x, y) for y in self]
+    #             if xy == self.ring_elements:
+    #                 # Found one
+    #                 self.__has_mult_identity = True
+    #                 self.__mult_identity = x
+    #                 return self.__mult_identity
+    #         # Didn't find one
+    #         if self.__has_mult_identity is None:
+    #             self.__has_mult_identity = False
+    #             return self.__mult_identity
+    #     return self.__mult_identity
 
-    @property
-    def has_mult_identity(self):
-        return self.__has_mult_identity
+    # @property
+    # def has_mult_identity(self):
+    #     return self.__has_mult_identity
 
     # TODO: Replace this method with the one in CayleyTable
     # def is_distributive(self, verbose=False):

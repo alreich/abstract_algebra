@@ -21,6 +21,39 @@ from cayley_table import CayleyTable
 from permutations import Perm
 
 
+class Operator:
+
+    def __init__(self, elements, identity, table):
+        self.__elements = elements
+        self.__identity = identity
+        self.__table = table
+
+    def __call__(self, *args):
+        return self.__op(*args)
+
+    def __binary_operation(self, elem1, elem2):
+        """Returns the 'sum' of exactly two elements."""
+        row = self.__elements.index(elem1)
+        col = self.__elements.index(elem2)
+        index = self.__table[row, col]
+        return self.__elements[index]
+
+    def __op(self, *args):
+        """Return the 'product' or 'sum' of 1 or more algebra elements as defined by the
+        algebra's CayleyTable."""
+        if len(args) == 0:
+            return self.__identity
+        elif len(args) == 1:
+            if args[0] in self.__elements:
+                return args[0]
+            else:
+                raise ValueError(f"{args[0]} is not a valid element name")
+        elif len(args) == 2:
+            return self.__binary_operation(args[0], args[1])
+        else:
+            return functools.reduce(lambda a, b: self.__op(a, b), args)
+
+
 # =================
 #   FiniteAlgebra
 # =================
@@ -119,13 +152,13 @@ class FiniteAlgebra:
     #     else:
     #         return None
 
-    def set_elements(self, new_elements):
-        """Replace the existing element names with the list of new element names."""
-        if isinstance(new_elements, list):
-            self.__elements = new_elements
-        elif isinstance(new_elements, dict):
-            self.__elements = [new_elements[elem] for elem in self.__elements]
-        return self
+    # def set_elements(self, new_elements):
+    #     """Replace the existing element names with the list of new element names."""
+    #     if isinstance(new_elements, list):
+    #         self.__elements = new_elements
+    #     elif isinstance(new_elements, dict):
+    #         self.__elements = [new_elements[elem] for elem in self.__elements]
+    #     return self
     
     @property
     def order(self):
@@ -209,29 +242,30 @@ class Magma(FiniteAlgebra):
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
+        self.op = Operator(self.elements, self.identity, self.table)
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
 
-    def __binary_operation(self, elem1, elem2):
-        """Returns the 'sum' of exactly two elements."""
-        row = self.elements.index(elem1)
-        col = self.elements.index(elem2)
-        index = self.table[row, col]
-        return self.elements[index]
-
-    def op(self, *args):
-        """Return the 'product' or 'sum' of 1 or more algebra elements as defined by the
-        algebra's CayleyTable."""
-        if len(args) == 0:
-            return self.identity
-        elif len(args) == 1:
-            if args[0] in self.elements:
-                return args[0]
-            else:
-                raise ValueError(f"{args[0]} is not a valid element name")
-        elif len(args) == 2:
-            return self.__binary_operation(args[0], args[1])
-        else:
-            return functools.reduce(lambda a, b: self.op(a, b), args)
+    # def __binary_operation(self, elem1, elem2):
+    #     """Returns the 'sum' of exactly two elements."""
+    #     row = self.elements.index(elem1)
+    #     col = self.elements.index(elem2)
+    #     index = self.table[row, col]
+    #     return self.elements[index]
+    #
+    # def op(self, *args):
+    #     """Return the 'product' or 'sum' of 1 or more algebra elements as defined by the
+    #     algebra's CayleyTable."""
+    #     if len(args) == 0:
+    #         return self.identity
+    #     elif len(args) == 1:
+    #         if args[0] in self.elements:
+    #             return args[0]
+    #         else:
+    #             raise ValueError(f"{args[0]} is not a valid element name")
+    #     elif len(args) == 2:
+    #         return self.__binary_operation(args[0], args[1])
+    #     else:
+    #         return functools.reduce(lambda a, b: self.op(a, b), args)
 
     def direct_product_delimiter(self, delimiter=None):
         """If no input, then the current direct product element name delimiter will be returned (default is ':').
@@ -682,7 +716,7 @@ class Ring(Group):
         self.__mult_identity = None
         self.__is_distributive = None
 
-        if not super().is_abelian():
+        if not super().is_commutative():
             raise Exception("The ring addition operation is not abelian.")
 
         if not self.ring_mult_table.distributes_over(self.table):

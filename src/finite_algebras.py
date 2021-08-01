@@ -715,93 +715,44 @@ class Ring(Group):
 
         self.ring_mult_table = CayleyTable(args[4])
         self.__mult_identity = self.ring_mult_table.identity()
-        self.__ring_op = Operator(self.elements, self.identity, self.table)
+        self.__ring_mult = Operator(self.elements, self.__mult_identity, self.ring_mult_table)
 
         if not super().is_commutative():
-            raise Exception("The ring addition operation is not abelian.")
+            raise ValueError("The ring addition operation is not abelian.")
+
+        if not self.ring_mult_table.is_associative():
+            raise ValueError("The ring multiplication operation is not associative.")
 
         if not self.ring_mult_table.distributes_over(self.table):
-            raise Exception("Addition does not distribute over multiplication.")
+            raise ValueError("Addition does not distribute over multiplication.")
 
     @property
-    def ring_elements(self):
-        return super().elements
+    def add_identity(self):
+        return self.identity
 
     @property
-    def additive_identity(self):
-        """Return the additive identity"""
-        return super().identity
+    def mult_identity(self):
+        return self.__mult_identity
+
+    @property
+    def add_table(self):
+        return self.table
+
+    @property
+    def mult_table(self):
+        return self.ring_mult_table
 
     def add(self, *args):
-        """Use the parent's (group) mult. operation as the ring's addition operator."""
-        return super().op(*args)
+        """Use the inherited group operator as the ring's addition operator."""
+        return self.op(*args)
 
     def mult(self, *args):
-        return self.__ring_op(*args)
-
-    # def mult(self, *args):
-    #     """Ring multiplication"""
-    #
-    #     # TODO: Return None or Ring identity, if 0 args
-    #     if len(args) == 1:
-    #         if args[0] in self.ring_elements:
-    #             return args[0]
-    #         else:
-    #             raise ValueError(f"{args[0]} is not a valid Group element name")
-    #     elif len(args) == 2:
-    #         return self.__binary_operation(args[0], args[1])
-    #     else:
-    #         return functools.reduce(lambda a, b: self.mult(a, b), args)
-
-    # TODO: Need to consider left & right identities; Also delegate this to CayleyTable
-    # @property
-    # def mult_identity(self):
-    #     """If it exists, find and return the multiplicative identity element for
-    #     the given operation, op. This value is computed, and if it exists, it is
-    #     cached the first time it is accessed."""
-    #     if self.__has_mult_identity is None:
-    #         # Look for a multiplicative identity
-    #         for x in self:
-    #             xy = [self.mult(x, y) for y in self]
-    #             if xy == self.ring_elements:
-    #                 # Found one
-    #                 self.__has_mult_identity = True
-    #                 self.__mult_identity = x
-    #                 return self.__mult_identity
-    #         # Didn't find one
-    #         if self.__has_mult_identity is None:
-    #             self.__has_mult_identity = False
-    #             return self.__mult_identity
-    #     return self.__mult_identity
-
-    # @property
-    # def has_mult_identity(self):
-    #     return self.__has_mult_identity
-
-    # TODO: Replace this method with the one in CayleyTable
-    # def is_distributive(self, verbose=False):
-    #     """Check that a(b + c) = ab + ac for all elements, in the Ring."""
-    #     if self.__is_distributive is None:
-    #         self.__is_distributive = True
-    #         for a in self:
-    #             for b in self:
-    #                 for c in self:
-    #                     b_plus_c = self.add(b, c)
-    #                     ab = self.mult(a, b)
-    #                     ac = self.mult(a, c)
-    #                     if self.mult(a, b_plus_c) != self.add(ab, ac):
-    #                         if verbose:
-    #                             print(f"\na = {a}; b = {b}; c = {c}")
-    #                             print(f"{a} x {b_plus_c} != {ab} + {ac}")
-    #                         self.__is_distributive = False
-    #                         break
-    #         return self.__is_distributive
-    #     else:
-    #         return self.__is_distributive
+        """Ring multiplication, based on the second table."""
+        return self.__ring_mult(*args)
 
     # TODO: Combine this with the one that does the same thing for Groups and such.
     def ring_mult_table_with_names(self):
-        return [[self.ring_elements[elem_pos]
+        return [[self.elements[elem_pos]
                  for elem_pos in row]
                 for row in self.ring_mult_table]
 
@@ -813,21 +764,15 @@ class Ring(Group):
             pp.pprint(self.table_as_list_with_names())
             pp.pprint(self.ring_mult_table_with_names())
         else:
-            print(f"{self.ring_elements},")
+            print(f"{self.elements},")
             print("")
+            print(f"# Addition Table:")
             pp.pprint(self.table.tolist())
-            print("")
+            print(",")
+            print(f"# Multiplication Table:")
             pp.pprint(self.ring_mult_table.tolist())
         print(")")
         return None
-
-
-# def powerset_mult_table(n):
-#     """Return the multiplication table for the powerset of {0, 1, 2, ..., n-1},
-#     where intersection is the multiplication operation."""
-#     set_of_n = set(list(range(n)))
-#     pset = [set(x) for x in list(powerset(set_of_n))]
-#     return [[pset.index(a & b) for b in pset] for a in pset]
 
 
 # TODO: The tables here should be CayleyTables
@@ -842,14 +787,13 @@ def generate_powerset_ring(n, name=None, description=None):
     if description:
         desc = description
     else:
-        desc = f"Autogenerated ring on powerset of {n} elements w/ symmetric diff. (+) & intersection (*)"
+        desc = f"Autogenerated Ring on powerset of {{0,...,{n}}} w/ symm. diff. (add) & intersection (mult)"
     set_of_n = set(list(range(n)))
     pset = [set(x) for x in list(powerset(set_of_n))]
     addition_table = [[pset.index(a ^ b) for b in pset] for a in pset]
-    # mult_table = powerset_mult_table(n)
     mult_table = [[pset.index(a & b) for b in pset] for a in pset]
     elements = [str(elem) for elem in pset]
-    elements[0] = "{}"  # Because otherwise it would be "set()"
+    elements[0] = '{}'  # Because otherwise it would be 'set()'
     return Ring(nm, desc, elements, addition_table, mult_table)
 
 

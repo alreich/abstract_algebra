@@ -38,12 +38,12 @@ class TestMagma(TestCase):
     def test_identity(self):
         self.assertIsNone(self.rps.identity)
 
-    def test_set_elements(self):
-        full_names = ['rock', 'paper', 'scissors']
-        self.rps.set_elements(full_names)  # Changes the names used in rps
-        rps_copy_with_full_names = Magma('RPS', "Rock, Paper, Scissors",
-                                         full_names, [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
-        self.assertEqual(self.rps, rps_copy_with_full_names)
+    # def test_set_elements(self):
+    #     full_names = ['rock', 'paper', 'scissors']
+    #     self.rps.set_elements(full_names)  # Changes the names used in rps
+    #     rps_copy_with_full_names = Magma('RPS', "Rock, Paper, Scissors",
+    #                                      full_names, [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+    #     self.assertEqual(self.rps, rps_copy_with_full_names)
 
     def test_make_finite_algebra_1(self):
         rps2 = make_finite_algebra('RPS', "Rock, Paper, Scissors",

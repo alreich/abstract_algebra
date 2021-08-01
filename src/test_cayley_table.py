@@ -4,7 +4,7 @@
 """
 
 from unittest import TestCase
-from cayley_table import CayleyTable, about_tables
+from cayley_table import CayleyTable
 
 
 class TestCayleyTable(TestCase):

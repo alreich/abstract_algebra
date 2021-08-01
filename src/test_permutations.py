@@ -1,5 +1,9 @@
-from unittest import TestCase
+"""
+@author: Alfred J. Reich
 
+"""
+
+from unittest import TestCase
 from permutations import Perm
 
 

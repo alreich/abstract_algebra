@@ -372,11 +372,12 @@ class Monoid(Semigroup):
             self.__element_orders[element] = order_aux(element, element, 1)
         return self.__element_orders[element]
 
-    def set_elements(self, new_elements):
-        """Replace the existing element names with the list of new element names.
-        And then recalculate the inverse lookup dictionary."""
-        super().set_elements(new_elements)
-        self.__element_orders = {elem: None for elem in self.elements}  # Reset cached values
+    # TODO: set_elements either needs to be rewritten or deleted
+    # def set_elements(self, new_elements):
+    #     """Replace the existing element names with the list of new element names.
+    #     And then recalculate the inverse lookup dictionary."""
+    #     super().set_elements(new_elements)
+    #     self.__element_orders = {elem: None for elem in self.elements}  # Reset cached values
 
     # ---------------------
     # Monoid Isomorphisms
@@ -432,11 +433,12 @@ class Group(Monoid):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
         return self.op(g, self.op(a, self.inv(g)))
 
-    def set_elements(self, new_elements):
-        """Replace the existing element names with the list of new element names.
-        And then recalculate the inverse lookup dictionary."""
-        super().set_elements(new_elements)
-        self.__inverses = self.create_inverse_lookup_dict()
+    # TODO: set_elements either needs to be rewritten or deleted
+    # def set_elements(self, new_elements):
+    #     """Replace the existing element names with the list of new element names.
+    #     And then recalculate the inverse lookup dictionary."""
+    #     super().set_elements(new_elements)
+    #     self.__inverses = self.create_inverse_lookup_dict()
 
     def is_normal(self, subgrp):
         """Return True if the subgroup is normal."""

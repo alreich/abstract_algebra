@@ -7,27 +7,29 @@ Algebra Definitions
 This is a Python module that contains the following implementations of
 **finite algebras**:
 
-**Magma** – a set with a binary operation:
-:math:`\langle S, \circ \rangle`, where :math:`S` is a finite set and
-:math:`\circ: S \times S \to S`
+-  **Magma** – a set with a binary operation:
+   :math:`\langle S, \circ \rangle`, where :math:`S` is a finite set and
+   :math:`\circ: S \times S \to S`
 
-**Semigroup** – an associative Magma: for any
-:math:`a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
+-  **Semigroup** – an associative Magma: for any
+   :math:`a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
 
-**Monoid** – a Semigroup with identity element: :math:`\exists e \in S`,
-such that, for all :math:`a \in S, a \circ e = e \circ a = a`
+-  **Monoid** – a Semigroup with identity element:
+   :math:`\exists e \in S`, such that, for all
+   :math:`a \in S, a \circ e = e \circ a = a`
 
-**Group** – a Monoid with inverse elements:
-:math:`\forall a \in S, \exists a^{-1} \in S`, such that,
-:math:`a \circ a^{-1} = a^{-1} \circ a = e`
+-  **Group** – a Monoid with inverse elements:
+   :math:`\forall a \in S, \exists a^{-1} \in S`, such that,
+   :math:`a \circ a^{-1} = a^{-1} \circ a = e`
 
-**Ring** – :math:`\langle S, +, \cdot \rangle`, where
-:math:`\langle S, + \rangle` is a commutative Group,
-:math:`\langle S, \cdot \rangle` is a Semigroup, and :math:`+`
-distributes over :math:`\cdot`
+-  **Ring** – :math:`\langle S, +, \cdot \rangle`, where
+   :math:`\langle S, + \rangle` is a commutative Group,
+   :math:`\langle S, \cdot \rangle` is a Semigroup, and :math:`+`
+   distributes over :math:`\cdot`
 
-**Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
-:math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative Group.
+-  **Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
+   :math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative
+   Group.
 
 Class Hierarchy
 ---------------
@@ -63,8 +65,8 @@ properties of a finite algebra can be derived from its Cayley Table. For
 this reason, this module includes a ``CayleyTable`` class for storing
 the table and methods associated with it.
 
-Group Constuction
------------------
+Algebra Constuction
+-------------------
 
 **``make_finite_algebra``**: Although individual algebras (Magma,
 Semigroup, etc.) have their own individual constructors, requiring the
@@ -106,12 +108,25 @@ In the following examples, the only algebra constructor used is
 .. parsed-literal::
 
     Group(
-    Z3,
-    Cyclic group of order 3,
+    'Z3',
+    'Cyclic group of order 3',
     ['e', 'a', 'a^2'],
     [[0, 1, 2], [1, 2, 0], [2, 0, 1]]
     )
 
+
+
+Printing an algebra converts the algebra to string containing the unique
+id of the algebra instance:
+
+.. code:: ipython3
+
+    >>> print(z3)
+
+
+.. parsed-literal::
+
+    <Group:Z3, ID:140504097993168>
 
 
 **Associativity, Commutativity, Identity Elements, and Inverses**
@@ -336,7 +351,33 @@ positions, but it can also printout a table using element names:
     [['r', 'p', 'r'], ['p', 'p', 's'], ['r', 's', 's']]
 
 
-**EXAMPLE (Magma with Identity)**
+Paper beats Rock:
+
+.. code:: ipython3
+
+    >>> rps.op('r', 'p')
+
+
+
+
+.. parsed-literal::
+
+    'p'
+
+
+
+.. code:: ipython3
+
+    >>> if rps.op() is None:
+        print("RPS does not have an identity element")
+
+
+.. parsed-literal::
+
+    RPS does not have an identity element
+
+
+**EXAMPLE: Magma with Identity**
 
 .. code:: ipython3
 
@@ -404,6 +445,34 @@ B. Vasantha Kandasamy
      [5, 2, 5, 2, 5, 2]]
 
 
+Since the element in the 0,1 position of the table is 3:
+
+‘a’ \* ‘b’ = ‘d’
+
+.. code:: ipython3
+
+    >>> sg.op('a', 'b')
+
+
+
+
+.. parsed-literal::
+
+    'd'
+
+
+
+.. code:: ipython3
+
+    >>> if sg.op() is None:
+        print("There is no identity element")
+
+
+.. parsed-literal::
+
+    There is no identity element
+
+
 **EXAMPLE: Monoid**
 
 .. code:: ipython3
@@ -434,6 +503,223 @@ B. Vasantha Kandasamy
      ['a', 'b', 'c', 'd'],
      ['a', 'c', 'a', 'c'],
      ['a', 'd', 'c', 'b']]
+
+
+.. code:: ipython3
+
+    >>> m4.op()  # Returns the identity element
+
+
+
+
+.. parsed-literal::
+
+    'b'
+
+
+
+.. code:: ipython3
+
+    >>> m4.op('c', 'b')  # since 'b' is the identity element
+
+
+
+
+.. parsed-literal::
+
+    'c'
+
+
+
+**EXAMPLE: Ring based on powerset of a set**
+
+In this ring, *“addition”* is symmetric difference and
+*“multiplication”* is intersection.
+
+.. code:: ipython3
+
+    >>> rng = make_finite_algebra('Powerset Ring 2',
+                                  'Ring on powerset of {0, 1}',
+                                  ['{}', '{0}', '{1}', '{0, 1}'],
+                                  [[0, 1, 2, 3],
+                                   [1, 0, 3, 2],
+                                   [2, 3, 0, 1],
+                                   [3, 2, 1, 0]],
+                                  [[0, 0, 0, 0],
+                                   [0, 1, 0, 1],
+                                   [0, 0, 2, 2],
+                                   [0, 1, 2, 3]]
+                                 )
+    >>> rng
+
+
+
+
+.. parsed-literal::
+
+    Ring(
+    'Powerset Ring 2',
+    'Ring on powerset of {0, 1}',
+    ['{}', '{0}', '{1}', '{0, 1}'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
+    [[0, 0, 0, 0], [0, 1, 0, 1], [0, 0, 2, 2], [0, 1, 2, 3]]
+    )
+
+
+
+.. code:: ipython3
+
+    >>> rng.about(use_table_names=True)
+
+
+.. parsed-literal::
+
+    
+    Ring: Powerset Ring 2
+    Description: Ring on powerset of {0, 1}
+    Identity: {}
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0      {}      {}       1
+          1     {0}     {0}       2
+          2     {1}     {1}       2
+          3  {0, 1}  {0, 1}       2
+    Cayley Table (showing names):
+    [['{}', '{0}', '{1}', '{0, 1}'],
+     ['{0}', '{}', '{0, 1}', '{1}'],
+     ['{1}', '{0, 1}', '{}', '{0}'],
+     ['{0, 1}', '{1}', '{0}', '{}']]
+    Mult. Identity: {0, 1}
+    Mult. Commutative? Yes
+    Multiplicative Cayley Table (showing names):
+    [['{}', '{}', '{}', '{}'],
+     ['{}', '{0}', '{}', '{0}'],
+     ['{}', '{}', '{1}', '{1}'],
+     ['{}', '{0}', '{1}', '{0, 1}']]
+
+
+.. code:: ipython3
+
+    >>> {1} ^ {0,1}  # Symmetric Difference using actual sets
+
+
+
+
+.. parsed-literal::
+
+    {0}
+
+
+
+.. code:: ipython3
+
+    >>> rng.add("{1}", "{0, 1}")
+
+
+
+
+.. parsed-literal::
+
+    '{0}'
+
+
+
+.. code:: ipython3
+
+    >>> {1} & {0,1}  # Intersection using actual sets
+
+
+
+
+.. parsed-literal::
+
+    {1}
+
+
+
+.. code:: ipython3
+
+    >>> rng.mult("{1}", "{0, 1}")
+
+
+
+
+.. parsed-literal::
+
+    '{1}'
+
+
+
+**EXAMPLE: Autogeneration of a Powerset Ring**
+
+.. code:: ipython3
+
+    >>> from finite_algebras import generate_powerset_ring
+    
+    >>> psr3 = generate_powerset_ring(3)  # Ring order will be 3!
+    
+    >>> psr3
+
+
+
+
+.. parsed-literal::
+
+    Ring(
+    'PSRing3',
+    'Autogenerated Ring on powerset of {0,...,3} w/ symm. diff. (add) & intersection (mult)',
+    ['{}', '{0}', '{1}', '{2}', '{0, 1}', '{0, 2}', '{1, 2}', '{0, 1, 2}'],
+    [[0, 1, 2, 3, 4, 5, 6, 7], [1, 0, 4, 5, 2, 3, 7, 6], [2, 4, 0, 6, 1, 7, 3, 5], [3, 5, 6, 0, 7, 1, 2, 4], [4, 2, 1, 7, 0, 6, 5, 3], [5, 3, 7, 1, 6, 0, 4, 2], [6, 7, 3, 2, 5, 4, 0, 1], [7, 6, 5, 4, 3, 2, 1, 0]],
+    [[0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 1, 1, 0, 1], [0, 0, 2, 0, 2, 0, 2, 2], [0, 0, 0, 3, 0, 3, 3, 3], [0, 1, 2, 0, 4, 1, 2, 4], [0, 1, 0, 3, 1, 5, 3, 5], [0, 0, 2, 3, 2, 3, 6, 6], [0, 1, 2, 3, 4, 5, 6, 7]]
+    )
+
+
+
+.. code:: ipython3
+
+    >>> psr3.about(use_table_names=True)
+
+
+.. parsed-literal::
+
+    
+    Ring: PSRing3
+    Description: Autogenerated Ring on powerset of {0,...,3} w/ symm. diff. (add) & intersection (mult)
+    Identity: {}
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0      {}      {}       1
+          1     {0}     {0}       2
+          2     {1}     {1}       2
+          3     {2}     {2}       2
+          4  {0, 1}  {0, 1}       2
+          5  {0, 2}  {0, 2}       2
+          6  {1, 2}  {1, 2}       2
+          7 {0, 1, 2} {0, 1, 2}       2
+    Cayley Table (showing names):
+    [['{}', '{0}', '{1}', '{2}', '{0, 1}', '{0, 2}', '{1, 2}', '{0, 1, 2}'],
+     ['{0}', '{}', '{0, 1}', '{0, 2}', '{1}', '{2}', '{0, 1, 2}', '{1, 2}'],
+     ['{1}', '{0, 1}', '{}', '{1, 2}', '{0}', '{0, 1, 2}', '{2}', '{0, 2}'],
+     ['{2}', '{0, 2}', '{1, 2}', '{}', '{0, 1, 2}', '{0}', '{1}', '{0, 1}'],
+     ['{0, 1}', '{1}', '{0}', '{0, 1, 2}', '{}', '{1, 2}', '{0, 2}', '{2}'],
+     ['{0, 2}', '{2}', '{0, 1, 2}', '{0}', '{1, 2}', '{}', '{0, 1}', '{1}'],
+     ['{1, 2}', '{0, 1, 2}', '{2}', '{1}', '{0, 2}', '{0, 1}', '{}', '{0}'],
+     ['{0, 1, 2}', '{1, 2}', '{0, 2}', '{0, 1}', '{2}', '{1}', '{0}', '{}']]
+    Mult. Identity: {0, 1, 2}
+    Mult. Commutative? Yes
+    Multiplicative Cayley Table (showing names):
+    [['{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}'],
+     ['{}', '{0}', '{}', '{}', '{0}', '{0}', '{}', '{0}'],
+     ['{}', '{}', '{1}', '{}', '{1}', '{}', '{1}', '{1}'],
+     ['{}', '{}', '{}', '{2}', '{}', '{2}', '{2}', '{2}'],
+     ['{}', '{0}', '{1}', '{}', '{0, 1}', '{0}', '{1}', '{0, 1}'],
+     ['{}', '{0}', '{}', '{2}', '{0}', '{0, 2}', '{2}', '{0, 2}'],
+     ['{}', '{}', '{1}', '{2}', '{1}', '{2}', '{1, 2}', '{1, 2}'],
+     ['{}', '{0}', '{1}', '{2}', '{0, 1}', '{0, 2}', '{1, 2}', '{0, 1, 2}']]
 
 
 Serialization
@@ -493,8 +779,8 @@ And, here’s the **algebra**:
 .. parsed-literal::
 
     Group(
-    V4,
-    Klein-4 group,
+    'V4',
+    'Klein-4 group',
     ['e', 'h', 'v', 'r'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
     )
@@ -536,8 +822,8 @@ And, here’s the **algebra**:
 .. parsed-literal::
 
     Group(
-    V4,
-    Klein-4 group,
+    'V4',
+    'Klein-4 group',
     ['e', 'h', 'v', 'r'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
     )
@@ -564,9 +850,9 @@ And, here’s the **algebra**:
 **WARNING**: Although an algebra can be constructed by loading its
 definition from a JSON file, it cannot be constructed directly from a
 JSON string, because ``make_finite_algebra`` interprets a single string
-input as a JSON file name. To load an algebra from a JSON string one
-first has to convert the string to a Python dictionary and then input
-that to ``make_finite_algebra``, as shown below:
+input as a JSON file name. To load an algebra from a JSON string,
+convert the string to a Python dictionary and then input that to
+``make_finite_algebra``, as shown below:
 
 .. code:: ipython3
 
@@ -580,8 +866,8 @@ that to ``make_finite_algebra``, as shown below:
 .. parsed-literal::
 
     Group(
-    V4,
-    Klein-4 group,
+    'V4',
+    'Klein-4 group',
     ['e', 'h', 'v', 'r'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
     )
@@ -592,12 +878,15 @@ Autogeneration of Finite Algebras
 ---------------------------------
 
 There are three functions for autogenerating a group of a specified
-order: \* ``autogenerate_cyclic_group(order)`` \*
-``autogenerate_symmetric_group(order)`` \*
-``autogenerate_powerset_group(order)``
+order:
 
-And one function for autogenerating a monoid of a specified order: \*
-``autogenerate_commutative_monoid(order)``
+-  ``autogenerate_cyclic_group(order)``
+-  ``autogenerate_symmetric_group(order)``
+-  ``autogenerate_powerset_group(order)``
+
+And one function for autogenerating a monoid of a specified order:
+
+-  ``autogenerate_commutative_monoid(order)``
 
 **EXAMPLE: Autogenerated Cyclic Group**
 
@@ -617,8 +906,8 @@ A cyclic group of any desired order can be generated as follows:
 .. parsed-literal::
 
     Group(
-    Z2,
-    Autogenerated cyclic group of order 2,
+    'Z2',
+    'Autogenerated cyclic group of order 2',
     ['e', 'a'],
     [[0, 1], [1, 0]]
     )
@@ -804,8 +1093,8 @@ Python’s multiplication operator, ``*``:
 .. parsed-literal::
 
     Monoid(
-    M3,
-    Autogenerated commutative monoid of order 3,
+    'M3',
+    'Autogenerated commutative monoid of order 3',
     ['a0', 'a1', 'a2'],
     [[0, 0, 0], [0, 1, 2], [0, 2, 1]]
     )
@@ -848,7 +1137,7 @@ returned as a Python dictionary.
 
 Here’a a well-known example, using two small groups created above:
 
-**EXAMPLE: Isomorphisms**
+**EXAMPLE: Group Isomorphism**
 
 .. code:: ipython3
 
@@ -882,6 +1171,55 @@ If two groups are not isomorphic, then ``False`` is returned.
 
 
 
+**EXAMPLE: Magma Isomorphism**
+
+**Water, Fire, Stick Magma**
+
+A made-up Magma, similar to Rock, Paper, Scissors:
+
+-  Water quenches Fire
+-  Fire burns Stick
+-  Stick floats on Water
+
+.. code:: ipython3
+
+    wfs = make_finite_algebra('WFS',
+                              'Water, Fire, Stick Magma',
+                              ['water', 'fire', 'stick'],
+                              [[0, 0, 2],
+                               [0, 1, 1],
+                               [2, 1, 2]])
+    wfs
+
+
+
+
+.. parsed-literal::
+
+    Magma(
+    'WFS',
+    'Water, Fire, Stick Magma',
+    ['water', 'fire', 'stick'],
+    [[0, 0, 2], [0, 1, 1], [2, 1, 2]]
+    )
+
+
+
+Here’s the isomorphism between rps and wfs:
+
+.. code:: ipython3
+
+    rps.isomorphic(wfs)
+
+
+
+
+.. parsed-literal::
+
+    {'r': 'water', 'p': 'stick', 's': 'fire'}
+
+
+
 Subalgebras (Subgroups)
 -----------------------
 
@@ -899,14 +1237,14 @@ Subalgebras (Subgroups)
 .. parsed-literal::
 
     [Group(
-     Z8_subgroup_0,
-     Subgroup of: Autogenerated cyclic group of order 8,
+     'Z8_subgroup_0',
+     'Subgroup of: Autogenerated cyclic group of order 8',
      ['e', 'a^4'],
      [[0, 1], [1, 0]]
      ),
      Group(
-     Z8_subgroup_1,
-     Subgroup of: Autogenerated cyclic group of order 8,
+     'Z8_subgroup_1',
+     'Subgroup of: Autogenerated cyclic group of order 8',
      ['e', 'a^2', 'a^4', 'a^6'],
      [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
      )]
@@ -958,11 +1296,9 @@ of each sublist:
     Elements:
        Index   Name   Inverse  Order
           0      {}      {}       1
-          1     {0}     {0}       2
-          2     {1}     {1}       2
-          3  {0, 1}  {0, 1}       2
+          1     {2}     {2}       2
     Cayley Table (showing indices):
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
+    [[0, 1], [1, 0]]
     
     Group: PS3_subgroup_1
     Description: Subgroup of: Autogenerated group on the powerset of 3 elements, with symmetric difference operator
@@ -972,9 +1308,184 @@ of each sublist:
     Elements:
        Index   Name   Inverse  Order
           0      {}      {}       1
-          1 {0, 1, 2} {0, 1, 2}       2
+          1     {0}     {0}       2
+          2  {1, 2}  {1, 2}       2
+          3 {0, 1, 2} {0, 1, 2}       2
     Cayley Table (showing indices):
-    [[0, 1], [1, 0]]
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
+
+
+Loading Examples
+----------------
+
+``Examples`` is a convenience class for accessing some of the example
+algebras in the algebras directory. To add or subtract algebras to its
+default list, see the file, ‘examples.json’, in the algebras directory.
+
+.. code:: ipython3
+
+    from finite_algebras import Examples
+    
+    ex = Examples(alg_dir)
+
+
+.. parsed-literal::
+
+    ======================================================================
+                               Example Algebras
+    ----------------------------------------------------------------------
+      9 example algebras are available.
+      Use "get_example(INDEX)" to get a specific example,
+      where INDEX is the first number on each line below:
+    ----------------------------------------------------------------------
+    0: A4 -- Alternating group on 4 letters (AKA Tetrahedral group)
+    1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6
+    2: D4 -- Dihedral group on four vertices
+    3: Pinter29 -- Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
+    4: RPS -- Rock, Paper, Scissors Magma
+    5: S3 -- Symmetric group on 3 letters
+    6: S3X -- Another version of the symmetric group on 3 letters
+    7: V4 -- Klein-4 group
+    8: Z4 -- Cyclic group of order 4
+    ======================================================================
+
+
+.. code:: ipython3
+
+    grp = ex.get_example(3)
+    grp.about()
+
+
+.. parsed-literal::
+
+    
+    Group: Pinter29
+    Description: Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
+    Identity: I
+    Associative? Yes
+    Commutative? No
+    Elements:
+       Index   Name   Inverse  Order
+          0       I       I       1
+          1       A       A       2
+          2       B       D       3
+          3       C       C       2
+          4       D       B       3
+          5       K       K       2
+    Cayley Table (showing indices):
+    [[0, 1, 2, 3, 4, 5],
+     [1, 0, 3, 2, 5, 4],
+     [2, 5, 4, 1, 0, 3],
+     [3, 4, 5, 0, 1, 2],
+     [4, 3, 0, 5, 2, 1],
+     [5, 2, 1, 4, 3, 0]]
+
+
+Cayley Tables
+-------------
+
+All of the properties of a finite algebra are determined from its Cayley
+Table, or in the case of this Python module, its ``CayleyTable``. That
+functionality is passed through to the appropriate methods of the
+various algebras. Below, is a demonstration of how **distributivity**
+between two binary operations can be determined using their Cayley
+Tables.
+
+**EXAMPLE: Distributivity between Cayley Tables**
+
+The two tables, below, were generated from the powerset of a 3 element
+set, where “addition” is **symmetric difference** and “multiplication”
+is **intersection**. Recall, the order of the powerset is :math:`2^n`,
+where :math:`n` is the size of the set.
+
+The element names are simply the string representations of the sets in
+the powerset:
+
+[‘{}’, ‘{0}’, ‘{1}’, ‘{2}’, ‘{0, 1}’, ‘{0, 2}’, ‘{1, 2}’, ‘{0, 1, 2}’]
+
+And the tables, below, use the positions (indices) of the 8 elements in
+the powerset:
+
+.. code:: ipython3
+
+    addtbl = [[0, 1, 2, 3, 4, 5, 6, 7],
+              [1, 0, 4, 5, 2, 3, 7, 6],
+              [2, 4, 0, 6, 1, 7, 3, 5],
+              [3, 5, 6, 0, 7, 1, 2, 4],
+              [4, 2, 1, 7, 0, 6, 5, 3],
+              [5, 3, 7, 1, 6, 0, 4, 2],
+              [6, 7, 3, 2, 5, 4, 0, 1],
+              [7, 6, 5, 4, 3, 2, 1, 0]]
+
+.. code:: ipython3
+
+    multbl = [[0, 0, 0, 0, 0, 0, 0, 0],
+              [0, 1, 0, 0, 1, 1, 0, 1],
+              [0, 0, 2, 0, 2, 0, 2, 2],
+              [0, 0, 0, 3, 0, 3, 3, 3],
+              [0, 1, 2, 0, 4, 1, 2, 4],
+              [0, 1, 0, 3, 1, 5, 3, 5],
+              [0, 0, 2, 3, 2, 3, 6, 6],
+              [0, 1, 2, 3, 4, 5, 6, 7]]
+
+.. code:: ipython3
+
+    from cayley_table import CayleyTable
+
+.. code:: ipython3
+
+    addct = CayleyTable(addtbl)
+    addct.about(True)
+
+
+.. parsed-literal::
+
+      Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?
+    -------------------------------------------------------------------------------------
+         8        True         True            0         0          0       True
+
+
+.. code:: ipython3
+
+    mulct = CayleyTable(multbl)
+    mulct.about(True)
+
+
+.. parsed-literal::
+
+      Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?
+    -------------------------------------------------------------------------------------
+         8        True         True            7         7          7      False
+
+
+Multiplication distributes over addition.
+
+.. code:: ipython3
+
+    mulct.distributes_over(addct)
+
+
+
+
+.. parsed-literal::
+
+    True
+
+
+
+But, addition does not distribute over multiplication.
+
+.. code:: ipython3
+
+    addct.distributes_over(mulct)
+
+
+
+
+.. parsed-literal::
+
+    False
+
 
 
 Resources

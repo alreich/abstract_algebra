@@ -5,7 +5,7 @@
 @license:  MIT
 @requires: Python 3.7.7 or higher
 @since:    2021.04
-@version:  0.0.0
+@version:  0.0.1
 """
 
 import copy
@@ -23,9 +23,9 @@ from permutations import Perm
 
 class Operator:
     """A callable class that implements a binary operation based on a Cayley table.
-    It can be called with zero, one, or two or more arguments; and it will return
+    It can be called with zero, one, or two (or more) arguments; and it will return
     the identity (if one exists; or None), the calling argument itself, or the sum
-    of two or more arguments, respectively."""
+    of the two (or more) arguments, respectively."""
 
     def __init__(self, elements, identity, table):
         self.__elements = elements
@@ -81,11 +81,6 @@ class FiniteAlgebra:
             self.__table = table
         else:
             self.__table = make_cayley_table(table, elements)
-        # elif isinstance(table[0][0], str):
-        #     index_tbl = index_table_from_name_table(elements, table)
-        #     self.__table = CayleyTable(index_tbl)
-        # else:
-        #     self.__table = CayleyTable(table)
 
         # If it exists, setup the algebra's identity element
         id_index = self.table.identity()
@@ -110,18 +105,11 @@ class FiniteAlgebra:
         return self.__elements[index]
 
     def __repr__(self):
-        nm = self.name
-        desc = self.description
-        elems = self.__elements
-        tbl = self.__table.tolist()
-        return f"{self.__class__.__name__}(\n{nm},\n{desc},\n{elems},\n{tbl}\n)"
+        nm, desc, elems, tbl = get_name_desc_elements_table(self)
+        return f"{self.__class__.__name__}(\n'{nm}',\n'{desc}',\n{elems},\n{tbl}\n)"
 
     def __str__(self):
-        nm = self.name
-        desc = self.description
-        elems = self.__elements
-        tbl = self.__table.tolist()
-        return f"{self.__class__.__name__}({nm}, {desc}, {elems}, {tbl})"
+        return f"<{self.__class__.__name__}:{self.name}, ID:{id(self)}>"
 
     def deepcopy(self):
         """Returns a deep copy of this algebra."""
@@ -145,27 +133,6 @@ class FiniteAlgebra:
         """Returns the algebra's identity element, if it exists; otherwise, it returns None."""
         return self.__identity
 
-    # def identity_index(self):
-    #     """Returns the position of the identity element's name in the list of elements."""
-    #     if self.__table.identity() is not None:
-    #         return self.__table.identity()
-    #
-    # @property
-    # def identity(self):
-    #     """Returns the algebra's identity element name (str)."""
-    #     if self.__table.identity() is not None:
-    #         return self.__elements[self.__table.identity()]
-    #     else:
-    #         return None
-
-    # def set_elements(self, new_elements):
-    #     """Replace the existing element names with the list of new element names."""
-    #     if isinstance(new_elements, list):
-    #         self.__elements = new_elements
-    #     elif isinstance(new_elements, dict):
-    #         self.__elements = [new_elements[elem] for elem in self.__elements]
-    #     return self
-    
     @property
     def order(self):
         """Returns the order of the algebra."""
@@ -250,28 +217,6 @@ class Magma(FiniteAlgebra):
         super().__init__(name, description, elements, table)
         self.op = Operator(self.elements, self.identity, self.table)
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
-
-    # def __binary_operation(self, elem1, elem2):
-    #     """Returns the 'sum' of exactly two elements."""
-    #     row = self.elements.index(elem1)
-    #     col = self.elements.index(elem2)
-    #     index = self.table[row, col]
-    #     return self.elements[index]
-    #
-    # def op(self, *args):
-    #     """Return the 'product' or 'sum' of 1 or more algebra elements as defined by the
-    #     algebra's CayleyTable."""
-    #     if len(args) == 0:
-    #         return self.identity
-    #     elif len(args) == 1:
-    #         if args[0] in self.elements:
-    #             return args[0]
-    #         else:
-    #             raise ValueError(f"{args[0]} is not a valid element name")
-    #     elif len(args) == 2:
-    #         return self.__binary_operation(args[0], args[1])
-    #     else:
-    #         return functools.reduce(lambda a, b: self.op(a, b), args)
 
     def direct_product_delimiter(self, delimiter=None):
         """If no input, then the current direct product element name delimiter will be returned (default is ':').
@@ -378,13 +323,6 @@ class Monoid(Semigroup):
             self.__element_orders[element] = order_aux(element, element, 1)
         return self.__element_orders[element]
 
-    # TODO: set_elements either needs to be rewritten or deleted
-    # def set_elements(self, new_elements):
-    #     """Replace the existing element names with the list of new element names.
-    #     And then recalculate the inverse lookup dictionary."""
-    #     super().set_elements(new_elements)
-    #     self.__element_orders = {elem: None for elem in self.elements}  # Reset cached values
-
     # ---------------------
     # Monoid Isomorphisms
     # ---------------------
@@ -438,13 +376,6 @@ class Group(Monoid):
     def conj(self, a, g):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
         return self.op(g, self.op(a, self.inv(g)))
-
-    # TODO: set_elements either needs to be rewritten or deleted
-    # def set_elements(self, new_elements):
-    #     """Replace the existing element names with the list of new element names.
-    #     And then recalculate the inverse lookup dictionary."""
-    #     super().set_elements(new_elements)
-    #     self.__inverses = self.create_inverse_lookup_dict()
 
     def is_normal(self, subgrp):
         """Return True if the subgroup is normal."""
@@ -641,7 +572,6 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
         desc = f"Autogenerated cyclic group of order {order}"
     elements = [identity_name, elem_name] + [f"{elem_name}^" + str(i) for i in range(2, order)]
     table = [[((a + b) % order) for b in range(order)] for a in range(order)]
-    # return Group(nm, desc, elements, table)
     return make_finite_algebra(nm, desc, elements, table)
 
 
@@ -666,7 +596,6 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
                 for b in elem_dict]
                for a in elem_dict]
     index_table = index_table_from_name_table(list(elem_dict.keys()), mul_tbl)
-    # return Group(nm, desc, list(elem_dict.keys()), index_table)
     return make_finite_algebra(nm, desc, list(elem_dict.keys()), index_table)
 
 
@@ -686,7 +615,6 @@ def generate_powerset_group(n, name=None, description=None):
     table = [[pset.index(a ^ b) for b in pset] for a in pset]
     elements = [str(elem) for elem in pset]
     elements[0] = "{}"  # Because otherwise it would be "set()"
-    # return Group(nm, desc, elements, table)
     return make_finite_algebra(nm, desc, elements, table)
 
 
@@ -702,7 +630,6 @@ def generate_commutative_monoid(order, elem_name='a', name=None, description=Non
         desc = f"Autogenerated commutative monoid of order {order}"
     elements = [elem_name + str(i) for i in range(order)]
     table = [[(a * b) % order for b in range(order)] for a in range(order)]
-    # return Monoid(nm, desc, elements, table)
     return make_finite_algebra(nm, desc, elements, table)
 
 
@@ -710,9 +637,10 @@ def generate_commutative_monoid(order, elem_name='a', name=None, description=Non
 #   Ring
 # ========
 
-# TODO: Finish Ring implementation
-
 class Ring(Group):
+    """A Ring is a commutative Group with an 'addition' operator, along with an
+    associative 'multiplication' operator, where addition distributes over
+    multiplication."""
 
     def __init__(self, name, description, elements, table, table2):
 
@@ -734,6 +662,11 @@ class Ring(Group):
 
         if not self.__ring_mult_table.distributes_over(self.table):
             raise ValueError("Addition does not distribute over multiplication.")
+
+    def __repr__(self):
+        nm, desc, elems, tbl = get_name_desc_elements_table(self)
+        tbl2 = self.mult_table.tolist()
+        return f"{self.__class__.__name__}(\n'{nm}',\n'{desc}',\n{elems},\n{tbl},\n{tbl2}\n)"
 
     @property
     def add_identity(self):
@@ -988,17 +921,6 @@ def make_finite_algebra(*args):
     else:
         inverses = None
 
-    # if is_assoc:
-    #     if has_id is not None:
-    #         if inverses:
-    #             return Group(name, desc, elems, table)
-    #         else:
-    #             return Monoid(name, desc, elems, table)
-    #     else:
-    #         return Semigroup(name, desc, elems, table)
-    # else:
-    #     return Magma(name, desc, elems, table)
-
     if is_assoc:
         if has_id is not None:
             if inverses:
@@ -1017,6 +939,14 @@ def make_finite_algebra(*args):
 # ==========
 # Utilities
 # ==========
+
+def get_name_desc_elements_table(finalg):
+    name = finalg.name
+    description = finalg.description
+    elements = finalg.elements
+    table_as_list = finalg.table.tolist()
+    return name, description, elements, table_as_list
+
 
 def make_cayley_table(table, elements):
     """Return a CayleyTable from a table of indices or a table of strings."""

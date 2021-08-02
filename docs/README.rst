@@ -77,8 +77,8 @@ In the following example, a Magma is output.
 .. parsed-literal::
 
     Magma(
-    RPS,
-    Rock, Paper, Scissors,
+    'RPS',
+    'Rock, Paper, Scissors',
     ['r', 'p', 's'],
     [[0, 1, 0], [1, 1, 2], [0, 2, 2]]
     )

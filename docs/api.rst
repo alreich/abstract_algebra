@@ -76,7 +76,6 @@ Ring
     :undoc-members:
     :private-members:
 
-.. autofunction:: finite_algebras.powerset_mult_table
 .. autofunction:: finite_algebras.generate_powerset_ring
 
 Field

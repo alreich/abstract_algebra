@@ -938,7 +938,6 @@ def make_finite_algebra(*args):
                        'description': args[1],
                        'elements': args[2],
                        'table': args[3]
-                       'table2': args[4]
                        }
     else:
         raise ValueError("Incorrect number of input arguments.")

@@ -22,6 +22,10 @@ from permutations import Perm
 
 
 class Operator:
+    """A callable class that implements a binary operation based on a Cayley table.
+    It can be called with zero, one, or two or more arguments; and it will return
+    the identity (if one exists; or None), the calling argument itself, or the sum
+    of two or more arguments, respectively."""
 
     def __init__(self, elements, identity, table):
         self.__elements = elements
@@ -75,11 +79,13 @@ class FiniteAlgebra:
         # Setup the multiplication table
         if isinstance(table, CayleyTable):
             self.__table = table
-        elif isinstance(table[0][0], str):
-            index_tbl = index_table_from_name_table(elements, table)
-            self.__table = CayleyTable(index_tbl)
         else:
-            self.__table = CayleyTable(table)
+            self.__table = make_cayley_table(table, elements)
+        # elif isinstance(table[0][0], str):
+        #     index_tbl = index_table_from_name_table(elements, table)
+        #     self.__table = CayleyTable(index_tbl)
+        # else:
+        #     self.__table = CayleyTable(table)
 
         # If it exists, setup the algebra's identity element
         id_index = self.table.identity()
@@ -711,7 +717,12 @@ class Ring(Group):
     def __init__(self, name, description, elements, table, table2):
 
         super().__init__(name, description, elements, table)
-        self.__ring_mult_table = CayleyTable(table2)
+
+        if isinstance(table2, CayleyTable):
+            self.__ring_mult_table = table2
+        else:
+            self.__ring_mult_table = CayleyTable(table2)
+
         self.__mult_identity = self.__ring_mult_table.identity()
         self.__ring_mult = Operator(self.elements, self.__mult_identity, self.__ring_mult_table)
 
@@ -937,7 +948,8 @@ def make_finite_algebra(*args):
         finalg_dict = {'name': args[0],
                        'description': args[1],
                        'elements': args[2],
-                       'table': args[3]
+                       'table': args[3],
+                       'table2': args[4]
                        }
     else:
         raise ValueError("Incorrect number of input arguments.")
@@ -955,11 +967,19 @@ def make_finite_algebra(*args):
         raise ValueError(f"Duplicate element names: {dups}")
 
     # Check if first element in table is a string
-    if isinstance(tbl[0][0], str):
-        index_tbl = index_table_from_name_table(elems, tbl)
-        table = CayleyTable(index_tbl)
-    else:
-        table = CayleyTable(tbl)
+    # if isinstance(tbl[0][0], str):
+    #     index_tbl = index_table_from_name_table(elems, tbl)
+    #     table = CayleyTable(index_tbl)
+    # else:
+    #     table = CayleyTable(tbl)
+
+    table = make_cayley_table(tbl, elems)
+
+    table2 = None
+    is_assoc2 = False
+    if 'table2' in finalg_dict:
+        table2 = make_cayley_table(finalg_dict['table2'], elems)
+        is_assoc2 = table2.is_associative()
 
     is_assoc = table.is_associative()
     has_id = table.identity()
@@ -968,10 +988,24 @@ def make_finite_algebra(*args):
     else:
         inverses = None
 
+    # if is_assoc:
+    #     if has_id is not None:
+    #         if inverses:
+    #             return Group(name, desc, elems, table)
+    #         else:
+    #             return Monoid(name, desc, elems, table)
+    #     else:
+    #         return Semigroup(name, desc, elems, table)
+    # else:
+    #     return Magma(name, desc, elems, table)
+
     if is_assoc:
         if has_id is not None:
             if inverses:
-                return Group(name, desc, elems, table)
+                if table2 is not None and is_assoc2:
+                    return Ring(name, desc, elems, table, table2)
+                else:
+                    return Group(name, desc, elems, table)
             else:
                 return Monoid(name, desc, elems, table)
         else:
@@ -984,6 +1018,20 @@ def make_finite_algebra(*args):
 # Utilities
 # ==========
 
+def make_cayley_table(table, elements):
+    """Return a CayleyTable from a table of indices or a table of strings."""
+    if isinstance(table[0][0], str):
+        index_table = index_table_from_name_table(elements, table)
+        ct = CayleyTable(index_table)
+    else:
+        ct = CayleyTable(table)
+    return ct
+
+
+def index_table_from_name_table(elements, name_table):
+    return [[elements.index(elem_name) for elem_name in row] for row in name_table]
+
+
 def get_duplicates(lst):
     """Return a list of the duplicate items in the input list."""
     return [item for item, count in co.Counter(lst).items() if count > 1]
@@ -994,10 +1042,6 @@ def yes_or_no(true_or_false):
         return "Yes"
     else:
         return "No"
-
-
-def index_table_from_name_table(elements, name_table):
-    return [[elements.index(elem_name) for elem_name in row] for row in name_table]
 
 
 # See https://docs.python.org/3/library/itertools.html#itertools-recipes

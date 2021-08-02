@@ -708,22 +708,20 @@ def generate_commutative_monoid(order, elem_name='a', name=None, description=Non
 
 class Ring(Group):
 
-    def __init__(self, *args):
+    def __init__(self, name, description, elements, table, table2):
 
-        if len(args) == 5:
-            super().__init__(*args[:4])
-
-        self.ring_mult_table = CayleyTable(args[4])
-        self.__mult_identity = self.ring_mult_table.identity()
-        self.__ring_mult = Operator(self.elements, self.__mult_identity, self.ring_mult_table)
+        super().__init__(name, description, elements, table)
+        self.__ring_mult_table = CayleyTable(table2)
+        self.__mult_identity = self.__ring_mult_table.identity()
+        self.__ring_mult = Operator(self.elements, self.__mult_identity, self.__ring_mult_table)
 
         if not super().is_commutative():
             raise ValueError("The ring addition operation is not abelian.")
 
-        if not self.ring_mult_table.is_associative():
+        if not self.__ring_mult_table.is_associative():
             raise ValueError("The ring multiplication operation is not associative.")
 
-        if not self.ring_mult_table.distributes_over(self.table):
+        if not self.__ring_mult_table.distributes_over(self.table):
             raise ValueError("Addition does not distribute over multiplication.")
 
     @property
@@ -740,7 +738,7 @@ class Ring(Group):
 
     @property
     def mult_table(self):
-        return self.ring_mult_table
+        return self.__ring_mult_table
 
     def add(self, *args):
         """Use the inherited group operator as the ring's addition operator."""
@@ -752,26 +750,23 @@ class Ring(Group):
 
     # TODO: Combine this with the one that does the same thing for Groups and such.
     def ring_mult_table_with_names(self):
-        return [[self.elements[elem_pos]
-                 for elem_pos in row]
-                for row in self.ring_mult_table]
+        return [[self.elements[elem_pos] for elem_pos in row] for row in self.__ring_mult_table.tolist()]
 
-    # TODO: Turn pprint, below, into and 'about' method
-    def pprint(self, use_element_names=False):
-        print(f"{self.__class__.__name__}('{self.name}',")
-        print(f"'{self.description}',")
-        if use_element_names:
-            pp.pprint(self.table_as_list_with_names())
-            pp.pprint(self.ring_mult_table_with_names())
+    def about(self, max_size=12, use_table_names=False):
+        """Print information about the Ring."""
+        super().about(max_size, use_table_names)
+        print(f"Mult. Identity: {self.elements[self.mult()]}")
+        print(f"Mult. Commutative? {yes_or_no(self.mult_table.is_commutative())}")
+        size = len(self.elements)
+        if size <= max_size:
+            if use_table_names:
+                print(f"Multiplicative Cayley Table (showing names):")
+                pp.pprint(self.ring_mult_table_with_names())
+            else:
+                print(f"Multiplicative Cayley Table (showing indices):")
+                pp.pprint(self.mult_table.tolist())
         else:
-            print(f"{self.elements},")
-            print("")
-            print(f"# Addition Table:")
-            pp.pprint(self.table.tolist())
-            print(",")
-            print(f"# Multiplication Table:")
-            pp.pprint(self.ring_mult_table.tolist())
-        print(")")
+            print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
         return None
 
 
@@ -862,22 +857,7 @@ def is_table_associative(table):
 
 
 def tables_to_groups(tables, identity_name="e", elem_name="a"):
-    """Given a list of multiplication tables, all of the same size, turn them into a list of groups.
-
-    Parameters
-    ----------
-    tables : list
-      A list of tables (list of lists of ints) that represent group multiplication tables
-    identity_name : str
-      Root name to use for the identity element in all the groups
-    elem_name : str
-      Root name to use for the groups' elements
-
-    Returns
-    -------
-    list
-      A list of Groups based on the input tables.
-    """
+    """Given a list of multiplication tables, all of the same size, turn them into a list of groups."""
     order = len(tables[0])
     groups = []
     for j in range(len(tables)):
@@ -950,6 +930,15 @@ def make_finite_algebra(*args):
                        'description': args[1],
                        'elements': args[2],
                        'table': args[3]
+                       }
+
+    elif len(args) == 5:
+
+        finalg_dict = {'name': args[0],
+                       'description': args[1],
+                       'elements': args[2],
+                       'table': args[3]
+                       'table2': args[4]
                        }
     else:
         raise ValueError("Incorrect number of input arguments.")

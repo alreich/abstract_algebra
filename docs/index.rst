@@ -18,10 +18,10 @@ API Reference
 
     api
 
-Experimental
+Project Info
 ============
 
 .. toctree::
     :maxdepth: 2
 
-    experimental
+    license

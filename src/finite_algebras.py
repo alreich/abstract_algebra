@@ -2,7 +2,7 @@
 @summary:  Finite Algebras: Magma, Semigroup, Monoid, Group, Ring, and Field
 @author:   Alfred J. Reich, Ph.D.
 @contact:  al.reich@gmail.com
-@copyright: Copyright (C) 2021 Alfred J. Reich"
+@copyright: Copyright (C) 2021 Alfred J. Reich, Ph.D.
 @license:  MIT
 @requires: Python 3.7.7 or higher
 @since:    2021.04

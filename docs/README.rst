@@ -120,8 +120,3 @@ The method, ``about``, prints out information about an algebra.
      ['v', 'r', 'e', 'h'],
      ['r', 'v', 'h', 'e']]
 
-
-License
--------
-
-MIT

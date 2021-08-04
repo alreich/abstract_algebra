@@ -72,7 +72,7 @@ class FiniteAlgebra:
        FiniteAlgebra --> Magma --> Semigroup --> Monoid --> Group --> Ring --> Field
     """
 
-    def __init__(self, name, description, elements, table, check_inputs=True):
+    def __init__(self, name, description, elements, table):
         self.name = name
         self.description = description
         self.__elements = elements
@@ -214,7 +214,7 @@ class Magma(FiniteAlgebra):
     operation we can compute the direct product of two or more algebras.  Also, we can check to see
     if two Magmas are isomorphic."""
 
-    def __init__(self, name, description, elements, table, check_inputs=True):
+    def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
         self.op = Operator(self.elements, self.identity, self.table)
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
@@ -294,8 +294,11 @@ class Semigroup(Magma):
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table)
-        if not self.table.is_associative():
-            raise ValueError("Table does not support associativity")
+        if check_inputs is True and not self.table.is_associative():
+            print(f"Semigroup: Checking inputs, {self}")
+            raise ValueError("CHECK INPUTS: Table does not support associativity")
+        else:
+            print(f"Constructing a Semigroup without checking inputs, {self}")
 
 
 # ==========
@@ -307,11 +310,14 @@ class Monoid(Semigroup):
     we can compute element orders.  So, that happens here."""
 
     def __init__(self, name, description, elements, table, check_inputs=True):
-        super().__init__(name, description, elements, table)
+        super().__init__(name, description, elements, table, check_inputs)
         self.__element_orders = {elem: None for elem in self.elements}  # Cached on first access
         # Double check to make sure that the identity element is set
-        if self.identity is None:
-            raise ValueError("A monoid must have an identity element")
+        if check_inputs is True and self.identity is None:
+            print(f"Monoid: Checking inputs, {self}")
+            raise ValueError("CHECK INPUTS: A monoid must have an identity element")
+        else:
+            print(f"Constructing a Monoid without checking inputs, {self}")
 
     def element_order(self, element):
         """Returns the order of the given element within the algebra."""
@@ -357,10 +363,19 @@ class Group(Monoid):
     """A group is a monoid with inverses."""
 
     def __init__(self, name, description, elements, table, check_inputs=True):
-        super().__init__(name, description, elements, table)
-        if not self.table.has_inverses():
-            raise ValueError("Table has insufficient inverses")
+        super().__init__(name, description, elements, table, check_inputs)
+        # if self.table.has_inverses():
+        #     self.__inverses = self.create_inverse_lookup_dict()
+        # else:
+        #     raise ValueError("CHECK INPUTS: Table has insufficient inverses")
+        if check_inputs:
+            print(f"Group: Checking inputs, {self}")
+            if self.table.has_inverses():
+                self.__inverses = self.create_inverse_lookup_dict()
+            else:
+                raise ValueError("CHECK INPUTS: Table has insufficient inverses")
         else:
+            print(f"Constructing a Group without checking inputs, {self}")
             self.__inverses = self.create_inverse_lookup_dict()
 
     def create_inverse_lookup_dict(self):
@@ -645,7 +660,7 @@ class Ring(Group):
 
     def __init__(self, name, description, elements, table, table2, check_inputs=True):
 
-        super().__init__(name, description, elements, table)
+        super().__init__(name, description, elements, table, check_inputs)
 
         if isinstance(table2, CayleyTable):
             self.__ring_mult_table = table2
@@ -655,14 +670,16 @@ class Ring(Group):
         self.__mult_identity = self.__ring_mult_table.identity()
         self.__ring_mult = Operator(self.elements, self.__mult_identity, self.__ring_mult_table)
 
-        if not super().is_commutative():
-            raise ValueError("The ring addition operation is not abelian.")
-
-        if not self.__ring_mult_table.is_associative():
-            raise ValueError("The ring multiplication operation is not associative.")
-
-        if not self.__ring_mult_table.distributes_over(self.table):
-            raise ValueError("Addition does not distribute over multiplication.")
+        if check_inputs:
+            print(f"Ring: Checking inputs, {self}")
+            if not super().is_commutative():
+                raise ValueError(f"CHECK INPUTS: The ring addition operation is not abelian. {self}")
+            if not self.__ring_mult_table.is_associative():
+                raise ValueError(f"CHECK INPUTS: The ring multiplication operation is not associative. {self}")
+            if not self.__ring_mult_table.distributes_over(self.table):
+                raise ValueError(f"CHECK INPUTS: Addition does not distribute over multiplication. {self}")
+        else:
+            print(f"Constructing Ring without checking inputs. {self}")
 
     def __repr__(self):
         nm, desc, elems, tbl = get_name_desc_elements_table(self)
@@ -900,13 +917,6 @@ def make_finite_algebra(*args):
     else:
         raise ValueError(f"Duplicate element names: {dups}")
 
-    # Check if first element in table is a string
-    # if isinstance(tbl[0][0], str):
-    #     index_tbl = index_table_from_name_table(elems, tbl)
-    #     table = CayleyTable(index_tbl)
-    # else:
-    #     table = CayleyTable(tbl)
-
     table = make_cayley_table(tbl, elems)
 
     table2 = None
@@ -934,7 +944,7 @@ def make_finite_algebra(*args):
         else:
             return Semigroup(name, desc, elems, table, check_inputs=False)
     else:
-        return Magma(name, desc, elems, table, check_inputs=False)
+        return Magma(name, desc, elems, table)
 
 
 # ==========

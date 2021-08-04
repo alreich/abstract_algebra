@@ -72,7 +72,7 @@ class FiniteAlgebra:
        FiniteAlgebra --> Magma --> Semigroup --> Monoid --> Group --> Ring --> Field
     """
 
-    def __init__(self, name, description, elements, table):
+    def __init__(self, name, description, elements, table, check_inputs=True):
         self.name = name
         self.description = description
         self.__elements = elements
@@ -214,7 +214,7 @@ class Magma(FiniteAlgebra):
     operation we can compute the direct product of two or more algebras.  Also, we can check to see
     if two Magmas are isomorphic."""
 
-    def __init__(self, name, description, elements, table):
+    def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table)
         self.op = Operator(self.elements, self.identity, self.table)
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
@@ -292,7 +292,7 @@ class Semigroup(Magma):
     """A semigroup is an associative magma.  Not much else happens here.  But still,
     associativity is a pretty big deal."""
 
-    def __init__(self, name, description, elements, table):
+    def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table)
         if not self.table.is_associative():
             raise ValueError("Table does not support associativity")
@@ -306,7 +306,7 @@ class Monoid(Semigroup):
     """A monoid is a semigroup with an identity element.  With an identity element
     we can compute element orders.  So, that happens here."""
 
-    def __init__(self, name, description, elements, table):
+    def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table)
         self.__element_orders = {elem: None for elem in self.elements}  # Cached on first access
         # Double check to make sure that the identity element is set
@@ -356,7 +356,7 @@ class Monoid(Semigroup):
 class Group(Monoid):
     """A group is a monoid with inverses."""
 
-    def __init__(self, name, description, elements, table):
+    def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table)
         if not self.table.has_inverses():
             raise ValueError("Table has insufficient inverses")
@@ -643,7 +643,7 @@ class Ring(Group):
     associative 'multiplication' operator, where addition distributes over
     multiplication."""
 
-    def __init__(self, name, description, elements, table, table2):
+    def __init__(self, name, description, elements, table, table2, check_inputs=True):
 
         super().__init__(name, description, elements, table)
 
@@ -926,15 +926,15 @@ def make_finite_algebra(*args):
         if has_id is not None:
             if inverses:
                 if table2 is not None and is_assoc2:
-                    return Ring(name, desc, elems, table, table2)
+                    return Ring(name, desc, elems, table, table2, check_inputs=False)
                 else:
-                    return Group(name, desc, elems, table)
+                    return Group(name, desc, elems, table, check_inputs=False)
             else:
-                return Monoid(name, desc, elems, table)
+                return Monoid(name, desc, elems, table, check_inputs=False)
         else:
-            return Semigroup(name, desc, elems, table)
+            return Semigroup(name, desc, elems, table, check_inputs=False)
     else:
-        return Magma(name, desc, elems, table)
+        return Magma(name, desc, elems, table, check_inputs=False)
 
 
 # ==========

@@ -932,6 +932,8 @@ def make_finite_algebra(*args):
     else:
         inverses = None
 
+    print("MAKE FINITE ALGEBRA: All inputs checked.")
+
     if is_assoc:
         if has_id is not None:
             if inverses:

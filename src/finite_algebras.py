@@ -294,11 +294,14 @@ class Semigroup(Magma):
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table)
-        if check_inputs is True and not self.table.is_associative():
-            print(f"Semigroup: Checking inputs, {self}")
-            raise ValueError("CHECK INPUTS: Table does not support associativity")
-        else:
-            print(f"Constructing a Semigroup without checking inputs, {self}")
+        if check_inputs:
+            # print(f"CHECK INPUTS: Checking for Semigroup associativity, {self}")
+            if not self.table.is_associative():
+                raise ValueError("CHECK INPUTS: Table does not support associativity")
+        #     else:
+        #         print(f"    Semigroup is associative")
+        # else:
+        #     print(f"Constructing a Semigroup without checking inputs, {self}")
 
 
 # ==========
@@ -313,11 +316,14 @@ class Monoid(Semigroup):
         super().__init__(name, description, elements, table, check_inputs)
         self.__element_orders = {elem: None for elem in self.elements}  # Cached on first access
         # Double check to make sure that the identity element is set
-        if check_inputs is True and self.identity is None:
-            print(f"Monoid: Checking inputs, {self}")
-            raise ValueError("CHECK INPUTS: A monoid must have an identity element")
-        else:
-            print(f"Constructing a Monoid without checking inputs, {self}")
+        if check_inputs:
+            # print(f"CHECK INPUTS: Checking for Monoid identity element, {self}")
+            if self.identity is None:
+                raise ValueError("CHECK INPUTS: A monoid must have an identity element")
+        #     else:
+        #         print(f"    Monoid identity element exists")
+        # else:
+        #     print(f"Constructing a Monoid without checking inputs, {self}")
 
     def element_order(self, element):
         """Returns the order of the given element within the algebra."""
@@ -364,19 +370,18 @@ class Group(Monoid):
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table, check_inputs)
-        # if self.table.has_inverses():
-        #     self.__inverses = self.create_inverse_lookup_dict()
-        # else:
-        #     raise ValueError("CHECK INPUTS: Table has insufficient inverses")
         if check_inputs:
-            print(f"Group: Checking inputs, {self}")
+            # print(f"CHECK INPUTS: Checking for Group inverses, {self}")
             if self.table.has_inverses():
+                # print(f"    Group has inverses")
                 self.__inverses = self.create_inverse_lookup_dict()
+                # print(f"    Created inverse lookup dictionary")
             else:
                 raise ValueError("CHECK INPUTS: Table has insufficient inverses")
         else:
-            print(f"Constructing a Group without checking inputs, {self}")
+            # print(f"Constructing a Group without checking inputs, {self}")
             self.__inverses = self.create_inverse_lookup_dict()
+            # print(f"    Created inverse lookup dictionary")
 
     def create_inverse_lookup_dict(self):
         """Returns a dictionary that maps each of the algebra's elements to its inverse element."""
@@ -671,15 +676,21 @@ class Ring(Group):
         self.__ring_mult = Operator(self.elements, self.__mult_identity, self.__ring_mult_table)
 
         if check_inputs:
-            print(f"Ring: Checking inputs, {self}")
+            # print(f"CHECK INPUTS: Checking for Ring comm., assoc., & dist. properties, {self}")
             if not super().is_commutative():
-                raise ValueError(f"CHECK INPUTS: The ring addition operation is not abelian. {self}")
+                raise ValueError(f"CHECK INPUTS: The ring addition operation is not commutative. {self}")
+            # else:
+            #     print("    Ring is commutative")
             if not self.__ring_mult_table.is_associative():
                 raise ValueError(f"CHECK INPUTS: The ring multiplication operation is not associative. {self}")
+            # else:
+            #     print("    Ring is associative")
             if not self.__ring_mult_table.distributes_over(self.table):
-                raise ValueError(f"CHECK INPUTS: Addition does not distribute over multiplication. {self}")
-        else:
-            print(f"Constructing Ring without checking inputs. {self}")
+                raise ValueError(f"CHECK INPUTS: Multiplication does not distribute over addition. {self}")
+            # else:
+            #     print("    Ring multiplication distributes over addition")
+        # else:
+        #     print(f"Constructing Ring without checking inputs. {self}")
 
     def __repr__(self):
         nm, desc, elems, tbl = get_name_desc_elements_table(self)
@@ -932,7 +943,7 @@ def make_finite_algebra(*args):
     else:
         inverses = None
 
-    print("MAKE FINITE ALGEBRA: All inputs checked.")
+    # print("MAKE FINITE ALGEBRA: All inputs checked.")
 
     if is_assoc:
         if has_id is not None:

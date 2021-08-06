@@ -735,6 +735,19 @@ class Ring(Group):
         desc = f"Multiplicative-only portion of {self.name}"
         return make_finite_algebra(nm, desc, self.elements, self.mult_table.table)
 
+    def zero_divisors(self):
+        """Return the Ring's zero divisors. i.e., if a != 0 and b != 0, but a*b == 0, then
+        a and b are zero divisors."""
+        # Get the index of the additive identity element ("zero")
+        zero_index = self.elements.index(self.zero)
+        # Delete the zero element's row & column in the multiplication table.
+        # (NOTE: This operation leaves the original mult. table unchanged.)
+        mult_table_without_add_id = delete_row_col(self.mult_table.table, zero_index, zero_index)
+        # Get the row & column indices where the product equals "zero" in the remaining table
+        a, b = list(map(set, np.where(mult_table_without_add_id == zero_index)))
+        # Return all elements corresponding to the union of the the row & column indices
+        return [self.elements[index + 1] for index in list(a | b)]
+
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Ring."""
         super().about(max_size, use_table_names)
@@ -999,6 +1012,12 @@ def make_finite_algebra(*args):
 # ==========
 # Utilities
 # ==========
+
+def delete_row_col(np_arr, row, col):
+    """Removes the specified row and col from a Numpy array.
+    A new np array is returned, so this does not affect the input array."""
+    return np.delete(np.delete(np_arr, row, 0), col, 1)
+
 
 def get_name_desc_elements_table(finalg):
     name = finalg.name

@@ -174,10 +174,4 @@ def get_duplicates(lst):
     return [item for item, count in co.Counter(lst).items() if count > 1]
 
 
-def delete_row_col(np_arr, row, col):
-    """Removes the specified row and col from a Numpy array.
-    A new np array is returned, so this does not affect the input array."""
-    return np.delete(np.delete(np_arr, row, 0), col, 1)
-
-
 # END OF FILE

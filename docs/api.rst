@@ -8,8 +8,17 @@ Algebra Constructor
 
 .. autofunction:: finite_algebras.make_finite_algebra
 
+Operator
+--------
+
+.. autoclass:: finite_algebras.Operator
+    :members:
+    :special-members: __call__
+    :undoc-members:
+    :private-members:
+
 FiniteAlgebra
----------------
+-------------
 
 .. autoclass:: finite_algebras.FiniteAlgebra
     :members:

@@ -174,57 +174,10 @@ def get_duplicates(lst):
     return [item for item, count in co.Counter(lst).items() if count > 1]
 
 
-# def check_inputs(element_names, mult_table):
-#     """Check that the element_list and mult_table have sizes and contents
-#     that don't violate the attributes of a group.
-#
-#     This function is used by the Group constructor."""
-#
-#     # Check for duplicate element names
-#     dups = get_duplicates(element_names)
-#     if len(dups) == 0:
-#         pass
-#     else:
-#         raise ValueError(f"Duplicate element names: {dups}")
-#
-#     # Check that table is square
-#     rows, cols = mult_table.shape
-#     if rows == cols:
-#         pass
-#     else:
-#         raise ValueError(f"The table is not square: {rows}x{cols}")
-#
-#     # Check that the row-col dimensions are the same as the number of elements
-#     num_elements = len(element_names)
-#     if rows == num_elements:
-#         pass
-#     else:
-#         raise ValueError(f"Number of elements is {num_elements}, but table size is {rows}x{cols}")
-#
-#     # Check that each table row contains the correct values for a Cayley table
-#     correct_indices = set(range(num_elements))  # {0, 1, 2, ..., n-1}
-#     row_number = -1
-#     for row in mult_table:
-#         row_number += 1
-#         if set(row) == correct_indices:
-#             pass
-#         else:
-#             raise ValueError(f"A row {row_number} does not contain the correct values")
-#
-#     # Check that each table col contains the correct values for a Cayley table
-#     for col_number in range(num_elements):
-#         if set(mult_table[:, col_number]) == correct_indices:
-#             pass
-#         else:
-#             raise ValueError(f"Column {col_number} does not contain the correct values")
-#
-#     # Check that the table supports associativity for multiplication
-#     # if is_table_associative(mult_table):
-#     #     pass
-#     # else:
-#     #     raise ValueError("Multiplication table is not is_associative.")
-#
-#     return True
+def delete_row_col(np_arr, row, col):
+    """Removes the specified row and col from a Numpy array.
+    A new np array is returned, so this does not affect the input array."""
+    return np.delete(np.delete(np_arr, row, 0), col, 1)
 
 
 # END OF FILE

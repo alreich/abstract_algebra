@@ -654,7 +654,8 @@ class Ring(Group):
         if isinstance(table2, CayleyTable):
             self.__ring_mult_table = table2
         else:
-            self.__ring_mult_table = CayleyTable(table2)
+            # self.__ring_mult_table = CayleyTable(table2)
+            self.__ring_mult_table = make_cayley_table(table2, elements)
 
         self.__mult_identity = self.__ring_mult_table.identity()
         self.__ring_mult = Operator(self.elements, self.__mult_identity, self.__ring_mult_table)

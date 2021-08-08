@@ -3,8 +3,8 @@
 API Reference
 =============
 
-Algebra Constructor
--------------------
+Primary Algebra Constructor
+---------------------------
 
 .. autofunction:: finite_algebras.make_finite_algebra
 
@@ -52,8 +52,6 @@ Monoid
     :undoc-members:
     :private-members:
 
-.. autofunction:: finite_algebras.generate_commutative_monoid
-
 Group
 -----
 
@@ -62,10 +60,6 @@ Group
     :special-members:
     :undoc-members:
     :private-members:
-
-.. autofunction:: finite_algebras.generate_cyclic_group
-.. autofunction:: finite_algebras.generate_symmetric_group
-.. autofunction:: finite_algebras.generate_powerset_group
 
 Permutations
 ------------
@@ -85,8 +79,6 @@ Ring
     :undoc-members:
     :private-members:
 
-.. autofunction:: finite_algebras.generate_powerset_ring
-
 Field
 -----
 
@@ -95,6 +87,15 @@ Field
     :special-members:
     :undoc-members:
     :private-members:
+
+Algebra Generators
+------------------
+
+.. autofunction:: finite_algebras.generate_cyclic_group
+.. autofunction:: finite_algebras.generate_symmetric_group
+.. autofunction:: finite_algebras.generate_powerset_group
+.. autofunction:: finite_algebras.generate_commutative_monoid
+.. autofunction:: finite_algebras.generate_powerset_ring
 
 Cayley Table
 ------------

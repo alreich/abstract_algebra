@@ -24,9 +24,9 @@ from permutations import Perm
 
 class Operator:
     """A callable class that implements a binary operation based on a Cayley table.
-    It can be called with zero, one, or two (or more) arguments; and it will return
+    It can be called with zero, one, or two (or more) arguments. It will return
     the identity (if one exists; or None), the calling argument itself (if it's a
-    valid element), or the sum of the two (or more) arguments, respectively."""
+    valid element), or the sum of the two or more arguments, respectively."""
 
     def __init__(self, elements, identity, table):
         self.__elements = elements
@@ -132,15 +132,18 @@ class FiniteAlgebra:
         """Returns the algebra's identity element, if it exists; otherwise, it returns None."""
         return self.__identity
 
+    def has_identity(self):
+        """A convenience function that returns True or False, depending on whether the algebra
+        has an identity element."""
+        if self.identity is None:
+            return False
+        else:
+            return True
+
     @property
     def order(self):
         """Returns the order of the algebra."""
         return len(self.__elements)
-
-    # def table_as_list_with_names(self):
-    #     """Returns the Cayley Table as a regular Python array where the element indices have been
-    #     replaces by the element names (str)."""
-    #     return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
 
     def is_associative(self):
         """Returns True if the algebra is associative; returns False otherwise."""
@@ -189,7 +192,8 @@ class FiniteAlgebra:
             json.dump(self.to_dict(), fout)
 
     def about(self, max_size=12, use_table_names=False):
-        """Prints out information about the algebra."""
+        """Prints out information about the algebra. Tables larger than
+        max_size are not printed out."""
         print(f"\n{self.__class__.__name__}: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
@@ -220,7 +224,7 @@ class FiniteAlgebra:
 # =========
 
 class Magma(FiniteAlgebra):
-    """A magma is a finite algebra with a binary operation that returns a unique value, in the algebra,
+    """A Magma is a finite algebra with a binary operation that returns a unique value, in the algebra,
     for all pairs in the cross-product of the algebra's set of elements with itself.  With a binary
     operation we can compute the direct product of two or more algebras.  Also, we can check to see
     if two Magmas are isomorphic."""
@@ -271,13 +275,13 @@ class Magma(FiniteAlgebra):
         else:
             raise ValueError(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
 
-    def element_mappings(self, other):
+    def __element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this algebra's elements to all
-        possible permutations of other's elements.
-        """
+        possible permutations of other's elements.  The orders of self and other must
+        be equal."""
         return [dict(zip(self.elements, perm)) for perm in it.permutations(other.elements)]
 
-    def isomorphic_mapping(self, other, mapping):
+    def __isomorphic_mapping(self, other, mapping):
         """Returns True if the input mapping from this algebra to the other algebra is isomorphic."""
         return all([mapping[self.op(x, y)] == other.op(mapping[x], mapping[y])
                     for x in self.elements for y in self.elements])
@@ -286,9 +290,9 @@ class Magma(FiniteAlgebra):
         """If there is a mapping from elements of this algebra to the other algebra's elements,
         return it; otherwise return False."""
         if self.order == other.order:
-            maps = self.element_mappings(other)
+            maps = self.__element_mappings(other)
             for mp in maps:
-                if self.isomorphic_mapping(other, mp):
+                if self.__isomorphic_mapping(other, mp):
                     return mp
             return False
         else:
@@ -340,7 +344,7 @@ class Monoid(Semigroup):
     # Monoid Isomorphisms
     # ---------------------
 
-    def element_mappings(self, other):
+    def __element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this algebra's elements to all possible permutations
         of other's elements, where the identity of this algebra is always mapped to the identity of other."""
         if self.order == other.order:
@@ -372,13 +376,13 @@ class Group(Monoid):
         super().__init__(name, description, elements, table, check_inputs)
         if check_inputs:
             if self.table.has_inverses():
-                self.__inverses = self.create_inverse_lookup_dict()
+                self.__inverses = self.__create_inverse_lookup_dict()
             else:
                 raise ValueError("CHECK INPUTS: Table has insufficient inverses")
         else:
-            self.__inverses = self.create_inverse_lookup_dict()
+            self.__inverses = self.__create_inverse_lookup_dict()
 
-    def create_inverse_lookup_dict(self):
+    def __create_inverse_lookup_dict(self):
         """Returns a dictionary that maps each of the algebra's elements to its inverse element."""
         row_indices, col_indices = np.where(self.table.table == self.table.identity())
         return {self.elements[elem_index]: self.elements[elem_inv_index]
@@ -389,16 +393,16 @@ class Group(Monoid):
         """Return the inverse of an element"""
         return self.__inverses[element]
 
-    def conj(self, a, g):
+    def conjugate(self, a, g):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
         return self.op(g, self.op(a, self.inv(g)))
 
     def is_normal(self, subgrp):
-        """Return True if the subgroup is normal."""
+        """Returns True if the subgroup is normal, otherwise False is returned"""
         result = True
         for x in self:
             for a in subgrp:
-                if not self.conj(a, x) in subgrp:
+                if not self.conjugate(a, x) in subgrp:
                     result = False
                     break
         return result
@@ -543,7 +547,7 @@ class Group(Monoid):
 # TODO: See if this can be applied higher up in the class hierarchy (e.g., to Magmas, perhaps)
 def partition_into_isomorphic_lists(list_of_groups):
     """Partition the list of groups into sub-lists of groups that are isomorphic to each other.
-    The purpose of this function is operate on the proper subgroups of a group to determine
+    The purpose of this function is to operate on the proper subgroups of a group to determine
     the unique subgroups, up to isomorphism."""
 
     def iso_and_not_iso(gp, gps):
@@ -657,8 +661,9 @@ def generate_commutative_monoid(order, elem_name='a', name=None, description=Non
 
 class Ring(Group):
     """A Ring is a commutative Group with an 'addition' operator, along with an
-    associative 'multiplication' operator, where addition distributes over
-    multiplication."""
+    associative 'multiplication' operator, where multiplication distributes over
+    addition.  The operator inherited from Group becomes 'addition', while
+    'multiplication' is defined by table2."""
 
     def __init__(self, name, description, elements, table, table2, check_inputs=True):
 
@@ -698,7 +703,8 @@ class Ring(Group):
 
     @property
     def mult_identity(self):
-        """Returns the multiplicative identity element"""
+        """Returns the multiplicative identity element, if it exists.
+        If it doesn't exist, then None is returned."""
         return self.__mult_identity
 
     @property
@@ -707,7 +713,8 @@ class Ring(Group):
         return self.__mult_identity
 
     def has_mult_identity(self):
-        """A convenience function, so that others don't have to check for 'not None'."""
+        """A convenience function that returns True or False, depending on whether the algebra
+        has a multiplicative identity element, in addition to its additive identity element."""
         if self.mult_identity is not None:
             return True
         else:
@@ -911,7 +918,7 @@ def tables_to_groups(tables, identity_name="e", elem_name="a"):
 def get_integer_form(elem_list):
     """For an element list like ['e1', 'a1_2', 'a1_1', 'a1_3'],
     return the integer 213, i.e., the 'subscripts' of the elements that
-    follow the identity element."""
+    follow the identity element.  Used by get_int_forms."""
     return int(''.join(map(lambda x: x.split("_")[1], elem_list[1:])))
 
 
@@ -1037,6 +1044,9 @@ def delete_row_col(np_arr, row, col):
 
 
 def get_name_desc_elements_table(finalg):
+    """Returns an algebras name, description, elements, and table (in list form)
+    For example: nm, desc, elems, tbl = get_name_desc_elements_table(alg)
+    """
     name = finalg.name
     description = finalg.description
     elements = finalg.elements
@@ -1055,6 +1065,7 @@ def make_cayley_table(table, elements):
 
 
 def index_table_from_name_table(elements, name_table):
+    """Converts a table (list of lists) of strings into a table (list of lists) of ints."""
     return [[elements.index(elem_name) for elem_name in row] for row in name_table]
 
 
@@ -1064,6 +1075,7 @@ def get_duplicates(lst):
 
 
 def yes_or_no(true_or_false):
+    """A convenience function for turning True or False into Yes or No, respectively."""
     if true_or_false:
         return "Yes"
     else:
@@ -1072,7 +1084,9 @@ def yes_or_no(true_or_false):
 
 # See https://docs.python.org/3/library/itertools.html#itertools-recipes
 def powerset(iterable):
-    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
+    """Returns the powerset of the input iterable.
+    e.g., powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    """
     s = list(iterable)
     return it.chain.from_iterable(it.combinations(s, r) for r in range(len(s)+1))
 
@@ -1102,7 +1116,7 @@ def make_table(table_string):
 
 
 class Examples:
-    """A convenience class for accessing some of the example algebras in the algebras
+    """A convenience class for retrieving some of the example algebras in the algebras
     directory.  To add or subtract algebras to its default list, see the file,
     'examples.json', in the algebras directory."""
 
@@ -1115,15 +1129,18 @@ class Examples:
         self.about()
 
     def get_example(self, index):
+        """Retrieves an algebra from the Examples instance, based on the index of the algebra.
+        Execute the Example's 'about' method to see the list of examples and their indices."""
         return self.algebras[index]
 
     def about(self):
+        """Returns a list of example algebras with instructions on how to retrieve them."""
         n = 70
         print("=" * n)
         print(" " * (int(n / 2) - 8) + "Example Algebras")  # centered
         print("-" * n)
         print(f"  {len(self.algebras)} example algebras are available.")
-        print("  Use \"get_example(INDEX)\" to get a specific example,")
+        print("  Use \"get_example(INDEX)\" to retrieve a specific example,")
         print("  where INDEX is the first number on each line below:")
         print("-" * n)
         index = 0

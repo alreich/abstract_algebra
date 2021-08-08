@@ -8,6 +8,18 @@ import collections as co
 
 
 class CayleyTable:
+    """A Cayley table describes the structure of a finite group by arranging
+    all the possible products of all the group's elements in a square table
+    reminiscent of an addition or multiplication table. Many properties of
+    a group – such as whether or not it is abelian, which elements are
+    inverses of which elements, and the size and contents of the group's
+    center – can be discovered from its Cayley table. -- Wikipedia
+    (https://en.wikipedia.org/wiki/Cayley_table)
+
+    The actual table, within a CayleyTable instance, is stored as a square
+    NumPy array of int, where the integers correspond to the positions of
+    elements in a list of element names (str).
+    """
 
     def __init__(self, arr):
         tmp = np.array(arr, dtype=int)
@@ -25,7 +37,8 @@ class CayleyTable:
         return f"{self.__class__.__name__}({self.__table.tolist()})"
 
     def __str__(self):
-        return f"{self.__class__.__name__}({self.__table.tolist()})"
+        n = self.__order
+        return f"<{self.__class__.__name__}, order {n}, ID:{id(self)}>"
 
     def __eq__(self, other):
         compare = (self.__table == other.table)
@@ -37,13 +50,16 @@ class CayleyTable:
 
     @property
     def order(self):
+        """Returns the order of the table, e.g., a 3x3 table has order 3."""
         return self.__order
 
     @property
     def table(self):
+        """Returns the table, i.e., NumPy array."""
         return self.__table
 
     def tolist(self):
+        """Converts the CayleyTable into a list of lists of ints."""
         return self.__table.tolist()
 
     def to_list_with_names(self, elements):
@@ -52,6 +68,8 @@ class CayleyTable:
         return [[elements[index] for index in row] for row in self.__table]
 
     def is_associative(self):
+        """Returns True or False, depending on whether the table supports an associative
+        binary operation."""
         indices = range(len(self.__table))
         result = True
         for a in indices:
@@ -65,6 +83,8 @@ class CayleyTable:
         return result
 
     def is_commutative(self):
+        """Returns True or False, depending on whether the table supports a commutative
+        binary operation."""
         n = self.__table.shape[0]
         result = True
         # Loop over the table's upper off-diagonal elements
@@ -101,6 +121,7 @@ class CayleyTable:
         return is_distributive
 
     def left_identity(self):
+        """Returns the table's left identity element, if it exists, otherwise None is returned."""
         indices = range(len(self.__table))
         lid = None
         for x in indices:
@@ -110,6 +131,7 @@ class CayleyTable:
         return lid
 
     def right_identity(self):
+        """Returns the table's right identity element, if it exists, otherwise None is returned."""
         indices = range(len(self.__table))
         rid = None
         for x in indices:
@@ -119,14 +141,18 @@ class CayleyTable:
         return rid
 
     def identity(self):
+        """Returns the table's identity element, if it exists, otherwise None is returned."""
         left_id = self.left_identity()
         right_id = self.right_identity()
         if (left_id is not None) and (right_id is not None):
+            # If both left and right identities exist, then they are necessarily equal.
             return left_id
         else:
             return None
 
     def has_inverses(self):
+        """Returns True or False, depending on whether the table supports inverses for
+        all elements."""
         if self.identity() is not None:
             row_indices, col_indices = np.where(self.__table == self.identity())
             if set(row_indices) == set(col_indices):
@@ -147,6 +173,9 @@ class CayleyTable:
                 in zip(row_indices, col_indices)}
 
     def about(self, printout=False):
+        """Printout information about the CayleyTable: order, associativity,
+        commutativity, left/right identities, full identity, and whether
+        inverses exist."""
         n = str(self.order)
         ass = str(self.is_associative())
         co = str(self.is_commutative())

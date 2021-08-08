@@ -4,6 +4,38 @@ Abstract Algebra
 A Python implementation of **Finite Algebras**: Magma, Semigroup,
 Monoid, Group, Ring, and Field
 
+Class Hierarchy
+---------------
+
+:math:`\langle FiniteAlgebra \rangle \rightarrow` Magma
+:math:`\rightarrow` Semigroup :math:`\rightarrow` Monoid
+:math:`\rightarrow` Group :math:`\rightarrow` Ring :math:`\rightarrow`
+Field
+
+-  **Magma** – a set with a binary operation:
+   :math:`\langle S, \circ \rangle`, where :math:`S` is a finite set and
+   :math:`\circ: S \times S \to S`
+
+-  **Semigroup** – an associative Magma: for any
+   :math:`a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
+
+-  **Monoid** – a Semigroup with identity element:
+   :math:`\exists e \in S`, such that, for all
+   :math:`a \in S, a \circ e = e \circ a = a`
+
+-  **Group** – a Monoid with inverse elements:
+   :math:`\forall a \in S, \exists a^{-1} \in S`, such that,
+   :math:`a \circ a^{-1} = a^{-1} \circ a = e`
+
+-  **Ring** – :math:`\langle S, +, \cdot \rangle`, where
+   :math:`\langle S, + \rangle` is a commutative Group,
+   :math:`\langle S, \cdot \rangle` is a Semigroup, and :math:`cdot`
+   distributes over :math:`+`
+
+-  **Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
+   :math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative
+   Group.
+
 Summary
 -------
 
@@ -12,19 +44,18 @@ functions for working with algebras that only have a **finite number of
 elements**.
 
 -  The primary constructor of algebras is the function,
-   **``make_finite_algebra``**, which examines the properties of the
-   input table and returns the appropriate instance of an algebra.
+   ``make_finite_algebra``. It examines the properties of the input
+   table and returns the appropriate instance of an algebra.
 -  Algebras can be input from, or output to, JSON files/strings or
    Python dictionaries.
--  Each algebra is defined by a list of *element names* (``str``) and a
-   *multiplication table* (“Cayley Table”). A *name* and *description*
-   can also be provided.
+-  Each algebra is defined by name (``str``), a description (``str``), a
+   list of *element names* (``str``) and a square, 2-dimensional table
+   that defines a binary operation (``list`` of ``lists`` of ``int``).
+   Rings & Fields have two such tables.
 -  Each algebra has methods for examining its properties (e.g.,
    ``is_associative()``, ``is_commutative()``)
--  Each algebra has a binary operation, defined by its table.
--  Rings & Fields have two binary operations, defined by a second table.
--  Algebraic elements can be “multiplied” via their binary operations
-   (e.g., ``v4.op('h','v') ==> 'r'``).
+-  Algebraic elements can be “added” (or “multiplied”) via their binary
+   operations (e.g., ``v4.op('h','v') ==> 'r'``).
 -  Inverses & identities can be obtained, if the algebra supports them
    (e.g., ``z3.inv('a') = 'a^2'``, ``z3.identity ==> 'e'``).
 -  Direct products of two or more algebras can be computed using
@@ -35,7 +66,7 @@ elements**.
 -  Autogeneration of some types of algebras, of arbitrary order, is
    supported (e.g., symmetric, cyclic).
 -  Subalgebras (e.g., subgroups) can be determined, along with related
-   functionality (e.g, ``sg.is_normal()``).
+   functionality (e.g, ``is_normal()``).
 
 Installation
 ------------
@@ -52,43 +83,15 @@ Documentation
 See full documentation at
 `ReadTheDocs <https://abstract-algebra.readthedocs.io/en/latest/index.html>`__.
 
-Examples
---------
+Quick Look
+----------
 
-The function, ``make_finite_algebra``, analyzes the input table and
-outputs the appropriate type of algebra.
-
-In the following example, a Magma is output.
+**Create an algebra:**
 
 .. code:: ipython3
 
     >>> from finite_algebras import make_finite_algebra
     
-    >>> make_finite_algebra('RPS',
-                            'Rock, Paper, Scissors',
-                            ['r', 'p', 's'],
-                            [['r', 'p', 'r'],
-                             ['p', 'p', 's'],
-                             ['r', 's', 's']])
-
-
-
-
-.. parsed-literal::
-
-    Magma(
-    'RPS',
-    'Rock, Paper, Scissors',
-    ['r', 'p', 's'],
-    [[0, 1, 0], [1, 1, 2], [0, 2, 2]]
-    )
-
-
-
-The method, ``about``, prints out information about an algebra.
-
-.. code:: ipython3
-
     >>> v4 = make_finite_algebra('V4',
                                  'Klein-4 group',
                                  ['e', 'h', 'v', 'r'],
@@ -96,7 +99,26 @@ The method, ``about``, prints out information about an algebra.
                                   [1, 0, 3, 2],
                                   [2, 3, 0, 1],
                                   [3, 2, 1, 0]])
-    
+    >>> v4
+
+
+
+
+.. parsed-literal::
+
+    Group(
+    'V4',
+    'Klein-4 group',
+    ['e', 'h', 'v', 'r'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
+    )
+
+
+
+**Look at the algebra’s properties:**
+
+.. code:: ipython3
+
     >>> v4.about(use_table_names=True)
 
 
@@ -104,6 +126,7 @@ The method, ``about``, prints out information about an algebra.
 
     
     Group: V4
+    Instance ID: 140412686824400
     Description: Klein-4 group
     Identity: e
     Associative? Yes
@@ -119,4 +142,80 @@ The method, ``about``, prints out information about an algebra.
      ['h', 'e', 'r', 'v'],
      ['v', 'r', 'e', 'h'],
      ['r', 'v', 'h', 'e']]
+
+
+**Autogenerate a small cyclic group:**
+
+.. code:: ipython3
+
+    >>> from finite_algebras import generate_cyclic_group
+    
+    >>> z2 = generate_cyclic_group(2)
+    
+    >>> z2.about()
+
+
+.. parsed-literal::
+
+    
+    Group: Z2
+    Instance ID: 140412154202000
+    Description: Autogenerated cyclic Group of order 2
+    Identity: e
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1       a       a       2
+    Cayley Table (showing indices):
+    [[0, 1], [1, 0]]
+
+
+**Compute the Direct Product of the cyclic group with itself:**
+
+.. code:: ipython3
+
+    >>> z2_sqr = z2 * z2
+    
+    >>> z2_sqr.about(use_table_names=True)
+
+
+.. parsed-literal::
+
+    
+    Group: Z2_x_Z2
+    Instance ID: 140412154200208
+    Description: Direct product of Z2 & Z2
+    Identity: e:e
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0     e:e     e:e       1
+          1     e:a     e:a       2
+          2     a:e     a:e       2
+          3     a:a     a:a       2
+    Cayley Table (showing names):
+    [['e:e', 'e:a', 'a:e', 'a:a'],
+     ['e:a', 'e:e', 'a:a', 'a:e'],
+     ['a:e', 'a:a', 'e:e', 'e:a'],
+     ['a:a', 'a:e', 'e:a', 'e:e']]
+
+
+**Are z2_sqr & v4 isomorphic?**
+
+**Yes, and here’s the mapping between their elements:**
+
+.. code:: ipython3
+
+    >>> v4.isomorphic(z2_sqr)
+
+
+
+
+.. parsed-literal::
+
+    {'h': 'e:a', 'v': 'a:e', 'r': 'a:a', 'e': 'e:e'}
+
 

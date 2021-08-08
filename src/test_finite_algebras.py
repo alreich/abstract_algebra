@@ -27,7 +27,8 @@ class TestMagma(TestCase):
         self.assertNotEqual(rp_s, r_ps)
 
     def test_table_with_names(self):
-        self.assertEqual(self.rps.table_as_list_with_names(), [['r', 'p', 'r'], ['p', 'p', 's'], ['r', 's', 's']])
+        self.assertEqual(self.rps.table.to_list_with_names(self.rps.elements),
+                         [['r', 'p', 'r'], ['p', 'p', 's'], ['r', 's', 's']])
 
     def test_is_associative(self):
         self.assertEqual(self.rps.is_associative(), False)

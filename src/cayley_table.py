@@ -46,6 +46,11 @@ class CayleyTable:
     def tolist(self):
         return self.__table.tolist()
 
+    def to_list_with_names(self, elements):
+        """Returns the Cayley Table as a regular Python array where the element indices have been
+        replaces by the element names (str)."""
+        return [[elements[index] for index in row] for row in self.__table]
+
     def is_associative(self):
         indices = range(len(self.__table))
         result = True

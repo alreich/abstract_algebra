@@ -137,10 +137,10 @@ class FiniteAlgebra:
         """Returns the order of the algebra."""
         return len(self.__elements)
 
-    def table_as_list_with_names(self):
-        """Returns the Cayley Table as a regular Python array where the element indices have been
-        replaces by the element names (str)."""
-        return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
+    # def table_as_list_with_names(self):
+    #     """Returns the Cayley Table as a regular Python array where the element indices have been
+    #     replaces by the element names (str)."""
+    #     return [[self.__elements[index] for index in row] for row in self.__table.tolist()]
 
     def is_associative(self):
         """Returns True if the algebra is associative; returns False otherwise."""
@@ -159,14 +159,25 @@ class FiniteAlgebra:
         returns False otherwise."""
         return self.__table.has_inverses()
 
-    def to_dict(self):
-        """Returns a Python dictionary that represents the algebra."""
-        return {'type': self.__class__.__name__,
-                'name': self.name,
-                'description': self.description,
-                'elements': self.__elements,
-                'table': self.__table.tolist()
-                }
+    def to_dict(self, include_classname=False):
+        """Returns a Python dictionary that represents the algebra.
+        if 'include_classname is True, then the classname (ie., type of
+        algebra) is included with key, 'type'.  However, this is only
+        for human consumption; 'type' is ignored by the
+        make_finite_algebra function."""
+        if include_classname:
+            return {'type': self.__class__.__name__,
+                    'name': self.name,
+                    'description': self.description,
+                    'elements': self.__elements,
+                    'table': self.__table.tolist()
+                    }
+        else:
+            return {'name': self.name,
+                    'description': self.description,
+                    'elements': self.__elements,
+                    'table': self.__table.tolist()
+                    }
 
     def dumps(self):
         """Returns a JSON string that represents the algebra."""
@@ -194,7 +205,8 @@ class FiniteAlgebra:
         if size <= max_size:  # Don't print table if too large
             if use_table_names:
                 print(f"Cayley Table (showing names):")
-                pp.pprint(self.table_as_list_with_names())
+                # pp.pprint(self.table_as_list_with_names())
+                pp.pprint(self.table.to_list_with_names(self.elements))
             else:
                 print(f"Cayley Table (showing indices):")
                 pp.pprint(self.table.tolist())
@@ -501,7 +513,8 @@ class Group(Monoid):
         if size <= max_size:
             if use_table_names:
                 print(f"Cayley Table (showing names):")
-                pp.pprint(self.table_as_list_with_names())
+                # pp.pprint(self.table_as_list_with_names())
+                pp.pprint(self.table.to_list_with_names(self.elements))
             else:
                 print(f"Cayley Table (showing indices):")
                 pp.pprint(self.table.tolist())
@@ -719,8 +732,8 @@ class Ring(Group):
         return self.__ring_mult(*args)
 
     # TODO: Combine this with the one that does the same thing for Groups and such.
-    def ring_mult_table_with_names(self):
-        return [[self.elements[elem_pos] for elem_pos in row] for row in self.__ring_mult_table.tolist()]
+    # def ring_mult_table_with_names(self):
+    #     return [[self.elements[elem_pos] for elem_pos in row] for row in self.__ring_mult_table.tolist()]
 
     def extract_additive_algebra(self):
         """A Ring's elements over addition, alone, should be a commutative Group.  This function
@@ -761,7 +774,8 @@ class Ring(Group):
         if size <= max_size:
             if use_table_names:
                 print(f"Multiplicative Cayley Table (showing names):")
-                pp.pprint(self.ring_mult_table_with_names())
+                # pp.pprint(self.ring_mult_table_with_names())
+                pp.pprint(self.__ring_mult_table.to_list_with_names(self.elements))
             else:
                 print(f"Multiplicative Cayley Table (showing indices):")
                 pp.pprint(self.mult_table.tolist())
@@ -930,9 +944,11 @@ def make_finite_algebra(*args):
 
     This function either takes all four items in the order described, above,
     or a single JSON file name, or a single Python dictionary, where the latter
-    two contain definitions of the four items.
+    two contain definitions of the four items, using the keywords: 'name',
+    'description', 'elements', and 'table'.  Any other keywords contained in
+    the JSON file or Python dictionary are ignored (e.g.., 'type').
 
-    See the examples in the documentation.
+    See the examples in the User Guide.
     """
 
     if len(args) == 1:

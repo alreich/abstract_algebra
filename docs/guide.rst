@@ -1,49 +1,8 @@
 User Guide
 ==========
 
-Algebra Definitions
--------------------
-
-This is a Python module that contains the following implementations of
-**finite algebras**:
-
--  **Magma** – a set with a binary operation:
-   :math:`\langle S, \circ \rangle`, where :math:`S` is a finite set and
-   :math:`\circ: S \times S \to S`
-
--  **Semigroup** – an associative Magma: for any
-   :math:`a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
-
--  **Monoid** – a Semigroup with identity element:
-   :math:`\exists e \in S`, such that, for all
-   :math:`a \in S, a \circ e = e \circ a = a`
-
--  **Group** – a Monoid with inverse elements:
-   :math:`\forall a \in S, \exists a^{-1} \in S`, such that,
-   :math:`a \circ a^{-1} = a^{-1} \circ a = e`
-
--  **Ring** – :math:`\langle S, +, \cdot \rangle`, where
-   :math:`\langle S, + \rangle` is a commutative Group,
-   :math:`\langle S, \cdot \rangle` is a Semigroup, and :math:`+`
-   distributes over :math:`\cdot`
-
--  **Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
-   :math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative
-   Group.
-
-Class Hierarchy
----------------
-
-FiniteAlgebra :math:`\rightarrow` Magma :math:`\rightarrow` Semigroup
-:math:`\rightarrow` Monoid :math:`\rightarrow` Group :math:`\rightarrow`
-Ring :math:`\rightarrow` Field
-
-where, :math:`A \rightarrow B` denotes “A is a superclass of B”.
-
-**NOTE**: The *FiniteAlgbra* class is not intended to be instantiated.
-
-Internal Representation
------------------------
+Finite Algebra: Internal Representation
+---------------------------------------
 
 Internally, a ``FiniteAlgebra`` consists of the following quantities:
 
@@ -65,8 +24,8 @@ properties of a finite algebra can be derived from its Cayley Table. For
 this reason, this module includes a ``CayleyTable`` class for storing
 the table and methods associated with it.
 
-Algebra Constuction
--------------------
+Algebra Constuction Examples
+----------------------------
 
 In a nutshell, use the function, ``make_finite_algebra`` for all algebra
 construction.
@@ -80,7 +39,7 @@ inputs:
 1. Enter **individual values** corresponding to the quantities in its
    Internal Representation, described above.
 2. Enter a **Python dictionary** (``dict``), with keys and values
-   corresponding to either the four values, described above.
+   corresponding to the individual values, described above.
 3. Enter the **path to a JSON file** (``str``) that corresponds to the
    dictionary, described above.
 
@@ -120,8 +79,8 @@ Group
 
 
 
-Printing an algebra converts the algebra to string containing the unique
-id of the algebra instance:
+Printing an algebra converts it to a string containing its class name,
+algebra name, and the unique ID of the algebra instance:
 
 .. code:: ipython3
 
@@ -130,7 +89,7 @@ id of the algebra instance:
 
 .. parsed-literal::
 
-    <Group:Z3, ID:140552276823056>
+    <Group:Z3, ID:140372690299600>
 
 
 Group Properties
@@ -151,7 +110,7 @@ Group Properties
 
 .. code:: ipython3
 
-    >>> z3.is_commutative()  # Same as below
+    >>> z3.is_commutative()
 
 
 
@@ -164,7 +123,7 @@ Group Properties
 
 .. code:: ipython3
 
-    >>> z3.is_abelian()  # Same as above
+    >>> z3.is_abelian()
 
 
 
@@ -175,9 +134,14 @@ Group Properties
 
 
 
+The ``identity`` method (property) returns the algebra’s identity
+element, if it exists.
+
+If the identity doesn’t exist, then ``None`` is returned.
+
 .. code:: ipython3
 
-    >>> z3.identity  # Get the algebra's identity element, if it exists
+    >>> z3.identity
 
 
 
@@ -187,6 +151,9 @@ Group Properties
     'e'
 
 
+
+Internal to algebras, tables are stored as instances of the
+``CayleyTable`` class:
 
 .. code:: ipython3
 
@@ -229,6 +196,10 @@ Binary Operation
     'e'
 
 
+
+If only one argument is given to the binary operation, then that
+argument is simply returned; unless it is not a valid element of the
+algebra, in which case an exception is raised.
 
 .. code:: ipython3
 
@@ -283,7 +254,7 @@ The ``about`` Method
 
     
     Group: Z3
-    Instance ID: 140552276823056
+    Instance ID: 140372690299600
     Description: Cyclic group of order 3
     Identity: e
     Associative? Yes
@@ -328,7 +299,7 @@ commutative.
 
     
     Magma: RPS
-    Instance ID: 140551749825168
+    Instance ID: 140373097493840
     Description: Rock, Paper, Scissors Magma
     Elements: ['r', 'p', 's']
     Identity: None
@@ -351,7 +322,7 @@ positions, but it can also printout a table using element names:
 
     
     Magma: RPS
-    Instance ID: 140551749825168
+    Instance ID: 140373097493840
     Description: Rock, Paper, Scissors Magma
     Elements: ['r', 'p', 's']
     Identity: None
@@ -379,7 +350,7 @@ Paper beats Rock:
 
 .. code:: ipython3
 
-    >>> if rps.op() is None:
+    >>> if rps.identity is None:
         print("RPS does not have an identity element")
 
 
@@ -407,7 +378,7 @@ Magma with Identity Element
 
     
     Magma: Whatever
-    Instance ID: 140551749850832
+    Instance ID: 140373097536464
     Description: Magma with Identity
     Elements: ['e', 'a', 'b']
     Identity: e
@@ -444,7 +415,7 @@ B. Vasantha Kandasamy
 
     
     Semigroup: Example 1.4.1
-    Instance ID: 140551749792464
+    Instance ID: 140373097451280
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Elements: ['a', 'b', 'c', 'd', 'e', 'f']
     Identity: None
@@ -460,9 +431,8 @@ B. Vasantha Kandasamy
      [5, 2, 5, 2, 5, 2]]
 
 
-Since the element in the 0,1 position of the table is 3:
-
-‘a’ \* ‘b’ = ‘d’
+Since the element in the 0,1 position of the table is 3, it follows
+that, :math:`a \circ b = d`:
 
 .. code:: ipython3
 
@@ -479,7 +449,7 @@ Since the element in the 0,1 position of the table is 3:
 
 .. code:: ipython3
 
-    >>> if sg.op() is None:
+    >>> if sg.identity is None:
         print("There is no identity element")
 
 
@@ -508,7 +478,7 @@ Monoid
 
     
     Monoid: M4
-    Instance ID: 140551749736656
+    Instance ID: 140372558612048
     Description: Example of a commutative monoid
     Elements: ['a', 'b', 'c', 'd']
     Identity: b
@@ -524,7 +494,7 @@ Monoid
 
 .. code:: ipython3
 
-    >>> m4.op()  # Returns the identity element
+    >>> m4.identity  # Returns the identity element
 
 
 
@@ -597,7 +567,7 @@ In this ring, *“addition”* is symmetric difference and
 
     
     Ring: Powerset Ring 2
-    Instance ID: 140551749793936
+    Instance ID: 140373097536144
     Description: Ring on powerset of {0, 1}
     Identity: {}
     Associative? Yes
@@ -621,6 +591,9 @@ In this ring, *“addition”* is symmetric difference and
      ['{}', '{}', '{1}', '{1}'],
      ['{}', '{0}', '{1}', '{0, 1}']]
 
+
+Ring Addition and Multiplication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: ipython3
 
@@ -727,7 +700,7 @@ Autogeneration of a Powerset Ring
 
     
     Ring: PSRing3
-    Instance ID: 140551749892944
+    Instance ID: 140373097471504
     Description: Autogenerated Ring on powerset of {0, 1, 2} w/ symm. diff. (add) & intersection (mult)
     Identity: {}
     Associative? Yes
@@ -767,7 +740,7 @@ Autogeneration of a Powerset Ring
 Ring Based on 2x2 Matrices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This is example 6 here:
+See Example 6 in this reference:
 http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
 
 .. code:: ipython3
@@ -818,7 +791,7 @@ http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
 
     
     Ring: Ex6
-    Instance ID: 140551749794768
+    Instance ID: 140373097431504
     Description: Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
     Identity: 0
     Associative? Yes
@@ -846,13 +819,11 @@ http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
 Extracting a Ring’s Additive & Multiplicative “Subalgebras”
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-At the very beginning of this guide document, in the *Algebra
-Definitions* section, a Ring is describes as being a combination of a
-commutative Group, under addition, and a Semigroup, under
-multiplication.
-
-This section shows how the algebraic components of a Ring can be
-extracted.
+At the beginning of this User Guide, in the *Algebra Definitions*
+section, a Ring is described as being a combination of a commutative
+Group, under addition, and a Semigroup, under multiplication (with
+distributivity of multiplication over addition). This section shows how
+those algebraic components of a Ring can be extracted.
 
 **NOTE**: The implementation of the two extraction methods, illustrated
 below, operates by calling ``make_finite_algebra`` using the relevant
@@ -879,7 +850,8 @@ Semigroup for the multiplicative portion.
 
 
 
-The **Additive portion** is a commutative Group, as expected:
+The **additive portion** of this example ring is a commutative Group, as
+expected:
 
 .. code:: ipython3
 
@@ -891,7 +863,7 @@ The **Additive portion** is a commutative Group, as expected:
 
     
     Group: Ex6.Add
-    Instance ID: 140552000817744
+    Instance ID: 140372289214032
     Description: Additive-only portion of Ex6
     Identity: 0
     Associative? Yes
@@ -906,7 +878,7 @@ The **Additive portion** is a commutative Group, as expected:
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
 
 
-And, the **Multiplicative portion** is a Semigroup:
+And, the **multiplicative portion** is a Semigroup:
 
 .. code:: ipython3
 
@@ -966,7 +938,7 @@ http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
 
     
     Ring: R5
-    Instance ID: 140552000865936
+    Instance ID: 140372289247760
     Description: Autogenerated commutative Ring of order 5
     Identity: a0
     Associative? Yes
@@ -1012,7 +984,7 @@ multiplicative identity element (‘a1’).
 
     
     Group: R5.Add
-    Instance ID: 140552000836752
+    Instance ID: 140372289248784
     Description: Additive-only portion of R5
     Identity: a0
     Associative? Yes
@@ -1042,7 +1014,7 @@ multiplicative identity element (‘a1’).
 
     
     Monoid: R5.Mult
-    Instance ID: 140552000819024
+    Instance ID: 140372289225104
     Description: Multiplicative-only portion of R5
     Elements: ['a0', 'a1', 'a2', 'a3', 'a4']
     Identity: a1
@@ -1066,9 +1038,11 @@ dictionaries.
 Instantiate Algebra from JSON File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-First setup some path variables: \* one that points to the
-abstract_algebra directory \* and the other points to a subdirectory
-containing algebra definitions in JSON format
+First setup some path variables:
+
+-  one that points to the abstract_algebra directory
+-  and the other points to a subdirectory containing algebra definitions
+   in JSON format
 
 Also, the code here assumes that there is an environment variable,
 ``PYPROJ``, that points to the parent directory of the abstract_algebra
@@ -1123,8 +1097,8 @@ And, here’s the **algebra**:
 
 
 
-Convert Algebra to Dictionary
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Convert Algebra to Python Dictionary
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: ipython3
 
@@ -1137,16 +1111,15 @@ Convert Algebra to Dictionary
 
 .. parsed-literal::
 
-    {'type': 'Group',
-     'name': 'V4',
+    {'name': 'V4',
      'description': 'Klein-4 group',
      'elements': ['e', 'h', 'v', 'r'],
      'table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}
 
 
 
-Instantiate Algebra from Dictionary
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Instantiate Algebra from Python Dictionary
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: ipython3
 
@@ -1182,15 +1155,15 @@ Convert Algebra to JSON String
 
 .. parsed-literal::
 
-    '{"type": "Group", "name": "V4", "description": "Klein-4 group", "elements": ["e", "h", "v", "r"], "table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
+    '{"name": "V4", "description": "Klein-4 group", "elements": ["e", "h", "v", "r"], "table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]}'
 
 
 
 **WARNING**: Although an algebra can be constructed by loading its
 definition from a JSON file, it cannot be constructed directly from a
 JSON string, because ``make_finite_algebra`` interprets a single string
-input as a JSON file name. To load an algebra from a JSON string,
-convert the string to a Python dictionary and then input that to
+input as a JSON file name. To load an algebra from a JSON string, first
+convert the string to a Python dictionary, then input that to
 ``make_finite_algebra``, as shown below:
 
 .. code:: ipython3
@@ -1216,16 +1189,23 @@ convert the string to a Python dictionary and then input that to
 Autogeneration of Finite Algebras
 ---------------------------------
 
-There are three functions for autogenerating a group of a specified
-order:
+There are several functions for autogenerating finite algebras of
+specified orders:
 
--  ``autogenerate_cyclic_group(order)``
--  ``autogenerate_symmetric_group(order)``
--  ``autogenerate_powerset_group(order)``
+**Groups**
 
-And one function for autogenerating a monoid of a specified order:
+-  ``generate_cyclic_group(order)``
+-  ``generate_symmetric_group(order)``
+-  ``generate_powerset_group(order)``
 
--  ``autogenerate_commutative_monoid(order)``
+**Monoid**
+
+-  ``generate_commutative_monoid(order)``
+
+**Rings**
+
+-  ``generate_powerset_ring``
+-  ``generate_commutative_ring``
 
 Autogenerated Cyclic Group
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1238,20 +1218,24 @@ A cyclic group of any desired order can be generated as follows:
     
     >>> z2 = generate_cyclic_group(2)
     
-    >>> z2
-
-
+    >>> z2.about()
 
 
 .. parsed-literal::
 
-    Group(
-    'Z2',
-    'Autogenerated cyclic Group of order 2',
-    ['e', 'a'],
+    
+    Group: Z2
+    Instance ID: 140372289325456
+    Description: Autogenerated cyclic Group of order 2
+    Identity: e
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1       a       a       2
+    Cayley Table (showing indices):
     [[0, 1], [1, 0]]
-    )
-
 
 
 Autogenerated Symmetric Group
@@ -1276,7 +1260,7 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
 
     
     Group: S3
-    Instance ID: 140551466035280
+    Instance ID: 140372289273232
     Description: Autogenerated symmetric Group on 3 elements
     Identity: (1, 2, 3)
     Associative? Yes
@@ -1301,13 +1285,14 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
 Autogenerated Powerset Group
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The function, ``autogenerate_powerset_group``, will generate a group on
-the powerset of {0, 1, 2, …, n} with **symmetric difference** as the
-group’s binary operation. This group is useful because it can be used to
-form a ring with set intersection as the second operator.
+The function, ``generate_powerset_group``, will generate a group on the
+powerset of {0, 1, 2, …, n} with **symmetric difference** as the group’s
+binary operation. This group is useful because it can be used to form a
+ring with set intersection as the second operator.
 
 This means that the order of the autogenerated powerset group will be
-:math:`2^n`, so the same WARNING as above applies.
+:math:`2^n`, so the same WARNING as above applies with regard to large
+values of n.
 
 .. code:: ipython3
 
@@ -1322,7 +1307,7 @@ This means that the order of the autogenerated powerset group will be
 
     
     Group: PS3
-    Instance ID: 140552000919440
+    Instance ID: 140372289270992
     Description: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
     Identity: {}
     Associative? Yes
@@ -1364,7 +1349,7 @@ Autogenerated Monoid
 
     
     Monoid: M7
-    Instance ID: 140552000866320
+    Instance ID: 140372289272144
     Description: Autogenerated commutative Monoid of order 7
     Elements: ['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6']
     Identity: a1
@@ -1401,7 +1386,7 @@ Direct Product of Multiple Groups
 
     
     Group: Z2_x_Z2_x_Z2
-    Instance ID: 140551754127376
+    Instance ID: 140372289324944
     Description: Direct product of Z2_x_Z2 & Z2
     Identity: e:e:e
     Associative? Yes
@@ -1460,7 +1445,7 @@ Direct Product of Monoids
 
     
     Monoid: M3_x_M3
-    Instance ID: 140551754136336
+    Instance ID: 140372289144272
     Description: Direct product of M3 & M3
     Elements: ['a0:a0', 'a0:a1', 'a0:a2', 'a1:a0', 'a1:a1', 'a1:a2', 'a2:a0', 'a2:a1', 'a2:a2']
     Identity: a1:a1
@@ -1592,14 +1577,14 @@ Proper Subgroups
     [Group(
      'Z8_subgroup_0',
      'Subgroup of: Autogenerated cyclic Group of order 8',
-     ['e', 'a^4'],
-     [[0, 1], [1, 0]]
+     ['e', 'a^2', 'a^4', 'a^6'],
+     [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
      ),
      Group(
      'Z8_subgroup_1',
      'Subgroup of: Autogenerated cyclic Group of order 8',
-     ['e', 'a^2', 'a^4', 'a^6'],
-     [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
+     ['e', 'a^4'],
+     [[0, 1], [1, 0]]
      )]
 
 
@@ -1643,7 +1628,7 @@ of each sublist:
 
     
     Group: PS3_subgroup_0
-    Instance ID: 140551754178512
+    Instance ID: 140371745214736
     Description: Subgroup of: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
     Identity: {}
     Associative? Yes
@@ -1651,12 +1636,12 @@ of each sublist:
     Elements:
        Index   Name   Inverse  Order
           0      {}      {}       1
-          1     {1}     {1}       2
+          1     {2}     {2}       2
     Cayley Table (showing indices):
     [[0, 1], [1, 0]]
     
-    Group: PS3_subgroup_3
-    Instance ID: 140551754187600
+    Group: PS3_subgroup_1
+    Instance ID: 140371745215056
     Description: Subgroup of: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
     Identity: {}
     Associative? Yes
@@ -1682,7 +1667,7 @@ default list, see the file, ‘examples.json’, in the algebras directory.
 
     from finite_algebras import Examples
     
-    ex = Examples(alg_dir)
+    ex = Examples(alg_dir)  # Requires path to directory containing algebras' JSON files
 
 
 .. parsed-literal::
@@ -1716,7 +1701,7 @@ default list, see the file, ‘examples.json’, in the algebras directory.
 
     
     Group: Pinter29
-    Instance ID: 140551754206800
+    Instance ID: 140371745221584
     Description: Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
     Identity: I
     Associative? Yes
@@ -1745,9 +1730,9 @@ Under normal usage, there should be no need to directly create Cayley
 Tables. This section, however, provides a brief glimse at the
 ``CayleyTable`` class.
 
-All of the properties of a finite algebra are determined from its Cayley
-Table, or in the case of this Python module, its ``CayleyTable``. That
-functionality is passed through to the appropriate methods of the
+All of the properties of a finite algebra can be determined from its
+Cayley Table, or in the case of this Python module, its ``CayleyTable``.
+That functionality is passed through to the appropriate methods of the
 various algebras. Below, is a demonstration of how **distributivity**
 between two binary operations can be determined using their Cayley
 Tables.
@@ -1762,8 +1747,8 @@ the powerset:
 
 [‘{}’, ‘{0}’, ‘{1}’, ‘{2}’, ‘{0, 1}’, ‘{0, 2}’, ‘{1, 2}’, ‘{0, 1, 2}’]
 
-And the tables, below, use the positions (indices) of the 8 elements in
-the powerset:
+And the tables, below, contain the positions (indices) of the 8 elements
+in the powerset:
 
 .. code:: ipython3
 

@@ -81,9 +81,12 @@ class TestSemigroup(TestCase):
 class TestGroup(TestCase):
 
     def setUp(self) -> None:
-        self.z4 = generate_cyclic_group(4, name="Z4", description="Cyclic group")
+        self.z2 = generate_cyclic_group(2, name="Z2", description="Cyclic group of order 2")
+        self.z4 = generate_cyclic_group(4, name="Z4", description="Cyclic group of order 4")
         self.s3 = generate_symmetric_group(3, name="S3", description="Symmetric group")
         self.ps3 = generate_powerset_group(3, "PS3", "Powerset group")
+        self.v4 = make_finite_algebra('V4', 'Klein-4 group', ['e', 'h', 'v', 'r'],
+                                      [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
 
     def test_elements_accessor_ps3(self):
         self.assertEqual(self.ps3.elements, ['{}', '{0}', '{1}', '{2}', '{0, 1}',
@@ -145,6 +148,13 @@ class TestGroup(TestCase):
     def test_identity_accessor_s3(self):
         self.assertEqual(self.s3.identity, '(1, 2, 3)')
 
+    def test_direct_product_and_isomorphic(self):
+        z2_sqr = self.z2 * self.z2
+        self.assertEqual(self.v4.isomorphic(z2_sqr),
+                         {'e': 'e:e', 'h': 'e:a', 'v': 'a:e', 'r': 'a:a'})
+
+    def test_not_isomorphic(self):
+        self.assertFalse(self.z4.isomorphic(self.v4))
 
 # class TestRing(TestCase):
 #

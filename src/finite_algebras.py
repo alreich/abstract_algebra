@@ -322,6 +322,46 @@ class Magma(FiniteAlgebra):
         else:
             return list(result)
 
+    def closed_proper_subsets_of_elements(self):
+        """Return all unique, closed, proper subsets of the algebra's elements.
+        This returns a list of lists. Each list represents the elements of a subalgebra."""
+        closed = set()  # Build the result as a set of sets to avoid duplicates
+        all_elements = self.elements
+        n = len(all_elements)
+        for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
+            # Look at all combinations of elements: pairs, triples, quadruples, etc.
+            for combo in it.combinations(all_elements, i):
+                clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
+                if len(clo) < n:  # Don't include closures consisting of all elements
+                    closed.add(clo)
+        return list(map(lambda x: list(x), closed))
+
+    def subalgebra_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
+        """Return the algebra constructed from the given closed subset of elements."""
+        # TODO: Check whether the input elements are indeed closed (make this check optional)
+        #       Use the is_closed method (To Be Written) defined, above.
+        # Make sure the elements are sorted according to their order in the parent Group (self)
+        elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.elements.index(x))
+        table = []
+        for a in elements_sorted:
+            row = []
+            for b in elements_sorted:
+                # The table entry is the index of the product in the sorted elements list
+                row.append(elements_sorted.index(self.op(a, b)))
+            table.append(row)
+        return make_finite_algebra(name, desc, elements_sorted, table)
+
+    def proper_subalgebras(self):
+        """Return a list of proper subalgebras of the algebra."""
+        desc = f"Subalgebra of: {self.description}"
+        count = 0
+        list_of_subalgebras = []
+        for closed_element_set in self.closed_proper_subsets_of_elements():
+            name = f"{self.name}_subalgebra_{count}"
+            count += 1
+            list_of_subalgebras.append(self.subalgebra_from_elements(closed_element_set, name, desc))
+        return list_of_subalgebras
+
 
 # =============
 #   Semigroup
@@ -458,47 +498,47 @@ class Group(Monoid):
     # TODO: Write a method, is_closed, using closure, above.  Use this method in the
     #       subgroup method, below.
 
-    def closed_proper_subsets_of_elements(self):
-        """Return all unique, closed, proper subsets of the Group's elements.
-        This returns a list of lists. Each list represents the elements of a subgroup."""
-        closed = set()  # Build the result as a set of sets to avoid duplicates
-        all_elements = self.elements
-        n = len(all_elements)
-        for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
-            # Look at all combinations of elements: pairs, triples, quadruples, etc.
-            for combo in it.combinations(all_elements, i):
-                clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
-                if len(clo) < n:  # Don't include closures consisting of all elements
-                    closed.add(clo)
-        return list(map(lambda x: list(x), closed))
+    # def closed_proper_subsets_of_elements(self):
+    #     """Return all unique, closed, proper subsets of the Group's elements.
+    #     This returns a list of lists. Each list represents the elements of a subgroup."""
+    #     closed = set()  # Build the result as a set of sets to avoid duplicates
+    #     all_elements = self.elements
+    #     n = len(all_elements)
+    #     for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
+    #         # Look at all combinations of elements: pairs, triples, quadruples, etc.
+    #         for combo in it.combinations(all_elements, i):
+    #             clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
+    #             if len(clo) < n:  # Don't include closures consisting of all elements
+    #                 closed.add(clo)
+    #     return list(map(lambda x: list(x), closed))
 
-    def subgroup_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
-        """Return the Group constructed from the given closed subset of elements."""
-        # Make sure the elements are sorted according to their order in the parent Group (self)
-        # TODO: Check whether the input elements are indeed closed (make this check optional)
-        #       Use the is_closed method (To Be Written) defined, above.
-        elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.elements.index(x))
-        table = []
-        for a in elements_sorted:
-            row = []
-            for b in elements_sorted:
-                # The table entry is the index of the product in the sorted elements list
-                row.append(elements_sorted.index(self.op(a, b)))
-            table.append(row)
-        return Group(name, desc, elements_sorted, table)
+    # def subgroup_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
+    #     """Return the Group constructed from the given closed subset of elements."""
+    #     # Make sure the elements are sorted according to their order in the parent Group (self)
+    #     # TODO: Check whether the input elements are indeed closed (make this check optional)
+    #     #       Use the is_closed method (To Be Written) defined, above.
+    #     elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.elements.index(x))
+    #     table = []
+    #     for a in elements_sorted:
+    #         row = []
+    #         for b in elements_sorted:
+    #             # The table entry is the index of the product in the sorted elements list
+    #             row.append(elements_sorted.index(self.op(a, b)))
+    #         table.append(row)
+    #     return Group(name, desc, elements_sorted, table)
 
     # TODO: Generalize the concept of subgroups to subalgebras and move it up the hierarchy.
 
-    def proper_subgroups(self):
-        """Return a list of proper subgroups of the group."""
-        desc = f"Subgroup of: {self.description}"
-        count = 0
-        list_of_subgroups = []
-        for closed_element_set in self.closed_proper_subsets_of_elements():
-            name = f"{self.name}_subgroup_{count}"
-            count += 1
-            list_of_subgroups.append(self.subgroup_from_elements(closed_element_set, name, desc))
-        return list_of_subgroups
+    # def proper_subgroups(self):
+    #     """Return a list of proper subgroups of the group."""
+    #     desc = f"Subgroup of: {self.description}"
+    #     count = 0
+    #     list_of_subgroups = []
+    #     for closed_element_set in self.closed_proper_subsets_of_elements():
+    #         name = f"{self.name}_subgroup_{count}"
+    #         count += 1
+    #         list_of_subgroups.append(self.subgroup_from_elements(closed_element_set, name, desc))
+    #     return list_of_subgroups
 
     def trivial_subgroups(self):
         """Return the group's two trivial subgroups."""

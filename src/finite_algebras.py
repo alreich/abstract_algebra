@@ -74,6 +74,7 @@ class FiniteAlgebra:
         self.name = name
         self.description = description
         self.__elements = elements
+        self.__inverses = dict()
 
         # Setup the multiplication table
         if isinstance(table, CayleyTable):
@@ -161,6 +162,16 @@ class FiniteAlgebra:
         """Returns True if every element in the algebra has an inverse that is also in the algebra;
         returns False otherwise."""
         return self.__table.has_inverses()
+
+    def inv(self, element):
+        """Return the inverse of an element"""
+        if self.has_inverses():
+            if element in self.__inverses:
+                return self.__inverses[element]
+            else:
+                return None
+        else:
+            return None
 
     def to_dict(self, include_classname=False):
         """Returns a Python dictionary that represents the algebra.
@@ -453,9 +464,9 @@ class Group(Monoid):
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
 
-    def inv(self, element):
-        """Return the inverse of an element"""
-        return self.__inverses[element]
+    # def inv(self, element):
+    #     """Return the inverse of an element"""
+    #     return self.__inverses[element]
 
     def conjugate(self, a, g):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
@@ -608,7 +619,6 @@ class Group(Monoid):
         return None
 
 
-# TODO: See if this can be applied higher up in the class hierarchy (e.g., to Magmas, perhaps)
 def partition_into_isomorphic_lists(list_of_groups):
     """Partition the list of groups into sub-lists of groups that are isomorphic to each other.
     The purpose of this function is to operate on the proper subgroups of a group to determine

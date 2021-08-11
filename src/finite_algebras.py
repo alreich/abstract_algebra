@@ -333,13 +333,17 @@ class Magma(FiniteAlgebra):
         else:
             return list(result)
 
-    def closed_proper_subsets_of_elements(self):
+    def closed_subsets_of_elements(self, non_trivial=True):
         """Return all unique, closed, proper subsets of the algebra's elements.
         This returns a list of lists. Each list represents the elements of a subalgebra."""
         closed = set()  # Build the result as a set of sets to avoid duplicates
         all_elements = self.elements
         n = len(all_elements)
-        for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
+        if non_trivial:
+            range_low = 2  # avoids single element sets
+        else:
+            range_low = 1
+        for i in range(range_low, n - 1):  # No need to test entire set
             # Look at all combinations of elements: pairs, triples, quadruples, etc.
             for combo in it.combinations(all_elements, i):
                 clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
@@ -367,7 +371,8 @@ class Magma(FiniteAlgebra):
         desc = f"Subalgebra of: {self.description}"
         count = 0
         list_of_subalgebras = []
-        for closed_element_set in self.closed_proper_subsets_of_elements():
+        # for closed_element_set in self.closed_proper_subsets_of_elements():
+        for closed_element_set in self.closed_subsets_of_elements():
             name = f"{self.name}_subalgebra_{count}"
             count += 1
             list_of_subalgebras.append(self.subalgebra_from_elements(closed_element_set, name, desc))
@@ -464,9 +469,9 @@ class Group(Monoid):
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
 
-    # def inv(self, element):
-    #     """Return the inverse of an element"""
-    #     return self.__inverses[element]
+    def inv(self, element):
+        """Return the inverse of an element"""
+        return self.__inverses[element]
 
     def conjugate(self, a, g):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
@@ -560,7 +565,8 @@ class Group(Monoid):
 
     def subgroups(self):
         """Return a list of all subgroups, including trivial subgroups."""
-        return self.proper_subgroups() + self.trivial_subgroups()
+        # return self.proper_subgroups() + self.trivial_subgroups()
+        return self.proper_subalgebras() + self.trivial_subgroups()
 
     def unique_proper_subgroups(self, subgroups=None):
         """Return a list of proper subgroups that are unique, up to isomorphism.
@@ -568,7 +574,8 @@ class Group(Monoid):
         if subgroups:
             partitions = partition_into_isomorphic_lists(subgroups)
         else:
-            partitions = partition_into_isomorphic_lists(self.proper_subgroups())
+            # partitions = partition_into_isomorphic_lists(self.proper_subgroups())
+            partitions = partition_into_isomorphic_lists(self.proper_subalgebras())
         # Return a list of the first subgroups from each sublist of proper subgroups
         return [partition[0] for partition in partitions]
 
@@ -607,7 +614,7 @@ class Group(Monoid):
         if unique:
             subgrps = self.unique_proper_subgroups()
         else:
-            subgrps = self.proper_subgroups()
+            subgrps = self.proper_subalgebras()
         print(f"\nSubgroups of {self.name}:")
         for subgrp in subgrps:
             print(f"\n  {subgrp.name}:")

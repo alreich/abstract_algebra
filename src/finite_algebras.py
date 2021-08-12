@@ -488,75 +488,6 @@ class Group(Monoid):
                     break
         return result
 
-    # TODO: Look into pushing closure and related functionality up the hierarchy
-
-    # def closure(self, subset_of_elements):
-    #     """Given a subset (in list form) of the group's elements (name strings),
-    #     return the smallest possible set of elements, containing the subset,
-    #     that is closed under group multiplication, with inverses."""
-    #
-    #     # Make sure inverses are considered
-    #     result = set(subset_of_elements)
-    #     for elem in subset_of_elements:
-    #         result.add(self.inv(elem))
-    #
-    #     # Add the products of all possible pairs
-    #     for pair in it.product(result, result):
-    #         result.add(self.op(*pair))
-    #
-    #     # If the input set of elements increased, recurse ...
-    #     if len(result) > len(subset_of_elements):
-    #         return self.closure(list(result))
-    #
-    #     # ...otherwise, stop and return the result
-    #     else:
-    #         return list(result)
-
-    # TODO: Write a method, is_closed, using closure, above.  Use this method in the
-    #       subgroup method, below.
-
-    # def closed_proper_subsets_of_elements(self):
-    #     """Return all unique, closed, proper subsets of the Group's elements.
-    #     This returns a list of lists. Each list represents the elements of a subgroup."""
-    #     closed = set()  # Build the result as a set of sets to avoid duplicates
-    #     all_elements = self.elements
-    #     n = len(all_elements)
-    #     for i in range(2, n - 1):  # avoids trivial closures, {'e'} & set of all elements
-    #         # Look at all combinations of elements: pairs, triples, quadruples, etc.
-    #         for combo in it.combinations(all_elements, i):
-    #             clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
-    #             if len(clo) < n:  # Don't include closures consisting of all elements
-    #                 closed.add(clo)
-    #     return list(map(lambda x: list(x), closed))
-
-    # def subgroup_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
-    #     """Return the Group constructed from the given closed subset of elements."""
-    #     # Make sure the elements are sorted according to their order in the parent Group (self)
-    #     # TODO: Check whether the input elements are indeed closed (make this check optional)
-    #     #       Use the is_closed method (To Be Written) defined, above.
-    #     elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.elements.index(x))
-    #     table = []
-    #     for a in elements_sorted:
-    #         row = []
-    #         for b in elements_sorted:
-    #             # The table entry is the index of the product in the sorted elements list
-    #             row.append(elements_sorted.index(self.op(a, b)))
-    #         table.append(row)
-    #     return Group(name, desc, elements_sorted, table)
-
-    # TODO: Generalize the concept of subgroups to subalgebras and move it up the hierarchy.
-
-    # def proper_subgroups(self):
-    #     """Return a list of proper subgroups of the group."""
-    #     desc = f"Subgroup of: {self.description}"
-    #     count = 0
-    #     list_of_subgroups = []
-    #     for closed_element_set in self.closed_proper_subsets_of_elements():
-    #         name = f"{self.name}_subgroup_{count}"
-    #         count += 1
-    #         list_of_subgroups.append(self.subgroup_from_elements(closed_element_set, name, desc))
-    #     return list_of_subgroups
-
     def trivial_subgroups(self):
         """Return the group's two trivial subgroups."""
         name = f"Subgroup of {self.name}"
@@ -566,7 +497,6 @@ class Group(Monoid):
 
     def subgroups(self):
         """Return a list of all subgroups, including trivial subgroups."""
-        # return self.proper_subgroups() + self.trivial_subgroups()
         return self.proper_subalgebras() + self.trivial_subgroups()
 
     def unique_proper_subgroups(self, subgroups=None):
@@ -575,7 +505,6 @@ class Group(Monoid):
         if subgroups:
             partitions = partition_into_isomorphic_lists(subgroups)
         else:
-            # partitions = partition_into_isomorphic_lists(self.proper_subgroups())
             partitions = partition_into_isomorphic_lists(self.proper_subalgebras())
         # Return a list of the first subgroups from each sublist of proper subgroups
         return [partition[0] for partition in partitions]
@@ -600,7 +529,6 @@ class Group(Monoid):
         if size <= max_size:
             if use_table_names:
                 print(f"Cayley Table (showing names):")
-                # pp.pprint(self.table_as_list_with_names())
                 pp.pprint(self.table.to_list_with_names(self.elements))
             else:
                 print(f"Cayley Table (showing indices):")
@@ -1058,11 +986,12 @@ def get_int_forms(ref_group, isomorphisms):
 
 def is_field(add_id, elements, mult_table):
     """Given a Ring, determine whether it is also a Field."""
-    rng_mult = make_finite_algebra("tmp", "Temp", elements, mult_table.table)
-    elems = rng_mult.elements.copy()
-    elems.remove(elements[add_id])
-    alg = rng_mult.subalgebra_from_elements(elems)
-    return isinstance(alg, Group) and alg.is_commutative()
+    # rng_mult = make_finite_algebra("tmp", "Temp", elements, mult_table.table)
+    # elems = rng_mult.elements.copy()
+    # elems.remove(elements[add_id])
+    # alg = rng_mult.subalgebra_from_elements(elems)
+    # return isinstance(alg, Group) and alg.is_commutative()
+    return False
 
 
 class Field(Ring):
@@ -1070,9 +999,8 @@ class Field(Ring):
     def __init__(self, name, description, elements, table, table2, check_inputs=True):
         super().__init__(name, description, elements, table, table2, check_inputs)
 
-        # if check_inputs:
-        #     if not is_field_2(super().add_identity, super().elements, super().mult_table.table):
-        #         raise ValueError(f"CHECK INPUTS: Inputs don't support a Field.")
+        if check_inputs:
+            pass
 
 
 def generate_prime_field(order, elem_name='a', name=None, description=None):
@@ -1264,7 +1192,7 @@ def make_finite_algebra(*args):
         is_assoc2 = table2.is_associative()
 
     is_assoc = table.is_associative()
-    identity = table.identity()  # this is the integer index of the identity, not the element name (str)
+    identity = table.identity()  # this is the integer index of the identity, not the name str
     # id_name = None
     if identity is not None:
         inverses = table.has_inverses()
@@ -1364,7 +1292,7 @@ def powerset(iterable):
     return it.chain.from_iterable(it.combinations(s, r) for r in range(len(s)+1))
 
 
-def make_table(table_string):
+def make_table_from_xml(table_string):
     """This function helps turn the XML-based tables at https://groupprops.subwiki.org/wiki/Main_Page
     into a list of lists for use here.
 

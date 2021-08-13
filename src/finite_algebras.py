@@ -800,18 +800,6 @@ class Ring(Group):
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
         return None
 
-    # def is_field(self):
-    #     """Determine whether the Ring is actually a Field."""
-    #     # Get the algebra defined by the multiplicative portion of the Ring
-    #     rng_mult_alg = make_finite_algebra("tmp", "Temp", self.elements, self.mult_table.table)
-    #     # Create a copy of the element list without the additive identity element
-    #     elems = rng_mult_alg.elements.copy()
-    #     elems.remove(self.add_identity)
-    #     # Generate an algebra with the element list just created
-    #     alg = rng_mult_alg.subalgebra_from_elements(elems)
-    #     # If the algebra is a commutative Group, then this Ring is a Field
-    #     return isinstance(alg, Group) and alg.is_commutative()
-
 
 def generate_commutative_ring(order, elem_name='a', name=None, description=None):
     """Generates a commutative ring over {0,1,2,...,n-1}, where addition and multiplication
@@ -955,35 +943,6 @@ def get_int_forms(ref_group, isomorphisms):
 #   Field
 # =========
 
-# def is_field(rng):
-#     """Given a Ring, determine whether it is also a Field."""
-#     rng_mult = make_finite_algebra("tmp", "Temp", rng.elements, rng.mult_table.table)
-#     elems = rng_mult.elements.copy()
-#     elems.remove(rng.add_identity)
-#     alg = rng_mult.subalgebra_from_elements(elems)
-#     return isinstance(alg, Group) and alg.is_commutative()
-
-# def is_field(add_id, elements, mult_table):
-#     mult_alg = make_finite_algebra("tmp", "Temp", elements, mult_table)
-#     elems = mult_alg.elements.copy()
-#     if isinstance(add_id, int):
-#         elems.remove(elems[add_id])
-#     elif isinstance(add_id, str):
-#         elems.remove(add_id)
-#     else:
-#         raise ValueError(f"Additive identity, {add_id}, is not an integer or string.")
-#     alg = mult_alg.subalgebra_from_elements(elems)
-#     return isinstance(alg, Group) and alg.is_commutative()
-
-# def is_field(add_id, elements, mult_table):
-#     # mult_alg = make_finite_algebra("tmp", "Temp", elements, mult_table)
-#     # elems = mult_alg.elements.copy()
-#     # # elems.remove(elems[add_id_index])
-#     # elems.remove(add_id)
-#     # alg = mult_alg.subalgebra_from_elements(elems)
-#     # return isinstance(alg, Group) and alg.is_commutative()
-#     return False
-
 def is_field(add_id, elements, mult_table):
     """Given a Ring, determine whether it is also a Field."""
     # rng_mult = make_finite_algebra("tmp", "Temp", elements, mult_table.table)
@@ -1024,104 +983,6 @@ def generate_prime_field(order, elem_name='a', name=None, description=None):
 # =====================
 # Make Finite Algebra
 # =====================
-
-# def make_finite_algebra(*args):
-#     """Analyzes the input table and returns the appropriate finite algebra.
-#
-#     A finite algebra consists of four items: name (str), description (str),
-#     elements (list of str), and table (list of lists of int/str).
-#
-#     This function either takes all four items in the order described, above,
-#     or a single JSON file name, or a single Python dictionary, where the latter
-#     two contain definitions of the four items, using the keywords: 'name',
-#     'description', 'elements', and 'table'.  Any other keywords contained in
-#     the JSON file or Python dictionary are ignored (e.g.., 'type').
-#
-#     See the examples in the User Guide.
-#     """
-#
-#     if len(args) == 1:
-#
-#         # Create from a JSON file
-#         if isinstance(args[0], str):
-#             with open(args[0], 'r') as fin:
-#                 finalg_dict = json.load(fin)
-#
-#         # Create from a dictionary
-#         elif isinstance(args[0], dict):
-#             finalg_dict = args[0]
-#
-#         else:
-#             raise ValueError("If there's a single input, then it must be a string or a dictionary.")
-#
-#     elif len(args) == 4:
-#
-#         finalg_dict = {'name': args[0],
-#                        'description': args[1],
-#                        'elements': args[2],
-#                        'table': args[3]
-#                        }
-#
-#     elif len(args) == 5:
-#
-#         finalg_dict = {'name': args[0],
-#                        'description': args[1],
-#                        'elements': args[2],
-#                        'table': args[3],
-#                        'table2': args[4]
-#                        }
-#     else:
-#         raise ValueError("Incorrect number of input arguments.")
-#
-#     name = finalg_dict['name']
-#     desc = finalg_dict['description']
-#     elems = finalg_dict['elements']
-#     tbl = finalg_dict['table']
-#
-#     # Check for duplicate element names
-#     dups = get_duplicates(elems)
-#     if len(dups) == 0:
-#         pass
-#     else:
-#         raise ValueError(f"Duplicate element names: {dups}")
-#
-#     table = make_cayley_table(tbl, elems)
-#
-#     table2 = None
-#     is_assoc2 = False
-#     if 'table2' in finalg_dict:
-#         table2 = make_cayley_table(finalg_dict['table2'], elems)
-#         is_assoc2 = table2.is_associative()
-#
-#     is_assoc = table.is_associative()
-#     identity = table.identity()  # this is the integer index of the identity, not the element name (str)
-#     id_name = None
-#     if identity is not None:
-#         inverses = table.has_inverses()
-#         id_name = elems[identity]
-#     else:
-#         inverses = None
-#
-#     if is_assoc:
-#         if identity is not None:
-#             if inverses:
-#                 if table2 is not None and is_assoc2:
-#                     # print(f"identity = {identity}")
-#                     # print(f"elems = {elems}")
-#                     # print(f"table2 = {table2}")
-#                     if is_field(id_name, elems, table2.table):
-#                         return Field(name, desc, elems, table, table2, check_inputs=False)
-#                     else:
-#                         return Ring(name, desc, elems, table, table2, check_inputs=False)
-#                 else:
-#                     return Group(name, desc, elems, table, check_inputs=False)
-#             else:
-#                 return Monoid(name, desc, elems, table, check_inputs=False)
-#         else:
-#             return Semigroup(name, desc, elems, table, check_inputs=False)
-#     else:
-#         return Magma(name, desc, elems, table)
-
 
 def make_finite_algebra(*args):
     """Analyzes the input table and returns the appropriate finite algebra.

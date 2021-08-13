@@ -682,7 +682,6 @@ class Ring(Group):
         if isinstance(table2, CayleyTable):
             self.__ring_mult_table = table2
         else:
-            # self.__ring_mult_table = CayleyTable(table2)
             self.__ring_mult_table = make_cayley_table(table2, elements)
 
         self.__mult_identity = self.__ring_mult_table.identity()
@@ -747,10 +746,6 @@ class Ring(Group):
     def mult(self, *args):
         """Ring multiplication, based on the second table."""
         return self.__ring_mult(*args)
-
-    # TODO: Combine this with the one that does the same thing for Groups and such.
-    # def ring_mult_table_with_names(self):
-    #     return [[self.elements[elem_pos] for elem_pos in row] for row in self.__ring_mult_table.tolist()]
 
     def extract_additive_algebra(self):
         """A Ring's elements over addition, alone, should be a commutative Group.  This function
@@ -943,14 +938,19 @@ def get_int_forms(ref_group, isomorphisms):
 #   Field
 # =========
 
-def is_field(add_id, elements, mult_table):
-    """Given a Ring, determine whether it is also a Field."""
-    # rng_mult = make_finite_algebra("tmp", "Temp", elements, mult_table.table)
-    # elems = rng_mult.elements.copy()
-    # elems.remove(elements[add_id])
-    # alg = rng_mult.subalgebra_from_elements(elems)
-    # return isinstance(alg, Group) and alg.is_commutative()
-    return False
+def is_field(add_id, elements, table):
+    mult = make_finite_algebra("tmp", "temporary", elements, table)
+    elems_copy = elements.copy()
+    elems_copy.remove(add_id)
+    elems_copy_clo = mult.closure(elems_copy)
+    if set(elems_copy) == set(elems_copy_clo):
+        mult_sub = mult.subalgebra_from_elements(elems_copy)
+        if isinstance(mult_sub, Group) and mult_sub.is_commutative():
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
 class Field(Ring):
@@ -1065,7 +1065,7 @@ def make_finite_algebra(*args):
         if identity is not None:
             if inverses:
                 if table2 is not None and is_assoc2:
-                    if is_field(identity, elems, table2):
+                    if is_field(elems[identity], elems, table2.table):
                         return Field(name, desc, elems, table, table2, check_inputs=False)
                     else:
                         return Ring(name, desc, elems, table, table2, check_inputs=False)

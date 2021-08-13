@@ -973,15 +973,28 @@ class Field(Ring):
             else:
                 raise ValueError(f"Inputs do not support the construction of a Field.")
 
+        self.__mult_sub_grp.name = f"{self.name}_G"
+        self.__mult_sub_grp.description = f"Multiplicative abelian Group of {self.name}"
+
     def mult_abelian_subgroup(self):
+        """Return the abelian Group defined by the Ring elements, minus the additive identity,
+        under Ring multiplication."""
         return self.__mult_sub_grp
 
+    def mult_inv(self, element):
+        """Return the multiplicative inverse of 'element', unless it's the additive identity
+        element, in which case, return None."""
+        if element == self.add_identity:
+            return None
+        else:
+            return self.__mult_sub_grp.inv(element)
+
     def div(self, x, y):
-        """Return x/y if y is not the additive identity; otherwise return None."""
+        """Return x/y, if y is not the additive identity; otherwise return None."""
         if y == self.add_identity:
             return None
         else:
-            return self.mult(x, self.__mult_sub_grp.inv(y))
+            return self.mult(x, self.mult_inv(y))
 
 
 # def generate_prime_field(order, elem_name='a', name=None, description=None):

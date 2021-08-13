@@ -126,7 +126,7 @@ Misc Utilities
 .. autofunction:: finite_algebras.get_integer_form
 .. autofunction:: finite_algebras.index_table_from_name_table
 .. autofunction:: finite_algebras.is_table_associative
-.. autofunction:: finite_algebras.make_table
+.. autofunction:: finite_algebras.make_table_from_xml
 .. autofunction:: finite_algebras.partition_into_isomorphic_lists
 .. autofunction:: finite_algebras.powerset
 .. autofunction:: finite_algebras.tables_to_groups

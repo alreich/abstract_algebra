@@ -6,5 +6,9 @@
   "s3_symmetric_group_on_3_letters.json",
   "s3x_symmetric_group_OTHER.json",
   "v4_klein_4_group.json",
-  "z4_cyclic_group_of_order_4.json"
+  "z4_cyclic_group_of_order_4.json",
+  "field_with_four_elements.json",
+  "magma_with_identity.json",
+  "Kandasamy_Example_1_4_1.json",
+  "ring_based_on_2x2_matrices.json"
 ]

@@ -1,0 +1,10 @@
+{"name": "Example 1.4.1",
+ "description": "See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy",
+ "elements": ["a", "b", "c", "d", "e", "f"],
+ "table": [[0, 3, 0, 3, 0, 3],
+           [1, 4, 1, 4, 1, 4],
+           [2, 5, 2, 5, 2, 5],
+           [3, 0, 3, 0, 3, 0],
+           [4, 1, 4, 1, 4, 1],
+           [5, 2, 5, 2, 5, 2]]
+}

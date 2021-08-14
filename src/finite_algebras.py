@@ -174,25 +174,37 @@ class FiniteAlgebra:
         else:
             return None
 
-    def to_dict(self, include_classname=False):
-        """Returns a Python dictionary that represents the algebra.
-        if 'include_classname is True, then the classname (ie., type of
-        algebra) is included with key, 'type'.  However, this is only
-        for human consumption; 'type' is ignored by the
-        make_finite_algebra function."""
+    # def to_dict(self, include_classname=False):
+    #     """Returns a Python dictionary that represents the algebra.
+    #     if 'include_classname is True, then the classname (ie., type of
+    #     algebra) is included with key, 'type'.  However, this is only
+    #     for human consumption; 'type' is ignored by the
+    #     make_finite_algebra function."""
+    #     if include_classname:
+    #         return {'type': self.__class__.__name__,
+    #                 'name': self.name,
+    #                 'description': self.description,
+    #                 'elements': self.__elements,
+    #                 'table': self.__table.tolist()
+    #                 }
+    #     else:
+    #         return {'name': self.name,
+    #                 'description': self.description,
+    #                 'elements': self.__elements,
+    #                 'table': self.__table.tolist()
+    #                 }
+
+    def to_dict(alg, include_classname=False):
+        result = {'name': alg.name,
+                  'description': alg.description,
+                  'elements': alg.elements,
+                  'table': alg.table.tolist()
+                  }
+        if isinstance(alg, Ring):
+            result['table2'] = alg.mult_table.tolist()
         if include_classname:
-            return {'type': self.__class__.__name__,
-                    'name': self.name,
-                    'description': self.description,
-                    'elements': self.__elements,
-                    'table': self.__table.tolist()
-                    }
-        else:
-            return {'name': self.name,
-                    'description': self.description,
-                    'elements': self.__elements,
-                    'table': self.__table.tolist()
-                    }
+            result['type'] = alg.__class__.__name__
+        return result
 
     def dumps(self):
         """Returns a JSON string that represents the algebra."""

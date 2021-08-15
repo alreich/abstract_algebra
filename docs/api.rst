@@ -61,15 +61,6 @@ Group
     :undoc-members:
     :private-members:
 
-Permutations
-------------
-
-.. autoclass:: permutations.Perm
-    :members:
-    :special-members: __eq__, __len__, __hash__, __mul__, __repr__
-    :undoc-members:
-    :private-members:
-
 Ring
 ----
 
@@ -107,6 +98,15 @@ Cayley Table
     :private-members:
 
 .. autofunction:: cayley_table.get_duplicates
+
+Permutations
+------------
+
+.. autoclass:: permutations.Perm
+    :members:
+    :special-members: __eq__, __len__, __hash__, __mul__, __repr__
+    :undoc-members:
+    :private-members:
 
 Examples
 --------

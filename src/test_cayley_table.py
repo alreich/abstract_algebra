@@ -94,7 +94,13 @@ class TestCayleyTable(TestCase):
 
         test_arrays = [self.tbl1, self.tbl2, self.tbl3, self.tbl4, self.tbl5]
 
+        test_arrays_add  = [self.tbl6a, self.tbl7a, self.tbl8a]
+        test_arrays_mult = [self.tbl6m, self.tbl7m, self.tbl8m]
+
         self.test_tables = [CayleyTable(tbl) for tbl in test_arrays]
+        self.test_tables_add = [CayleyTable(tbl) for tbl in test_arrays_add]
+        self.test_tables_mult = [CayleyTable(tbl) for tbl in test_arrays_mult]
+        self.all_tables = self.test_tables + self.test_tables_add + self.test_tables_mult
 
     # ABOUT TEST_TABLES:
     #
@@ -105,6 +111,9 @@ class TestCayleyTable(TestCase):
     #      3      4        True         True            0         0          0       True
     #      4      8        True         True            0         0          0       True
     #      5      6        True        False         None         0       None      False
+
+    # NOTE: Creating an inverse_lookup_dict requires that the index, "id", of the identity
+    # element be provided.
 
     def test_inverse_lookup_dict_1(self):
         tb1 = self.test_tables[1]
@@ -117,12 +126,12 @@ class TestCayleyTable(TestCase):
         self.assertEqual(tb2.inverse_lookup_dict(id2), {0: 0, 1: 3, 2: 2, 3: 1})
 
     def test_table_order(self):
-        result = [tbl.order for tbl in self.test_tables]
-        self.assertEqual(result, [3, 6, 4, 8, 6])
+        result = [tbl.order for tbl in self.all_tables]
+        self.assertEqual(result, [3, 6, 4, 8, 6, 4, 4, 6, 4, 4, 6])
 
     def test_table_associative(self):
-        result = [tbl.is_associative() for tbl in self.test_tables]
-        self.assertEqual(result, [False, True, True, True, True])
+        result = [tbl.is_associative() for tbl in self.all_tables]
+        self.assertEqual(result, [False, True, True, True, True, True, True, True, True, True, True])
 
     def test_table_left_id(self):
         result = [tbl.left_identity() for tbl in self.test_tables]
@@ -141,12 +150,19 @@ class TestCayleyTable(TestCase):
         self.assertEqual(result, [False, True, True, True, False])
 
     def test_cayley_table_to_str(self):
-        ct = CayleyTable(self.tbl3)
-        result = 'CayleyTable([[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]])'
-        self.assertEqual(str(ct), result)
+        result = str(CayleyTable(self.tbl3))
+        self.assertEqual(result[:26], '<CayleyTable, order 4, ID:')
 
     def test_equal(self):
         self.assertEqual(CayleyTable(self.tbl1), CayleyTable(self.tbl1_copy))
+
+    def test_mult_distributes_over_add(self):
+        result = [m.distributes_over(a) for (m, a) in zip(self.test_tables_mult, self.test_tables_add)]
+        self.assertEqual(result, [True, True, True])
+
+    def test_add_distributes_over_mult(self):
+        result = [a.distributes_over(m) for (m, a) in zip(self.test_tables_mult, self.test_tables_add)]
+        self.assertEqual(result, [False, False, False])
 
     # def test_about_tables(self):
     #     about_tables(self.test_tables)

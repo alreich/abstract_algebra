@@ -700,7 +700,13 @@ class Ring(Group):
         else:
             self.__ring_mult_table = make_cayley_table(table2, elements)
 
-        self.__mult_identity = self.__ring_mult_table.identity()
+        # If it exists, setup the Ring's multiplicative identity element
+        mult_id_index = self.__ring_mult_table.identity()
+        if mult_id_index is not None:
+            self.__mult_identity = self.elements[mult_id_index]
+        else:
+            self.__mult_identity = None
+
         self.__ring_mult = FiniteOperator(self.elements, self.__mult_identity, self.__ring_mult_table)
 
         if check_inputs:
@@ -794,7 +800,7 @@ class Ring(Group):
         """Print information about the Ring."""
         super().about(max_size, use_table_names)
         if self.mult_identity is not None:
-            print(f"Mult. Identity: {self.elements[self.mult_identity]}")
+            print(f"Mult. Identity: {self.mult_identity}")
         else:
             print(f"Mult. Identity: None")
         print(f"Mult. Commutative? {yes_or_no(self.mult_table.is_commutative())}")
@@ -802,7 +808,6 @@ class Ring(Group):
         if size <= max_size:
             if use_table_names:
                 print(f"Multiplicative Cayley Table (showing names):")
-                # pp.pprint(self.ring_mult_table_with_names())
                 pp.pprint(self.__ring_mult_table.to_list_with_names(self.elements))
             else:
                 print(f"Multiplicative Cayley Table (showing indices):")

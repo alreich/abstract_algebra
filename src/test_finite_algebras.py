@@ -156,37 +156,44 @@ class TestGroup(TestCase):
     def test_not_isomorphic(self):
         self.assertFalse(self.z4.isomorphic(self.v4))
 
-# class TestRing(TestCase):
-#
-#     def setUp(self) -> None:
-#         pass
-#
-#     def test_ring_elements(self):
-#         self.fail()
-#
-#     def test_powerset_mult_table(self):
-#         self.fail()
-#
-#     def test_add_identity(self):
-#         self.fail()
-#
-#     def test_add(self):
-#         self.fail()
-#
-#     def test_ring_op(self):
-#         self.fail()
-#
-#     def test_mult_identity(self):
-#         self.fail()
-#
-#     def test_has_mult_identity(self):
-#         self.fail()
-#
-#     def test_is_distributive(self):
-#         self.fail()
-#
-#     def test_ring_mult_table_with_names(self):
-#         self.fail()
-#
-#     def test_pprint(self):
-#         self.fail()
+
+class TestRing(TestCase):
+
+    def setUp(self) -> None:
+
+        self.rng = make_finite_algebra('Powerset Ring 2',
+                                       'Ring on powerset of {0, 1}',
+                                       ['{}', '{0}', '{1}', '{0, 1}'],
+                                       [[0, 1, 2, 3],
+                                        [1, 0, 3, 2],
+                                        [2, 3, 0, 1],
+                                        [3, 2, 1, 0]],
+                                       [[0, 0, 0, 0],
+                                        [0, 1, 0, 1],
+                                        [0, 0, 2, 2],
+                                        [0, 1, 2, 3]]
+                                       )
+
+    def test_ring_elements(self):
+        self.assertEqual(self.rng.elements, ['{}', '{0}', '{1}', '{0, 1}'])
+
+    def test_powerset_mult_table(self):
+        self.assertEqual(self.rng.mult_table, CayleyTable([[0, 0, 0, 0], [0, 1, 0, 1], [0, 0, 2, 2], [0, 1, 2, 3]]))
+
+    def test_add_identity(self):
+        self.assertEqual(self.rng.add_identity, '{}')
+
+    def test_add(self):
+        self.assertEqual(self.rng.add('{1}', '{0, 1}'), '{0}')
+
+    def test_mult(self):
+        self.assertEqual(self.rng.mult('{1}', '{0, 1}'), '{1}')
+
+    def test_mult_identity(self):
+        self.assertEqual(self.rng.mult_identity, '{0, 1}')
+
+    def test_has_mult_identity(self):
+        self.assertTrue(self.rng.has_mult_identity())
+
+    def test_ring_zero_divisors(self):
+        self.assertEqual(self.rng.zero_divisors(), ['{0}', '{1}'])

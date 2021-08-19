@@ -203,9 +203,9 @@ def about_tables(list_of_cayley_tables):
         print(f"{i :>{6}} {n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}}")
 
 
-def get_duplicates(lst):
-    """Return a list of the duplicate items in the input list."""
-    return [item for item, count in co.Counter(lst).items() if count > 1]
+# def get_duplicates(lst):
+#     """Return a list of the duplicate items in the input list."""
+#     return [item for item, count in co.Counter(lst).items() if count > 1]
 
 
 # END OF FILE

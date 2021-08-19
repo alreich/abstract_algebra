@@ -174,26 +174,6 @@ class FiniteAlgebra:
         else:
             return None
 
-    # def to_dict(self, include_classname=False):
-    #     """Returns a Python dictionary that represents the algebra.
-    #     if 'include_classname is True, then the classname (ie., type of
-    #     algebra) is included with key, 'type'.  However, this is only
-    #     for human consumption; 'type' is ignored by the
-    #     make_finite_algebra function."""
-    #     if include_classname:
-    #         return {'type': self.__class__.__name__,
-    #                 'name': self.name,
-    #                 'description': self.description,
-    #                 'elements': self.__elements,
-    #                 'table': self.__table.tolist()
-    #                 }
-    #     else:
-    #         return {'name': self.name,
-    #                 'description': self.description,
-    #                 'elements': self.__elements,
-    #                 'table': self.__table.tolist()
-    #                 }
-
     def to_dict(self, include_classname=False):
         result = {'name': self.name,
                   'description': self.description,
@@ -233,7 +213,6 @@ class FiniteAlgebra:
         if size <= max_size:  # Don't print table if too large
             if use_table_names:
                 print(f"Cayley Table (showing names):")
-                # pp.pprint(self.table_as_list_with_names())
                 pp.pprint(self.table.to_list_with_names(self.elements))
             else:
                 print(f"Cayley Table (showing indices):")
@@ -346,17 +325,19 @@ class Magma(FiniteAlgebra):
         else:
             return list(result)
 
-    def closed_subsets_of_elements(self, non_trivial=True):
+    def closed_subsets_of_elements(self, divisors_only):
         """Return all unique, closed, proper subsets of the algebra's elements.
-        This returns a list of lists. Each list represents the elements of a subalgebra."""
+        This returns a list of lists. Each list represents the elements of a subalgebra.
+        If divisors_only is True, then only subalgebras of orders that are divisors of
+        self will be examined."""
         closed = set()  # Build the result as a set of sets to avoid duplicates
         all_elements = self.elements
         n = len(all_elements)
-        if non_trivial:
-            range_low = 2  # avoids single element sets
+        if divisors_only:
+            rng = divisors(n, non_trivial=divisors_only)
         else:
-            range_low = 1
-        for i in range(range_low, n - 1):  # No need to test entire set
+            rng = range(2, n - 1)
+        for i in rng:
             # Look at all combinations of elements: pairs, triples, quadruples, etc.
             for combo in it.combinations(all_elements, i):
                 clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
@@ -379,13 +360,12 @@ class Magma(FiniteAlgebra):
             table.append(row)
         return make_finite_algebra(name, desc, elements_sorted, table)
 
-    def proper_subalgebras(self):
+    def proper_subalgebras(self, divisors_only):
         """Return a list of proper subalgebras of the algebra."""
         desc = f"Subalgebra of: {self.description}"
         count = 0
         list_of_subalgebras = []
-        # for closed_element_set in self.closed_proper_subsets_of_elements():
-        for closed_element_set in self.closed_subsets_of_elements():
+        for closed_element_set in self.closed_subsets_of_elements(divisors_only):
             name = f"{self.name}_subalgebra_{count}"
             count += 1
             list_of_subalgebras.append(self.subalgebra_from_elements(closed_element_set, name, desc))
@@ -513,7 +493,7 @@ class Group(Monoid):
 
     def subgroups(self):
         """Return a list of all subgroups, including trivial subgroups."""
-        return self.proper_subalgebras() + self.trivial_subgroups()
+        return self.proper_subalgebras(True) + self.trivial_subgroups()
 
     def unique_proper_subgroups(self, subgroups=None):
         """Return a list of proper subgroups that are unique, up to isomorphism.
@@ -521,7 +501,7 @@ class Group(Monoid):
         if subgroups:
             partitions = partition_into_isomorphic_lists(subgroups)
         else:
-            partitions = partition_into_isomorphic_lists(self.proper_subalgebras())
+            partitions = partition_into_isomorphic_lists(self.proper_subalgebras(True))
         # Return a list of the first subgroups from each sublist of proper subgroups
         return [partition[0] for partition in partitions]
 
@@ -1008,24 +988,6 @@ class Field(Ring):
             return self.mult(x, self.mult_inv(y))
 
 
-# def generate_prime_field(order, elem_name='a', name=None, description=None):
-#     if is_prime(order):
-#         if name:
-#             nm = name
-#         else:
-#             nm = "F" + str(order)
-#         if description:
-#             desc = description
-#         else:
-#             desc = f"Autogenerated prime field of order {order}"
-#         elements = [elem_name + str(i) for i in range(order)]
-#         add_table = [[(a + b) % order for b in range(order)] for a in range(order)]
-#         mult_table = [[(a * b) % order for b in range(order)] for a in range(order)]
-#         return make_finite_algebra(nm, desc, elements, add_table, mult_table)
-#     else:
-#         raise ValueError(f"{order} must be a prime number")
-
-
 def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
 
     if is_prime(n):
@@ -1127,10 +1089,8 @@ def make_finite_algebra(*args):
 
     is_assoc = table.is_associative()
     identity = table.identity()  # this is the integer index of the identity, not the name str
-    # id_name = None
     if identity is not None:
         inverses = table.has_inverses()
-        # id_name = elems[identity]
     else:
         inverses = None
 
@@ -1172,6 +1132,21 @@ def is_prime(n):
         return True
     else:
         raise False
+
+
+def divisors(n, non_trivial=False):
+    """Return the set of divisors of n.  Setting non_trivial=True, returns all
+    divisors except for 1 & n."""
+    result = set()
+    for i in range(1, int(math.sqrt(n)) + 1):
+        quot, rem = divmod(n, i)
+        if rem == 0:
+            result.update({i, quot})
+    res = sorted(list(result))
+    if non_trivial:
+        return res[1:-1]
+    else:
+        return res
 
 
 def delete_row_col(np_arr, row, col):

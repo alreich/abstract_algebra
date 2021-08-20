@@ -11,7 +11,7 @@ Primary Algebra Constructor
 Operator
 --------
 
-.. autoclass:: finite_algebras.Operator
+.. autoclass:: finite_algebras.FiniteOperator
     :members:
     :special-members: __call__
     :undoc-members:
@@ -96,8 +96,6 @@ Cayley Table
     :special-members: __eq__, __repr__, __str__, __getitem__
     :undoc-members:
     :private-members:
-
-.. autofunction:: cayley_table.get_duplicates
 
 Permutations
 ------------

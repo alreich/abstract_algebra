@@ -334,7 +334,7 @@ class Magma(FiniteAlgebra):
         all_elements = self.elements
         n = len(all_elements)
         if divisors_only:
-            rng = divisors(n, non_trivial=divisors_only)
+            rng = divisors(n, non_trivial=True)
         else:
             rng = range(2, n - 1)
         for i in rng:
@@ -462,6 +462,10 @@ class Group(Monoid):
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
 
+    def inverse_mapping(self):
+        """Returns a dictionary that maps each element to its inverse."""
+        return self.__inverses
+
     def inv(self, element):
         """Return the inverse of an element"""
         return self.__inverses[element]
@@ -539,7 +543,7 @@ class Group(Monoid):
         if unique:
             subgrps = self.unique_proper_subgroups()
         else:
-            subgrps = self.proper_subalgebras()
+            subgrps = self.proper_subalgebras(True)
         print(f"\nSubgroups of {self.name}:")
         for subgrp in subgrps:
             print(f"\n  {subgrp.name}:")

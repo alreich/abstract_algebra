@@ -201,6 +201,7 @@ class FiniteAlgebra:
         print(f"\n{self.__class__.__name__}: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
+        print(f"Order: {self.order}")
         print(f"Elements: {self.elements}")
         if self.identity is None:
             print("Identity: None")
@@ -301,15 +302,16 @@ class Magma(FiniteAlgebra):
         else:
             return False
 
-    def closure(self, subset_of_elements):
+    def closure(self, subset_of_elements, include_inverses):
         """Given a subset (in list form) of the group's elements (name strings),
         return the smallest possible set of elements, containing the subset,
-        that is closed under group multiplication, with inverses."""
+        that is closed under multiplication.  If include_inverses is True
+        and the algebra has inverses, then they will be added to the closure."""
 
         result = set(subset_of_elements)
 
-        # Make sure inverses are considered
-        if self.has_inverses():
+        # Include inverses, maybe.
+        if include_inverses and self.has_inverses():
             for elem in subset_of_elements:
                 result.add(self.inv(elem))
 
@@ -319,13 +321,13 @@ class Magma(FiniteAlgebra):
 
         # If the input set of elements increased, recurse ...
         if len(result) > len(subset_of_elements):
-            return self.closure(list(result))
+            return self.closure(list(result), include_inverses)
 
         # ...otherwise, stop and return the result
         else:
             return list(result)
 
-    def closed_subsets_of_elements(self, divisors_only):
+    def closed_subsets_of_elements(self, divisors_only, include_inverses):
         """Return all unique, closed, proper subsets of the algebra's elements.
         This returns a list of lists. Each list represents the elements of a subalgebra.
         If divisors_only is True, then only subalgebras of orders that are divisors of
@@ -340,7 +342,8 @@ class Magma(FiniteAlgebra):
         for i in rng:
             # Look at all combinations of elements: pairs, triples, quadruples, etc.
             for combo in it.combinations(all_elements, i):
-                clo = frozenset(self.closure(list(combo)))  # freezing required to add a set to a set
+                # Freezing is required to add a set to a set
+                clo = frozenset(self.closure(list(combo), include_inverses))
                 if len(clo) < n:  # Don't include closures consisting of all elements
                     closed.add(clo)
         return list(map(lambda x: list(x), closed))
@@ -360,12 +363,12 @@ class Magma(FiniteAlgebra):
             table.append(row)
         return make_finite_algebra(name, desc, elements_sorted, table)
 
-    def proper_subalgebras(self, divisors_only):
+    def proper_subalgebras(self, divisors_only=True, include_inverses=True):
         """Return a list of proper subalgebras of the algebra."""
         desc = f"Subalgebra of: {self.description}"
         count = 0
         list_of_subalgebras = []
-        for closed_element_set in self.closed_subsets_of_elements(divisors_only):
+        for closed_element_set in self.closed_subsets_of_elements(divisors_only, include_inverses):
             name = f"{self.name}_subalgebra_{count}"
             count += 1
             list_of_subalgebras.append(self.subalgebra_from_elements(closed_element_set, name, desc))
@@ -497,7 +500,7 @@ class Group(Monoid):
 
     def subgroups(self):
         """Return a list of all subgroups, including trivial subgroups."""
-        return self.proper_subalgebras(True) + self.trivial_subgroups()
+        return self.proper_subalgebras(divisors_only=True, include_inverses=True) + self.trivial_subgroups()
 
     def unique_proper_subgroups(self, subgroups=None):
         """Return a list of proper subgroups that are unique, up to isomorphism.
@@ -505,7 +508,8 @@ class Group(Monoid):
         if subgroups:
             partitions = partition_into_isomorphic_lists(subgroups)
         else:
-            partitions = partition_into_isomorphic_lists(self.proper_subalgebras(True))
+            partitions = partition_into_isomorphic_lists(self.proper_subalgebras(divisors_only=True,
+                                                                                 include_inverses=True))
         # Return a list of the first subgroups from each sublist of proper subgroups
         return [partition[0] for partition in partitions]
 
@@ -514,6 +518,7 @@ class Group(Monoid):
         print(f"\n{self.__class__.__name__}: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
+        print(f"Order: {self.order}")
         print(f"Identity: {self.identity}")
         print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
@@ -543,7 +548,7 @@ class Group(Monoid):
         if unique:
             subgrps = self.unique_proper_subgroups()
         else:
-            subgrps = self.proper_subalgebras(True)
+            subgrps = self.proper_subalgebras(divisors_only=True, include_inverses=True)
         print(f"\nSubgroups of {self.name}:")
         for subgrp in subgrps:
             print(f"\n  {subgrp.name}:")
@@ -935,7 +940,7 @@ def is_field(add_id, elements, table):
     mult = make_finite_algebra("tmp", "temporary", elements, table)
     elems_copy = elements.copy()
     elems_copy.remove(add_id)
-    elems_copy_clo = mult.closure(elems_copy)
+    elems_copy_clo = mult.closure(elems_copy, True)  # Includes inverse elements
     if set(elems_copy) == set(elems_copy_clo):
         mult_sub = mult.subalgebra_from_elements(elems_copy)
         if isinstance(mult_sub, Group) and mult_sub.is_commutative():

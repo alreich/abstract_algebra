@@ -35,46 +35,55 @@ class Term:
             return f"{sign}{self.__coefficient}{self.__varname}^{self.__order}"
         
     def __call__(self, x):
+        """Compute and return the value of the term for x"""
         return self.__coefficient * power(x, self.__order)
     
     def __add__(self, other):
+        """If two terms have the same order, add them and return the resulting term."""
         if self.__order == other.__order:
             return Term(self.__coefficient + other.__coefficient, self.__order)
         else:
             raise ValueError(f"Terms must be of the same order, {self.__order} != {other.__order}")
     
     def __mul__(self, other):
+        """Multiply two terms and return the resulting term."""
         return Term(self.__coefficient * other.__coefficient,
                     self.__order + other.__order)
     
     def __eq__(self, other):
+        """Return True if the two terms are equal; return False otherwise."""
         return (self.__varname == other.__varname and
                 self.__order == other.__order and
                 self.__coefficient == other.__coefficient)
     
     @property
     def coefficient(self):
+        """Return the value of the term's coefficient"""
         return self.__coefficient
     
     @property
     def order(self):
+        """Return the order of the term."""
         return self.__order
     
-    def varname(self, newname=None):
-        if newname is not None:
-            if isinstance(newname, str):
-                self.__varname = newname
+    def varname(self, new_varname=None):
+        """Return or change the string (character) used for the term's variable."""
+        if new_varname is not None:
+            if isinstance(new_varname, str):
+                self.__varname = new_varname
             else:
                 raise ValueError("Variable name must be a string.")
         return self.__varname
     
     def is_constant(self):
+        """Return True if the term represents a constant value.  Return False, otherwise."""
         if self.__order == 0:
             return self.__coefficient
         else:
             return False
         
     def is_linear(self):
+        """Return True if the term is linear in the variable.  Return False, otherwise."""
         if self.__order == 1:
             return self.__coefficient
         else:

@@ -14,10 +14,10 @@ class Term:
     terms, separated by spaces: -2 -4x +7x^2 -3x^4
     """
     
-    def __init__(self, coefficient, order):
+    def __init__(self, coefficient, order, varname='x'):
         self.__coefficient = coefficient
         self.__order = order
-        self.__varname = "x"
+        self.__varname = varname
         
     def __repr__(self):
         return f"Term({self.__coefficient},{self.__order})"
@@ -95,33 +95,47 @@ class Polynomial:
     single string, as long as the terms of the polynomial are separated by spaces.
     """
     
-    def __init__(self, poly_spec):
-        """Given a list of coefficients, coeff, return a Polynomial"""
+    def __init__(self, poly_spec, varname='x'):
+        """Given a list of coefficients, coeff, return a Polynomial.
 
-        # In all of the poly_spec examples, below, the same polynomial is created.
+        poly_spec is the specification required to build the polynomial.
+        It can take one of five different forms as shown below.
 
-        # Example poly_spec: [-2, -4, 7, 0, -3]
-        #   Order IS important.  Missing orders must have 0 coefficient
+        1. An ordered list of term coefficients, where the position in
+        the list represents the order of the term:
+        [-2, -4, 7, 0, -3]
+
+        2. A list (no required order) of two-element tuples, where the
+        first element is a term's coefficient and the second is its order:
+        [(-3, 4), (-4,1), (7, 2), (-2,0)]
+
+        3. Same as 2, except the coefficient/order pairs can be lists:
+        [[-4,1], [7, 2], [-2,0], [-3, 4]]
+
+        4. A list of Term instances (no required order):
+        [Term(-2,0), Term(-4,1), Term(7,2), Term(-3,4)]
+
+        5. A string representation of a polynomial: "-2 -4x +7x^2 -3x^4", where
+        there must be a space between each term, and, except for the first term,
+        every term must begin with a + or - sign, and then a number, unless the
+        number is a 1.
+        """
+
         if isinstance(poly_spec[0], int):
-            terms = [Term(coeff, order) for order, coeff in enumerate(poly_spec)]
+            terms = [Term(coeff, order, varname) for order, coeff in enumerate(poly_spec)]
 
-        # Example poly_spec: [(-3, 4), (-4,1), (7, 2), (-2,0)]
-        #                or: [[-4,1], [7, 2], [-2,0], [-3, 4]]
-        #   Order is not important.  Only terms with non-zero coefficients are required
         elif isinstance(poly_spec[0], tuple) or isinstance(poly_spec[0], list):
-            terms = [Term(tup[0], tup[1]) for tup in poly_spec]
+            terms = [Term(tup[0], tup[1], varname) for tup in poly_spec]
 
-        # Example poly_spec: [Term(-2,0), Term(-4,1), Term(7,2), Term(-3,4)]
-        #   Order is not important.  Only terms with non-zero coefficients are required
         elif isinstance(poly_spec[0], Term):
-            terms = poly_spec
+            if all([trm.varname() == varname for trm in poly_spec]):
+                terms = poly_spec
+            else:
+                raise ValueError(f"All variable names must be the same as '{varname}'")
 
-        # Example poly_spec: "-2 -4x +7x^2 -3x^4"
-        #   Order is not important.  There must be one space between each term.
-        #   Except for the first term, every term must begin with a + or - sign
-        #   and then a number, unless the number is a 1.
         elif isinstance(poly_spec[0], str):
             terms = parse_polynomial(poly_spec, 'x')
+
         else:
             raise ValueError("Input to Polynomial constructor not valid")
 
@@ -171,6 +185,7 @@ def parse_polynomial(poly_str, varname):
     return [parse_term(term, varname) for term in poly_str.split()]
 
 
+# TODO: Make this function also consider 'varname'
 def combine_like_terms(terms):
     """Given a list of Terms, this function returns a possibly smaller list of Terms,
     where terms with the same order ("like terms") have been combined."""
@@ -183,10 +198,10 @@ def combine_like_terms(terms):
     return result
 
 
-def poly_from_string(poly_string, varname):
-    """Parse a polynomial string and return a list of Term that represent it."""
-    terms = [term for term in combine_like_terms(parse_polynomial(poly_string, varname))
-             if term.coefficient != 0]
-    if len(terms) == 0:
-        terms.append(Term(0, 0))
-    return terms
+# def poly_from_string(poly_string, varname):
+#     """Parse a polynomial string and return a list of Term that represent it."""
+#     terms = [term for term in combine_like_terms(parse_polynomial(poly_string, varname))
+#              if term.coefficient != 0]
+#     if len(terms) == 0:
+#         terms.append(Term(0, 0))
+#     return terms

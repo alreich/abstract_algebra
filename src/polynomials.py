@@ -139,6 +139,8 @@ class Polynomial:
         else:
             raise ValueError("Input to Polynomial constructor not valid")
 
+        self.__varname = varname
+
         self.__terms = [term for term in combine_like_terms(terms) if term.coefficient != 0]
         if len(self.__terms) == 0:
             self.__terms.append(Term(0, 0))
@@ -151,9 +153,27 @@ class Polynomial:
     
     def __call__(self, x):
         return fnc.reduce(lambda a, b: a + b, map(lambda term: term(x), self.__terms))
-    
+
+    def __add__(self, other):
+        if self.__varname == other.varname():
+            return Polynomial(self.__terms + other.terms())
+        else:
+            raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
+
+    def __mul__(self, other):
+        if self.__varname == other.varname():
+            prod_terms = list()
+            for t1 in self.__terms:
+                prod_terms += [t1 * t2 for t2 in other.terms()]
+            return Polynomial(prod_terms)
+        else:
+            raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
+
     def terms(self):
         return self.__terms
+
+    def varname(self):
+        return self.__varname
 
 
 def parse_term(term_str, varname):
@@ -197,11 +217,3 @@ def combine_like_terms(terms):
         result.append(combined_term)
     return result
 
-
-# def poly_from_string(poly_string, varname):
-#     """Parse a polynomial string and return a list of Term that represent it."""
-#     terms = [term for term in combine_like_terms(parse_polynomial(poly_string, varname))
-#              if term.coefficient != 0]
-#     if len(terms) == 0:
-#         terms.append(Term(0, 0))
-#     return terms

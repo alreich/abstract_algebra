@@ -93,13 +93,39 @@ class Term:
 class Polynomial:
     """A callable class for polynomials.  The constructor takes the polynomial as a 
     single string, as long as the terms of the polynomial are separated by spaces.
-    
-    Example: Polynomial('-4x -2 -3x^4 +7x^2', 'x') ==> '-2 -4x 7x^2 -3x^4'
     """
     
-    def __init__(self, poly_string, varname):
-        self.__terms = [term for term in combine_like_terms(parse_polynomial(poly_string, varname))
-                        if term.coefficient != 0]
+    def __init__(self, poly_spec):
+        """Given a list of coefficients, coeff, return a Polynomial"""
+
+        # In all of the poly_spec examples, below, the same polynomial is created.
+
+        # Example poly_spec: [-2, -4, 7, 0, -3]
+        #   Order IS important.  Missing orders must have 0 coefficient
+        if isinstance(poly_spec[0], int):
+            terms = [Term(coeff, order) for order, coeff in enumerate(poly_spec)]
+
+        # Example poly_spec: [(-3, 4), (-4,1), (7, 2), (-2,0)]
+        #                or: [[-4,1], [7, 2], [-2,0], [-3, 4]]
+        #   Order is not important.  Only terms with non-zero coefficients are required
+        elif isinstance(poly_spec[0], tuple) or isinstance(poly_spec[0], list):
+            terms = [Term(tup[0], tup[1]) for tup in poly_spec]
+
+        # Example poly_spec: [Term(-2,0), Term(-4,1), Term(7,2), Term(-3,4)]
+        #   Order is not important.  Only terms with non-zero coefficients are required
+        elif isinstance(poly_spec[0], Term):
+            terms = poly_spec
+
+        # Example poly_spec: "-2 -4x +7x^2 -3x^4"
+        #   Order is not important.  There must be one space between each term.
+        #   Except for the first term, every term must begin with a + or - sign
+        #   and then a number, unless the number is a 1.
+        elif isinstance(poly_spec[0], str):
+            terms = parse_polynomial(poly_spec, 'x')
+        else:
+            raise ValueError("Input to Polynomial constructor not valid")
+
+        self.__terms = [term for term in combine_like_terms(terms) if term.coefficient != 0]
         if len(self.__terms) == 0:
             self.__terms.append(Term(0, 0))
 
@@ -107,7 +133,7 @@ class Polynomial:
         poly_str = ""
         for term in self.__terms:
             poly_str += " " + str(term)
-        return poly_str
+        return poly_str[1:]
     
     def __call__(self, x):
         return fnc.reduce(lambda a, b: a + b, map(lambda term: term(x), self.__terms))
@@ -137,8 +163,10 @@ def parse_term(term_str, varname):
 
 
 def parse_polynomial(poly_str, varname):
-    """An extreme hack.  Terms in polynomials have to be separated by a space.
-    Example polynomial string where varname is 'x': '-2 -4x +7x^2 -3x^4'
+    """Given the string representation of a polynomial and the name of the polynomial's
+    variable, return the list Terms that represent it. This is an extreme hack.
+    The terms in the polynomial string must be separated by a space.
+    EXAMPLE: parse_polynomial('-2 -4x +7x^2 -3x^4', 'x')
     """
     return [parse_term(term, varname) for term in poly_str.split()]
 
@@ -153,3 +181,12 @@ def combine_like_terms(terms):
         combined_term = fnc.reduce(lambda t, s: t + s, like_terms)
         result.append(combined_term)
     return result
+
+
+def poly_from_string(poly_string, varname):
+    """Parse a polynomial string and return a list of Term that represent it."""
+    terms = [term for term in combine_like_terms(parse_polynomial(poly_string, varname))
+             if term.coefficient != 0]
+    if len(terms) == 0:
+        terms.append(Term(0, 0))
+    return terms

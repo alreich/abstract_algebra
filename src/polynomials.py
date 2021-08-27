@@ -24,7 +24,10 @@ class Term:
         self.__varname = varname
         
     def __repr__(self):
-        return f"Term({self.__coefficient},{self.__order})"
+        if self.__varname == 'x':
+            return f"Term({self.__coefficient}, {self.__order})"
+        else:
+            return f"Term({self.__coefficient}, {self.__order}, {self.__varname})"
     
     def __str__(self):
         if self.__coefficient > 0:
@@ -40,7 +43,7 @@ class Term:
         
     def __call__(self, x):
         """Compute and return the value of the term for x"""
-        return self.__coefficient * power(x, self.__order)
+        return self.__coefficient * pow(x, self.__order)
     
     def __add__(self, other):
         """If two terms have the same order, add them and return the resulting term."""
@@ -52,7 +55,8 @@ class Term:
     def __mul__(self, other):
         """Multiply two terms and return the resulting term."""
         return Term(self.__coefficient * other.__coefficient,
-                    self.__order + other.__order)
+                    self.__order + other.__order,
+                    self.__varname)
     
     def __eq__(self, other):
         """Return True if the two terms are equal; return False otherwise."""
@@ -78,20 +82,28 @@ class Term:
             else:
                 raise ValueError("Variable name must be a string.")
         return self.__varname
-    
-    def is_constant(self):
-        """Return True if the term represents a constant value.  Return False, otherwise."""
-        if self.__order == 0:
+
+    def copy(self):
+        return Term(self.__coefficient, self.__order, self.varname())
+
+    def is_of_order_n(self, n):
+        """Return the coefficient if the Term's order is n.  Return False, otherwise."""
+        if self.__order == n:
             return self.__coefficient
         else:
             return False
+
+    def is_constant(self):
+        """Return True if the term represents a constant value.  Return False, otherwise."""
+        return self.is_of_order_n(0)
         
     def is_linear(self):
         """Return True if the term is linear in the variable.  Return False, otherwise."""
-        if self.__order == 1:
-            return self.__coefficient
-        else:
-            return False
+        return self.is_of_order_n(1)
+
+    def is_quadratic(self):
+        """Return True if the term is quadratic in the variable.  Return False, otherwise."""
+        return self.is_of_order_n(2)
 
 
 class Poly:
@@ -138,7 +150,7 @@ class Poly:
                 raise ValueError(f"All variable names must be the same as '{varname}'")
 
         elif isinstance(poly_spec[0], str):
-            terms = parse_polynomial(poly_spec, 'x')
+            terms = parse_polynomial(poly_spec, varname)
 
         else:
             raise ValueError("Input to Polynomial constructor not valid")
@@ -155,9 +167,15 @@ class Poly:
         chars_using_tuples = 8 * len(self.__terms)
         chars_using_coeffs = 3 * self.__order
         if chars_using_tuples < chars_using_coeffs:
-            return f"Poly({self.term_tuples()})"
+            if self.__varname == 'x':
+                return f"Poly({self.term_tuples()})"
+            else:
+                return f"Poly({self.term_tuples()}, '{self.__varname}')"
         else:
-            return f"Poly({self.term_coefficients()})"
+            if self.__varname == 'x':
+                return f"Poly({self.term_coefficients()})"
+            else:
+                return f"Poly({self.term_coefficients()}, '{self.__varname}')"
 
     def __str__(self):
         poly_str = ""
@@ -179,7 +197,7 @@ class Poly:
             prod_terms = list()
             for t1 in self.__terms:
                 prod_terms += [t1 * t2 for t2 in other.terms()]
-            return Poly(prod_terms)
+            return Poly(prod_terms, self.__varname)
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
 
@@ -207,15 +225,23 @@ class Poly:
             coeffs[t.order] = t.coefficient
         return coeffs
 
+    def copy(self):
+        return Poly([Term(t.coefficient, t.order, t.varname)
+                     for t in self.__terms],
+                    self.__varname)
 
-def power(x, n):
-    result = 1
-    for _ in range(n):
-        result = result * x
-    return result
+
+# def power(x, n):
+#     """Return the value of x to the n power."""
+#     result = 1
+#     for _ in range(n):
+#         result = result * x
+#     return result
 
 
 def num(st):
+    """Figure out if the input string represents an int or a float and return
+    the appropriate numeric value."""
     try:
         result = int(st)
     except ValueError:
@@ -273,3 +299,8 @@ def combine_like_terms(terms):
         combined_term = fnc.reduce(lambda t, s: t + s, like_terms)
         result.append(combined_term)
     return result
+
+
+def fromroots(roots, varname='x'):
+    return fnc.reduce(lambda p, q: p * q, [Poly([r, -1], varname) for r in roots])
+

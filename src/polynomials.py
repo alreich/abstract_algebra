@@ -125,7 +125,7 @@ class Poly:
         number is a 1.
         """
 
-        if isinstance(poly_spec[0], int):
+        if isinstance(poly_spec[0], int) or isinstance(poly_spec[0], float):
             terms = [Term(coeff, order, varname) for order, coeff in enumerate(poly_spec)]
 
         elif isinstance(poly_spec[0], tuple) or isinstance(poly_spec[0], list):
@@ -215,6 +215,17 @@ def power(x, n):
     return result
 
 
+def num(st):
+    try:
+        result = int(st)
+    except ValueError:
+        try:
+            result = float(st)
+        except ValueError:
+            raise ValueError(f"Could not convert {st} to int or float.")
+    return result
+
+
 def parse_term(term_str, varname):
     """A very hacky term string parser.  Returns a Term from the input string."""
 
@@ -223,20 +234,21 @@ def parse_term(term_str, varname):
         if varpower in term_str:
             foo = term_str.split(varpower)  # e.g., '-3x^4' ==> ('-3', '4')
             if foo[0] == '' or foo[0] == '+':
-                args = [1, int(foo[1])]  # e.g., '+x^2' ==> ('1', '2')
+                args = [1, num(foo[1])]  # e.g., '+x^2' ==> ('1', '2')
             elif foo[0] == '-':
-                args = [-1, int(foo[1])]  # e.g., '-x^2' ==> ('-1', '2')
+                args = [-1, num(foo[1])]  # e.g., '-x^2' ==> ('-1', '2')
             else:
-                args = list(map(lambda x: int(x), foo))  # e.g., '-3x^4' ==> ('-3', '4')
+                # args = list(map(lambda x: num(x), foo))
+                args = [num(foo[0]), num(foo[1])]  # e.g., '-3x^4' ==> ('-3', '4')
         else:
             foo = term_str.split(varname)[0]
             if foo == '+' or foo == '-' or foo == '':
                 coeff_str = foo + '1'
-                args = [int(coeff_str), 1]
+                args = [num(coeff_str), 1]
             else:
-                args = [int(foo), 1]
+                args = [num(foo), 1]
     else:
-        args = [int(term_str), 0]
+        args = [num(term_str), 0]
 
     return Term(args[0], args[1])
 

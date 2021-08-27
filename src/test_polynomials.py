@@ -54,6 +54,6 @@ class TestPolynomials(TestCase):
 
     def test_polynomial_1(self):
         coeffs = [-2, -4, 7, 0, -3]
-        p = Polynomial(coeffs)
+        p = Poly(coeffs)
         result = [Term(-2,0), Term(-4,1), Term(7,2), Term(-3,4)]
         self.assertEqual(p.terms(), result)

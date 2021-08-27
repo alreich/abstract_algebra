@@ -1,12 +1,16 @@
+"""
+@summary:  An experimental prototype of polynomials (still a work-in-progress)
+@author:   Alfred J. Reich, Ph.D.
+@contact:  al.reich@gmail.com
+@copyright: Copyright (C) 2021 Alfred J. Reich, Ph.D.
+@license:  MIT
+@requires: Python 3.7.7 or higher
+@since:    2021.08
+@version:  0.1.0
+"""
+
 import functools as fnc
 import itertools as it
-
-
-def power(x, n):
-    result = 1
-    for _ in range(n):
-        result = result * x
-    return result
 
 
 class Term:
@@ -90,7 +94,7 @@ class Term:
             return False
 
 
-class Polynomial:
+class Poly:
     """A callable class for polynomials.  The constructor takes the polynomial as a 
     single string, as long as the terms of the polynomial are separated by spaces.
     """
@@ -145,7 +149,17 @@ class Polynomial:
         if len(self.__terms) == 0:
             self.__terms.append(Term(0, 0))
 
+        self.__order = max([t.order for t in self.__terms])
+
     def __repr__(self):
+        chars_using_tuples = 8 * len(self.__terms)
+        chars_using_coeffs = 3 * self.__order
+        if chars_using_tuples < chars_using_coeffs:
+            return f"Poly({self.term_tuples()})"
+        else:
+            return f"Poly({self.term_coefficients()})"
+
+    def __str__(self):
         poly_str = ""
         for term in self.__terms:
             poly_str += " " + str(term)
@@ -156,7 +170,7 @@ class Polynomial:
 
     def __add__(self, other):
         if self.__varname == other.varname():
-            return Polynomial(self.__terms + other.terms())
+            return Poly(self.__terms + other.terms())
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
 
@@ -165,9 +179,13 @@ class Polynomial:
             prod_terms = list()
             for t1 in self.__terms:
                 prod_terms += [t1 * t2 for t2 in other.terms()]
-            return Polynomial(prod_terms)
+            return Poly(prod_terms)
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
+
+    @property
+    def order(self):
+        return self.__order
 
     def terms(self):
         return self.__terms
@@ -175,9 +193,30 @@ class Polynomial:
     def varname(self):
         return self.__varname
 
+    def term_tuples(self):
+        """Returns a list of the polynomial's (coeff, order) tuples.  Suitable as input
+        to recreate the polynomial"""
+        ts = self.__terms
+        return [(t.coefficient, t.order) for t in ts]
+
+    def term_coefficients(self):
+        """Returns a 1D array of the polynomial's coefficients, where the array index
+        is the coefficient's order.  Suitable as input to recreate the polynomial"""
+        coeffs = [0] * (self.__order + 1)
+        for t in self.__terms:
+            coeffs[t.order] = t.coefficient
+        return coeffs
+
+
+def power(x, n):
+    result = 1
+    for _ in range(n):
+        result = result * x
+    return result
+
 
 def parse_term(term_str, varname):
-    """A hacky term string parser.  Returns a Term from the input string."""
+    """A very hacky term string parser.  Returns a Term from the input string."""
 
     if varname in term_str:
         varpower = varname + "^"
@@ -222,4 +261,3 @@ def combine_like_terms(terms):
         combined_term = fnc.reduce(lambda t, s: t + s, like_terms)
         result.append(combined_term)
     return result
-

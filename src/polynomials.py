@@ -182,10 +182,16 @@ def parse_term(term_str, varname):
     if varname in term_str:
         varpower = varname + "^"
         if varpower in term_str:
-            args = list(map(lambda x: int(x), term_str.split(varpower)))
+            foo = term_str.split(varpower)  # e.g., '-3x^4' ==> ('-3', '4')
+            if foo[0] == '' or foo[0] == '+':
+                args = [1, int(foo[1])]  # e.g., '+x^2' ==> ('1', '2')
+            elif foo[0] == '-':
+                args = [-1, int(foo[1])]  # e.g., '-x^2' ==> ('-1', '2')
+            else:
+                args = list(map(lambda x: int(x), foo))  # e.g., '-3x^4' ==> ('-3', '4')
         else:
             foo = term_str.split(varname)[0]
-            if foo == '+' or foo == '-':
+            if foo == '+' or foo == '-' or foo == '':
                 coeff_str = foo + '1'
                 args = [int(coeff_str), 1]
             else:

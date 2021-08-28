@@ -40,7 +40,31 @@ class Term:
             return f"{sign}{self.__coefficient}{self.__varname}"
         else:
             return f"{sign}{self.__coefficient}{self.__varname}^{self.__order}"
-        
+
+    # def __str__(self):
+    #     coeff = self.__coefficient
+    #     if isinstance(coeff, complex):
+    #         if coeff.real > 0:
+    #             sign = "+"
+    #         elif coeff.real == 0:
+    #             if coeff.imag > 0:
+    #                 sign = "+"
+    #             else:
+    #                 sign = ""
+    #         else:
+    #             sign = ""
+    #     else:
+    #         if coeff > 0:
+    #             sign = "+"
+    #         else:
+    #             sign = ""
+    #     if self.__order == 0:
+    #         return f"{sign}{coeff}"
+    #     elif self.__order == 1:
+    #         return f"{sign}{coeff}{self.__varname}"
+    #     else:
+    #         return f"{sign}{coeff}{self.__varname}^{self.__order}"
+
     def __call__(self, x):
         """Compute and return the value of the term for x"""
         return self.__coefficient * pow(x, self.__order)
@@ -160,8 +184,9 @@ class Poly:
         number is a 1.
         """
 
+        # if isinstance(poly_spec[0], int) or isinstance(poly_spec[0], float) or isinstance(poly_spec[0], complex):
         if isinstance(poly_spec[0], int) or isinstance(poly_spec[0], float):
-            terms = [Term(coeff, order, varname) for order, coeff in enumerate(poly_spec)]
+                terms = [Term(coeff, order, varname) for order, coeff in enumerate(poly_spec)]
 
         elif isinstance(poly_spec[0], tuple) or isinstance(poly_spec[0], list):
             terms = [Term(tup[0], tup[1], varname) for tup in poly_spec]
@@ -297,6 +322,22 @@ def num(st):
         except ValueError:
             raise ValueError(f"Could not convert {st} to int or float.")
     return result
+
+
+# def num(st):
+#     """Figure out if the input string represents an int or float,
+#     and return the appropriate numeric value."""
+#     try:
+#         result = int(st)
+#     except ValueError:
+#         try:
+#             result = float(st)
+#         except ValueError:
+#             try:
+#                 result = complex(st)
+#             except ValueError:
+#                 raise ValueError(f"Could not convert {st} to int or float.")
+#     return result
 
 
 def parse_term(term_str, varname):

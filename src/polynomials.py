@@ -105,6 +105,18 @@ class Term:
         """Return True if the term is quadratic in the variable.  Return False, otherwise."""
         return self.is_of_order_n(2)
 
+    def derivative(self):
+        """Return a Term that represents the derivative of this term."""
+        if self.__order == 0:
+            return Term(0, 0)
+        else:
+            return Term(self.coefficient * self.order, self.order - 1, self.__varname)
+
+    def antiderivative(self):
+        """Return a Term that represents the antiderivative of this term."""
+        order_p_1 = self.__order + 1
+        return Term(self.coefficient / order_p_1, order_p_1, self.__varname)
+
 
 class Poly:
     """A callable class for polynomials.  The constructor takes the polynomial as a 
@@ -226,17 +238,18 @@ class Poly:
         return coeffs
 
     def copy(self):
+        """Return a copy of this polynomial."""
         return Poly([Term(t.coefficient, t.order, t.varname)
                      for t in self.__terms],
                     self.__varname)
 
+    def derivative(self):
+        """Return the derivative of this polynomial."""
+        return Poly([t.derivative() for t in self.__terms], self.__varname)
 
-# def power(x, n):
-#     """Return the value of x to the n power."""
-#     result = 1
-#     for _ in range(n):
-#         result = result * x
-#     return result
+    def antiderivative(self, constant_term=0):
+        """Return an antiderivative of this polynomial."""
+        return Poly([t.antiderivative() for t in self.__terms] + [Term(constant_term, 0)], self.__varname)
 
 
 def num(st):
@@ -304,3 +317,10 @@ def combine_like_terms(terms):
 def fromroots(roots, varname='x'):
     return fnc.reduce(lambda p, q: p * q, [Poly([r, -1], varname) for r in roots])
 
+
+# def power(x, n):
+#     """Return the value of x to the n power."""
+#     result = 1
+#     for _ in range(n):
+#         result = result * x
+#     return result

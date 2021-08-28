@@ -12,8 +12,8 @@ class TestPolynomials(TestCase):
     # def setUp(self) -> None:
     #     pass
 
-    def test_power_1(self):
-        self.assertEqual(power(2, 3), 8)
+    # def test_power_1(self):
+    #     self.assertEqual(power(2, 3), 8)
 
     def test_parse_term_1(self):
         self.assertEqual(parse_term('-3x^4', 'x'), Term(-3, 4))

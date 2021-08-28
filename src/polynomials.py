@@ -51,7 +51,18 @@ class Term:
             return Term(self.__coefficient + other.__coefficient, self.__order)
         else:
             raise ValueError(f"Terms must be of the same order, {self.__order} != {other.__order}")
-    
+
+    def __sub__(self, other):
+        """If two terms have the same order, subtract other from self and return the resulting term."""
+        if self.__order == other.__order:
+            return Term(self.__coefficient - other.__coefficient, self.__order)
+        else:
+            raise ValueError(f"Terms must be of the same order, {self.__order} != {other.__order}")
+
+    def __neg__(self):
+        """Return a copy of this term, where the coefficient has been negated."""
+        return Term(- self.__coefficient, self.__order, self.__varname)
+
     def __mul__(self, other):
         """Multiply two terms and return the resulting term."""
         return Term(self.__coefficient * other.__coefficient,
@@ -175,6 +186,8 @@ class Poly:
 
         self.__order = max([t.order for t in self.__terms])
 
+        self.__lookup_term = {t.order: t for t in self.__terms}
+
     def __repr__(self):
         chars_using_tuples = 8 * len(self.__terms)
         chars_using_coeffs = 3 * self.__order
@@ -200,7 +213,17 @@ class Poly:
 
     def __add__(self, other):
         if self.__varname == other.varname():
-            return Poly(self.__terms + other.terms())
+            return Poly(self.__terms + other.terms)
+        else:
+            raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
+
+    def __neg__(self):
+        """Return a copy of this polynomial where all of the terms have been negated."""
+        return Poly([-t for t in self.terms], self.__varname)
+
+    def __sub__(self, other):
+        if self.__varname == other.varname():
+            return Poly(self.terms + (- other).terms, self.__varname)
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
 
@@ -208,7 +231,7 @@ class Poly:
         if self.__varname == other.varname():
             prod_terms = list()
             for t1 in self.__terms:
-                prod_terms += [t1 * t2 for t2 in other.terms()]
+                prod_terms += [t1 * t2 for t2 in other.terms]
             return Poly(prod_terms, self.__varname)
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
@@ -217,11 +240,22 @@ class Poly:
     def order(self):
         return self.__order
 
+    @property
     def terms(self):
         return self.__terms
 
-    def varname(self):
+    def varname(self, new_varname=None):
+        """Return or change the string (character) used for the polynomial's variable."""
+        if new_varname is not None:
+            if isinstance(new_varname, str):
+                [t.varname(new_varname) for t in self.__terms]
+                self.__varname = new_varname
+            else:
+                raise ValueError("Variable name must be a string.")
         return self.__varname
+
+    def term(self, order):
+        return self.__lookup_term[order]
 
     def term_tuples(self):
         """Returns a list of the polynomial's (coeff, order) tuples.  Suitable as input

@@ -84,6 +84,14 @@ In the following examples, the only algebra constructor used is
 Group
 ~~~~~
 
+We’ll start in the middle of the hierarchy of algebras, the Group.
+
+Finite algebra elements, here, are always represented as strings; and,
+although a Cayley table can be entered (and displayed) using strings,
+they are represented internally (and displayed by default) as
+2-dimensional, square arrays of integers that represent the positions of
+elements in the element list.
+
 .. code:: ipython3
 
     >>> from finite_algebras import make_finite_algebra
@@ -121,7 +129,35 @@ algebra name, and the unique ID of the algebra instance:
 
 .. parsed-literal::
 
-    <Group:Z3, ID:140310561986768>
+    <Group:Z3, ID:140321017988368>
+
+
+The ``about`` prints information about an algebra. Set
+``use_element_names`` to ``True`` to see the Cayley table printed using
+element names (``str``) rather than element positions (``int``).
+
+.. code:: ipython3
+
+    >>> z3.about(use_table_names=True)
+
+
+.. parsed-literal::
+
+    
+    Group: Z3
+    Instance ID: 140321017988368
+    Description: Cyclic group of order 3
+    Order: 3
+    Identity: e
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1       a     a^2       3
+          2     a^2       a       3
+    Cayley Table (showing names):
+    [['e', 'a', 'a^2'], ['a', 'a^2', 'e'], ['a^2', 'e', 'a']]
 
 
 Group Properties
@@ -184,6 +220,19 @@ If the identity doesn’t exist, then ``None`` is returned.
 
 
 
+.. code:: ipython3
+
+    >>> z3.inv('a')  # Get an element's inverse, if it exists
+
+
+
+
+.. parsed-literal::
+
+    'a^2'
+
+
+
 Internal to algebras, tables are stored as instances of the
 ``CayleyTable`` class:
 
@@ -197,19 +246,6 @@ Internal to algebras, tables are stored as instances of the
 .. parsed-literal::
 
     CayleyTable([[0, 1, 2], [1, 2, 0], [2, 0, 1]])
-
-
-
-.. code:: ipython3
-
-    >>> z3.inv('a')  # Get an element's inverse, if it exists
-
-
-
-
-.. parsed-literal::
-
-    'a^2'
 
 
 
@@ -246,6 +282,8 @@ algebra, in which case an exception is raised.
 
 
 
+For :math:`Z_3`, :math:`a \circ a = a^2`
+
 .. code:: ipython3
 
     >>> z3.op('a', 'a')
@@ -259,31 +297,50 @@ algebra, in which case an exception is raised.
 
 
 
+and :math:`a \circ a \circ a = a \circ a^2 = a^2 \circ a = e`.
+
 .. code:: ipython3
 
-    >>> z3.op('a', 'a', 'a')
+    >>> z3.op('a', 'a', 'a') == z3.op('a', 'a^2') == z3.op('a^2', 'a') == 'e'
 
 
 
 
 .. parsed-literal::
 
-    'e'
+    True
 
+
+
+Note, however, that the function, ``op``, can only be used with elements
+(``str``) that are members of the element list. So, since ‘a^3’ is not a
+string in the element list, it cannot be used in function ``op``.
+
+.. code:: ipython3
+
+    >>> try:
+    >>>     z3.op('a^3')
+    >>> except Exception as exc:
+    >>>     print(exc)
+
+
+.. parsed-literal::
+
+    a^3 is not a valid element name
 
 
 “Subtraction” in Groups
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The method, ``sub``, is a convenience method for computing
-“:math:`\alpha - \beta`”, that is, :math:`\alpha \circ \beta^{-1}` where
-:math:`\alpha, \beta \in \langle G, \circ \rangle`.
+“:math:`x - y`”, that is, :math:`x \circ y^{-1}` where
+:math:`x, y \in \langle G, \circ \rangle`.
 
 .. code:: ipython3
 
-    >>> a = 'a'
-    >>> b = 'a^2'
-    >>> print(f"For example, \"{a} - {b}\" = {a} * {z3.inv(b)} = {z3.op(a, z3.inv(b))}")
+    >>> x = 'a'
+    >>> y = 'a^2'
+    >>> print(f"For example, \"{x} - {y}\" = {x} * {z3.inv(y)} = {z3.op(x, z3.inv(y))}")
 
 
 .. parsed-literal::
@@ -291,9 +348,11 @@ The method, ``sub``, is a convenience method for computing
     For example, "a - a^2" = a * a = a^2
 
 
+Or, more succinctly:
+
 .. code:: ipython3
 
-    >>> z3.sub(a, b)
+    >>> z3.sub(x, y)
 
 
 
@@ -304,36 +363,12 @@ The method, ``sub``, is a convenience method for computing
 
 
 
-The ``about`` Method
-~~~~~~~~~~~~~~~~~~~~
-
-``about`` prints information about an algebra.
-
-.. code:: ipython3
-
-    >>> z3.about()
-
-
-.. parsed-literal::
-
-    
-    Group: Z3
-    Instance ID: 140310561986768
-    Description: Cyclic group of order 3
-    Identity: e
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0       e       e       1
-          1       a     a^2       3
-          2     a^2       a       3
-    Cayley Table (showing indices):
-    [[0, 1, 2], [1, 2, 0], [2, 0, 1]]
-
-
 Magma
 ~~~~~
+
+**Magma** – a set with a binary operation:
+:math:`\langle S, \circ \rangle`, where :math:`S` is a finite set and
+:math:`\circ: S \times S \to S`
 
 **Rock-Paper-Scissors**
 
@@ -363,8 +398,9 @@ commutative.
 
     
     Magma: RPS
-    Instance ID: 140310566620496
+    Instance ID: 140321287422352
     Description: Rock, Paper, Scissors Magma
+    Order: 3
     Elements: ['r', 'p', 's']
     Identity: None
     Associative? No
@@ -372,29 +408,6 @@ commutative.
     Has Inverses? No
     Cayley Table (showing indices):
     [[0, 1, 0], [1, 1, 2], [0, 2, 2]]
-
-
-By default, the ``about`` method prints the table using element
-positions, but it can also printout a table using element names:
-
-.. code:: ipython3
-
-    >>> rps.about(use_table_names=True)
-
-
-.. parsed-literal::
-
-    
-    Magma: RPS
-    Instance ID: 140310566620496
-    Description: Rock, Paper, Scissors Magma
-    Elements: ['r', 'p', 's']
-    Identity: None
-    Associative? No
-    Commutative? Yes
-    Has Inverses? No
-    Cayley Table (showing names):
-    [['r', 'p', 'r'], ['p', 'p', 's'], ['r', 's', 's']]
 
 
 Paper beats Rock:
@@ -415,13 +428,33 @@ Paper beats Rock:
 .. code:: ipython3
 
     >>> if rps.identity is None:
-        print("RPS does not have an identity element")
+    >>>     print("RPS does not have an identity element")
 
 
 .. parsed-literal::
 
     RPS does not have an identity element
 
+
+For convenience, the method, ``has_identity``, returns True or False,
+depending on whether an algebra has an identity.
+
+.. code:: ipython3
+
+    >>> rps.has_identity()
+
+
+
+
+.. parsed-literal::
+
+    False
+
+
+
+The next section demonstrates that a Magma can have an identity element,
+as long as the Magma is not associative, otherwise
+``make_finite_algebra`` would output a Monoid.
 
 Magma with Identity Element
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -442,8 +475,9 @@ Magma with Identity Element
 
     
     Magma: Whatever
-    Instance ID: 140310566603024
+    Instance ID: 140321287423248
     Description: Magma with Identity
+    Order: 3
     Elements: ['e', 'a', 'b']
     Identity: e
     Associative? No
@@ -456,22 +490,27 @@ Magma with Identity Element
 Semigroup
 ~~~~~~~~~
 
+**Semigroup** – an associative Magma: for any
+:math:`a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
+
 Reference: `Groupoids and Smarandache
 Groupoids <https://arxiv.org/ftp/math/papers/0304/0304490.pdf>`__ by W.
 B. Vasantha Kandasamy
 
 .. code:: ipython3
 
-    >>> sg = make_finite_algebra('Example 1.4.1',
-                             'See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy',
-                             ['a', 'b', 'c', 'd', 'e', 'f'],
-                             [[0, 3, 0, 3, 0, 3],
-                              [1, 4, 1, 4, 1, 4],
-                              [2, 5, 2, 5, 2, 5],
-                              [3, 0, 3, 0, 3, 0],
-                              [4, 1, 4, 1, 4, 1],
-                              [5, 2, 5, 2, 5, 2]]
-                            )
+    >>> sg = make_finite_algebra(
+        'Example 1.4.1',
+        'See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy',
+        ['a', 'b', 'c', 'd', 'e', 'f'],
+        [[0, 3, 0, 3, 0, 3],
+         [1, 4, 1, 4, 1, 4],
+         [2, 5, 2, 5, 2, 5],
+         [3, 0, 3, 0, 3, 0],
+         [4, 1, 4, 1, 4, 1],
+         [5, 2, 5, 2, 5, 2]]
+    )
+    
     >>> sg.about()
 
 
@@ -479,8 +518,9 @@ B. Vasantha Kandasamy
 
     
     Semigroup: Example 1.4.1
-    Instance ID: 140310566547088
+    Instance ID: 140321287435856
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
+    Order: 6
     Elements: ['a', 'b', 'c', 'd', 'e', 'f']
     Identity: None
     Associative? Yes
@@ -511,19 +551,11 @@ that, :math:`a \circ b = d`:
 
 
 
-.. code:: ipython3
-
-    >>> if sg.identity is None:
-        print("There is no identity element")
-
-
-.. parsed-literal::
-
-    There is no identity element
-
-
 Monoid
 ~~~~~~
+
+**Monoid** – a Semigroup with identity element: :math:`\exists e \in S`,
+such that, for all :math:`a \in S, a \circ e = e \circ a = a`
 
 .. code:: ipython3
 
@@ -542,8 +574,9 @@ Monoid
 
     
     Monoid: M4
-    Instance ID: 140310566617808
+    Instance ID: 140320620173904
     Description: Example of a commutative monoid
+    Order: 4
     Elements: ['a', 'b', 'c', 'd']
     Identity: b
     Associative? Yes
@@ -587,14 +620,20 @@ modulo the desired order.
 
 
 
-Rings
------
+Ring
+----
+
+**Ring** – :math:`\langle S, +, \times \rangle`, where
+:math:`\langle S, + \rangle` is a commutative Group,
+:math:`\langle S, \times \rangle` is a Semigroup, and :math:`\times`
+distributes over :math:`+`
 
 Ring Based on Powerset of a Set
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In this ring, *“addition”* is symmetric difference and
-*“multiplication”* is intersection.
+In this ring, *“addition”* is symmetric difference,
+:math:`\bigtriangleup`, and *“multiplication”* is intersection,
+:math:`\cap`.
 
 .. code:: ipython3
 
@@ -636,8 +675,9 @@ In this ring, *“addition”* is symmetric difference and
 
     
     Ring: Powerset Ring 2
-    Instance ID: 140310561999504
+    Instance ID: 140320620175440
     Description: Ring on powerset of {0, 1}
+    Order: 4
     Identity: {}
     Associative? Yes
     Commutative? Yes
@@ -667,18 +707,7 @@ Ring Addition and Multiplication
 Ring addition, ``add``, is the same as the operation, ``op``, inherited
 from its superclass, Group.
 
-.. code:: ipython3
-
-    >>> {1} ^ {0,1}  # Symmetric Difference using actual sets
-
-
-
-
-.. parsed-literal::
-
-    {0}
-
-
+:math:`\{1\} \bigtriangleup \{0,1\} = \{0\}`
 
 .. code:: ipython3
 
@@ -693,18 +722,7 @@ from its superclass, Group.
 
 
 
-.. code:: ipython3
-
-    >>> {1} & {0,1}  # Intersection using actual sets
-
-
-
-
-.. parsed-literal::
-
-    {1}
-
-
+:math:`\{1\} \cap \{0,1\} = \{0\}`
 
 .. code:: ipython3
 
@@ -722,6 +740,17 @@ from its superclass, Group.
 Zero Divisors of a Ring
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+Suppose :math:`\alpha \ne 0` is an element of the Ring,
+:math:`\langle S, +, \times \rangle`.
+
+Then, :math:`\alpha` is a **left zero divisor**, if
+:math:`\exists \beta \in S, \beta \ne 0` such that
+:math:`\alpha \times \beta = 0`.
+
+Similarly, :math:`\alpha` is a **right zero divisor**, if
+:math:`\exists \gamma \in S, \gamma \ne 0` such that
+:math:`\gamma \times \alpha = 0`.
+
 The Ring just created has two zero divisors:
 
 .. code:: ipython3
@@ -734,6 +763,63 @@ The Ring just created has two zero divisors:
 .. parsed-literal::
 
     ['{0}', '{1}']
+
+
+
+To check this, recall, what the addititve identity is:
+
+.. code:: ipython3
+
+    zero = rng.add_identity
+    zero
+
+
+
+
+.. parsed-literal::
+
+    '{}'
+
+
+
+Multiplying an element by “zero” produces “zero”:
+
+.. code:: ipython3
+
+    [rng.mult(x, zero) for x in rng.elements]
+
+
+
+
+.. parsed-literal::
+
+    ['{}', '{}', '{}', '{}']
+
+
+
+.. code:: ipython3
+
+    [rng.mult(x, '{0}') for x in rng.elements]
+
+
+
+
+.. parsed-literal::
+
+    ['{}', '{0}', '{}', '{0}']
+
+
+
+.. code:: ipython3
+
+    rng.mult('{0}', '{1}')
+
+
+
+
+.. parsed-literal::
+
+    '{}'
 
 
 
@@ -772,8 +858,9 @@ Autogeneration of a Powerset Ring
 
     
     Ring: PSRing3
-    Instance ID: 140309738792528
+    Instance ID: 140321287566992
     Description: Autogenerated Ring on powerset of {0, 1, 2} w/ symm. diff. (add) & intersection (mult)
+    Order: 8
     Identity: {}
     Associative? Yes
     Commutative? Yes
@@ -865,8 +952,9 @@ done modulo 2:
 
     
     Ring: Ex6
-    Instance ID: 140309738833872
+    Instance ID: 140320620178064
     Description: Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
+    Order: 4
     Identity: 0
     Associative? Yes
     Commutative? Yes
@@ -937,8 +1025,9 @@ expected:
 
     
     Group: Ex6.Add
-    Instance ID: 140309738818768
+    Instance ID: 140321287619216
     Description: Additive-only portion of Ex6
+    Order: 4
     Identity: 0
     Associative? Yes
     Commutative? Yes
@@ -1020,8 +1109,9 @@ it will produce a Field.
 
     
     Ring: R6
-    Instance ID: 140309738853712
+    Instance ID: 140321287632720
     Description: Autogenerated Ring of integers mod 6
+    Order: 6
     Identity: a0
     Associative? Yes
     Commutative? Yes
@@ -1070,8 +1160,9 @@ all elements.
 
     
     Group: R6.Add
-    Instance ID: 140309738856080
+    Instance ID: 140321287610896
     Description: Additive-only portion of R6
+    Order: 6
     Identity: a0
     Associative? Yes
     Commutative? Yes
@@ -1102,8 +1193,9 @@ all elements.
 
     
     Monoid: R6.Mult
-    Instance ID: 140309738867408
+    Instance ID: 140321287633552
     Description: Multiplicative-only portion of R6
+    Order: 6
     Elements: ['a0', 'a1', 'a2', 'a3', 'a4', 'a5']
     Identity: a1
     Associative? Yes
@@ -1118,8 +1210,15 @@ all elements.
      [0, 5, 4, 3, 2, 1]]
 
 
-Fields
-------
+Field
+-----
+
+**Field** – a Ring :math:`\langle S, +, \times \rangle`, where
+:math:`\langle S\setminus{\{0\}}, \times \rangle` is a commutative
+Group.
+
+:math:`S\setminus{\{0\}}` is the set :math:`S` with the additive
+identity element removed.
 
 Field with four elements
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1154,8 +1253,9 @@ elements” <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements
 
     
     Field: F4
-    Instance ID: 140309738791824
+    Instance ID: 140321287668944
     Description: Field with 4 elements
+    Order: 4
     Identity: 0
     Associative? Yes
     Commutative? Yes
@@ -1290,8 +1390,9 @@ produce a Field.
 
     
     Field: F7
-    Instance ID: 140309738724112
+    Instance ID: 140321287711312
     Description: Autogenerated Field of integers mod 7
+    Order: 7
     Identity: a0
     Associative? Yes
     Commutative? Yes
@@ -1370,7 +1471,7 @@ Here’s the **JSON file**:
     }
 
 
-And, here’s the **algebra**:
+And, here’s the **algebra** that is loaded from the JSON file:
 
 .. code:: ipython3
 
@@ -1634,8 +1735,9 @@ A cyclic group of any desired order can be generated as follows:
 
     
     Group: Z2
-    Instance ID: 140309738725328
+    Instance ID: 140321287619728
     Description: Autogenerated cyclic Group of order 2
+    Order: 2
     Identity: e
     Associative? Yes
     Commutative? Yes
@@ -1669,8 +1771,9 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
 
     
     Group: S3
-    Instance ID: 140310566723024
+    Instance ID: 140321287678416
     Description: Autogenerated symmetric Group on 3 elements
+    Order: 6
     Identity: (1, 2, 3)
     Associative? Yes
     Commutative? No
@@ -1716,8 +1819,9 @@ values of n.
 
     
     Group: PS3
-    Instance ID: 140310566743120
+    Instance ID: 140321287619408
     Description: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
+    Order: 8
     Identity: {}
     Associative? Yes
     Commutative? Yes
@@ -1761,8 +1865,9 @@ multiplication modulo the desired order.
 
     
     Monoid: M7
-    Instance ID: 140310566679824
+    Instance ID: 140320620176528
     Description: Autogenerated commutative Monoid of order 7
+    Order: 7
     Elements: ['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6']
     Identity: a1
     Associative? Yes
@@ -1798,8 +1903,9 @@ Direct Product of Multiple Groups
 
     
     Group: Z2_x_Z2_x_Z2
-    Instance ID: 140309738854736
+    Instance ID: 140320620268048
     Description: Direct product of Z2_x_Z2 & Z2
+    Order: 8
     Identity: e:e:e
     Associative? Yes
     Commutative? Yes
@@ -1857,8 +1963,9 @@ Direct Product of Monoids
 
     
     Monoid: M3_x_M3
-    Instance ID: 140310566715792
+    Instance ID: 140321287621712
     Description: Direct product of M3 & M3
+    Order: 9
     Elements: ['a0:a0', 'a0:a1', 'a0:a2', 'a1:a0', 'a1:a1', 'a1:a2', 'a2:a0', 'a2:a1', 'a2:a2']
     Identity: a1:a1
     Associative? Yes
@@ -1986,28 +2093,79 @@ Proper Subgroups
 .. code:: ipython3
 
     >>> z8 = generate_cyclic_group(8)
-    
-    >>> z8_proper_subs = z8.proper_subalgebras(True)
-    >>> z8_proper_subs
-
-
+    >>> z8.about()
 
 
 .. parsed-literal::
 
-    [Group(
-     'Z8_subalgebra_0',
-     'Subalgebra of: Autogenerated cyclic Group of order 8',
-     ['e', 'a^4'],
-     [[0, 1], [1, 0]]
-     ),
-     Group(
-     'Z8_subalgebra_1',
-     'Subalgebra of: Autogenerated cyclic Group of order 8',
-     ['e', 'a^2', 'a^4', 'a^6'],
-     [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
-     )]
+    
+    Group: Z8
+    Instance ID: 140321287582352
+    Description: Autogenerated cyclic Group of order 8
+    Order: 8
+    Identity: e
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1       a     a^7       8
+          2     a^2     a^6       4
+          3     a^3     a^5       8
+          4     a^4     a^4       2
+          5     a^5     a^3       8
+          6     a^6     a^2       4
+          7     a^7       a       8
+    Cayley Table (showing indices):
+    [[0, 1, 2, 3, 4, 5, 6, 7],
+     [1, 2, 3, 4, 5, 6, 7, 0],
+     [2, 3, 4, 5, 6, 7, 0, 1],
+     [3, 4, 5, 6, 7, 0, 1, 2],
+     [4, 5, 6, 7, 0, 1, 2, 3],
+     [5, 6, 7, 0, 1, 2, 3, 4],
+     [6, 7, 0, 1, 2, 3, 4, 5],
+     [7, 0, 1, 2, 3, 4, 5, 6]]
 
+
+.. code:: ipython3
+
+    >>> z8_proper_subs = z8.proper_subalgebras()
+    
+    >>> _ = [z8_proper_sub.about() for z8_proper_sub in z8_proper_subs]
+
+
+.. parsed-literal::
+
+    
+    Group: Z8_subalgebra_0
+    Instance ID: 140321287611664
+    Description: Subalgebra of: Autogenerated cyclic Group of order 8
+    Order: 2
+    Identity: e
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1     a^4     a^4       2
+    Cayley Table (showing indices):
+    [[0, 1], [1, 0]]
+    
+    Group: Z8_subalgebra_1
+    Instance ID: 140321287577872
+    Description: Subalgebra of: Autogenerated cyclic Group of order 8
+    Order: 4
+    Identity: e
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1     a^2     a^6       4
+          2     a^4     a^4       2
+          3     a^6     a^2       4
+    Cayley Table (showing indices):
+    [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
 
 
 Normal Subgroups
@@ -2031,71 +2189,56 @@ Both of the subgroups of Z8, derived above, are **normal**:
 Proper Subalgebras up to Isomorphism
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The function, ``partition_into_isomorphic_lists``, does just that; it
+partitions a list of algebras (subgroups in this case) into a list of
+lists, where each sublist contains subalgebras that are all isomophic to
+each other.
+
+The function, ``about_isomorphic_partitions``, prints out a summary of
+information about the partitions output by
+``partition_into_isomorphic_list``.
+
+.. code:: ipython3
+
+    from finite_algebras import partition_into_isomorphic_lists, about_isomorphic_partitions
+
 The example, below, uses the autogenerated powerset group, **ps3**, that
 was created earlier.
 
 .. code:: ipython3
 
-    >>> from finite_algebras import partition_into_isomorphic_lists
+    >>> ps3_proper_subs = ps3.proper_subalgebras()
     
-    >>> ps3_proper_subalgebras = ps3.proper_subalgebras(True)
+    >>> partitions = partition_into_isomorphic_lists(ps3_proper_subs)
     
-    >>> print(f"{ps3.name} has {len(ps3_proper_subalgebras)} proper subalgebras.")
-    
-    >>> unique_subalgebras = partition_into_isomorphic_lists(ps3_proper_subalgebras)
-    
-    >>> print(f"But, up to isomorphisms, only {len(unique_subalgebras)} are proper and unique.")
-
-
-.. parsed-literal::
-
-    PS3 has 14 proper subalgebras.
-    But, up to isomorphisms, only 2 are proper and unique.
-
-
-The function, ``partition_into_isomorphic_lists``, does just that; it
-partitions a list of algebras (subgroups in this case) into a list of
-lists, where each sublist contains subalgebras that are all isomophic to
-each other. In this example, all of the subalgebras are subgroups.
-
-So, in the following, the ``about`` method is called on the first group
-of each sublist:
-
-.. code:: ipython3
-
-    >>> _ = [subalg[0].about() for subalg in unique_subalgebras]
+    >>> about_isomorphic_partitions(ps3, partitions)
 
 
 .. parsed-literal::
 
     
-    Group: PS3_subalgebra_0
-    Instance ID: 140310566566224
-    Description: Subalgebra of: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
-    Identity: {}
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0      {}      {}       1
-          1  {0, 2}  {0, 2}       2
-    Cayley Table (showing indices):
-    [[0, 1], [1, 0]]
+    Subalgebras of <Group:PS3, ID:140321287619408>
+      There are 2 unique subalgebras, up to isomorphisms, out of 14 total subalgebras
+      as shown by the partitions below:
     
-    Group: PS3_subalgebra_2
-    Instance ID: 140309738677712
-    Description: Subalgebra of: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
-    Identity: {}
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0      {}      {}       1
-          1     {0}     {0}       2
-          2     {2}     {2}       2
-          3  {0, 2}  {0, 2}       2
-    Cayley Table (showing indices):
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
+    7 Commutative Normal Groups of Order 4 with identity '{}':
+          PS3_subalgebra_0: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
+          PS3_subalgebra_1: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
+          PS3_subalgebra_4: ['{}', '{0}', '{2}', '{0, 2}']
+          PS3_subalgebra_6: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
+          PS3_subalgebra_10: ['{}', '{0}', '{1}', '{0, 1}']
+          PS3_subalgebra_12: ['{}', '{2}', '{0, 1}', '{0, 1, 2}']
+          PS3_subalgebra_13: ['{}', '{1}', '{2}', '{1, 2}']
+    
+    7 Commutative Normal Groups of Order 2 with identity '{}':
+          PS3_subalgebra_2: ['{}', '{0, 2}']
+          PS3_subalgebra_3: ['{}', '{1, 2}']
+          PS3_subalgebra_5: ['{}', '{2}']
+          PS3_subalgebra_7: ['{}', '{1}']
+          PS3_subalgebra_8: ['{}', '{0}']
+          PS3_subalgebra_9: ['{}', '{0, 1}']
+          PS3_subalgebra_11: ['{}', '{0, 1, 2}']
+    
 
 
 Subalgebras of Semigroups, Etc.
@@ -2112,8 +2255,9 @@ Recall the Semigroup example from above:
 
     
     Semigroup: Example 1.4.1
-    Instance ID: 140310566547088
+    Instance ID: 140321287435856
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
+    Order: 6
     Elements: ['a', 'b', 'c', 'd', 'e', 'f']
     Identity: None
     Associative? Yes
@@ -2128,120 +2272,43 @@ Recall the Semigroup example from above:
      [5, 2, 5, 2, 5, 2]]
 
 
-It contains 10 proper subalgebras, including 7 Semigroups and 3 Groups,
-as shown below:
+It contains 4 unique subalgebras, up to isomorphism, 3 Semigroups and 1
+Group:
 
 .. code:: ipython3
 
-    >>> sg_subs = sg.proper_subalgebras(False)
-    >>> _ = [print(f"{sub}\n   Order: {sub.order}\n   Elements: {sub.elements}")
-             for sub in sg_subs]
-
-
-.. parsed-literal::
-
-    <Semigroup:Example 1.4.1_subalgebra_0, ID:140310566601488>
-       Order: 2
-       Elements: ['a', 'e']
-    <Semigroup:Example 1.4.1_subalgebra_1, ID:140310566604432>
-       Order: 4
-       Elements: ['a', 'b', 'd', 'e']
-    <Semigroup:Example 1.4.1_subalgebra_2, ID:140309738854544>
-       Order: 4
-       Elements: ['a', 'c', 'd', 'f']
-    <Semigroup:Example 1.4.1_subalgebra_3, ID:140309738854288>
-       Order: 2
-       Elements: ['c', 'e']
-    <Group:Example 1.4.1_subalgebra_4, ID:140310566492048>
-       Order: 2
-       Elements: ['a', 'd']
-    <Semigroup:Example 1.4.1_subalgebra_5, ID:140309738794576>
-       Order: 4
-       Elements: ['b', 'c', 'e', 'f']
-    <Group:Example 1.4.1_subalgebra_6, ID:140309738791312>
-       Order: 2
-       Elements: ['c', 'f']
-    <Semigroup:Example 1.4.1_subalgebra_7, ID:140309738793936>
-       Order: 3
-       Elements: ['a', 'c', 'e']
-    <Semigroup:Example 1.4.1_subalgebra_8, ID:140310566723408>
-       Order: 2
-       Elements: ['a', 'c']
-    <Group:Example 1.4.1_subalgebra_9, ID:140310566723536>
-       Order: 2
-       Elements: ['b', 'e']
-
-
-The list subalgebras of **sg** can be partitioned into 4 sublists of
-subalgebras, where within each sublist, the subalgebras are isomorphic
-each other. The ``about`` info for the first subalgebra of each sublist
-is below:
-
-.. code:: ipython3
-
-    >>> parts = partition_into_isomorphic_lists(sg_subs)
+    >>> sg_proper_subs = sg.proper_subalgebras()
     
-    >>> for part in parts:
-    >>>     part[0].about()
-    >>>     print("\n" + "="*60)
+    >>> partitions = partition_into_isomorphic_lists(sg_proper_subs)
+    
+    >>> about_isomorphic_partitions(sg, partitions)
 
 
 .. parsed-literal::
 
     
-    Semigroup: Example 1.4.1_subalgebra_0
-    Instance ID: 140310566601488
-    Description: Subalgebra of: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
-    Elements: ['a', 'e']
-    Identity: None
-    Associative? Yes
-    Commutative? No
-    Has Inverses? No
-    Cayley Table (showing indices):
-    [[0, 0], [1, 1]]
+    Subalgebras of <Semigroup:Example 1.4.1, ID:140321287435856>
+      There are 4 unique subalgebras, up to isomorphisms, out of 10 total subalgebras
+      as shown by the partitions below:
     
-    ============================================================
+    3 Semigroups of Order 4:
+          Example 1.4.1_subalgebra_0: ['a', 'c', 'd', 'f']
+          Example 1.4.1_subalgebra_7: ['b', 'c', 'e', 'f']
+          Example 1.4.1_subalgebra_8: ['a', 'b', 'd', 'e']
     
-    Semigroup: Example 1.4.1_subalgebra_1
-    Instance ID: 140310566604432
-    Description: Subalgebra of: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
-    Elements: ['a', 'b', 'd', 'e']
-    Identity: None
-    Associative? Yes
-    Commutative? No
-    Has Inverses? No
-    Cayley Table (showing indices):
-    [[0, 2, 2, 0], [1, 3, 3, 1], [2, 0, 0, 2], [3, 1, 1, 3]]
+    3 Semigroups of Order 2:
+          Example 1.4.1_subalgebra_1: ['a', 'e']
+          Example 1.4.1_subalgebra_5: ['a', 'c']
+          Example 1.4.1_subalgebra_6: ['c', 'e']
     
-    ============================================================
+    3 Commutative Groups of Order 2:
+          Example 1.4.1_subalgebra_2: ['c', 'f'] with identity 'c'
+          Example 1.4.1_subalgebra_3: ['b', 'e'] with identity 'e'
+          Example 1.4.1_subalgebra_9: ['a', 'd'] with identity 'a'
     
-    Group: Example 1.4.1_subalgebra_4
-    Instance ID: 140310566492048
-    Description: Subalgebra of: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
-    Identity: a
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0       a       a       1
-          1       d       d       2
-    Cayley Table (showing indices):
-    [[0, 1], [1, 0]]
+    1 Semigroup of Order 3:
+          Example 1.4.1_subalgebra_4: ['a', 'c', 'e']
     
-    ============================================================
-    
-    Semigroup: Example 1.4.1_subalgebra_7
-    Instance ID: 140309738793936
-    Description: Subalgebra of: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
-    Elements: ['a', 'c', 'e']
-    Identity: None
-    Associative? Yes
-    Commutative? No
-    Has Inverses? No
-    Cayley Table (showing indices):
-    [[0, 0, 0], [1, 1, 1], [2, 2, 2]]
-    
-    ============================================================
 
 
 Built-In Examples
@@ -2263,7 +2330,7 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     ======================================================================
                                Example Algebras
     ----------------------------------------------------------------------
-      13 example algebras are available.
+      15 example algebras are available.
       Use "get_example(INDEX)" to retrieve a specific example,
       where INDEX is the first number on each line below:
     ----------------------------------------------------------------------
@@ -2280,6 +2347,8 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     10: mag_id -- Magma with Identity
     11: Example 1.4.1 -- See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
+    13: Q8 -- Quaternion Group
+    14: SD16 -- Semidihedral group of order 16
     ======================================================================
 
 
@@ -2293,8 +2362,9 @@ default list, see the file, ‘examples.json’, in the algebras directory.
 
     
     Group: Pinter29
-    Instance ID: 140310566740368
+    Instance ID: 140321287770960
     Description: Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
+    Order: 6
     Identity: I
     Associative? Yes
     Commutative? No

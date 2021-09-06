@@ -4,21 +4,28 @@
 """
 
 import numpy as np
-import collections as co
 
 
 class CayleyTable:
-    """A Cayley table describes the structure of a finite group by arranging
-    all the possible products of all the group's elements in a square table
+    """
+    Here is the definition of a Cayley table in Wikipedia, edited to refer
+    to finite algebras, in general, not just finite groups:
+
+    'A Cayley table describes the structure of a finite algebra by arranging
+    all the possible products of all [the algebra's] elements in a square table
     reminiscent of an addition or multiplication table. Many properties of
-    a group – such as whether or not it is abelian, which elements are
-    inverses of which elements, and the size and contents of the group's
-    center – can be discovered from its Cayley table. -- Wikipedia
+    [an algebra] – such as whether or not it is abelian, which elements are
+    inverses of which elements, [etc.] – can be discovered from its Cayley table.'
     (https://en.wikipedia.org/wiki/Cayley_table)
 
     The actual table, within a CayleyTable instance, is stored as a square
     NumPy array of int, where the integers correspond to the positions of
     elements in a list of element names (str).
+
+    Regarding the interpretation of a Cayley table, the row element is "multiplied"
+    on the left and the column element on the right, e.g., row * col.  Or, assuming
+    functions written on the left, such as permutations, this means that the column
+    element is applied first and the row element is applied next, e.g., row(col(x)).
     """
 
     def __init__(self, arr):
@@ -201,11 +208,6 @@ def about_tables(list_of_cayley_tables):
         i = list_of_cayley_tables.index(tbl) + 1
         n, ass, co, lid, rid, ident, invs = tbl.about()
         print(f"{i :>{6}} {n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}}")
-
-
-# def get_duplicates(lst):
-#     """Return a list of the duplicate items in the input list."""
-#     return [item for item, count in co.Counter(lst).items() if count > 1]
 
 
 # END OF FILE

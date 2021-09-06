@@ -543,21 +543,21 @@ class Group(Monoid):
         return None
 
     # TODO: about_proper_subgroups is still a work-in-progress.  Finish it.
-    def about_proper_subgroups(self, unique=False, show_elements=True):
-        """Print info about proper subgroups of this group."""
-        if unique:
-            subgrps = self.unique_proper_subgroups()
-        else:
-            subgrps = self.proper_subalgebras(divisors_only=True, include_inverses=True)
-        print(f"\nSubgroups of {self.name}:")
-        for subgrp in subgrps:
-            print(f"\n  {subgrp.name}:")
-            print(f"       order: {subgrp.order}")
-            if show_elements:
-                print(f"    elements: {subgrp.elements}")
-            print(f"    abelian?: {subgrp.is_abelian()}")
-            print(f"     normal?: {self.is_normal(subgrp)}")
-        return None
+    # def about_proper_subgroups(self, unique=False, show_elements=True):
+    #     """Print info about proper subgroups of this group."""
+    #     if unique:
+    #         subgrps = self.unique_proper_subgroups()
+    #     else:
+    #         subgrps = self.proper_subalgebras(divisors_only=True, include_inverses=True)
+    #     print(f"\nSubgroups of {self.name}:")
+    #     for subgrp in subgrps:
+    #         print(f"\n  {subgrp.name}:")
+    #         print(f"       order: {subgrp.order}")
+    #         if show_elements:
+    #             print(f"    elements: {subgrp.elements}")
+    #         print(f"    abelian?: {subgrp.is_abelian()}")
+    #         print(f"     normal?: {self.is_normal(subgrp)}")
+    #     return None
 
 
 def partition_into_isomorphic_lists(list_of_groups):
@@ -598,12 +598,12 @@ def about_isomorphic_partition(alg, part):
     sub0 = part[0]
     classname = f"{sub0.__class__.__name__}"
     order = sub0.order
-    has_identity = sub0.has_identity()
+    # has_identity = sub0.has_identity()
 
     identities = False
     single_id = False
     if sub0.has_identity():
-        identities = True
+        # identities = True
         identities = {sub.identity for sub in part}
         if len(identities) == 1:
             single_id = sub0.identity
@@ -1194,8 +1194,8 @@ def is_prime(n):
             return True
         if n % 2 == 0 or n <= 1:
             return False
-        rootn = int(math.sqrt(n)) + 1
-        for val in range(3, rootn, 2):
+        root_n = int(math.sqrt(n)) + 1
+        for val in range(3, root_n, 2):
             if n % val == 0:
                 return False
         return True

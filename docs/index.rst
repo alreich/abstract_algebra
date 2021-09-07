@@ -9,6 +9,7 @@ User Guide
     :maxdepth: 3
 
     guide
+    vectors
 
 API Reference
 =============

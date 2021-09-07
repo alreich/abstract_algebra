@@ -264,6 +264,16 @@ class Magma(FiniteAlgebra):
                                    list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                                    dp_mult_table)
 
+    def power(self, n):
+        """Return the direct product of this algebra with itself, n times."""
+        result = self
+        if isinstance(n, int) and n > 0:
+            for _ in range(n - 1):
+                result = result * self
+        else:
+            raise ValueError(f"n = {n}, but the power must be a positive integer.")
+        return result
+
     def reorder_elements(self, reordered_elements):
         """Return a new group made from this one with the elements reordered."""
         n = self.order

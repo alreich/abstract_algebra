@@ -9,13 +9,13 @@ def make_dp_sv_op(alg):
     return lambda s, v: delimiter.join([alg.mult(s, x) for x in v.split(delimiter)])
 
 
-def make_module(ring, group, operator):
+def make_module(name, description, ring, group, operator):
     """The primary function for creating Vector Spaces or Modules."""
     if isinstance(group, Group):
         if isinstance(ring, Field):
-            result = VectorSpace(ring, group, operator)
+            result = VectorSpace(name, description, ring, group, operator)
         elif isinstance(ring, Ring):
-            result = Module(ring, group, operator)
+            result = Module(name, description, ring, group, operator)
         else:
             raise ValueError(f"{ring} must be a Ring or a Field")
     else:
@@ -25,33 +25,66 @@ def make_module(ring, group, operator):
 
 class Module:
 
-    def __init__(self, ring, group, operator):
+    def __init__(self, name, description, ring, group, operator):
+        self.name = name
+        self.description = description
         self.scalar = ring
         self.vector = group
         self.sv_op = operator  # scalar-vector operator
         if not isinstance(ring, Ring):
             raise ValueError(f"{ring} is not a Ring.")
-        if not isinstance(group, Group):
-            raise ValueError(f"{group} is not a Group.")
+        if not isinstance(group, Group) and group.is_abelian():
+            raise ValueError(f"{group} is not an abelian Group.")
         if not check_module_conditions(ring, group, operator):
             raise ValueError("Inputs don't meet requirements for a Module.")
 
     def __repr__(self):
         sname = self.scalar.name
         vname = self.vector.name
-        return f"<{self.__class__.__name__}: Scalars:{sname}, Vectors:{vname}>"
+        cname = self.__class__.__name__
+        return f"<{cname}:{self.name}, ID:{id(self)}, Scalars:{sname}, Vectors:{vname}>"
 
     def vector_add(self, v1, v2):
         """Return the sum of two vectors using the Group operation, op."""
         return self.vector.op(v1, v2)
 
+    def about(self, max_size=12, use_table_names=False):
+        """Print information about the Module or Vector Space."""
+        print(f"\n{self.__class__.__name__}: {self.name}")
+        print(f"Instance ID: {id(self)}")
+        print(f"Description: {self.description}")
+        print(f"Order: {self.scalar.order}")
+        print(f"\nSCALARS:")
+        self.scalar.about(max_size, use_table_names)
+        print(f"\nVECTORS:")
+        self.vector.about(max_size, use_table_names)
+        return None
+
 
 class VectorSpace(Module):
 
-    def __init__(self, field, group, operator):
-        super().__init__(field, group, operator)
+    def __init__(self, name, description, field, group, operator):
+        super().__init__(name, description, field, group, operator)
         if not isinstance(field, Field):
             raise ValueError(f"{field} must be a Field.")
+
+
+def generate_n_dim_module(alg, n):
+    """Return a Module or Vector Space over the input algebra (field or ring),
+    where the vectors are the n-times direct product of the input algebra"""
+    if isinstance(alg, Field):
+        prefix = "VS"
+        kind = "Vector Space"
+    elif isinstance(alg, Ring):
+        prefix = "Mod"
+        kind = "Module"
+    else:
+        raise ValueError(f"{alg} is not a Ring or a Field")
+    name = f"{prefix}{n}-{alg.name}"
+    desc = f"{n}-dimensional {kind} over {alg}"
+    group = alg.power(n)
+    op = make_dp_sv_op(alg)
+    return make_module(name, desc, alg, group, op)
 
 
 def check_module_conditions(ring, group, sv_op, verbose=False):

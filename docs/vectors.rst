@@ -17,11 +17,13 @@ Vector Spaces
 
 A vector space,
 :math:`\mathscr{V} = \langle \mathscr{G}, \mathscr{F}, \circ \rangle`,
-consists of … \* an abelian Group,
-:math:`\mathscr{G} = \langle V, \oplus \rangle` (i.e., the *“vectors”*)
-\* a field, :math:`\mathscr{F} = \langle S, +, \times \rangle` (i.e.,
-the *“scalars”*) \* and a binary operator,
-:math:`\circ : S \times V \to V`
+consists of the following:
+
+-  an abelian Group, :math:`\mathscr{G} = \langle V, \oplus \rangle`
+   (i.e., the *“vectors”*)
+-  a field, :math:`\mathscr{F} = \langle S, +, \times \rangle` (i.e.,
+   the *“scalars”*)
+-  and a binary operator, :math:`\circ : S \times V \to V`
 
 where the following conditions hold:
 
@@ -69,18 +71,18 @@ elements (from Wikipedia)”.
 
 .. code:: ipython3
 
-    import os
-    aa_path = os.path.join(os.getenv("PYPROJ"), "abstract_algebra")
-    alg_dir = os.path.join(aa_path, "Algebras")
+    >>> import os
+    >>> aa_path = os.path.join(os.getenv("PYPROJ"), "abstract_algebra")
+    >>> alg_dir = os.path.join(aa_path, "Algebras")
 
 .. code:: ipython3
 
-    import finite_algebras as finalg
-    import modules_and_vector_spaces as mvs
+    >>> import finite_algebras as finalg
+    >>> import modules_and_vector_spaces as mvs
 
 .. code:: ipython3
 
-    ex = finalg.Examples(alg_dir)
+    >>> ex = finalg.Examples(alg_dir)
 
 
 .. parsed-literal::
@@ -114,15 +116,15 @@ The “field with 4 elements” will be the scalars.
 
 .. code:: ipython3
 
-    F4 = ex.get_example(9)
-    F4.about(use_table_names=True)
+    >>> F4 = ex.get_example(9)
+    >>> F4.about(use_table_names=True)
 
 
 .. parsed-literal::
 
     
     Field: F4
-    Instance ID: 140329335379216
+    Instance ID: 140459396121168
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: 0
@@ -153,15 +155,15 @@ Group, as follows:
 
 .. code:: ipython3
 
-    F4_2 = F4 * F4
-    F4_2.about(max_size=16)
+    >>> F4_2 = F4 * F4
+    >>> F4_2.about(max_size=16)
 
 
 .. parsed-literal::
 
     
     Group: F4_x_F4
-    Instance ID: 140329335394768
+    Instance ID: 140459396152336
     Description: Direct product of F4 & F4
     Order: 16
     Identity: 0:0
@@ -216,7 +218,7 @@ vector element.
 
 .. code:: ipython3
 
-    op = mvs.make_dp_sv_op(F4)
+    >>> op = mvs.make_dp_sv_op(F4)
 
 The function, ``make_module``, is similar to ``make_finite_algebra`` in
 that it checks the inputs and then outputs the most specific algebraic
@@ -225,15 +227,15 @@ Module or a Vector Space.
 
 .. code:: ipython3
 
-    vs = mvs.make_module('VS4_2D', '4 Element 2D Vector Space', F4, F4_2, op)
-    vs
+    >>> vs = mvs.make_module('VS4_2D', '4 Element 2D Vector Space', F4, F4_2, op)
+    >>> vs
 
 
 
 
 .. parsed-literal::
 
-    <VectorSpace:VS4_2D, ID:140329335396624, Scalars:F4, Vectors:F4_x_F4>
+    <VectorSpace:VS4_2D, ID:140459396204688, Scalars:F4, Vectors:F4_x_F4>
 
 
 
@@ -246,7 +248,7 @@ yielding something elements like, a:1:0:1+a.
 
 .. code:: ipython3
 
-    print(vs.vector.elements)
+    >>> print(vs.vector.elements)
 
 
 .. parsed-literal::
@@ -256,7 +258,7 @@ yielding something elements like, a:1:0:1+a.
 
 .. code:: ipython3
 
-    print(vs.scalar.elements)
+    >>> print(vs.scalar.elements)
 
 
 .. parsed-literal::
@@ -270,7 +272,7 @@ Vector Space (or Module)
 
 .. code:: ipython3
 
-    vs.scalar.add('1', 'a')
+    >>> vs.scalar.add('1', 'a')
 
 
 
@@ -283,7 +285,7 @@ Vector Space (or Module)
 
 .. code:: ipython3
 
-    vs.scalar.mult('a', 'a')
+    >>> vs.scalar.mult('a', 'a')
 
 
 
@@ -299,7 +301,7 @@ to create the Vector Space (or Module)
 
 .. code:: ipython3
 
-    vs.vector_add('1:a', 'a:a')  # Same as vs.vector.op('1:a', 'a:a')
+    >>> vs.vector_add('1:a', 'a:a')  # Same as vs.vector.op('1:a', 'a:a')
 
 
 
@@ -315,7 +317,7 @@ The method, ``sv_op``, below, is the result of the function,
 
 .. code:: ipython3
 
-    vs.sv_op('a', 'a:a')
+    >>> vs.sv_op('a', 'a:a')
 
 
 
@@ -328,7 +330,7 @@ The method, ``sv_op``, below, is the result of the function,
 
 .. code:: ipython3
 
-    vs.scalar.zero
+    >>> vs.scalar.zero
 
 
 
@@ -341,7 +343,7 @@ The method, ``sv_op``, below, is the result of the function,
 
 .. code:: ipython3
 
-    vs.scalar.one
+    >>> vs.scalar.one
 
 
 
@@ -360,7 +362,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    mvs.check_scaling_by_one(F4, F4_2, op)
+    >>> mvs.check_scaling_by_one(F4, F4_2, op)
 
 
 
@@ -378,13 +380,13 @@ Check: Distributivity of scalars over vector addition
 
 .. code:: ipython3
 
-    # Example
-    
-    s = 'a'
-    v1 = 'a:1+a'
-    v2 = 'a:1'
-    print(vs.sv_op(s, vs.vector_add(v1, v2)))
-    print(vs.vector_add(vs.sv_op(s, v1), vs.sv_op(s, v2)))
+    >>> # Example
+    >>> 
+    >>> s = 'a'
+    >>> v1 = 'a:1+a'
+    >>> v2 = 'a:1'
+    >>> print(vs.sv_op(s, vs.vector_add(v1, v2)))
+    >>> print(vs.vector_add(vs.sv_op(s, v1), vs.sv_op(s, v2)))
 
 
 .. parsed-literal::
@@ -395,7 +397,7 @@ Check: Distributivity of scalars over vector addition
 
 .. code:: ipython3
 
-    mvs.check_dist_of_scalars_over_vec_add(F4, F4_2, op)
+    >>> mvs.check_dist_of_scalars_over_vec_add(F4, F4_2, op)
 
 
 
@@ -413,13 +415,13 @@ Check: Distributivity of vectors over scalar addition
 
 .. code:: ipython3
 
-    # Example
-    
-    s1 = 'a'
-    s2 = '1+a'
-    v = 'a:1'
-    print(vs.sv_op(vs.scalar.add(s1, s2), v))
-    print(vs.vector_add(vs.sv_op(s1, v), vs.sv_op(s2, v)))
+    >>> # Example
+    >>> 
+    >>> s1 = 'a'
+    >>> s2 = '1+a'
+    >>> v = 'a:1'
+    >>> print(vs.sv_op(vs.scalar.add(s1, s2), v))
+    >>> print(vs.vector_add(vs.sv_op(s1, v), vs.sv_op(s2, v)))
 
 
 .. parsed-literal::
@@ -430,7 +432,7 @@ Check: Distributivity of vectors over scalar addition
 
 .. code:: ipython3
 
-    mvs.check_dist_of_vec_over_scalar_add(F4, F4_2, op)
+    >>> mvs.check_dist_of_vec_over_scalar_add(F4, F4_2, op)
 
 
 
@@ -448,13 +450,13 @@ Check: Associativity
 
 .. code:: ipython3
 
-    # Example
-    
-    s1 = 'a'
-    s2 = '1+a'
-    v = 'a:1'
-    print(vs.sv_op(s1, vs.sv_op(s2, v)))
-    print(vs.sv_op(vs.scalar.mult(s1, s2), v))
+    >>> # Example
+    >>> 
+    >>> s1 = 'a'
+    >>> s2 = '1+a'
+    >>> v = 'a:1'
+    >>> print(vs.sv_op(s1, vs.sv_op(s2, v)))
+    >>> print(vs.sv_op(vs.scalar.mult(s1, s2), v))
 
 
 .. parsed-literal::
@@ -465,7 +467,7 @@ Check: Associativity
 
 .. code:: ipython3
 
-    mvs.check_associativity(F4, F4_2, op)
+    >>> mvs.check_associativity(F4, F4_2, op)
 
 
 
@@ -485,15 +487,15 @@ calculated for any Finite Algebra using the method, ``power``.
 
 .. code:: ipython3
 
-    F4_3 = F4.power(3)
-    F4_3.about()
+    >>> F4_3 = F4.power(3)
+    >>> F4_3.about()
 
 
 .. parsed-literal::
 
     
     Group: F4_x_F4_x_F4
-    Instance ID: 140329335397136
+    Instance ID: 140459396203728
     Description: Direct product of F4_x_F4 & F4
     Order: 64
     Identity: 0:0:0
@@ -570,19 +572,19 @@ calculated for any Finite Algebra using the method, ``power``.
 
 .. code:: ipython3
 
-    op = mvs.make_dp_sv_op(F4)
+    >>> op = mvs.make_dp_sv_op(F4)
 
 .. code:: ipython3
 
-    vs3 = mvs.make_module('VS4_3D', '4 Element 3D Vector Space', F4, F4_3, op)
-    vs3
+    >>> vs3 = mvs.make_module('VS4_3D', '4 Element 3D Vector Space', F4, F4_3, op)
+    >>> vs3
 
 
 
 
 .. parsed-literal::
 
-    <VectorSpace:VS4_3D, ID:140329604528592, Scalars:F4, Vectors:F4_x_F4_x_F4>
+    <VectorSpace:VS4_3D, ID:140459124938704, Scalars:F4, Vectors:F4_x_F4_x_F4>
 
 
 
@@ -596,7 +598,7 @@ raise a ValueError exception.
 
 .. code:: ipython3
 
-    mvs.check_module_conditions(F4, F4_3, op, verbose=True)
+    >>> mvs.check_module_conditions(F4, F4_3, op, verbose=True)
 
 
 .. parsed-literal::
@@ -623,15 +625,15 @@ a Ring, instead of a Field.
 
 .. code:: ipython3
 
-    psr2 = finalg.generate_powerset_ring(2)
-    psr2.about()
+    >>> psr2 = finalg.generate_powerset_ring(2)
+    >>> psr2.about()
 
 
 .. parsed-literal::
 
     
     Ring: PSRing2
-    Instance ID: 140329604520528
+    Instance ID: 140459124929936
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
@@ -653,15 +655,15 @@ a Ring, instead of a Field.
 
 .. code:: ipython3
 
-    psr2_2 = psr2 * psr2
-    psr2_2.about()
+    >>> psr2_2 = psr2 * psr2
+    >>> psr2_2.about()
 
 
 .. parsed-literal::
 
     
     Group: PSRing2_x_PSRing2
-    Instance ID: 140329335412880
+    Instance ID: 140459124824208
     Description: Direct product of PSRing2 & PSRing2
     Order: 16
     Identity: {}:{}
@@ -690,24 +692,24 @@ a Ring, instead of a Field.
 
 .. code:: ipython3
 
-    psr_op = mvs.make_dp_sv_op(psr2)
-    
-    psr_mod = mvs.make_module("PSRmod", "2D Powerset Vector Space", psr2, psr2_2, psr_op)
-    psr_mod.about(max_size=16)
+    >>> psr_op = mvs.make_dp_sv_op(psr2)
+    >>> 
+    >>> psr_mod = mvs.make_module("PSRmod", "2D Powerset Vector Space", psr2, psr2_2, psr_op)
+    >>> psr_mod.about(max_size=16)
 
 
 .. parsed-literal::
 
     
     Module: PSRmod
-    Instance ID: 140329604518544
+    Instance ID: 140459396151824
     Description: 2D Powerset Vector Space
     Order: 4
     
     SCALARS:
     
     Ring: PSRing2
-    Instance ID: 140329604520528
+    Instance ID: 140459124929936
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
@@ -729,7 +731,7 @@ a Ring, instead of a Field.
     VECTORS:
     
     Group: PSRing2_x_PSRing2
-    Instance ID: 140329335412880
+    Instance ID: 140459124824208
     Description: Direct product of PSRing2 & PSRing2
     Order: 16
     Identity: {}:{}
@@ -782,22 +784,22 @@ Two inputs are required: a Field and an integer (number of dimensions)
 
 .. code:: ipython3
 
-    F4_2X = mvs.generate_n_dim_module(F4, 2)
-    F4_2X.about()
+    >>> F4_2X = mvs.generate_n_dim_module(F4, 2)
+    >>> F4_2X.about()
 
 
 .. parsed-literal::
 
     
     VectorSpace: VS2-F4
-    Instance ID: 140329604401424
-    Description: 2-dimensional Vector Space over <Field:F4, ID:140329335379216>
+    Instance ID: 140459124958160
+    Description: 2-dimensional Vector Space over <Field:F4, ID:140459396121168>
     Order: 4
     
     SCALARS:
     
     Field: F4
-    Instance ID: 140329335379216
+    Instance ID: 140459396121168
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: 0
@@ -819,7 +821,7 @@ Two inputs are required: a Field and an integer (number of dimensions)
     VECTORS:
     
     Group: F4_x_F4
-    Instance ID: 140329604401488
+    Instance ID: 140459124957584
     Description: Direct product of F4 & F4
     Order: 16
     Identity: 0:0

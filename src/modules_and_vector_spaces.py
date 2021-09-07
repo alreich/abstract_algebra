@@ -1,14 +1,16 @@
 from finite_algebras import Group, Ring, Field, yes_or_no
 
 
-def make_dp_sv_op(alg, delimiter):
+def make_dp_sv_op(alg):
     """Return a scalar-vector operator based on the direct product of a Ring or
-    Field with itself."""
+    Field with itself.  That is, op:SxV-->V
+    """
+    delimiter = alg.direct_product_delimiter()
     return lambda s, v: delimiter.join([alg.mult(s, x) for x in v.split(delimiter)])
 
 
 def make_module(ring, group, operator):
-    result = None
+    """The primary function for creating Vector Spaces or Modules."""
     if isinstance(group, Group):
         if isinstance(ring, Field):
             result = VectorSpace(ring, group, operator)

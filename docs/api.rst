@@ -3,10 +3,11 @@
 API Reference
 =============
 
-Primary Algebra Constructor
----------------------------
+Primary Algebra Constructors
+----------------------------
 
 .. autofunction:: finite_algebras.make_finite_algebra
+.. autofunction:: modules_and_vector_spaces.make_module
 
 Operator
 --------
@@ -79,6 +80,26 @@ Field
     :undoc-members:
     :private-members:
 
+Module
+------
+
+.. autofunction:: modules_and_vector_spaces.make_dp_sv_op
+.. autoclass:: modules_and_vector_spaces.Module
+    :members:
+    :special-members:
+    :undoc-members:
+    :private-members:
+.. autofunction:: modules_and_vector_spaces.check_module_conditions
+
+VectorSpace
+-----------
+
+.. autoclass:: modules_and_vector_spaces.VectorSpace
+    :members:
+    :special-members:
+    :undoc-members:
+    :private-members:
+
 Algebra Generators
 ------------------
 
@@ -87,6 +108,8 @@ Algebra Generators
 .. autofunction:: finite_algebras.generate_powerset_group
 .. autofunction:: finite_algebras.generate_commutative_monoid
 .. autofunction:: finite_algebras.generate_powerset_ring
+.. autofunction:: finite_algebras.generate_algebra_mod_n
+.. autofunction:: modules_and_vector_spaces.generate_n_dim_module
 
 Cayley Table
 ------------

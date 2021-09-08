@@ -8,7 +8,8 @@ User Guide
 .. toctree::
     :maxdepth: 3
 
-    guide
+    groups_etc
+    rings_and_fields
     vectors
 
 API Reference

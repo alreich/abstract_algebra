@@ -1,5 +1,5 @@
-User Guide
-==========
+Groups, Monoids, Semigroups, & Magmas
+=====================================
 
 Class Hierarchy
 ---------------
@@ -10,7 +10,7 @@ Class Hierarchy
 Field
 
 -  **Magma** – a set with a binary operation:
-   :math:`\langle S, \circ \rangle`, where :math:`S` is a finite set and
+   :math:`\langle S, \circ \rangle`, where :math:`S` is a set and
    :math:`\circ: S \times S \to S`
 
 -  **Semigroup** – an associative Magma: for any
@@ -129,7 +129,7 @@ algebra name, and the unique ID of the algebra instance:
 
 .. parsed-literal::
 
-    <Group:Z3, ID:140321017988368>
+    <Group:Z3, ID:140706488126928>
 
 
 The ``about`` prints information about an algebra. Set
@@ -145,7 +145,7 @@ element names (``str``) rather than element positions (``int``).
 
     
     Group: Z3
-    Instance ID: 140321017988368
+    Instance ID: 140706488126928
     Description: Cyclic group of order 3
     Order: 3
     Identity: e
@@ -398,7 +398,7 @@ commutative.
 
     
     Magma: RPS
-    Instance ID: 140321287422352
+    Instance ID: 140706220361168
     Description: Rock, Paper, Scissors Magma
     Order: 3
     Elements: ['r', 'p', 's']
@@ -475,7 +475,7 @@ Magma with Identity Element
 
     
     Magma: Whatever
-    Instance ID: 140321287423248
+    Instance ID: 140706220362640
     Description: Magma with Identity
     Order: 3
     Elements: ['e', 'a', 'b']
@@ -518,7 +518,7 @@ B. Vasantha Kandasamy
 
     
     Semigroup: Example 1.4.1
-    Instance ID: 140321287435856
+    Instance ID: 140707049007184
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Elements: ['a', 'b', 'c', 'd', 'e', 'f']
@@ -574,7 +574,7 @@ such that, for all :math:`a \in S, a \circ e = e \circ a = a`
 
     
     Monoid: M4
-    Instance ID: 140320620173904
+    Instance ID: 140707048951120
     Description: Example of a commutative monoid
     Order: 4
     Elements: ['a', 'b', 'c', 'd']
@@ -618,811 +618,6 @@ modulo the desired order.
 
     'c'
 
-
-
-Ring
-----
-
-**Ring** – :math:`\langle S, +, \times \rangle`, where
-:math:`\langle S, + \rangle` is a commutative Group,
-:math:`\langle S, \times \rangle` is a Semigroup, and :math:`\times`
-distributes over :math:`+`
-
-Ring Based on Powerset of a Set
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In this ring, *“addition”* is symmetric difference,
-:math:`\bigtriangleup`, and *“multiplication”* is intersection,
-:math:`\cap`.
-
-.. code:: ipython3
-
-    >>> rng = make_finite_algebra('Powerset Ring 2',
-                                  'Ring on powerset of {0, 1}',
-                                  ['{}', '{0}', '{1}', '{0, 1}'],
-                                  [[0, 1, 2, 3],
-                                   [1, 0, 3, 2],
-                                   [2, 3, 0, 1],
-                                   [3, 2, 1, 0]],
-                                  [[0, 0, 0, 0],
-                                   [0, 1, 0, 1],
-                                   [0, 0, 2, 2],
-                                   [0, 1, 2, 3]]
-                                 )
-    >>> rng
-
-
-
-
-.. parsed-literal::
-
-    Ring(
-    'Powerset Ring 2',
-    'Ring on powerset of {0, 1}',
-    ['{}', '{0}', '{1}', '{0, 1}'],
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
-    [[0, 0, 0, 0], [0, 1, 0, 1], [0, 0, 2, 2], [0, 1, 2, 3]]
-    )
-
-
-
-.. code:: ipython3
-
-    >>> rng.about(use_table_names=True)
-
-
-.. parsed-literal::
-
-    
-    Ring: Powerset Ring 2
-    Instance ID: 140320620175440
-    Description: Ring on powerset of {0, 1}
-    Order: 4
-    Identity: {}
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0      {}      {}       1
-          1     {0}     {0}       2
-          2     {1}     {1}       2
-          3  {0, 1}  {0, 1}       2
-    Cayley Table (showing names):
-    [['{}', '{0}', '{1}', '{0, 1}'],
-     ['{0}', '{}', '{0, 1}', '{1}'],
-     ['{1}', '{0, 1}', '{}', '{0}'],
-     ['{0, 1}', '{1}', '{0}', '{}']]
-    Mult. Identity: {0, 1}
-    Mult. Commutative? Yes
-    Multiplicative Cayley Table (showing names):
-    [['{}', '{}', '{}', '{}'],
-     ['{}', '{0}', '{}', '{0}'],
-     ['{}', '{}', '{1}', '{1}'],
-     ['{}', '{0}', '{1}', '{0, 1}']]
-
-
-Ring Addition and Multiplication
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Ring addition, ``add``, is the same as the operation, ``op``, inherited
-from its superclass, Group.
-
-:math:`\{1\} \bigtriangleup \{0,1\} = \{0\}`
-
-.. code:: ipython3
-
-    >>> rng.add("{1}", "{0, 1}")
-
-
-
-
-.. parsed-literal::
-
-    '{0}'
-
-
-
-:math:`\{1\} \cap \{0,1\} = \{0\}`
-
-.. code:: ipython3
-
-    >>> rng.mult("{1}", "{0, 1}")
-
-
-
-
-.. parsed-literal::
-
-    '{1}'
-
-
-
-Zero Divisors of a Ring
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Suppose :math:`\alpha \ne 0` is an element of the Ring,
-:math:`\langle S, +, \times \rangle`.
-
-Then, :math:`\alpha` is a **left zero divisor**, if
-:math:`\exists \beta \in S, \beta \ne 0` such that
-:math:`\alpha \times \beta = 0`.
-
-Similarly, :math:`\alpha` is a **right zero divisor**, if
-:math:`\exists \gamma \in S, \gamma \ne 0` such that
-:math:`\gamma \times \alpha = 0`.
-
-The Ring just created has two zero divisors:
-
-.. code:: ipython3
-
-    >>> rng.zero_divisors()
-
-
-
-
-.. parsed-literal::
-
-    ['{0}', '{1}']
-
-
-
-To check this, recall, what the addititve identity is:
-
-.. code:: ipython3
-
-    zero = rng.add_identity
-    zero
-
-
-
-
-.. parsed-literal::
-
-    '{}'
-
-
-
-Multiplying an element by “zero” produces “zero”:
-
-.. code:: ipython3
-
-    [rng.mult(x, zero) for x in rng.elements]
-
-
-
-
-.. parsed-literal::
-
-    ['{}', '{}', '{}', '{}']
-
-
-
-.. code:: ipython3
-
-    [rng.mult(x, '{0}') for x in rng.elements]
-
-
-
-
-.. parsed-literal::
-
-    ['{}', '{0}', '{}', '{0}']
-
-
-
-.. code:: ipython3
-
-    rng.mult('{0}', '{1}')
-
-
-
-
-.. parsed-literal::
-
-    '{}'
-
-
-
-Autogeneration of a Powerset Ring
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: ipython3
-
-    >>> from finite_algebras import generate_powerset_ring
-    
-    >>> psr3 = generate_powerset_ring(3)  # Ring order will be 3!
-    
-    >>> psr3
-
-
-
-
-.. parsed-literal::
-
-    Ring(
-    'PSRing3',
-    'Autogenerated Ring on powerset of {0, 1, 2} w/ symm. diff. (add) & intersection (mult)',
-    ['{}', '{0}', '{1}', '{2}', '{0, 1}', '{0, 2}', '{1, 2}', '{0, 1, 2}'],
-    [[0, 1, 2, 3, 4, 5, 6, 7], [1, 0, 4, 5, 2, 3, 7, 6], [2, 4, 0, 6, 1, 7, 3, 5], [3, 5, 6, 0, 7, 1, 2, 4], [4, 2, 1, 7, 0, 6, 5, 3], [5, 3, 7, 1, 6, 0, 4, 2], [6, 7, 3, 2, 5, 4, 0, 1], [7, 6, 5, 4, 3, 2, 1, 0]],
-    [[0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 0, 0, 1, 1, 0, 1], [0, 0, 2, 0, 2, 0, 2, 2], [0, 0, 0, 3, 0, 3, 3, 3], [0, 1, 2, 0, 4, 1, 2, 4], [0, 1, 0, 3, 1, 5, 3, 5], [0, 0, 2, 3, 2, 3, 6, 6], [0, 1, 2, 3, 4, 5, 6, 7]]
-    )
-
-
-
-.. code:: ipython3
-
-    >>> psr3.about(use_table_names=True)
-
-
-.. parsed-literal::
-
-    
-    Ring: PSRing3
-    Instance ID: 140321287566992
-    Description: Autogenerated Ring on powerset of {0, 1, 2} w/ symm. diff. (add) & intersection (mult)
-    Order: 8
-    Identity: {}
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0      {}      {}       1
-          1     {0}     {0}       2
-          2     {1}     {1}       2
-          3     {2}     {2}       2
-          4  {0, 1}  {0, 1}       2
-          5  {0, 2}  {0, 2}       2
-          6  {1, 2}  {1, 2}       2
-          7 {0, 1, 2} {0, 1, 2}       2
-    Cayley Table (showing names):
-    [['{}', '{0}', '{1}', '{2}', '{0, 1}', '{0, 2}', '{1, 2}', '{0, 1, 2}'],
-     ['{0}', '{}', '{0, 1}', '{0, 2}', '{1}', '{2}', '{0, 1, 2}', '{1, 2}'],
-     ['{1}', '{0, 1}', '{}', '{1, 2}', '{0}', '{0, 1, 2}', '{2}', '{0, 2}'],
-     ['{2}', '{0, 2}', '{1, 2}', '{}', '{0, 1, 2}', '{0}', '{1}', '{0, 1}'],
-     ['{0, 1}', '{1}', '{0}', '{0, 1, 2}', '{}', '{1, 2}', '{0, 2}', '{2}'],
-     ['{0, 2}', '{2}', '{0, 1, 2}', '{0}', '{1, 2}', '{}', '{0, 1}', '{1}'],
-     ['{1, 2}', '{0, 1, 2}', '{2}', '{1}', '{0, 2}', '{0, 1}', '{}', '{0}'],
-     ['{0, 1, 2}', '{1, 2}', '{0, 2}', '{0, 1}', '{2}', '{1}', '{0}', '{}']]
-    Mult. Identity: {0, 1, 2}
-    Mult. Commutative? Yes
-    Multiplicative Cayley Table (showing names):
-    [['{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}'],
-     ['{}', '{0}', '{}', '{}', '{0}', '{0}', '{}', '{0}'],
-     ['{}', '{}', '{1}', '{}', '{1}', '{}', '{1}', '{1}'],
-     ['{}', '{}', '{}', '{2}', '{}', '{2}', '{2}', '{2}'],
-     ['{}', '{0}', '{1}', '{}', '{0, 1}', '{0}', '{1}', '{0, 1}'],
-     ['{}', '{0}', '{}', '{2}', '{0}', '{0, 2}', '{2}', '{0, 2}'],
-     ['{}', '{}', '{1}', '{2}', '{1}', '{2}', '{1, 2}', '{1, 2}'],
-     ['{}', '{0}', '{1}', '{2}', '{0, 1}', '{0, 2}', '{1, 2}', '{0, 1, 2}']]
-
-
-Ring Based on 2x2 Matrices
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-See Example 6 in this reference:
-http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
-
-Example 6 is a Ring based on the following matrices, where arithmetic is
-done modulo 2:
-
-:math:`0 = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix}, a = \begin{bmatrix} 0 & 1 \\ 0 & 0 \end{bmatrix}, b = \begin{bmatrix} 0 & 1 \\ 0 & 1 \end{bmatrix}, c = \begin{bmatrix} 0 & 0 \\ 0 & 1 \end{bmatrix}`
-
-.. code:: ipython3
-
-    >>> addtbl = [['0', 'a', 'b', 'c'],
-                  ['a', '0', 'c', 'b'],
-                  ['b', 'c', '0', 'a'],
-                  ['c', 'b', 'a', '0']]
-    
-    >>> multbl = [['0', '0', '0', '0'],
-                  ['0', '0', 'a', 'a'],
-                  ['0', '0', 'b', 'b'],
-                  ['0', '0', 'c', 'c']]
-    
-    >>> ex6 = make_finite_algebra(
-        'Ex6',
-        'Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html',
-        ['0', 'a', 'b', 'c'],
-        addtbl,
-        multbl)
-    
-    >>> ex6
-
-
-
-
-.. parsed-literal::
-
-    Ring(
-    'Ex6',
-    'Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html',
-    ['0', 'a', 'b', 'c'],
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
-    [[0, 0, 0, 0], [0, 0, 1, 1], [0, 0, 2, 2], [0, 0, 3, 3]]
-    )
-
-
-
-.. code:: ipython3
-
-    >>> ex6.about(use_table_names=True)
-
-
-.. parsed-literal::
-
-    
-    Ring: Ex6
-    Instance ID: 140320620178064
-    Description: Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
-    Order: 4
-    Identity: 0
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0       0       0       1
-          1       a       a       2
-          2       b       b       2
-          3       c       c       2
-    Cayley Table (showing names):
-    [['0', 'a', 'b', 'c'],
-     ['a', '0', 'c', 'b'],
-     ['b', 'c', '0', 'a'],
-     ['c', 'b', 'a', '0']]
-    Mult. Identity: None
-    Mult. Commutative? No
-    Multiplicative Cayley Table (showing names):
-    [['0', '0', '0', '0'],
-     ['0', '0', 'a', 'a'],
-     ['0', '0', 'b', 'b'],
-     ['0', '0', 'c', 'c']]
-
-
-Extracting a Ring’s Additive & Multiplicative “Subalgebras”
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-At the beginning of this User Guide, in the *Algebra Definitions*
-section, a Ring is described as being a combination of a commutative
-Group, under addition, and a Semigroup, under multiplication (with
-distributivity of multiplication over addition). This section shows how
-those algebraic components of a Ring can be extracted.
-
-**NOTE**: The implementation of the two extraction methods, illustrated
-below, operates by calling ``make_finite_algebra`` using the relevant
-portions of the Ring. That way, the appropriate algebras are returned: a
-commutative Group for the additive portion, and, at a minimum, a
-Semigroup for the multiplicative portion.
-
-.. code:: ipython3
-
-    >>> ex6
-
-
-
-
-.. parsed-literal::
-
-    Ring(
-    'Ex6',
-    'Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html',
-    ['0', 'a', 'b', 'c'],
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
-    [[0, 0, 0, 0], [0, 0, 1, 1], [0, 0, 2, 2], [0, 0, 3, 3]]
-    )
-
-
-
-The **additive portion** of this example ring is a commutative Group, as
-expected:
-
-.. code:: ipython3
-
-    >>> ex6_add = ex6.extract_additive_algebra()
-    >>> ex6_add.about()
-
-
-.. parsed-literal::
-
-    
-    Group: Ex6.Add
-    Instance ID: 140321287619216
-    Description: Additive-only portion of Ex6
-    Order: 4
-    Identity: 0
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0       0       0       1
-          1       a       a       2
-          2       b       b       2
-          3       c       c       2
-    Cayley Table (showing indices):
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
-
-
-And, the **multiplicative portion** is a Semigroup:
-
-.. code:: ipython3
-
-    >>> ex6_mult = ex6.extract_multiplicative_algebra()
-    >>> ex6_mult
-
-
-
-
-.. parsed-literal::
-
-    Semigroup(
-    'Ex6.Mult',
-    'Multiplicative-only portion of Ex6',
-    ['0', 'a', 'b', 'c'],
-    [[0, 0, 0, 0], [0, 0, 1, 1], [0, 0, 2, 2], [0, 0, 3, 3]]
-    )
-
-
-
-Autogenerating a Commutative Ring
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The function, ``generate_algebra_mod_n``, is based on `example 2
-here <http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html>`__
-and in `Wikipedia
-here <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>`__.
-The :math:`+` and :math:`\times` operations are the usual integer
-addition and multiplication modulo the order (n), resp.
-
-As long as the order (n) is not prime the function
-``generate_algebra_mod_n`` will produce a Ring, but for a prime order,
-it will produce a Field.
-
-.. code:: ipython3
-
-    >>> from finite_algebras import generate_algebra_mod_n
-
-.. code:: ipython3
-
-    >>> r6 = generate_algebra_mod_n(6)
-    >>> r6
-
-
-
-
-.. parsed-literal::
-
-    Ring(
-    'R6',
-    'Autogenerated Ring of integers mod 6',
-    ['a0', 'a1', 'a2', 'a3', 'a4', 'a5'],
-    [[0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 0], [2, 3, 4, 5, 0, 1], [3, 4, 5, 0, 1, 2], [4, 5, 0, 1, 2, 3], [5, 0, 1, 2, 3, 4]],
-    [[0, 0, 0, 0, 0, 0], [0, 1, 2, 3, 4, 5], [0, 2, 4, 0, 2, 4], [0, 3, 0, 3, 0, 3], [0, 4, 2, 0, 4, 2], [0, 5, 4, 3, 2, 1]]
-    )
-
-
-
-.. code:: ipython3
-
-    >>> r6.about(use_table_names=True)
-
-
-.. parsed-literal::
-
-    
-    Ring: R6
-    Instance ID: 140321287632720
-    Description: Autogenerated Ring of integers mod 6
-    Order: 6
-    Identity: a0
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0      a0      a0       1
-          1      a1      a5       6
-          2      a2      a4       3
-          3      a3      a3       2
-          4      a4      a2       3
-          5      a5      a1       6
-    Cayley Table (showing names):
-    [['a0', 'a1', 'a2', 'a3', 'a4', 'a5'],
-     ['a1', 'a2', 'a3', 'a4', 'a5', 'a0'],
-     ['a2', 'a3', 'a4', 'a5', 'a0', 'a1'],
-     ['a3', 'a4', 'a5', 'a0', 'a1', 'a2'],
-     ['a4', 'a5', 'a0', 'a1', 'a2', 'a3'],
-     ['a5', 'a0', 'a1', 'a2', 'a3', 'a4']]
-    Mult. Identity: a1
-    Mult. Commutative? Yes
-    Multiplicative Cayley Table (showing names):
-    [['a0', 'a0', 'a0', 'a0', 'a0', 'a0'],
-     ['a0', 'a1', 'a2', 'a3', 'a4', 'a5'],
-     ['a0', 'a2', 'a4', 'a0', 'a2', 'a4'],
-     ['a0', 'a3', 'a0', 'a3', 'a0', 'a3'],
-     ['a0', 'a4', 'a2', 'a0', 'a4', 'a2'],
-     ['a0', 'a5', 'a4', 'a3', 'a2', 'a1']]
-
-
-**Extracting it’s component algebras**
-
-In the following, we extract the component algebras of this Ring as a
-commutative Group and a Monoid.
-
-The Monoid occurs since this Ring’s multiplicative portion includes a
-multiplicative identity element (‘a1’), but does not include inverses of
-all elements.
-
-.. code:: ipython3
-
-    >>> r6add = r6.extract_additive_algebra()
-    >>> r6add.about()
-
-
-.. parsed-literal::
-
-    
-    Group: R6.Add
-    Instance ID: 140321287610896
-    Description: Additive-only portion of R6
-    Order: 6
-    Identity: a0
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0      a0      a0       1
-          1      a1      a5       6
-          2      a2      a4       3
-          3      a3      a3       2
-          4      a4      a2       3
-          5      a5      a1       6
-    Cayley Table (showing indices):
-    [[0, 1, 2, 3, 4, 5],
-     [1, 2, 3, 4, 5, 0],
-     [2, 3, 4, 5, 0, 1],
-     [3, 4, 5, 0, 1, 2],
-     [4, 5, 0, 1, 2, 3],
-     [5, 0, 1, 2, 3, 4]]
-
-
-.. code:: ipython3
-
-    >>> r6mult = r6.extract_multiplicative_algebra()
-    >>> r6mult.about()
-
-
-.. parsed-literal::
-
-    
-    Monoid: R6.Mult
-    Instance ID: 140321287633552
-    Description: Multiplicative-only portion of R6
-    Order: 6
-    Elements: ['a0', 'a1', 'a2', 'a3', 'a4', 'a5']
-    Identity: a1
-    Associative? Yes
-    Commutative? Yes
-    Has Inverses? No
-    Cayley Table (showing indices):
-    [[0, 0, 0, 0, 0, 0],
-     [0, 1, 2, 3, 4, 5],
-     [0, 2, 4, 0, 2, 4],
-     [0, 3, 0, 3, 0, 3],
-     [0, 4, 2, 0, 4, 2],
-     [0, 5, 4, 3, 2, 1]]
-
-
-Field
------
-
-**Field** – a Ring :math:`\langle S, +, \times \rangle`, where
-:math:`\langle S\setminus{\{0\}}, \times \rangle` is a commutative
-Group.
-
-:math:`S\setminus{\{0\}}` is the set :math:`S` with the additive
-identity element removed.
-
-Field with four elements
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-**Reference**: See Wikipedia: `“Field with four
-elements” <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>`__
-
-.. code:: ipython3
-
-    >>> elems = ['0', '1', 'a', '1+a']
-    
-    >>> add_table = [[ '0' ,  '1' ,  'a' , '1+a'],
-                     [ '1' ,  '0' , '1+a',  'a' ],
-                     [ 'a' , '1+a',  '0' ,  '1' ],
-                     ['1+a',  'a' ,  '1' ,  '0' ]]
-    
-    >>> mult_table = [['0',  '0' ,  '0' ,  '0' ],
-                      ['0',  '1' ,  'a' , '1+a'],
-                      ['0',  'a' , '1+a',  '1' ],
-                      ['0', '1+a',  '1' ,  'a' ]]
-    
-    >>> f4 = make_finite_algebra('F4',
-                                 'Field with 4 elements',
-                                 elems,
-                                 add_table,
-                                 mult_table
-                                )
-    >>> f4.about()
-
-
-.. parsed-literal::
-
-    
-    Field: F4
-    Instance ID: 140321287668944
-    Description: Field with 4 elements
-    Order: 4
-    Identity: 0
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0       0       0       1
-          1       1       1       2
-          2       a       a       2
-          3     1+a     1+a       2
-    Cayley Table (showing indices):
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
-    Mult. Identity: 1
-    Mult. Commutative? Yes
-    Multiplicative Cayley Table (showing indices):
-    [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]
-
-
-Addition & Multiplication in Fields
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-A Field’s addition and multiplication operations are inherited from its
-superclass, Ring.
-
-.. code:: ipython3
-
-    >>> f4.add('a', '1')
-
-
-
-
-.. parsed-literal::
-
-    '1+a'
-
-
-
-.. code:: ipython3
-
-    >>> f4.mult('a', 'a')
-
-
-
-
-.. parsed-literal::
-
-    '1+a'
-
-
-
-Division in Fields
-~~~~~~~~~~~~~~~~~~
-
-The method, ``div``, is a convenience method in Fields for computing
-“:math:`\alpha \div \beta, \beta \ne 0`”, that is,
-:math:`\alpha \times \beta^{-1}` where
-:math:`\alpha, \beta \in \langle F, +, \times \rangle`.
-
-.. code:: ipython3
-
-    >>> a = 'a'
-    >>> b = '1+a'
-    >>> print(f"For example, \"{a} / {b}\" = {a} * {f4.mult_inv(b)} = {f4.mult(a, f4.mult_inv(b))}")
-
-
-.. parsed-literal::
-
-    For example, "a / 1+a" = a * a = 1+a
-
-
-.. code:: ipython3
-
-    >>> f4.div(a, b)
-
-
-
-
-.. parsed-literal::
-
-    '1+a'
-
-
-
-Recall the definition of a Field, given at the beginning of this User
-Guide:
-
-**Field** – a Ring :math:`\langle S, +, \times \rangle`, where
-:math:`\langle S\setminus{\{0\}}, \times \rangle` is a commutative
-Group.
-
-During Field construction, the commutative Group, mentioned in the
-definition, is also constructed and stored inside the Field instance. It
-is used to obtain multiplicative inverses and to define a *division*
-method, ``div``.
-
-The ``div`` method, for example, can be used to construct the “Division”
-table shown in the Wikipedia entry, `“Field with four
-elements” <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>`__:
-
-.. code:: ipython3
-
-    >>> div_table = [[f4.div(x, y) for y in f4.elements] for x in f4.elements]
-    >>> div_table
-
-
-
-
-.. parsed-literal::
-
-    [[None, '0', '0', '0'],
-     [None, '1', '1+a', 'a'],
-     [None, 'a', '1', '1+a'],
-     [None, '1+a', 'a', '1']]
-
-
-
-Autogenerated Prime Field
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The example here uses the function, ``generate_algebra_mod_n``,
-described above. As noted above, if the order, n, is prime, then it will
-produce a Field.
-
-.. code:: ipython3
-
-    >>> from finite_algebras import generate_algebra_mod_n
-    
-    >>> f7 = generate_algebra_mod_n(7)
-    >>> f7.about()
-
-
-.. parsed-literal::
-
-    
-    Field: F7
-    Instance ID: 140321287711312
-    Description: Autogenerated Field of integers mod 7
-    Order: 7
-    Identity: a0
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0      a0      a0       1
-          1      a1      a6       7
-          2      a2      a5       7
-          3      a3      a4       7
-          4      a4      a3       7
-          5      a5      a2       7
-          6      a6      a1       7
-    Cayley Table (showing indices):
-    [[0, 1, 2, 3, 4, 5, 6],
-     [1, 2, 3, 4, 5, 6, 0],
-     [2, 3, 4, 5, 6, 0, 1],
-     [3, 4, 5, 6, 0, 1, 2],
-     [4, 5, 6, 0, 1, 2, 3],
-     [5, 6, 0, 1, 2, 3, 4],
-     [6, 0, 1, 2, 3, 4, 5]]
-    Mult. Identity: a1
-    Mult. Commutative? Yes
-    Multiplicative Cayley Table (showing indices):
-    [[0, 0, 0, 0, 0, 0, 0],
-     [0, 1, 2, 3, 4, 5, 6],
-     [0, 2, 4, 6, 1, 3, 5],
-     [0, 3, 6, 2, 5, 1, 4],
-     [0, 4, 1, 5, 2, 6, 3],
-     [0, 5, 3, 1, 6, 4, 2],
-     [0, 6, 5, 4, 3, 2, 1]]
 
 
 Serialization
@@ -1496,7 +691,7 @@ And, here’s the **algebra** that is loaded from the JSON file:
 Convert Algebra to Python Dictionary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The examples, below, show a Magma, Group, & Field, being converted into
+The examples, below, show a Magma and a Group being converted into
 dictionaries.
 
 .. code:: ipython3
@@ -1556,25 +751,6 @@ for readability, however, the *type* field is ignored when
 
 
 
-.. code:: ipython3
-
-    >>> f4_dict = f4.to_dict()
-    
-    >>> f4_dict
-
-
-
-
-.. parsed-literal::
-
-    {'name': 'F4',
-     'description': 'Field with 4 elements',
-     'elements': ['0', '1', 'a', '1+a'],
-     'table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
-     'table2': [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]}
-
-
-
 Instantiate Algebra from Python Dictionary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1614,27 +790,6 @@ Instantiate Algebra from Python Dictionary
     'Klein-4 group',
     ['e', 'h', 'v', 'r'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
-    )
-
-
-
-.. code:: ipython3
-
-    >>> f4_from_dict = make_finite_algebra(f4_dict)
-    
-    >>> f4_from_dict
-
-
-
-
-.. parsed-literal::
-
-    Field(
-    'F4',
-    'Field with 4 elements',
-    ['0', '1', 'a', '1+a'],
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
-    [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]
     )
 
 
@@ -1706,17 +861,6 @@ specified size:
 -  ``generate_commutative_monoid(n)``: :math:`a \circ b \equiv ab` mod
    :math:`n`, where :math:`a,b \in \{0,1,...,n-1\}`
 
-**Rings & Fields**
-
--  ``generate_powerset_ring``: :math:`A+B \equiv A \bigtriangleup B` and
-   :math:`A \times B \equiv A \cap B`, where
-   :math:`A,B \in P(\{0, 1, ..., n-1\})`
--  ``generate_algebra_mod_n``: Combination of generate_cyclic_group
-   (:math:`+`) and generate_commutative_monoid (:math:`\times`)
-
-   -  If n is prime, then this will be a Field, otherwise it will be a
-      Ring
-
 Autogenerated Cyclic Group
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1735,7 +879,7 @@ A cyclic group of any desired order can be generated as follows:
 
     
     Group: Z2
-    Instance ID: 140321287619728
+    Instance ID: 140707048991568
     Description: Autogenerated cyclic Group of order 2
     Order: 2
     Identity: e
@@ -1771,7 +915,7 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
 
     
     Group: S3
-    Instance ID: 140321287678416
+    Instance ID: 140706220405136
     Description: Autogenerated symmetric Group on 3 elements
     Order: 6
     Identity: (1, 2, 3)
@@ -1819,7 +963,7 @@ values of n.
 
     
     Group: PS3
-    Instance ID: 140321287619408
+    Instance ID: 140706220363472
     Description: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
     Order: 8
     Identity: {}
@@ -1865,7 +1009,7 @@ multiplication modulo the desired order.
 
     
     Monoid: M7
-    Instance ID: 140320620176528
+    Instance ID: 140706220405008
     Description: Autogenerated commutative Monoid of order 7
     Order: 7
     Elements: ['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6']
@@ -1903,7 +1047,7 @@ Direct Product of Multiple Groups
 
     
     Group: Z2_x_Z2_x_Z2
-    Instance ID: 140320620268048
+    Instance ID: 140706220513168
     Description: Direct product of Z2_x_Z2 & Z2
     Order: 8
     Identity: e:e:e
@@ -1963,7 +1107,7 @@ Direct Product of Monoids
 
     
     Monoid: M3_x_M3
-    Instance ID: 140321287621712
+    Instance ID: 140706220528848
     Description: Direct product of M3 & M3
     Order: 9
     Elements: ['a0:a0', 'a0:a1', 'a0:a2', 'a1:a0', 'a1:a1', 'a1:a2', 'a2:a0', 'a2:a1', 'a2:a2']
@@ -2100,7 +1244,7 @@ Proper Subgroups
 
     
     Group: Z8
-    Instance ID: 140321287582352
+    Instance ID: 140707048950032
     Description: Autogenerated cyclic Group of order 8
     Order: 8
     Identity: e
@@ -2138,21 +1282,7 @@ Proper Subgroups
 
     
     Group: Z8_subalgebra_0
-    Instance ID: 140321287611664
-    Description: Subalgebra of: Autogenerated cyclic Group of order 8
-    Order: 2
-    Identity: e
-    Associative? Yes
-    Commutative? Yes
-    Elements:
-       Index   Name   Inverse  Order
-          0       e       e       1
-          1     a^4     a^4       2
-    Cayley Table (showing indices):
-    [[0, 1], [1, 0]]
-    
-    Group: Z8_subalgebra_1
-    Instance ID: 140321287577872
+    Instance ID: 140706220555152
     Description: Subalgebra of: Autogenerated cyclic Group of order 8
     Order: 4
     Identity: e
@@ -2166,6 +1296,20 @@ Proper Subgroups
           3     a^6     a^2       4
     Cayley Table (showing indices):
     [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
+    
+    Group: Z8_subalgebra_1
+    Instance ID: 140706220554768
+    Description: Subalgebra of: Autogenerated cyclic Group of order 8
+    Order: 2
+    Identity: e
+    Associative? Yes
+    Commutative? Yes
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1     a^4     a^4       2
+    Cayley Table (showing indices):
+    [[0, 1], [1, 0]]
 
 
 Normal Subgroups
@@ -2217,27 +1361,27 @@ was created earlier.
 .. parsed-literal::
 
     
-    Subalgebras of <Group:PS3, ID:140321287619408>
+    Subalgebras of <Group:PS3, ID:140706220363472>
       There are 2 unique subalgebras, up to isomorphisms, out of 14 total subalgebras
       as shown by the partitions below:
     
-    7 Commutative Normal Groups of Order 4 with identity '{}':
-          PS3_subalgebra_0: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
-          PS3_subalgebra_1: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
-          PS3_subalgebra_4: ['{}', '{0}', '{2}', '{0, 2}']
-          PS3_subalgebra_6: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
-          PS3_subalgebra_10: ['{}', '{0}', '{1}', '{0, 1}']
-          PS3_subalgebra_12: ['{}', '{2}', '{0, 1}', '{0, 1, 2}']
-          PS3_subalgebra_13: ['{}', '{1}', '{2}', '{1, 2}']
-    
     7 Commutative Normal Groups of Order 2 with identity '{}':
-          PS3_subalgebra_2: ['{}', '{0, 2}']
-          PS3_subalgebra_3: ['{}', '{1, 2}']
-          PS3_subalgebra_5: ['{}', '{2}']
-          PS3_subalgebra_7: ['{}', '{1}']
-          PS3_subalgebra_8: ['{}', '{0}']
-          PS3_subalgebra_9: ['{}', '{0, 1}']
-          PS3_subalgebra_11: ['{}', '{0, 1, 2}']
+          PS3_subalgebra_0: ['{}', '{1, 2}']
+          PS3_subalgebra_1: ['{}', '{0, 1, 2}']
+          PS3_subalgebra_2: ['{}', '{0}']
+          PS3_subalgebra_4: ['{}', '{1}']
+          PS3_subalgebra_6: ['{}', '{2}']
+          PS3_subalgebra_7: ['{}', '{0, 1}']
+          PS3_subalgebra_10: ['{}', '{0, 2}']
+    
+    7 Commutative Normal Groups of Order 4 with identity '{}':
+          PS3_subalgebra_3: ['{}', '{0}', '{2}', '{0, 2}']
+          PS3_subalgebra_5: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
+          PS3_subalgebra_8: ['{}', '{0}', '{1}', '{0, 1}']
+          PS3_subalgebra_9: ['{}', '{1}', '{2}', '{1, 2}']
+          PS3_subalgebra_11: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
+          PS3_subalgebra_12: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
+          PS3_subalgebra_13: ['{}', '{2}', '{0, 1}', '{0, 1, 2}']
     
 
 
@@ -2255,7 +1399,7 @@ Recall the Semigroup example from above:
 
     
     Semigroup: Example 1.4.1
-    Instance ID: 140321287435856
+    Instance ID: 140707049007184
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Elements: ['a', 'b', 'c', 'd', 'e', 'f']
@@ -2287,27 +1431,27 @@ Group:
 .. parsed-literal::
 
     
-    Subalgebras of <Semigroup:Example 1.4.1, ID:140321287435856>
+    Subalgebras of <Semigroup:Example 1.4.1, ID:140707049007184>
       There are 4 unique subalgebras, up to isomorphisms, out of 10 total subalgebras
       as shown by the partitions below:
     
     3 Semigroups of Order 4:
-          Example 1.4.1_subalgebra_0: ['a', 'c', 'd', 'f']
-          Example 1.4.1_subalgebra_7: ['b', 'c', 'e', 'f']
-          Example 1.4.1_subalgebra_8: ['a', 'b', 'd', 'e']
-    
-    3 Semigroups of Order 2:
-          Example 1.4.1_subalgebra_1: ['a', 'e']
-          Example 1.4.1_subalgebra_5: ['a', 'c']
-          Example 1.4.1_subalgebra_6: ['c', 'e']
+          Example 1.4.1_subalgebra_0: ['b', 'c', 'e', 'f']
+          Example 1.4.1_subalgebra_2: ['a', 'b', 'd', 'e']
+          Example 1.4.1_subalgebra_8: ['a', 'c', 'd', 'f']
     
     3 Commutative Groups of Order 2:
-          Example 1.4.1_subalgebra_2: ['c', 'f'] with identity 'c'
-          Example 1.4.1_subalgebra_3: ['b', 'e'] with identity 'e'
+          Example 1.4.1_subalgebra_1: ['b', 'e'] with identity 'e'
+          Example 1.4.1_subalgebra_7: ['c', 'f'] with identity 'c'
           Example 1.4.1_subalgebra_9: ['a', 'd'] with identity 'a'
     
+    3 Semigroups of Order 2:
+          Example 1.4.1_subalgebra_3: ['a', 'e']
+          Example 1.4.1_subalgebra_4: ['a', 'c']
+          Example 1.4.1_subalgebra_5: ['c', 'e']
+    
     1 Semigroup of Order 3:
-          Example 1.4.1_subalgebra_4: ['a', 'c', 'e']
+          Example 1.4.1_subalgebra_6: ['a', 'c', 'e']
     
 
 
@@ -2362,7 +1506,7 @@ default list, see the file, ‘examples.json’, in the algebras directory.
 
     
     Group: Pinter29
-    Instance ID: 140321287770960
+    Instance ID: 140706220614224
     Description: Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
     Order: 6
     Identity: I
@@ -2383,118 +1527,6 @@ default list, see the file, ‘examples.json’, in the algebras directory.
      [3, 4, 5, 0, 1, 2],
      [4, 3, 0, 5, 2, 1],
      [5, 2, 1, 4, 3, 0]]
-
-
-Cayley Tables
--------------
-
-Under normal usage, there should be no need to directly create Cayley
-Tables. This section, however, provides a brief glimse at the
-``CayleyTable`` class.
-
-All of the properties of a finite algebra can be determined from its
-Cayley Table, or in the case of this Python module, its ``CayleyTable``.
-That functionality is passed through to the appropriate methods of the
-various algebras. Below, is a demonstration of how **distributivity**
-between two binary operations can be determined using their Cayley
-Tables.
-
-The two tables, below, were generated from the powerset of a 3 element
-set, where “addition” is **symmetric difference** and “multiplication”
-is **intersection**. Recall, the order of the powerset is :math:`2^n`,
-where :math:`n` is the size of the set.
-
-The element names are simply the string representations of the sets in
-the powerset:
-
-[‘{}’, ‘{0}’, ‘{1}’, ‘{2}’, ‘{0, 1}’, ‘{0, 2}’, ‘{1, 2}’, ‘{0, 1, 2}’]
-
-And the tables, below, contain the positions (indices) of the 8 elements
-in the powerset:
-
-.. code:: ipython3
-
-    >>> addtbl = [[0, 1, 2, 3, 4, 5, 6, 7],
-                  [1, 0, 4, 5, 2, 3, 7, 6],
-                  [2, 4, 0, 6, 1, 7, 3, 5],
-                  [3, 5, 6, 0, 7, 1, 2, 4],
-                  [4, 2, 1, 7, 0, 6, 5, 3],
-                  [5, 3, 7, 1, 6, 0, 4, 2],
-                  [6, 7, 3, 2, 5, 4, 0, 1],
-                  [7, 6, 5, 4, 3, 2, 1, 0]]
-
-.. code:: ipython3
-
-    >>> multbl = [[0, 0, 0, 0, 0, 0, 0, 0],
-                  [0, 1, 0, 0, 1, 1, 0, 1],
-                  [0, 0, 2, 0, 2, 0, 2, 2],
-                  [0, 0, 0, 3, 0, 3, 3, 3],
-                  [0, 1, 2, 0, 4, 1, 2, 4],
-                  [0, 1, 0, 3, 1, 5, 3, 5],
-                  [0, 0, 2, 3, 2, 3, 6, 6],
-                  [0, 1, 2, 3, 4, 5, 6, 7]]
-
-.. code:: ipython3
-
-    >>> from cayley_table import CayleyTable
-
-.. code:: ipython3
-
-    >>> addct = CayleyTable(addtbl)
-    >>> addct.about(True)
-
-
-.. parsed-literal::
-
-      Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?
-    -------------------------------------------------------------------------------------
-         8        True         True            0         0          0       True
-
-
-.. code:: ipython3
-
-    >>> mulct = CayleyTable(multbl)
-    >>> mulct.about(True)
-
-
-.. parsed-literal::
-
-      Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?
-    -------------------------------------------------------------------------------------
-         8        True         True            7         7          7      False
-
-
-Checking Tables for Distributivity
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Multiplication distributes over addition.
-
-.. code:: ipython3
-
-    >>> mulct.distributes_over(addct)
-
-
-
-
-.. parsed-literal::
-
-    True
-
-
-
-But, addition does not distribute over multiplication.
-
-.. code:: ipython3
-
-    >>> addct.distributes_over(mulct)
-
-
-
-
-.. parsed-literal::
-
-    False
-
 
 
 Resources

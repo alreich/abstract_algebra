@@ -1,6 +1,6 @@
 # Abstract Algebra
 
-A Python implementation of **Finite Algebras**: Magma, Semigroup, Monoid, Group, Ring, and Field
+A Python implementation of **Finite Algebras**: Groups, Rings, Fields, Vector Spaces, Modules, Monoids, Semigroups, and Magmas.
 
 ## Summary
 

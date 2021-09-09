@@ -604,6 +604,7 @@ def partition_into_isomorphic_lists(list_of_groups):
 
 
 def about_isomorphic_partition(alg, part):
+    """Print a summary of a particular partition of isomorphic subalgebras of an algebra."""
     size = len(part)
     sub0 = part[0]
     classname = f"{sub0.__class__.__name__}"
@@ -629,31 +630,32 @@ def about_isomorphic_partition(alg, part):
     if size > 1:
         if identities:
             if single_id:
-                print(f"{size} {comm}{norm}{classname}s of Order {order} with identity '{single_id}':")
+                print(f"{size} {comm}{norm}{classname}s of order {order} with identity '{single_id}':")
                 for sub in part:
                     print(f"      {sub.name}: {sub.elements}")
                 print("")
             else:
-                print(f"{size} {comm}{norm}{classname}s of Order {order}:")
+                print(f"{size} {comm}{norm}{classname}s of order {order}:")
                 for sub in part:
                     print(f"      {sub.name}: {sub.elements} with identity '{sub.identity}'")
                 print("")
         else:
-            print(f"{size} {comm}{norm}{classname}s of Order {order}:")
+            print(f"{size} {comm}{norm}{classname}s of order {order}:")
             for sub in part:
                 print(f"      {sub.name}: {sub.elements}")
             print("")
     elif size == 1:
         if identities:
-            print(f"{size} {comm}{norm}{classname} of Order {order} with identity '{sub0.identity}':")
+            print(f"{size} {comm}{norm}{classname} of order {order} with identity '{sub0.identity}':")
         else:
-            print(f"{size} {comm}{norm}{classname} of Order {order}:")
+            print(f"{size} {comm}{norm}{classname} of order {order}:")
         print(f"      {sub0.name}: {sub0.elements}\n")
     else:
         raise ValueError("A partition must have at least one member.")
 
 
 def about_isomorphic_partitions(alg, partitions):
+    """Print a summary of the isomorphic partitions of an algebra."""
     num_sub_algs = functools.reduce(lambda x, y: x + y, [len(p) for p in partitions])
     num_parts = len(partitions)
     print(f"\nSubalgebras of {alg}")

@@ -63,17 +63,25 @@ class FiniteOperator:
 # =================
 
 class FiniteAlgebra:
-    """A top-level container class for functionality that is common to all finite algebras:
-    THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.  (It is not actually an algebra; it lacks
-    a binary operation.)
+
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
+
+class SimpleAlgebra(FiniteAlgebra):
+    """A top-level container class for functionality that is common to all finite algebras
+    that only have one set of elements: THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
+    (It is not actually an algebra; it lacks a binary operation.)
 
     Class Hierarchy:
        FiniteAlgebra --> Magma --> Semigroup --> Monoid --> Group --> Ring --> Field
     """
 
     def __init__(self, name, description, elements, table):
-        self.name = name
-        self.description = description
+        super().__init__(name, description)
+        # self.name = name
+        # self.description = description
         self.__elements = elements
         self.__inverses = dict()
 
@@ -227,7 +235,7 @@ class FiniteAlgebra:
 #   Magma
 # =========
 
-class Magma(FiniteAlgebra):
+class Magma(SimpleAlgebra):
     """A Magma is a finite algebra with a binary operation that returns a unique value, in the algebra,
     for all pairs in the cross-product of the algebra's set of elements with itself.  With a binary
     operation we can compute the direct product of two or more algebras.  Also, we can check to see

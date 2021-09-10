@@ -1,4 +1,4 @@
-from finite_algebras import Group, Ring, Field, yes_or_no
+from finite_algebras import FiniteAlgebra, Group, Ring, Field, yes_or_no
 
 
 def make_dp_sv_op(alg):
@@ -23,11 +23,16 @@ def make_module(name, description, ring, group, operator):
     return result
 
 
-class Module:
+class CompositeAlgebra(FiniteAlgebra):
+    pass
+
+
+class Module(CompositeAlgebra):
 
     def __init__(self, name, description, ring, group, operator):
-        self.name = name
-        self.description = description
+        super().__init__(name, description)
+        # self.name = name
+        # self.description = description
         self.scalar = ring
         self.vector = group
         self.sv_op = operator  # scalar-vector operator

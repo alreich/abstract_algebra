@@ -1,37 +1,8 @@
 Groups, Monoids, Semigroups, & Magmas
 =====================================
 
-Class Hierarchy
----------------
-
-:math:`\langle FiniteAlgebra \rangle \rightarrow` Magma
-:math:`\rightarrow` Semigroup :math:`\rightarrow` Monoid
-:math:`\rightarrow` Group :math:`\rightarrow` Ring :math:`\rightarrow`
-Field
-
--  **Magma** – a set with a binary operation:
-   :math:`\langle S, \circ \rangle`, where :math:`S` is a set and
-   :math:`\circ: S \times S \to S`
-
--  **Semigroup** – an associative Magma: for any
-   :math:`a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
-
--  **Monoid** – a Semigroup with identity element:
-   :math:`\exists e \in S`, such that, for all
-   :math:`a \in S, a \circ e = e \circ a = a`
-
--  **Group** – a Monoid with inverse elements:
-   :math:`\forall a \in S, \exists a^{-1} \in S`, such that,
-   :math:`a \circ a^{-1} = a^{-1} \circ a = e`
-
--  **Ring** – :math:`\langle S, +, \times \rangle`, where
-   :math:`\langle S, + \rangle` is a commutative Group,
-   :math:`\langle S, \times \rangle` is a Semigroup, and :math:`\times`
-   distributes over :math:`+`
-
--  **Field** – a Ring :math:`\langle S, +, \times \rangle`, where
-   :math:`\langle S\setminus{\{0\}}, \times \rangle` is a commutative
-   Group.
+This section provides numerous examples of finite algebra creation and
+manipulation.
 
 Finite Algebra: Internal Representation
 ---------------------------------------
@@ -1581,3 +1552,6 @@ Resources
    Fields” <http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/index.html>`__,
    John O’Connor & Edmund Robertson, School of Math. & Stat., Univ. of
    St Andrews, Scotland
+-  `SACK <https://github.com/johnkerl/sack>`__ A simple abstract-algebra
+   calculator. Includes some elementary group routines.
+

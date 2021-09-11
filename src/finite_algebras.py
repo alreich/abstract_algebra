@@ -1283,18 +1283,26 @@ def check_associativity(ring, group, sv_op, verbose=False):
 # =====================
 
 def make_finite_algebra(*args):
-    """Analyzes the input table and returns the appropriate finite algebra.
+    """The recommended function to use to create any finite algebra.
+    It analyzes the input and returns the appropriate finite algebra:
+    Group, Ring, Field, VectorSpace, Module, Monoid, Semigroup, or Magma.
 
-    A finite algebra consists of four items: name (str), description (str),
-    elements (list of str), and table (list of lists of int/str).
+    If only 1 input argument, it must a string (str) path to a JSON file
+    that defines an algebra.
 
-    This function either takes all four items in the order described, above,
-    or a single JSON file name, or a single Python dictionary, where the latter
-    two contain definitions of the four items, using the keywords: 'name',
-    'description', 'elements', and 'table'.  Any other keywords contained in
-    the JSON file or Python dictionary are ignored (e.g.., 'type').
+    If more than 1 argument is input, the first two should be a name (str)
+    and a description (str) of the algebra.
 
-    See the examples in the User Guide.
+    If 4 input arguments, then the first two should be as specified above,
+    and the 3rd should be a list of element names (list of str) and the 4th
+    a square Python array of int or str that represents a Cayley Table.
+
+    If 5 input arguments, then either the first 4 should be as described
+    above and the 5th another table (i.e., defining a Ring or Field) or
+    the 3rd, 4th, and 5th arguments should be a Ring (or Field), Group,
+    and a operator that "multiplies" scalars with vectors.
+
+    See the examples at https://abstract-algebra.readthedocs.io
     """
 
     if len(args) == 1:

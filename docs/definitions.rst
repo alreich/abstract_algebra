@@ -77,8 +77,17 @@ Class Hierarchy
 The definitions, above, are supported by the following class hierarchy,
 used in the ``finite_algebras`` module:
 
-.. figure:: attachment:class_hierarchy_sm.png
-   :alt: class_hierarchy_sm.png
+.. code:: ipython3
 
-   class_hierarchy_sm.png
+    from IPython.display import Image
+    Image(url= "class_hierarchy_sm.jpg")
+
+
+
+
+.. raw:: html
+
+    <img src="class_hierarchy_sm.jpg"/>
+
+
 

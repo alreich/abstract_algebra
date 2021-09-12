@@ -1,7 +1,6 @@
 .. Abstract Algebra documentation master file
 
 .. include:: README.rst
-.. image:: _static/class_hierarchy_sm.png
 
 User Guide
 ==========

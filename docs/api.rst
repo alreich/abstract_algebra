@@ -7,7 +7,6 @@ Primary Algebra Constructors
 ----------------------------
 
 .. autofunction:: finite_algebras.make_finite_algebra
-.. autofunction:: modules_and_vector_spaces.make_module
 
 Operator
 --------
@@ -83,18 +82,18 @@ Field
 Module
 ------
 
-.. autofunction:: modules_and_vector_spaces.make_dp_sv_op
-.. autoclass:: modules_and_vector_spaces.Module
+.. autofunction:: finite_algebras.make_dp_sv_op
+.. autoclass:: finite_algebras.Module
     :members:
     :special-members:
     :undoc-members:
     :private-members:
-.. autofunction:: modules_and_vector_spaces.check_module_conditions
+.. autofunction:: finite_algebras.check_module_conditions
 
 VectorSpace
 -----------
 
-.. autoclass:: modules_and_vector_spaces.VectorSpace
+.. autoclass:: finite_algebras.VectorSpace
     :members:
     :special-members:
     :undoc-members:
@@ -109,7 +108,7 @@ Algebra Generators
 .. autofunction:: finite_algebras.generate_commutative_monoid
 .. autofunction:: finite_algebras.generate_powerset_ring
 .. autofunction:: finite_algebras.generate_algebra_mod_n
-.. autofunction:: modules_and_vector_spaces.generate_n_dim_module
+.. autofunction:: finite_algebras.generate_n_dim_module
 
 Cayley Table
 ------------

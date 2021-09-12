@@ -69,8 +69,8 @@ class FiniteAlgebra:
         self.name = name
         self.description = description
 
-    def __iter__(self):
-        pass
+    # def __iter__(self):
+    #     pass
 
 
 class SimpleAlgebra(FiniteAlgebra):
@@ -1120,18 +1120,18 @@ def make_dp_sv_op(alg):
     return lambda s, v: delimiter.join([alg.mult(s, x) for x in v.split(delimiter)])
 
 
-def make_module(name, description, ring, group, operator):
-    """The primary function for creating Vector Spaces or Modules."""
-    if isinstance(group, Group):
-        if isinstance(ring, Field):
-            result = VectorSpace(name, description, ring, group, operator)
-        elif isinstance(ring, Ring):
-            result = Module(name, description, ring, group, operator)
-        else:
-            raise ValueError(f"{ring} must be a Ring or a Field")
-    else:
-        raise ValueError(f"{group} must be a Group")
-    return result
+# def make_module(name, description, ring, group, operator):
+#     """The primary function for creating Vector Spaces or Modules."""
+#     if isinstance(group, Group):
+#         if isinstance(ring, Field):
+#             result = VectorSpace(name, description, ring, group, operator)
+#         elif isinstance(ring, Ring):
+#             result = Module(name, description, ring, group, operator)
+#         else:
+#             raise ValueError(f"{ring} must be a Ring or a Field")
+#     else:
+#         raise ValueError(f"{group} must be a Group")
+#     return result
 
 
 class CompositeAlgebra(FiniteAlgebra):

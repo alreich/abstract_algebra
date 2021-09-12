@@ -2,7 +2,27 @@ Vector Spaces & Modules
 =======================
 
 Vector Spaces and Modules can be implemented using Finite Algebra
-components, such as Groups, Rings, and Fields.
+components, such as Groups, Rings, and Fields. See the previous section,
+“Definitions”, for definitions of these algebraic structures.
+
+Internal Representation of Vector Spaces & Modules
+--------------------------------------------------
+
+Internally, a ``FiniteAlgebra`` can take several different forms. For
+algebras that have more than one set of elements and multiple binary
+operations, such as Vector Spaces and Modules, the internal
+representation is as shown below.
+
+-  **name**: (``str``) A short name for the algebra;
+-  **description**: (``str``) Any additional, useful information about
+   the algebra;
+-  **scalars**: A ``Ring`` (Module) or a ``Field`` (VectorSpace). Its
+   elements are *scalars* and its operations are *scalar addition and
+   multiplication*;
+-  **vectors**: An abelian ``Group``. Its elements are *vectors* and its
+   operation is *vector addition*;
+-  **sv_op**: A scalar-vector binary operation,
+   :math:`\circ : S \times V \to V`, for “scaling vectors”
 
 Examples
 --------
@@ -10,8 +30,8 @@ Examples
 The following example demonstrates the construction of an n-dimensional
 Vector Space that is similar to the type of vector space most students
 are familiar with, i.e., vectors consist of components made out of the
-same field elements (Real numbers) as the scalar field (also Real
-numbers).
+same field elements (e.g., Real numbers) as the scalar field (e.g., also
+Real numbers).
 
 If you would rather skip this demonstration, then jump to the bottom of
 this page to find the function, ``generate_n_dim_module``. It puts
@@ -21,7 +41,7 @@ So, to begin, we’ll use a Field, :math:`F`, and the abelian Group,
 :math:`F_2 = F \times F`, created by computing the direct product of
 :math:`F` with itself. This will create a “two-dimensional” Vector
 Space. (This generalizes, by the way, to n-dimensions by using the
-Group, :math:`F_n = \times^n F`.)
+Group, :math:`F_n = F \times \dots \times F \equiv \times^n F`.)
 
 First, we’ll load the built-in examples to obtain the “Field with 4
 elements (from Wikipedia)”.
@@ -34,12 +54,12 @@ elements (from Wikipedia)”.
 
 .. code:: ipython3
 
-    >>> import finite_algebras as finalg
-    >>> import modules_and_vector_spaces as mvs
+    >>> from finite_algebras import *
+    #>>> import modules_and_vector_spaces as mvs
 
 .. code:: ipython3
 
-    >>> ex = finalg.Examples(alg_dir)
+    >>> ex = Examples(alg_dir)
 
 
 .. parsed-literal::
@@ -81,7 +101,7 @@ The “field with 4 elements” will be the scalars.
 
     
     Field: F4
-    Instance ID: 140459396121168
+    Instance ID: 140652267961104
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: 0
@@ -120,7 +140,7 @@ Group, as follows:
 
     
     Group: F4_x_F4
-    Instance ID: 140459396152336
+    Instance ID: 140652267936016
     Description: Direct product of F4 & F4
     Order: 16
     Identity: 0:0
@@ -175,16 +195,15 @@ vector element.
 
 .. code:: ipython3
 
-    >>> op = mvs.make_dp_sv_op(F4)
+    >>> op = make_dp_sv_op(F4)
 
-The function, ``make_module``, is similar to ``make_finite_algebra`` in
-that it checks the inputs and then outputs the most specific algebraic
-structure supported by the inputs, which in this case are either a
-Module or a Vector Space.
+The function, ``make_finite_algebra``, checks the inputs and then
+outputs the most specific algebraic structure supported by the inputs,
+which in this case are either a Module or a Vector Space.
 
 .. code:: ipython3
 
-    >>> vs = mvs.make_module('VS4_2D', '4 Element 2D Vector Space', F4, F4_2, op)
+    >>> vs = make_finite_algebra('VS4_2D', '4 Element 2D Vector Space', F4, F4_2, op)
     >>> vs
 
 
@@ -192,7 +211,7 @@ Module or a Vector Space.
 
 .. parsed-literal::
 
-    <VectorSpace:VS4_2D, ID:140459396204688, Scalars:F4, Vectors:F4_x_F4>
+    <VectorSpace:VS4_2D, ID:140652267934608, Scalars:F4, Vectors:F4_x_F4>
 
 
 
@@ -319,7 +338,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> mvs.check_scaling_by_one(F4, F4_2, op)
+    >>> check_scaling_by_one(F4, F4_2, op)
 
 
 
@@ -354,7 +373,7 @@ Check: Distributivity of scalars over vector addition
 
 .. code:: ipython3
 
-    >>> mvs.check_dist_of_scalars_over_vec_add(F4, F4_2, op)
+    >>> check_dist_of_scalars_over_vec_add(F4, F4_2, op)
 
 
 
@@ -389,7 +408,7 @@ Check: Distributivity of vectors over scalar addition
 
 .. code:: ipython3
 
-    >>> mvs.check_dist_of_vec_over_scalar_add(F4, F4_2, op)
+    >>> check_dist_of_vec_over_scalar_add(F4, F4_2, op)
 
 
 
@@ -424,7 +443,7 @@ Check: Associativity
 
 .. code:: ipython3
 
-    >>> mvs.check_associativity(F4, F4_2, op)
+    >>> check_associativity(F4, F4_2, op)
 
 
 
@@ -452,7 +471,7 @@ calculated for any Finite Algebra using the method, ``power``.
 
     
     Group: F4_x_F4_x_F4
-    Instance ID: 140459396203728
+    Instance ID: 140653340679248
     Description: Direct product of F4_x_F4 & F4
     Order: 64
     Identity: 0:0:0
@@ -529,11 +548,11 @@ calculated for any Finite Algebra using the method, ``power``.
 
 .. code:: ipython3
 
-    >>> op = mvs.make_dp_sv_op(F4)
+    >>> op = make_dp_sv_op(F4)
 
 .. code:: ipython3
 
-    >>> vs3 = mvs.make_module('VS4_3D', '4 Element 3D Vector Space', F4, F4_3, op)
+    >>> vs3 = make_finite_algebra('VS4_3D', '4 Element 3D Vector Space', F4, F4_3, op)
     >>> vs3
 
 
@@ -541,7 +560,7 @@ calculated for any Finite Algebra using the method, ``power``.
 
 .. parsed-literal::
 
-    <VectorSpace:VS4_3D, ID:140459124938704, Scalars:F4, Vectors:F4_x_F4_x_F4>
+    <VectorSpace:VS4_3D, ID:140652395126096, Scalars:F4, Vectors:F4_x_F4_x_F4>
 
 
 
@@ -555,7 +574,7 @@ raise a ValueError exception.
 
 .. code:: ipython3
 
-    >>> mvs.check_module_conditions(F4, F4_3, op, verbose=True)
+    >>> check_module_conditions(F4, F4_3, op, verbose=True)
 
 
 .. parsed-literal::
@@ -582,7 +601,7 @@ a Ring, instead of a Field.
 
 .. code:: ipython3
 
-    >>> psr2 = finalg.generate_powerset_ring(2)
+    >>> psr2 = generate_powerset_ring(2)
     >>> psr2.about()
 
 
@@ -590,7 +609,7 @@ a Ring, instead of a Field.
 
     
     Ring: PSRing2
-    Instance ID: 140459124929936
+    Instance ID: 140652395139984
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
@@ -620,7 +639,7 @@ a Ring, instead of a Field.
 
     
     Group: PSRing2_x_PSRing2
-    Instance ID: 140459124824208
+    Instance ID: 140652395168144
     Description: Direct product of PSRing2 & PSRing2
     Order: 16
     Identity: {}:{}
@@ -649,9 +668,9 @@ a Ring, instead of a Field.
 
 .. code:: ipython3
 
-    >>> psr_op = mvs.make_dp_sv_op(psr2)
+    >>> psr_op = make_dp_sv_op(psr2)
     >>> 
-    >>> psr_mod = mvs.make_module("PSRmod", "2D Powerset Vector Space", psr2, psr2_2, psr_op)
+    >>> psr_mod = make_finite_algebra("PSRmod", "2D Powerset Vector Space", psr2, psr2_2, psr_op)
     >>> psr_mod.about(max_size=16)
 
 
@@ -659,14 +678,14 @@ a Ring, instead of a Field.
 
     
     Module: PSRmod
-    Instance ID: 140459396151824
+    Instance ID: 140652395171280
     Description: 2D Powerset Vector Space
     Order: 4
     
     SCALARS:
     
     Ring: PSRing2
-    Instance ID: 140459124929936
+    Instance ID: 140652395139984
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
@@ -688,7 +707,7 @@ a Ring, instead of a Field.
     VECTORS:
     
     Group: PSRing2_x_PSRing2
-    Instance ID: 140459124824208
+    Instance ID: 140652395168144
     Description: Direct product of PSRing2 & PSRing2
     Order: 16
     Identity: {}:{}
@@ -741,22 +760,22 @@ Two inputs are required: a Field and an integer (number of dimensions)
 
 .. code:: ipython3
 
-    >>> F4_2X = mvs.generate_n_dim_module(F4, 2)
-    >>> F4_2X.about()
+    >>> F4_2X = generate_n_dim_module(F4, 2)
+    >>> F4_2X.about(max_size=16)
 
 
 .. parsed-literal::
 
     
     VectorSpace: VS2-F4
-    Instance ID: 140459124958160
-    Description: 2-dimensional Vector Space over <Field:F4, ID:140459396121168>
+    Instance ID: 140652395171792
+    Description: 2-dimensional Vector Space over <Field:F4, ID:140652267961104>
     Order: 4
     
     SCALARS:
     
     Field: F4
-    Instance ID: 140459396121168
+    Instance ID: 140652267961104
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: 0
@@ -778,7 +797,7 @@ Two inputs are required: a Field and an integer (number of dimensions)
     VECTORS:
     
     Group: F4_x_F4
-    Instance ID: 140459124957584
+    Instance ID: 140652395159824
     Description: Direct product of F4 & F4
     Order: 16
     Identity: 0:0
@@ -802,5 +821,21 @@ Two inputs are required: a Field and an integer (number of dimensions)
          13   1+a:1   1+a:1       2
          14   1+a:a   1+a:a       2
          15 1+a:1+a 1+a:1+a       2
-    Group order is 16 > 12, so no further info calculated/printed.
+    Cayley Table (showing indices):
+    [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+     [1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14],
+     [2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13],
+     [3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12],
+     [4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11],
+     [5, 4, 7, 6, 1, 0, 3, 2, 13, 12, 15, 14, 9, 8, 11, 10],
+     [6, 7, 4, 5, 2, 3, 0, 1, 14, 15, 12, 13, 10, 11, 8, 9],
+     [7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8],
+     [8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7],
+     [9, 8, 11, 10, 13, 12, 15, 14, 1, 0, 3, 2, 5, 4, 7, 6],
+     [10, 11, 8, 9, 14, 15, 12, 13, 2, 3, 0, 1, 6, 7, 4, 5],
+     [11, 10, 9, 8, 15, 14, 13, 12, 3, 2, 1, 0, 7, 6, 5, 4],
+     [12, 13, 14, 15, 8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3],
+     [13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2],
+     [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1],
+     [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
 

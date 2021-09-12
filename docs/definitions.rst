@@ -74,9 +74,10 @@ replaced by a **Ring**,
 Class Hierarchy
 ---------------
 
-:math:`\langle FiniteAlgebra \rangle \rightarrow` Magma
-:math:`\rightarrow` Semigroup :math:`\rightarrow` Monoid
-:math:`\rightarrow` Group :math:`\rightarrow` Ring :math:`\rightarrow`
-Field
+The definitions, above, are supported by the following class hierarchy,
+used in the ``finite_algebras`` module:
 
-Module :math:`\rightarrow` VectorSpace
+.. figure:: attachment:class_hierarchy_sm.jpg
+   :alt: class_hierarchy_sm.jpg
+
+   class_hierarchy_sm.jpg

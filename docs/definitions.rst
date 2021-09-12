@@ -77,7 +77,8 @@ Class Hierarchy
 The definitions, above, are supported by the following class hierarchy,
 used in the ``finite_algebras`` module:
 
-.. figure:: attachment:class_hierarchy_sm.jpg
-   :alt: class_hierarchy_sm.jpg
+.. figure:: attachment:class_hierarchy_sm.png
+   :alt: class_hierarchy_sm.png
 
-   class_hierarchy_sm.jpg
+   class_hierarchy_sm.png
+

@@ -24,8 +24,6 @@ representation is as shown below.
    the table, and each integer represents the position of an element in
    ‘element_names’. Optionally, element names (``str``) may be used in
    the table, rather than integers.
--  **table2**: (OPTIONAL) Similar to *table*, above. Required when
-   defining a Ring or Field.
 
 **NOTE**: The type of table required here is known as a `Cayley
 Table <https://en.wikipedia.org/wiki/Cayley_table>`__. All of the

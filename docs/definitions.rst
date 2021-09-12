@@ -70,24 +70,3 @@ A **Module**,
 has the same conditions as a Vector Space, except that the Field is
 replaced by a **Ring**,
 :math:`\mathscr{R} = \langle S, +, \times \rangle`.
-
-Class Hierarchy
----------------
-
-The definitions, above, are supported by the following class hierarchy,
-used in the ``finite_algebras`` module:
-
-.. code:: ipython3
-
-    from IPython.display import Image
-    Image(url= "class_hierarchy_sm.jpg")
-
-
-
-
-.. raw:: html
-
-    <img src="class_hierarchy_sm.jpg"/>
-
-
-

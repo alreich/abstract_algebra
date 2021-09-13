@@ -606,9 +606,11 @@ def about_isomorphic_partition(alg, part):
         if len(identities) == 1:
             single_id = sub0.identity
 
-    comm = ""
+    comm = "Isomorphic "
+    comm1 = ""
     if sub0.is_commutative():
-        comm = "Commutative "
+        comm = "Isomorphic Commutative "
+        comm1 = "Commutative "
 
     norm = ""
     if alg.has_inverses() and alg.is_normal(sub0):
@@ -633,9 +635,9 @@ def about_isomorphic_partition(alg, part):
             print("")
     elif size == 1:
         if identities:
-            print(f"{size} {comm}{norm}{classname} of order {order} with identity '{sub0.identity}':")
+            print(f"{size} {comm1}{norm}{classname} of order {order} with identity '{sub0.identity}':")
         else:
-            print(f"{size} {comm}{norm}{classname} of order {order}:")
+            print(f"{size} {comm1}{norm}{classname} of order {order}:")
         print(f"      {sub0.name}: {sub0.elements}\n")
     else:
         raise ValueError("A partition must have at least one member.")

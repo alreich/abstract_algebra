@@ -1306,6 +1306,7 @@ def make_finite_algebra(*args):
 
     table = make_cayley_table(tbl, elems)
 
+    # Turn table2 into a CayleyTable and determine if it supports associativity
     table2 = None
     is_assoc2 = False
     if 'table2' in finalg_dict:
@@ -1323,6 +1324,8 @@ def make_finite_algebra(*args):
         if identity is not None:
             if inverses:
                 if table2 is not None and is_assoc2:
+                    # is_field will either build the abelian Group, mentioned in the Field definition
+                    # or it will return False.  In the latter case, this becomes a Ring, instead of a Field.
                     abelian_group = is_field(elems[identity], elems, table2.table)
                     if abelian_group:
                         return Field(name, desc, elems, table, table2, check_inputs=False,

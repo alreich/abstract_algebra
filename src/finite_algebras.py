@@ -318,30 +318,30 @@ class Magma(SingleElementSetAlgebra):
         else:
             return False
 
-    def closure_OLD(self, subset_of_elements, include_inverses):
-        """Given a subset (in list form) of the group's elements (name strings),
-        return the smallest possible set of elements, containing the subset,
-        that is closed under multiplication.  If include_inverses is True
-        and the algebra has inverses, then they will be added to the closure."""
-
-        result = set(subset_of_elements)
-
-        # Include inverses, maybe.
-        if include_inverses and self.has_inverses():
-            for elem in subset_of_elements:
-                result.add(self.inv(elem))
-
-        # Add the products of all possible pairs
-        for pair in it.product(result, result):
-            result.add(self.op(*pair))
-
-        # If the input set of elements increased, recurse ...
-        if len(result) > len(subset_of_elements):
-            return self.closure(list(result), include_inverses)
-
-        # ...otherwise, stop and return the result
-        else:
-            return list(result)
+    # def closure_OLD(self, subset_of_elements, include_inverses):
+    #     """Given a subset (in list form) of the group's elements (name strings),
+    #     return the smallest possible set of elements, containing the subset,
+    #     that is closed under multiplication.  If include_inverses is True
+    #     and the algebra has inverses, then they will be added to the closure."""
+    #
+    #     result = set(subset_of_elements)
+    #
+    #     # Include inverses, maybe.
+    #     if include_inverses and self.has_inverses():
+    #         for elem in subset_of_elements:
+    #             result.add(self.inv(elem))
+    #
+    #     # Add the products of all possible pairs
+    #     for pair in it.product(result, result):
+    #         result.add(self.op(*pair))
+    #
+    #     # If the input set of elements increased, recurse ...
+    #     if len(result) > len(subset_of_elements):
+    #         return self.closure(list(result), include_inverses)
+    #
+    #     # ...otherwise, stop and return the result
+    #     else:
+    #         return list(result)
 
     def closure(self, subset_of_elements, include_inverses):
         """Given a subset (in list form) of the group's elements (name strings),
@@ -356,9 +356,14 @@ class Magma(SingleElementSetAlgebra):
             for elem in subset_of_elements:
                 result.add(self.inv(elem))
 
-        # Add the products of all possible pairs (These are sums, if rings)
+        # Add the products (sums, if rings) of all possible pairs
         for pair in it.product(result, result):
             result.add(self.op(*pair))
+
+        # For rings, add the products of all possible pairs
+        if isinstance(self, Ring):
+            for pair in it.product(result, result):
+                result.add(self.mult(*pair))
 
         # If the input set of elements increased, recurse ...
         if len(result) > len(subset_of_elements):
@@ -377,10 +382,10 @@ class Magma(SingleElementSetAlgebra):
         all_elements = self.elements
         n = len(all_elements)
         if divisors_only:
-            rng = divisors(n, non_trivial=True)
+            range_ = divisors(n, non_trivial=True)
         else:
-            rng = range(2, n - 1)
-        for i in rng:
+            range_ = range(2, n - 1)
+        for i in range_:
             # Look at all combinations of elements: pairs, triples, quadruples, etc.
             for combo in it.combinations(all_elements, i):
                 # Freezing is required to add a set to a set
@@ -389,10 +394,21 @@ class Magma(SingleElementSetAlgebra):
                     closed.add(clo)
         return list(map(lambda x: list(x), closed))
 
+    # def subalgebra_from_elements_OLD(self, closed_subset_of_elements, name="No name", desc="No description"):
+    #     """Return the algebra constructed from the given closed subset of elements."""
+    #     # Make sure the elements are sorted according to their order in the parent Group (self)
+    #     elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.elements.index(x))
+    #     table = []
+    #     for a in elements_sorted:
+    #         row = []
+    #         for b in elements_sorted:
+    #             # The table entry is the index of the product in the sorted elements list
+    #             row.append(elements_sorted.index(self.op(a, b)))
+    #         table.append(row)
+    #     return make_finite_algebra(name, desc, elements_sorted, table)
+
     def subalgebra_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
         """Return the algebra constructed from the given closed subset of elements."""
-        # TODO: Check whether the input elements are indeed closed (make this check optional)
-        #       Use an is_closed method (To Be Written).
         # Make sure the elements are sorted according to their order in the parent Group (self)
         elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.elements.index(x))
         table = []
@@ -402,7 +418,17 @@ class Magma(SingleElementSetAlgebra):
                 # The table entry is the index of the product in the sorted elements list
                 row.append(elements_sorted.index(self.op(a, b)))
             table.append(row)
-        return make_finite_algebra(name, desc, elements_sorted, table)
+        if isinstance(self, Ring):
+            table2 = []
+            for c in elements_sorted:
+                row2 = []
+                for d in elements_sorted:
+                    # The table entry is the index of the product in the sorted elements list
+                    row2.append(elements_sorted.index(self.mult(c, d)))
+                table2.append(row2)
+            return make_finite_algebra(name, desc, elements_sorted, table, table2)
+        else:
+            return make_finite_algebra(name, desc, elements_sorted, table)
 
     def proper_subalgebras(self, divisors_only=True, include_inverses=True):
         """Return a list of proper subalgebras of the algebra."""

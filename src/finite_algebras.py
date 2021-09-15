@@ -318,7 +318,7 @@ class Magma(SingleElementSetAlgebra):
         else:
             return False
 
-    def closure(self, subset_of_elements, include_inverses):
+    def closure_OLD(self, subset_of_elements, include_inverses):
         """Given a subset (in list form) of the group's elements (name strings),
         return the smallest possible set of elements, containing the subset,
         that is closed under multiplication.  If include_inverses is True
@@ -332,6 +332,31 @@ class Magma(SingleElementSetAlgebra):
                 result.add(self.inv(elem))
 
         # Add the products of all possible pairs
+        for pair in it.product(result, result):
+            result.add(self.op(*pair))
+
+        # If the input set of elements increased, recurse ...
+        if len(result) > len(subset_of_elements):
+            return self.closure(list(result), include_inverses)
+
+        # ...otherwise, stop and return the result
+        else:
+            return list(result)
+
+    def closure(self, subset_of_elements, include_inverses):
+        """Given a subset (in list form) of the group's elements (name strings),
+        return the smallest possible set of elements, containing the subset,
+        that is closed under multiplication.  If include_inverses is True
+        and the algebra has inverses, then they will be added to the closure."""
+
+        result = set(subset_of_elements)
+
+        # Include inverses, maybe.
+        if include_inverses and self.has_inverses():
+            for elem in subset_of_elements:
+                result.add(self.inv(elem))
+
+        # Add the products of all possible pairs (These are sums, if rings)
         for pair in it.product(result, result):
             result.add(self.op(*pair))
 

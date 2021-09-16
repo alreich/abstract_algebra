@@ -694,12 +694,30 @@ def about_isomorphic_partition(alg, part):
         raise ValueError("A partition must have at least one member.")
 
 
+def are_n(n):
+    choices = ['are no', 'is 1', f'are {n}']
+    if n < 2:
+        return choices[n]
+    else:
+        return choices[2]
+
+
+def add_s(string, n):
+    if n == 1:
+        return string
+    else:
+        return string + 's'
+
+
 def about_isomorphic_partitions(alg, partitions):
     """Print a summary of the isomorphic partitions of an algebra."""
-    num_sub_algs = functools.reduce(lambda x, y: x + y, [len(p) for p in partitions])
-    num_parts = len(partitions)
+    n_subs = functools.reduce(lambda x, y: x + y, [len(p) for p in partitions])
+    n_parts = len(partitions)
     print(f"\nSubalgebras of {alg}")
-    print(f"  There are {num_parts} unique subalgebras, up to isomorphisms, out of {num_sub_algs} total subalgebras")
+    # print(f"  There are {num_parts} unique subalgebras, up to isomorphisms, out of {num_sub_algs} total subalgebras")
+    what = f"  There {are_n(n_parts)} unique proper {add_s('subalgebra', n_parts)}, up to isomorphism, "
+    out_of = f"out of {n_subs} total subalgebras."
+    print(what + out_of)
     print(f"  as shown by the partitions below:\n")
     for partition in partitions:
         about_isomorphic_partition(alg, partition)
@@ -869,6 +887,11 @@ class Ring(Group):
     def mult(self, *args):
         """Ring multiplication, based on the second table."""
         return self.__ring_mult(*args)
+
+    def mult_is_commutative(self):
+        """By definition, Ring addition is commutative, but Ring multiplication only needs to be
+        associative.  This method tells us whether multiplication is commutative for this Ring."""
+        return self.mult_table.is_commutative()
 
     def extract_additive_algebra(self):
         """A Ring's elements over addition, alone, should be a commutative Group.  This function

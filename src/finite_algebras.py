@@ -270,6 +270,16 @@ class Magma(SingleElementSetAlgebra):
                                    list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                                    dp_mult_table)
 
+    def about(self, max_size=12, use_table_names=False):
+        """Print additional information about the algebra."""
+        super().about(max_size, use_table_names)
+        generators = self.is_cyclic()
+        if generators:
+            print("Cyclic?: Yes")
+            print(f"  Generators: {generators}")
+        else:
+            print("Cyclic?: No")
+
     def power(self, n):
         """Return the direct product of this algebra with itself, n times."""
         result = self
@@ -346,8 +356,9 @@ class Magma(SingleElementSetAlgebra):
     def closure(self, subset_of_elements, include_inverses):
         """Given a subset (in list form) of the group's elements (name strings),
         return the smallest possible set of elements, containing the subset,
-        that is closed under multiplication.  If include_inverses is True
-        and the algebra has inverses, then they will be added to the closure."""
+        that is closed under the algebra's operation(s).  If include_inverses
+        is True and the algebra has inverses, then they will be added to the
+        closure."""
 
         result = set(subset_of_elements)
 
@@ -440,6 +451,20 @@ class Magma(SingleElementSetAlgebra):
             count += 1
             list_of_subalgebras.append(self.subalgebra_from_elements(closed_element_set, name, desc))
         return list_of_subalgebras
+
+    def generators(self):
+        """Return a list of individual elements that generate the entire algebra."""
+        elemset = set(self.elements)
+        return [x for x in elemset if set(self.closure([x], False)) == elemset]
+
+    def is_cyclic(self):
+        """Returns False if this algebra is not cyclic; otherwise a list of elements
+        that generates the algebra is returned."""
+        gens = self.generators()
+        if len(gens) == 0:
+            return False
+        else:
+            return gens
 
 
 # =============
@@ -703,6 +728,8 @@ def about_isomorphic_partition(alg, part):
 
 
 def are_n(n):
+    """A bit of grammar.  This function returns a string with the appropriate
+    singular or plural present indicative form of 'to be', along with 'n'."""
     choices = ['are no', 'is 1', f'are {n}']
     if n < 2:
         return choices[n]
@@ -711,6 +738,7 @@ def are_n(n):
 
 
 def add_s(string, n):
+    """Adds an 's' to 'string', or not, depending on 'n'."""
     if n == 1:
         return string
     else:
@@ -723,7 +751,6 @@ def about_isomorphic_partitions(alg, partitions):
         n_subs = functools.reduce(lambda x, y: x + y, [len(p) for p in partitions])
         n_parts = len(partitions)
         print(f"\nSubalgebras of {alg}")
-        # print(f"  There are {num_parts} unique subalgebras, up to isomorphisms, out of {num_sub_algs} total subalgebras")
         what = f"  There {are_n(n_parts)} unique proper {add_s('subalgebra', n_parts)}, up to isomorphism, "
         out_of = f"out of {n_subs} total subalgebras."
         print(what + out_of)
@@ -731,7 +758,17 @@ def about_isomorphic_partitions(alg, partitions):
         for partition in partitions:
             about_isomorphic_partition(alg, partition)
     else:
-        print("There are no subalgebras.")
+        print("There are no proper subalgebras.")
+
+
+def about_subalgebras(alg):
+    """A convenience function that finds and summarizes all proper subalgebras
+    of the input SingleElementSetAlgebra.  The list of isomorphic partitions is
+    returned and a summary of it is printed out."""
+    alg_subs = alg.proper_subalgebras()
+    partitions = partition_into_isomorphic_lists(alg_subs)
+    about_isomorphic_partitions(alg, partitions)
+    return partitions
 
 
 # -----------------
@@ -1566,10 +1603,16 @@ class Examples:
                          for filename in self.filenames_list]
         self.about()
 
-    def get_example(self, index):
-        """Retrieves an algebra from the Examples instance, based on the index of the algebra.
-        Execute the Example's 'about' method to see the list of examples and their indices."""
+    def __len__(self):
+        return len(self.algebras)
+
+    def __getitem__(self, index):
         return self.algebras[index]
+
+    # def get_example(self, index):
+    #     """Retrieves an algebra from the Examples instance, based on the index of the algebra.
+    #     Execute the Example's 'about' method to see the list of examples and their indices."""
+    #     return self.algebras[index]
 
     def about(self):
         """Returns a list of example algebras with instructions on how to retrieve them."""
@@ -1578,7 +1621,7 @@ class Examples:
         print(" " * (int(n / 2) - 8) + "Example Algebras")  # centered
         print("-" * n)
         print(f"  {len(self.algebras)} example algebras are available.")
-        print("  Use \"get_example(INDEX)\" to retrieve a specific example,")
+        print("  Use \"Examples[INDEX]\" to retrieve a specific example,")
         print("  where INDEX is the first number on each line below:")
         print("-" * n)
         index = 0

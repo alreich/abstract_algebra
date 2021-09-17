@@ -646,22 +646,26 @@ def partition_into_isomorphic_lists(list_of_groups):
 def about_isomorphic_partition(alg, part):
     """Print a summary of a particular partition of isomorphic subalgebras of an algebra."""
     size = len(part)
+
+    # All the algebras in a partition are isomorphic to each other,
+    # so, get (most) properties from the first algebra in the partition
     sub0 = part[0]
     classname = f"{sub0.__class__.__name__}"
     order = sub0.order
-
-    identities = False
-    single_id = False
-    if sub0.has_identity():
-        identities = {sub.identity for sub in part}
-        if len(identities) == 1:
-            single_id = sub0.identity
 
     comm = "Isomorphic "
     comm1 = ""
     if sub0.is_commutative():
         comm = "Isomorphic Commutative "
         comm1 = "Commutative "
+
+    # See if there are different identity elements for each algebra in the partition
+    identities = False
+    single_id = False
+    if sub0.has_identity():
+        identities = {sub.identity for sub in part}
+        if len(identities) == 1:
+            single_id = sub0.identity
 
     norm = ""
     if alg.has_inverses() and alg.is_normal(sub0):
@@ -672,24 +676,28 @@ def about_isomorphic_partition(alg, part):
             if single_id:
                 print(f"{size} {comm}{norm}{classname}s of order {order} with identity '{single_id}':")
                 for sub in part:
-                    print(f"      {sub.name}: {sub.elements}")
+                    sub_cname = sub.__class__.__name__
+                    print(f"      {sub_cname}: {sub.name}: {sub.elements}")
                 print("")
             else:
                 print(f"{size} {comm}{norm}{classname}s of order {order}:")
                 for sub in part:
-                    print(f"      {sub.name}: {sub.elements} with identity '{sub.identity}'")
+                    sub_cname = sub.__class__.__name__
+                    print(f"      {sub_cname}: {sub.name}: {sub.elements} with identity '{sub.identity}'")
                 print("")
         else:
             print(f"{size} {comm}{norm}{classname}s of order {order}:")
             for sub in part:
-                print(f"      {sub.name}: {sub.elements}")
+                sub_cname = sub.__class__.__name__
+                print(f"      {sub_cname}: {sub.name}: {sub.elements}")
             print("")
     elif size == 1:
         if identities:
             print(f"{size} {comm1}{norm}{classname} of order {order} with identity '{sub0.identity}':")
         else:
             print(f"{size} {comm1}{norm}{classname} of order {order}:")
-        print(f"      {sub0.name}: {sub0.elements}\n")
+        sub0_cname = sub0.__class__.__name__
+        print(f"      {sub0_cname}: {sub0.name}: {sub0.elements}\n")
     else:
         raise ValueError("A partition must have at least one member.")
 
@@ -711,16 +719,19 @@ def add_s(string, n):
 
 def about_isomorphic_partitions(alg, partitions):
     """Print a summary of the isomorphic partitions of an algebra."""
-    n_subs = functools.reduce(lambda x, y: x + y, [len(p) for p in partitions])
-    n_parts = len(partitions)
-    print(f"\nSubalgebras of {alg}")
-    # print(f"  There are {num_parts} unique subalgebras, up to isomorphisms, out of {num_sub_algs} total subalgebras")
-    what = f"  There {are_n(n_parts)} unique proper {add_s('subalgebra', n_parts)}, up to isomorphism, "
-    out_of = f"out of {n_subs} total subalgebras."
-    print(what + out_of)
-    print(f"  as shown by the partitions below:\n")
-    for partition in partitions:
-        about_isomorphic_partition(alg, partition)
+    if len(partitions) != 0:
+        n_subs = functools.reduce(lambda x, y: x + y, [len(p) for p in partitions])
+        n_parts = len(partitions)
+        print(f"\nSubalgebras of {alg}")
+        # print(f"  There are {num_parts} unique subalgebras, up to isomorphisms, out of {num_sub_algs} total subalgebras")
+        what = f"  There {are_n(n_parts)} unique proper {add_s('subalgebra', n_parts)}, up to isomorphism, "
+        out_of = f"out of {n_subs} total subalgebras."
+        print(what + out_of)
+        print(f"  as shown by the partitions below:\n")
+        for partition in partitions:
+            about_isomorphic_partition(alg, partition)
+    else:
+        print("There are no subalgebras.")
 
 
 # -----------------
@@ -923,12 +934,22 @@ class Ring(Group):
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Ring."""
         super().about(max_size, use_table_names)
+
         if self.mult_identity is not None:
             print(f"Mult. Identity: {self.mult_identity}")
         else:
             print(f"Mult. Identity: None")
-        print(f"Mult. Commutative? {yes_or_no(self.mult_table.is_commutative())}")
+
+        print(f"Mult. Commutative? {yes_or_no(self.mult_is_commutative())}")
+
+        zero_divisors = self.zero_divisors()
+        if len(zero_divisors) == 0:
+            print("Zero Divisors: None")
+        else:
+            print(f"Zero Divisors: {zero_divisors}")
+
         size = len(self.elements)
+
         if size <= max_size:
             if use_table_names:
                 print(f"Multiplicative Cayley Table (showing names):")
@@ -938,6 +959,7 @@ class Ring(Group):
                 pp.pprint(self.mult_table.tolist())
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+
         return None
 
 

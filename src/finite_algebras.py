@@ -204,17 +204,18 @@ class SingleElementSetAlgebra(FiniteAlgebra):
     def about(self, max_size=12, use_table_names=False):
         """Prints out information about the algebra. Tables larger than
         max_size are not printed out."""
-        print(f"\n{self.__class__.__name__}: {self.name}")
+        print(f"\n** {self.__class__.__name__} **")
+        print(f"Name: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
         print(f"Order: {self.order}")
-        print(f"Elements: {self.elements}")
         if self.identity is None:
             print("Identity: None")
         else:
             print(f"Identity: {self.identity}")
         print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
+        print(f"Elements: {self.elements}")
         print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
         size = len(self.elements)
         if size <= max_size:  # Don't print table if too large
@@ -269,16 +270,6 @@ class Magma(SingleElementSetAlgebra):
                                    dp_description,
                                    list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                                    dp_mult_table)
-
-    def about(self, max_size=12, use_table_names=False):
-        """Print additional information about the algebra."""
-        super().about(max_size, use_table_names)
-        generators = self.is_cyclic()
-        if generators:
-            print("Cyclic?: Yes")
-            print(f"  Generators: {generators}")
-        else:
-            print("Cyclic?: No")
 
     def power(self, n):
         """Return the direct product of this algebra with itself, n times."""
@@ -607,13 +598,20 @@ class Group(Monoid):
 
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Group."""
-        print(f"\n{self.__class__.__name__}: {self.name}")
+        print(f"\n** {self.__class__.__name__} **")
+        print(f"Name: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
         print(f"Order: {self.order}")
         print(f"Identity: {self.identity}")
         print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
+        generators = self.is_cyclic()
+        if generators:
+            print("Cyclic?: Yes")
+            print(f"  Generators: {sorted(generators)}")
+        else:
+            print("Cyclic?: No")
         spc = 7
         print("Elements:")
         print("   Index   Name   Inverse  Order")

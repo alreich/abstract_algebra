@@ -457,6 +457,18 @@ class Magma(SingleElementSetAlgebra):
         else:
             return gens
 
+    def center_elements(self):
+        """Return the list of elements that form the center of this algebra."""
+        return [a for a in self if all([self.op(a, x) == self.op(x, a) for x in self])]
+
+    def center(self):
+        """Return the subalgebra that is the center of this algebra."""
+        ctr = self.center_elements()
+        if len(ctr) > 0:
+            return self.subalgebra_from_elements(ctr, self.name + '_CENTER', 'Center of ' + self.name)
+        else:
+            return None
+
 
 # =============
 #   Semigroup

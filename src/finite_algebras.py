@@ -201,6 +201,9 @@ class SingleElementSetAlgebra(FiniteAlgebra):
         with open(json_filename, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
+    # This 'about' method differs from the one in Groups in that it does not print out
+    # as much detailed information about elements.
+    # TODO: Combine the 'about' method, below, with the one in Groups.
     def about(self, max_size=12, use_table_names=False):
         """Prints out information about the algebra. Tables larger than
         max_size are not printed out."""
@@ -215,6 +218,12 @@ class SingleElementSetAlgebra(FiniteAlgebra):
             print(f"Identity: {self.identity}")
         print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
+        generators = self.is_cyclic()
+        if generators:
+            print("Cyclic?: Yes")
+            print(f"  Generators: {sorted(generators)}")
+        else:
+            print("Cyclic?: No")
         print(f"Elements: {self.elements}")
         print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
         size = len(self.elements)
@@ -457,17 +466,57 @@ class Magma(SingleElementSetAlgebra):
         else:
             return gens
 
-    def center_elements(self):
-        """Return the list of elements that form the center of this algebra."""
+    def center(self):
+        """Return the list of elements that commute with every element of the algebra.
+        In Pinter's book, chapter 5, exercise D3, the 'center' is defined for Groups,
+        but the definition also works for any Magma."""
         return [a for a in self if all([self.op(a, x) == self.op(x, a) for x in self])]
 
-    def center(self):
-        """Return the subalgebra that is the center of this algebra."""
-        ctr = self.center_elements()
-        if len(ctr) > 0:
+    def center_algebra(self, verbose=False):
+        """Return the subalgebra that is the center of this algebra.  If the center is part of a
+        Semigroup, then (due to associativity) it will be closed wrt the Semigroup operation,
+        and hence form a sub-semigroup, but the center of a Magma will not necessarily be closed.
+        Note also that, if the algebra is commutative, then the entire algebra is its center."""
+        ctr = self.center()
+
+        if len(ctr) == 0:  # If there is no center...
+            if verbose:
+                print(f"{self} does not have a Center.")
+            return None
+
+        # Being lazy (or careful) and checking closure, regardless of the type of algebra
+        elif set(ctr) == set(self.closure(ctr, False)):
             return self.subalgebra_from_elements(ctr, self.name + '_CENTER', 'Center of ' + self.name)
         else:
+            if verbose:
+                print(f"The Center of {self} is not closed.")
             return None
+
+    def is_division_algebra(self, verbose=False):
+        """Return True if, for every a & b in the algebra, there is an x and y in the algebra
+        such that ax=b and ya=b.  Otherwise, return False.  If False is returned and you need to
+        see why, set verbose to True and look for 'fail' in the output."""
+        if verbose:
+            print(f"\n{self}\n")
+        result = True
+        elems = self.elements
+        for ab in it.product(elems, elems):
+            ab_ok = False
+            for xy in it.product(elems, elems):
+                a = ab[0]
+                b = ab[1]
+                x = xy[0]
+                y = xy[1]
+                if self.op(a, x) == b and self.op(y, a) == b:
+                    if verbose:
+                        print(f"{ab} & {xy}")
+                    ab_ok = True
+                    break
+            if not ab_ok:
+                result = False
+                if verbose:
+                    print(f"{ab} fail")
+        return result
 
 
 # =============
@@ -475,14 +524,25 @@ class Magma(SingleElementSetAlgebra):
 # =============
 
 class Semigroup(Magma):
-    """A semigroup is an associative magma.  Not much else happens here.  But still,
-    associativity is a pretty big deal."""
+    """A semigroup is an associative Magma."""
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table)
         if check_inputs:
             if not self.table.is_associative():
                 raise ValueError("CHECK INPUTS: Table does not support associativity")
+
+    def is_regular(self):
+        """Returns True if for all elements, a, there exists an element, x, such that axa=a.
+        Otherwise, False is returned."""
+        return all([any([self.op(self.op(a, x), a) == a for x in self]) for a in self])
+
+    def weak_inverses(self):
+        """Returns a dictionary of weak inverses, where each key is one of the algebra's
+        elements and its value is a list of its weak inverses.  If the algebra is
+        regular, then there will be at least 1 weak inverse for each element, otherwise
+        some elements may not have a weak inverse."""
+        return {a: [x for x in self if self.op(self.op(a, x), a) == a] for a in self}
 
 
 # ==========
@@ -608,6 +668,8 @@ class Group(Monoid):
         # Return a list of the first subgroups from each sublist of proper subgroups
         return [partition[0] for partition in partitions]
 
+    # This 'about' method differs from the one in SingleElementSetAlgebra in that it prints out
+    # more detailed information about elements.  It would be nice to combine the two someday.
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Group."""
         print(f"\n** {self.__class__.__name__} **")
@@ -1628,7 +1690,7 @@ class Examples:
         """Returns a list of example algebras with instructions on how to retrieve them."""
         n = 70
         print("=" * n)
-        print(" " * (int(n / 2) - 8) + "Example Algebras")  # centered
+        print(" " * (int(n / 2) - 8) + "Example Algebras")  # centered text
         print("-" * n)
         print(f"  {len(self.algebras)} example algebras are available.")
         print("  Use \"Examples[INDEX]\" to retrieve a specific example,")

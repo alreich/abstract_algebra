@@ -3,8 +3,8 @@ Rings and Fields
 
 Rings and Fields have a single set of elements, but have two binary
 operations on those elements. This section provides examples of Ring and
-Field construction. See the previous section, “Definitions”, for
-definitions of these algebraic structures
+Field construction. See the section, “Definitions”, for definitions of
+these algebraic structures
 
 Internal Representation of Rings & Fields
 -----------------------------------------
@@ -12,6 +12,9 @@ Internal Representation of Rings & Fields
 Internally, a ``FiniteAlgebra`` can take several different forms. For
 algebras that have only one set of elements and two binary operations,
 such as Rings and Fields, the internal representation is as shown below.
+The first four components are the same as for Groups, Monoids, etc. The
+only difference is the addition of **table2**. It defines Ring
+multiplication.
 
 -  **name**: (``str``) A short name for the algebra;
 -  **description**: (``str``) Any additional, useful information about
@@ -25,16 +28,10 @@ such as Rings and Fields, the internal representation is as shown below.
 -  **table2**: Similar to *table*, above. Required when defining a Ring
    or Field.
 
-**NOTE**: The type of table required here is known as a `Cayley
-Table <https://en.wikipedia.org/wiki/Cayley_table>`__. All of the
-properties of a finite algebra can be derived from its Cayley Table. For
-this reason, this module includes a ``CayleyTable`` class for storing
-the table and methods associated with it.
-
 Ring
 ----
 
-**Ring** – :math:`\langle S, +, \times \rangle`, where
+**Ring** - :math:`\langle S, +, \times \rangle`, where
 :math:`\langle S, + \rangle` is a commutative Group,
 :math:`\langle S, \times \rangle` is a Semigroup, and :math:`\times`
 distributes over :math:`+`
@@ -89,7 +86,7 @@ In this ring, *“addition”* is symmetric difference,
     
     ** Ring **
     Name: Powerset Ring 2
-    Instance ID: 140295250296272
+    Instance ID: 140374834818256
     Description: Ring on powerset of {0, 1}
     Order: 4
     Identity: {}
@@ -117,12 +114,80 @@ In this ring, *“addition”* is symmetric difference,
      ['{}', '{0}', '{1}', '{0, 1}']]
 
 
+Additive & Multiplicative Identity Elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A Ring’s additive and multiplicative identity elements can be obtained
+as follows:
+
+.. code:: ipython3
+
+    rng.add_identity
+
+
+
+
+.. parsed-literal::
+
+    '{}'
+
+
+
+.. code:: ipython3
+
+    rng.mult_identity
+
+
+
+
+.. parsed-literal::
+
+    '{0, 1}'
+
+
+
+Or, perhaps more suggestively as follows:
+
+.. code:: ipython3
+
+    rng.zero
+
+
+
+
+.. parsed-literal::
+
+    '{}'
+
+
+
+.. code:: ipython3
+
+    rng.one
+
+
+
+
+.. parsed-literal::
+
+    '{0, 1}'
+
+
+
 Ring Addition and Multiplication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Ring addition, ``add``, is the same as the operation, ``op``, inherited
 from its superclass, Group.
 
+Recall that, in this module, all elements are represented by strings
+(names). So, even though the actual elements of a powerset Ring are sets
+(e.g., {0, 1}), those elements are represented as strings (e.g., “{0,
+1}”). The two examples below show “addition” and “multiplication”
+operations in set notation, along with the same operations as performed
+by the Ring’s ``add`` and ``mult`` operators.
+
+Ring “addition” using set notation:
 :math:`\{1\} \bigtriangleup \{0,1\} = \{0\}`
 
 .. code:: ipython3
@@ -138,7 +203,8 @@ from its superclass, Group.
 
 
 
-:math:`\{1\} \cap \{0,1\} = \{0\}`
+Ring “multiplication” using set notation:
+:math:`\{1\} \cap \{0,1\} = \{1\}`
 
 .. code:: ipython3
 
@@ -156,8 +222,10 @@ from its superclass, Group.
 Zero Divisors of a Ring
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Suppose :math:`\alpha \ne 0` is an element of the Ring,
-:math:`\langle S, +, \times \rangle`.
+**This section needs more work**
+
+Suppose :math:`\alpha \ne 0 \in S`, where :math:`0` is the additive
+identity element of the Ring, :math:`\langle S, +, \times \rangle`.
 
 Then, :math:`\alpha` is a **left zero divisor**, if
 :math:`\exists \beta \in S, \beta \ne 0` such that
@@ -179,63 +247,6 @@ The Ring just created has two zero divisors:
 .. parsed-literal::
 
     ['{0}', '{1}']
-
-
-
-To check this, recall, what the addititve identity is:
-
-.. code:: ipython3
-
-    >>> zero = rng.add_identity
-    >>> zero
-
-
-
-
-.. parsed-literal::
-
-    '{}'
-
-
-
-Multiplying an element by “zero” produces “zero”:
-
-.. code:: ipython3
-
-    >>> [rng.mult(x, zero) for x in rng.elements]
-
-
-
-
-.. parsed-literal::
-
-    ['{}', '{}', '{}', '{}']
-
-
-
-.. code:: ipython3
-
-    >>> [rng.mult(x, '{0}') for x in rng.elements]
-
-
-
-
-.. parsed-literal::
-
-    ['{}', '{0}', '{}', '{0}']
-
-
-
-.. code:: ipython3
-
-    >>> rng.mult('{0}', '{1}')
-
-
-
-
-.. parsed-literal::
-
-    '{}'
 
 
 
@@ -275,7 +286,7 @@ Autogeneration of a Powerset Ring
     
     ** Ring **
     Name: PSRing3
-    Instance ID: 140295788617680
+    Instance ID: 140375928854864
     Description: Autogenerated Ring on powerset of {0, 1, 2} w/ symm. diff. (add) & intersection (mult)
     Order: 8
     Identity: {}
@@ -372,7 +383,7 @@ done modulo 2:
     
     ** Ring **
     Name: Ex6
-    Instance ID: 140295788571792
+    Instance ID: 140375107910224
     Description: Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html
     Order: 4
     Identity: 0
@@ -403,17 +414,19 @@ done modulo 2:
 Extracting a Ring’s Additive & Multiplicative “Subalgebras”
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-At the beginning of this User Guide, in the *Algebra Definitions*
-section, a Ring is described as being a combination of a commutative
-Group, under addition, and a Semigroup, under multiplication (with
-distributivity of multiplication over addition). This section shows how
-those algebraic components of a Ring can be extracted.
+In the Definitions section, a Ring is described as being a combination
+of a commutative Group, under addition, and a Semigroup, under
+multiplication (with distributivity of multiplication over addition).
+This section shows how those algebraic components of a Ring can be
+extracted.
 
-**NOTE**: The implementation of the two extraction methods, illustrated
-below, operates by calling ``make_finite_algebra`` using the relevant
-portions of the Ring. That way, the appropriate algebras are returned: a
+The implementation of the two extraction methods, illustrated below,
+operates by calling ``make_finite_algebra`` using the relevant portions
+of the Ring. That way, the appropriate algebras are returned: a
 commutative Group for the additive portion, and, at a minimum, a
 Semigroup for the multiplicative portion.
+
+The example to follow uses the Ring, ``ex6``, created above.
 
 .. code:: ipython3
 
@@ -448,7 +461,7 @@ expected:
     
     ** Group **
     Name: Ex6.Add
-    Instance ID: 140294980658256
+    Instance ID: 140375107911056
     Description: Additive-only portion of Ex6
     Order: 4
     Identity: 0
@@ -491,7 +504,7 @@ Autogenerating a Commutative Ring
 
 The function, ``generate_algebra_mod_n``, is based on `example 2
 here <http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html>`__
-and in `Wikipedia
+and `Wikipedia
 here <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>`__.
 The :math:`+` and :math:`\times` operations are the usual integer
 addition and multiplication modulo the order (n), resp.
@@ -534,7 +547,7 @@ it will produce a Field.
     
     ** Ring **
     Name: R6
-    Instance ID: 140295788691344
+    Instance ID: 140375928807824
     Description: Autogenerated Ring of integers mod 6
     Order: 6
     Identity: a0
@@ -569,50 +582,9 @@ it will produce a Field.
      ['a0', 'a5', 'a4', 'a3', 'a2', 'a1']]
 
 
-**Extracting it’s component algebras**
-
-In the following, we extract the component algebras of this Ring as a
-commutative Group and a Monoid.
-
-The Monoid occurs since this Ring’s multiplicative portion includes a
-multiplicative identity element (‘a1’), but does not include inverses of
-all elements.
-
-.. code:: ipython3
-
-    >>> r6add = r6.extract_additive_algebra()
-    >>> r6add.about()
-
-
-.. parsed-literal::
-
-    
-    ** Group **
-    Name: R6.Add
-    Instance ID: 140295788691920
-    Description: Additive-only portion of R6
-    Order: 6
-    Identity: a0
-    Associative? Yes
-    Commutative? Yes
-    Cyclic?: Yes
-      Generators: ['a1', 'a5']
-    Elements:
-       Index   Name   Inverse  Order
-          0      a0      a0       1
-          1      a1      a5       6
-          2      a2      a4       3
-          3      a3      a3       2
-          4      a4      a2       3
-          5      a5      a1       6
-    Cayley Table (showing indices):
-    [[0, 1, 2, 3, 4, 5],
-     [1, 2, 3, 4, 5, 0],
-     [2, 3, 4, 5, 0, 1],
-     [3, 4, 5, 0, 1, 2],
-     [4, 5, 0, 1, 2, 3],
-     [5, 0, 1, 2, 3, 4]]
-
+Notice that there is a multiplicative identity in the Ring, above. So,
+if we extract the multiplicative portion of that Ring we should expect
+to obtain a Monoid, instead of a Semigroup, and we do, as shown below.
 
 .. code:: ipython3
 
@@ -625,7 +597,7 @@ all elements.
     
     ** Monoid **
     Name: R6.Mult
-    Instance ID: 140295788710224
+    Instance ID: 140375107892240
     Description: Multiplicative-only portion of R6
     Order: 6
     Identity: a1
@@ -653,10 +625,10 @@ Group.
 :math:`S\setminus{\{0\}}` is the set :math:`S` with the additive
 identity element removed.
 
-Field with four elements
-~~~~~~~~~~~~~~~~~~~~~~~~
+Example: A field with four elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Reference**: See Wikipedia: `“Field with four
+**Reference**: Wikipedia: `“Field with four
 elements” <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>`__
 
 .. code:: ipython3
@@ -687,7 +659,7 @@ elements” <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements
     
     ** Field **
     Name: F4
-    Instance ID: 140295788758096
+    Instance ID: 140375107924560
     Description: Field with 4 elements
     Order: 4
     Identity: 0
@@ -754,12 +726,12 @@ The method, ``div``, is a convenience method in Fields for computing
 
     >>> a = 'a'
     >>> b = '1+a'
-    >>> print(f"For example, \"{a} / {b}\" = {a} * {f4.mult_inv(b)} = {f4.mult(a, f4.mult_inv(b))}")
+    >>> print(f"For example, \"{a} / {b}\" = {a} * inv({b}) = {a} * {f4.mult_inv(b)} = {f4.mult(a, f4.mult_inv(b))}")
 
 
 .. parsed-literal::
 
-    For example, "a / 1+a" = a * a = 1+a
+    For example, "a / 1+a" = a * inv(1+a) = a * a = 1+a
 
 
 .. code:: ipython3
@@ -775,8 +747,7 @@ The method, ``div``, is a convenience method in Fields for computing
 
 
 
-Recall the definition of a Field, given at the beginning of this User
-Guide:
+Recall the definition of a Field, given in the Definition section:
 
 **Field** – a Ring :math:`\langle S, +, \times \rangle`, where
 :math:`\langle S\setminus{\{0\}}, \times \rangle` is a commutative
@@ -828,7 +799,7 @@ produce a Field.
     
     ** Field **
     Name: F7
-    Instance ID: 140295788538512
+    Instance ID: 140375107898832
     Description: Autogenerated Field of integers mod 7
     Order: 7
     Identity: a0
@@ -869,8 +840,8 @@ produce a Field.
 Serialization
 -------------
 
-Algebras can be converted to and from JSON strings/files and Python
-dictionaries.
+Rings and Fields can be converted to and from JSON strings/files and
+Python dictionaries.
 
 Instantiate Algebra from JSON File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -891,6 +862,55 @@ directory.
     >>> aa_path = os.path.join(os.getenv("PYPROJ"), "abstract_algebra")
     >>> alg_dir = os.path.join(aa_path, "Algebras")
 
+Here’s the path to the JSON file for the “field with four elements”, and
+a listing of the file itself.
+
+.. code:: ipython3
+
+    >>> f4_json = os.path.join(alg_dir, "field_with_four_elements.json")
+    
+    >>> !cat {f4_json}
+
+
+.. parsed-literal::
+
+    {"name": "F4",
+     "description": "Field with 4 elements (from Wikipedia)",
+     "elements": ["0", "1", "a", "1+a"],
+     "table": [[0, 1, 2, 3],
+               [1, 0, 3, 2],
+               [2, 3, 0, 1],
+               [3, 2, 1, 0]],
+     "table2": [[0, 0, 0, 0],
+                [0, 1, 2, 3],
+                [0, 2, 3, 1],
+                [0, 3, 1, 2]]
+    }
+
+
+And here’s the field created from the JSON file.
+
+.. code:: ipython3
+
+    >>> f4 = make_finite_algebra(f4_json)
+    
+    >>> f4
+
+
+
+
+.. parsed-literal::
+
+    Field(
+    'F4',
+    'Field with 4 elements (from Wikipedia)',
+    ['0', '1', 'a', '1+a'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
+    [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]
+    )
+
+
+
 Convert Algebra to Python Dictionary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -908,7 +928,7 @@ The example, below, shows a Field, being converted into dictionary.
 .. parsed-literal::
 
     {'name': 'F4',
-     'description': 'Field with 4 elements',
+     'description': 'Field with 4 elements (from Wikipedia)',
      'elements': ['0', '1', 'a', '1+a'],
      'table': [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
      'table2': [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]}
@@ -931,7 +951,7 @@ Instantiate Algebra from Python Dictionary
 
     Field(
     'F4',
-    'Field with 4 elements',
+    'Field with 4 elements (from Wikipedia)',
     ['0', '1', 'a', '1+a'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
     [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]
@@ -953,7 +973,7 @@ Convert Algebra to JSON String
 
 .. parsed-literal::
 
-    '{"name": "F4", "description": "Field with 4 elements", "elements": ["0", "1", "a", "1+a"], "table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]], "table2": [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]}'
+    '{"name": "F4", "description": "Field with 4 elements (from Wikipedia)", "elements": ["0", "1", "a", "1+a"], "table": [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]], "table2": [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]}'
 
 
 
@@ -977,7 +997,7 @@ convert the string to a Python dictionary, then input that to
 
     Field(
     'F4',
-    'Field with 4 elements',
+    'Field with 4 elements (from Wikipedia)',
     ['0', '1', 'a', '1+a'],
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
     [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]
@@ -1024,7 +1044,7 @@ abelian Group.
     
     ** Group **
     Name: F4_x_F4
-    Instance ID: 140295788785744
+    Instance ID: 140375108020688
     Description: Direct product of F4 & F4
     Order: 16
     Identity: 0:0

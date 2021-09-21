@@ -9,7 +9,7 @@ Groups, Rings, Fields, etc.
 
 The following list of algebraic structures is ordered such that each
 successive structure builds on the previous one. The class hierarchy of
-the ``finite_algebra`` module modeled on this progression.
+the ``finite_algebra`` module is modeled on this progression.
 
 -  **Magma** – a set, :math:`S`, with a binary operation,
    :math:`\circ: S \times S \to S`, such that
@@ -112,18 +112,20 @@ operation, it has been extended here to Magma’s.
 Note also, the center of a commutative algebra is the entire algebra.
 The gist of Pinter’s exercise is that, for Groups, the center is closed
 and hence defines a subgroup. The proof of this follows easily from
-associativity, and the property of center elements, so it will also be
-true for Semigroups, but not necessarily true for Magmas.
+associativity and the commutative property of center elements, so it
+will also be true for Semigroups, but not necessarily true for Magmas.
 
 There are two Magma methods related to the center:
 
--  ``center`` returns the center of a Magma, or it returns ``None`` if
-   the center is empty
--  ``center_algebra``, returns the algebra defined by the center, if the
-   center exists and is closed
+-  ``center`` returns the center of a Magma, or it returns an empty list
+   if the center is empty
+-  ``center_algebra`` returns the algebra defined by the center, if the
+   center exists and is closed, otherwise it returns ``None``.
 
 Division Algebra
 ~~~~~~~~~~~~~~~~
+
+**[NOTE: Need good references for divisibility and cancellation]**
 
 A Magma, :math:`M = \langle S, \circ \rangle` is a **division Algebra**
 if :math:`\forall a,b \in S, \exists x,y \in S` such that
@@ -133,23 +135,23 @@ This property is trivially true for Groups.
 
 The Magma method, ``is_division_algebra``, tests for this property.
 
-**Need a good reference for this definition**
-
 Regularity in Semigroups
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-A Semigroup, :math:`\langle S, \circ \rangle` is **regular** if
-:math:`\forall a \in S, \exists x \in S` such that
-:math:`a \circ x \circ a = a`.
+A Semigroup, :math:`\langle S, \circ \rangle` is **regular** if for each
+:math:`a \in S, \exists \bar{a} \in S` such that
+:math:`a \circ \bar{a} \circ a = a`.
 
-The element :math:`x` is called a **weak inverse** of :math:`a`. If the
-algebra is regular, then there will be at least 1 weak inverse for each
-element, otherwise some elements may not have a weak inverse.
+The element :math:`\bar{a}` is called a **weak inverse** of :math:`a`. A
+weak inverse may not exist or there may be more than one for any
+particular element. If the algebra is regular, then there will be at
+least 1 weak inverse for each element, otherwise some elements may not
+have a weak inverse.
 
 See the paper, `“Why Study Semigroups” by John M.
 Howie <http://www.thebookshelf.auckland.ac.nz/docs/Maths/PDF2/mathschron016-001.pdf>`__
 
-There are several Semigroup method related to regularity:
+Here are some Semigroup methods related to regularity:
 
 -  ``is_regular`` returns True or False, depending on whether the
    Semigroup is regular

@@ -22,8 +22,9 @@ representation is as shown below.
 -  **table**: (``list`` of ``list`` of ``int``) The algebra’s
    multiplication table, where each list in the list represents a row of
    the table, and each integer represents the position of an element in
-   ‘element_names’. Optionally, element names (``str``) may be used in
-   the table, rather than integers.
+   ‘element_names’. For input and ouput, element names (``str``) may be
+   used in the table, rather than integers, but integers are still used
+   internally.
 
 **NOTE**: The type of table required here is known as a `Cayley
 Table <https://en.wikipedia.org/wiki/Cayley_table>`__. All of the
@@ -50,7 +51,7 @@ inputs:
 3. Enter the **path to a JSON file** (``str``) that corresponds to the
    dictionary, described above.
 
-``make_finite_algebra`` uses the table(s) to determine what type of
+``make_finite_algebra`` uses the input table to determine what type of
 algebra it supports and returns the appropriate algebra.
 
 In the following examples, the only algebra constructor used is
@@ -59,13 +60,15 @@ In the following examples, the only algebra constructor used is
 Group
 ~~~~~
 
-We’ll start in the middle of the hierarchy of algebras, the Group.
+We’ll start the examples in the middle of the hierarchy of algebras,
+with Groups.
 
-Finite algebra elements, here, are always represented as strings; and,
-although a Cayley table can be entered (and displayed) using strings,
-they are represented internally (and displayed by default) as
-2-dimensional, square arrays of integers that represent the positions of
-elements in the element list.
+The element names in a finite algebra’s element list are **always**
+represented as strings; and, although a Cayley table can be entered (and
+displayed) using the same string names, within a Cayley table they are
+represented and displayed using a 2-dimensional, square array of
+integers that denote the positions of element names in the element list.
+To see this, look at the following input table vs. output table.
 
 .. code:: ipython3
 
@@ -78,6 +81,7 @@ elements in the element list.
                                   [ 'a' , 'a^2',  'e' ],
                                   ['a^2',  'e' ,  'a' ]]
                                 )
+    
     >>> z3
 
 
@@ -94,8 +98,12 @@ elements in the element list.
 
 
 
-Printing an algebra converts it to a string containing its class name,
-algebra name, and the unique ID of the algebra instance:
+Following Python convention, the representation (``__repr__``) of an
+algebra can be used to construct the same algebra, via cut-and-paste.
+
+On the other hand, printing an algebra converts it to a compact string
+representation that contains its class name, algebra name, and the
+unique ID of the algebra instance:
 
 .. code:: ipython3
 
@@ -104,10 +112,10 @@ algebra name, and the unique ID of the algebra instance:
 
 .. parsed-literal::
 
-    <Group:Z3, ID:140454564891088>
+    <Group:Z3, ID:140226264654992>
 
 
-The ``about`` prints information about an algebra. Set
+The ``about`` method prints information about an algebra. Set
 ``use_element_names`` to ``True`` to see the Cayley table printed using
 element names (``str``) rather than element positions (``int``).
 
@@ -121,7 +129,7 @@ element names (``str``) rather than element positions (``int``).
     
     ** Group **
     Name: Z3
-    Instance ID: 140454564891088
+    Instance ID: 140226264654992
     Description: Cyclic group of order 3
     Order: 3
     Identity: e
@@ -181,7 +189,9 @@ Group Properties
 
 
 The ``identity`` method (property) returns the algebra’s identity
-element, if it exists.
+element, if it exists. This method is implemented as a property, so no
+trailing parentheses (“()”) are required. See the API documentation to
+see what other methods are implemented as properties.
 
 If the identity doesn’t exist, then ``None`` is returned.
 
@@ -212,7 +222,8 @@ If the identity doesn’t exist, then ``None`` is returned.
 
 
 Internal to algebras, tables are stored as instances of the
-``CayleyTable`` class:
+``CayleyTable`` class. Under normal usage, there should be no need to
+deal with a ``CayleyTable``.
 
 .. code:: ipython3
 
@@ -230,16 +241,42 @@ Internal to algebras, tables are stored as instances of the
 Binary Operation
 ~~~~~~~~~~~~~~~~
 
+The binary operation, implicitely defined by a Cayley table, is made
+explicit by an algebra’s ``op`` method. Obviously, ``op`` should be able
+to take two algebraic elements as input, and it does, but it can also
+take any number of inputs from none to as many as needed, as shown
+below.
+
+For the example Group, Z3, created above, we have that
+:math:`a \circ a = a^2` and this is verified below.
+
 .. code:: ipython3
 
-    >>> z3.op()  # zero arguments returns the identity, if it exists
+    >>> z3.op('a', 'a')
 
 
 
 
 .. parsed-literal::
 
-    'e'
+    'a^2'
+
+
+
+Also, the following holds,
+:math:`a \circ a \circ a = a \circ a^2 = a^2 \circ a = e`, as shown
+below
+
+.. code:: ipython3
+
+    >>> z3.op('a', 'a', 'a') == z3.op('a', 'a^2') == z3.op('a^2', 'a') == 'e'
+
+
+
+
+.. parsed-literal::
+
+    True
 
 
 
@@ -260,39 +297,24 @@ algebra, in which case an exception is raised.
 
 
 
-For :math:`Z_3`, :math:`a \circ a = a^2`
+With zero arguments, ``op`` returns the identity, if it exists.
 
 .. code:: ipython3
 
-    >>> z3.op('a', 'a')
+    >>> z3.op()
 
 
 
 
 .. parsed-literal::
 
-    'a^2'
+    'e'
 
 
 
-and :math:`a \circ a \circ a = a \circ a^2 = a^2 \circ a = e`.
-
-.. code:: ipython3
-
-    >>> z3.op('a', 'a', 'a') == z3.op('a', 'a^2') == z3.op('a^2', 'a') == 'e'
-
-
-
-
-.. parsed-literal::
-
-    True
-
-
-
-Note, however, that the function, ``op``, can only be used with elements
-(``str``) that are members of the element list. So, since ‘a^3’ is not a
-string in the element list, it cannot be used in function ``op``.
+Note, however, that ``op`` can only be used with elements (``str``) that
+are members of an algebra’s element list. So, since ‘a^3’ is not a
+string in Z3’s element list, it cannot be used in ``op``.
 
 .. code:: ipython3
 
@@ -307,26 +329,33 @@ string in the element list, it cannot be used in function ``op``.
     a^3 is not a valid element name
 
 
+**A final word on ``op``**
+
+Since the binary operation here is implemented as a function (i.e., in
+prefix notation) rather than an infix operator, the convention for
+handling none, one, or more arguments is borrowed from the long-standing
+Lisp convention for addition and subtraction.
+
 “Subtraction” in Groups
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The method, ``sub``, is a convenience method for computing
 “:math:`x - y`”, that is, :math:`x \circ y^{-1}` where
-:math:`x, y \in \langle G, \circ \rangle`.
+:math:`x, y \in S` and :math:`\langle S, \circ \rangle` is a Group.
 
 .. code:: ipython3
 
     >>> x = 'a'
     >>> y = 'a^2'
-    >>> print(f"For example, \"{x} - {y}\" = {x} * {z3.inv(y)} = {z3.op(x, z3.inv(y))}")
+    >>> print(f"For example, \"{x} - {y}\" = {x} * inv({y}) = {x} * {z3.inv(y)} = {z3.op(x, z3.inv(y))}")
 
 
 .. parsed-literal::
 
-    For example, "a - a^2" = a * a = a^2
+    For example, "a - a^2" = a * inv(a^2) = a * a = a^2
 
 
-Or, more succinctly:
+Or, more succinctly using ``sub``:
 
 .. code:: ipython3
 
@@ -344,18 +373,27 @@ Or, more succinctly:
 Magma
 ~~~~~
 
-**Magma** – a set with a binary operation:
+A Magma is the most fundamental type of algebra that we can instantiate
+with ``make_finite_algebra``.
+
+**Magma** - a set with a binary operation:
 :math:`\langle S, \circ \rangle`, where :math:`S` is a finite set and
 :math:`\circ: S \times S \to S`
 
-**Rock-Paper-Scissors**
+**Example: Rock-Paper-Scissors**
 
-See https://en.wikipedia.org/wiki/Commutative_magma
+-  paper covers rock
+-  rock crushes scissors
+-  scissors cuts paper
+
+Expressing this in algebraic form (see
+https://en.wikipedia.org/wiki/Commutative_magma), where p *beats* r, and
+r *beats* s, and s *beats* p, we have:
 
 -  :math:`\langle S, \circ \rangle`, where :math:`S = \{r,p,s\}`
 -  For all :math:`x, y \in S`, if :math:`x` *beats* :math:`y`, then
    :math:`x \circ y = y \circ x = x`
--  Also, for all :math:`x \in S`, :math:`xx = x`
+-  Also, for all :math:`x \in S`, :math:`x \circ x = x`
 
 From the rule in the second bullet, above, this algebra is obviously
 commutative.
@@ -377,7 +415,7 @@ commutative.
     
     ** Magma **
     Name: RPS
-    Instance ID: 140454835994896
+    Instance ID: 140226136323856
     Description: Rock, Paper, Scissors Magma
     Order: 3
     Identity: None
@@ -436,6 +474,11 @@ The next section demonstrates that a Magma can have an identity element,
 as long as the Magma is not associative, otherwise
 ``make_finite_algebra`` would output a Monoid.
 
+A convention often used with abstract algebras is to denote an identity
+element with the letter “e”. That is done in the example below, but the
+function, ``make_finite_algebra``, ignores that convention and derives
+the identity element, if it exists, from the table properties alone.
+
 Magma with Identity Element
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -456,7 +499,7 @@ Magma with Identity Element
     
     ** Magma **
     Name: Whatever
-    Instance ID: 140454836129296
+    Instance ID: 140226138119632
     Description: Magma with Identity
     Order: 3
     Identity: e
@@ -475,6 +518,8 @@ Semigroup
 
 **Semigroup** – an associative Magma: for any
 :math:`a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
+
+**Example:**
 
 Reference: `Groupoids and Smarandache
 Groupoids <https://arxiv.org/ftp/math/papers/0304/0304490.pdf>`__ by W.
@@ -502,7 +547,7 @@ B. Vasantha Kandasamy
     
     ** Semigroup **
     Name: Example 1.4.1
-    Instance ID: 140454836088080
+    Instance ID: 140226264949968
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Identity: None
@@ -594,7 +639,7 @@ such that, for all :math:`a \in S, a \circ e = e \circ a = a`
     
     ** Monoid **
     Name: M4
-    Instance ID: 140454836101904
+    Instance ID: 140226264972880
     Description: Example of a commutative monoid
     Order: 4
     Identity: b
@@ -668,6 +713,12 @@ directory.
 
 Here’s the **JSON file**:
 
+The path to the JSON file is constructed by using Python’s
+*os.path.join* to join strings together. So, the quantity, ``v4_json``,
+below, is a string. And then we’ve used Jupyter Notebook’s ability to
+“reach out” into the external environment (via “!”) and printout the
+file using the UNIX command, ``cat``.
+
 .. code:: ipython3
 
     >>> v4_json = os.path.join(alg_dir, "v4_klein_4_group.json")
@@ -731,9 +782,16 @@ dictionaries.
 
 
 
-The **type** of algebra (e.g., Magma) can be included in the dictionary
-for readability, however, the *type* field is ignored when
-``make_finite_algebra`` reads a dictionary or JSON file.
+Note that the only difference between the JSON and Python dictionary
+representations of an algebra is the type of quotes used aroung strings.
+JSON requires that double quotes be used, while Python uses single
+quotes by default.
+
+In the second example, below, the **type** of algebra (e.g., Magma) can
+be included in the dictionary for readability, however, the *type* field
+is ignored when ``make_finite_algebra`` reads a dictionary or JSON file.
+Again, the type of algebra and its properties are always derived from
+its Cayley table.
 
 .. code:: ipython3
 
@@ -774,6 +832,9 @@ for readability, however, the *type* field is ignored when
 
 Instantiate Algebra from Python Dictionary
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For these examples, we’ll use the Python dictionaries, created above, as
+inputs to ``make_finite_algebra``.
 
 .. code:: ipython3
 
@@ -818,6 +879,10 @@ Instantiate Algebra from Python Dictionary
 Convert Algebra to JSON String
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Note that the conversion example here outputs a single Python string
+(i.e., enclosed by single quotes), within which, all the strings are
+enclosed by double quotes, as required by JSON.
+
 .. code:: ipython3
 
     >>> v4_json_string = v4.dumps()
@@ -838,7 +903,8 @@ definition from a JSON file, it cannot be constructed directly from a
 JSON string, because ``make_finite_algebra`` interprets a single string
 input as a JSON file name. To load an algebra from a JSON string, first
 convert the string to a Python dictionary, then input that to
-``make_finite_algebra``, as shown below:
+``make_finite_algebra``, as shown below, using the JSON string
+constructed above:
 
 .. code:: ipython3
 
@@ -863,16 +929,17 @@ convert the string to a Python dictionary, then input that to
 Autogeneration of Finite Algebras
 ---------------------------------
 
-There are several functions for autogenerating finite algebras of
-specified size:
+There are several functions for autogenerating finite algebras of any
+desired size:
 
 **Groups**
 
 -  ``generate_cyclic_group(n)``: :math:`Z_n`, where
    :math:`a \circ b \equiv a+b` mod :math:`n`, where
-   :math:`a,b \in \{0,1,...,n-1\}`
+   :math:`a,b \in \{0,1,...,n-1\}`; order is :math:`n`
 -  ``generate_symmetric_group(n)``: :math:`S_n`, where :math:`\circ` is
-   composition of permutations of :math:`(0, 1, ..., n-1)`
+   composition of permutations of :math:`(0, 1, ..., n-1)`; order is
+   :math:`n!`
 -  ``generate_powerset_group(n)``:
    :math:`A \circ B \equiv A \bigtriangleup B`, where
    :math:`A,B \in P(\{0, 1, ..., n-1\})`; order is :math:`2^n`
@@ -880,12 +947,14 @@ specified size:
 **Monoid**
 
 -  ``generate_commutative_monoid(n)``: :math:`a \circ b \equiv ab` mod
-   :math:`n`, where :math:`a,b \in \{0,1,...,n-1\}`
+   :math:`n`, where :math:`a,b \in \{0,1,...,n-1\}`; order is :math:`n`
 
 Autogenerated Cyclic Group
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A cyclic group of any desired order can be generated as follows:
+A cyclic group of any desired order can be generated. A very small one
+is created, below, because it will be used later to demonstrate Direct
+Products and Isomorphisms.
 
 .. code:: ipython3
 
@@ -901,7 +970,7 @@ A cyclic group of any desired order can be generated as follows:
     
     ** Group **
     Name: Z2
-    Instance ID: 140454836233296
+    Instance ID: 140226138175184
     Description: Autogenerated cyclic Group of order 2
     Order: 2
     Identity: e
@@ -940,7 +1009,7 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
     
     ** Group **
     Name: S3
-    Instance ID: 140454836233104
+    Instance ID: 140226138175504
     Description: Autogenerated symmetric Group on 3 elements
     Order: 6
     Identity: (1, 2, 3)
@@ -990,7 +1059,7 @@ values of n.
     
     ** Group **
     Name: PS3
-    Instance ID: 140454836054864
+    Instance ID: 140226138173904
     Description: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
     Order: 8
     Identity: {}
@@ -1038,7 +1107,7 @@ multiplication modulo the desired order.
     
     ** Monoid **
     Name: M7
-    Instance ID: 140454836085328
+    Instance ID: 140226264950288
     Description: Autogenerated commutative Monoid of order 7
     Order: 7
     Identity: a1
@@ -1078,7 +1147,7 @@ Direct Product of Multiple Groups
     
     ** Group **
     Name: Z2_x_Z2_x_Z2
-    Instance ID: 140454836253904
+    Instance ID: 140226264952016
     Description: Direct product of Z2_x_Z2 & Z2
     Order: 8
     Identity: e:e:e
@@ -1140,7 +1209,7 @@ Direct Product of Monoids
     
     ** Monoid **
     Name: M3_x_M3
-    Instance ID: 140454836283088
+    Instance ID: 140226138294864
     Description: Direct product of M3 & M3
     Order: 9
     Identity: a1:a1
@@ -1167,7 +1236,7 @@ Isomorphisms
 If two algebras are isomorphic, then the mapping between their elements
 is returned as a Python dictionary.
 
-Here’a a well-known example, using two small groups created above, v4
+Here is a well-known example, using two small groups created above, v4
 and the direct product of z2 with itself, z2 \* z2:
 
 Group Isomorphism
@@ -1208,9 +1277,10 @@ If two algebras are not isomorphic, then ``False`` is returned.
 Magma Isomorphism
 ~~~~~~~~~~~~~~~~~
 
-**Water, Fire, Stick Magma**
+In this example, we’ll use a made-up Magma, similar to Rock, Paper,
+Scissors.
 
-A made-up Magma, similar to Rock, Paper, Scissors:
+**Water, Fire, Stick:**
 
 -  Water quenches Fire
 -  Fire burns Stick
@@ -1258,16 +1328,21 @@ Here’s the isomorphism between rps and wfs:
 Subalgebras (Subgroups)
 -----------------------
 
-A Group can contain subgroups, submonoids, subsemigroups, or submagmas.
-In general, all of these are referred to here as *subalgebras*.
+An algebra can contain subalgebras (e.g., a Group can have subgroups).
+In fact, sometimes the subalgebra may not even be of the same type as
+the parent algebra. For, example, we’ll see below that a Semigroup can
+contain a Group as a subalgebra.
 
-The method, ``proper_subalgebras``, extracts all possible subalgebras
-that exist within an algebra, regardless of whether they are isomorphic
-to each other or not, or even of the same algebraic class as the parent
-algebra.
+The method, ``proper_subalgebras``, extracts all possible proper
+subalgebras that exist within an algebra, regardless of whether they are
+isomorphic to each other or not, or even of the same algebraic class as
+the parent algebra.
 
-Proper Subgroups
-~~~~~~~~~~~~~~~~
+A subalgebra is constructed from a subset of elements that are closed
+under the algebra’s binary operation.
+
+Example: Proper Subgroups
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: ipython3
 
@@ -1280,7 +1355,7 @@ Proper Subgroups
     
     ** Group **
     Name: Z8
-    Instance ID: 140454836161232
+    Instance ID: 140226138117200
     Description: Autogenerated cyclic Group of order 8
     Order: 8
     Identity: e
@@ -1313,7 +1388,8 @@ Proper Subgroups
 
     >>> z8_proper_subs = z8.proper_subalgebras()
     
-    >>> _ = [z8_proper_sub.about() for z8_proper_sub in z8_proper_subs]
+    >>> for sub in z8_proper_subs:
+    >>>     sub.about()
 
 
 .. parsed-literal::
@@ -1321,7 +1397,24 @@ Proper Subgroups
     
     ** Group **
     Name: Z8_subalgebra_0
-    Instance ID: 140454836279632
+    Instance ID: 140226138118160
+    Description: Subalgebra of: Autogenerated cyclic Group of order 8
+    Order: 2
+    Identity: e
+    Associative? Yes
+    Commutative? Yes
+    Cyclic?: Yes
+      Generators: ['a^4']
+    Elements:
+       Index   Name   Inverse  Order
+          0       e       e       1
+          1     a^4     a^4       2
+    Cayley Table (showing indices):
+    [[0, 1], [1, 0]]
+    
+    ** Group **
+    Name: Z8_subalgebra_1
+    Instance ID: 140226138116304
     Description: Subalgebra of: Autogenerated cyclic Group of order 8
     Order: 4
     Identity: e
@@ -1337,23 +1430,6 @@ Proper Subgroups
           3     a^6     a^2       4
     Cayley Table (showing indices):
     [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
-    
-    ** Group **
-    Name: Z8_subalgebra_1
-    Instance ID: 140454836280528
-    Description: Subalgebra of: Autogenerated cyclic Group of order 8
-    Order: 2
-    Identity: e
-    Associative? Yes
-    Commutative? Yes
-    Cyclic?: Yes
-      Generators: ['a^4']
-    Elements:
-       Index   Name   Inverse  Order
-          0       e       e       1
-          1     a^4     a^4       2
-    Cayley Table (showing indices):
-    [[0, 1], [1, 0]]
 
 
 Normal Subgroups
@@ -1377,10 +1453,9 @@ Both of the subgroups of Z8, derived above, are **normal**:
 Proper Subalgebras up to Isomorphism
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The function, ``partition_into_isomorphic_lists``, does just that; it
-partitions a list of algebras (subgroups in this case) into a list of
-lists, where each sublist contains subalgebras that are all isomophic to
-each other.
+The function, ``partition_into_isomorphic_lists``, partitions a list of
+algebras (subgroups in this case) into a list of lists, where each
+sublist contains subalgebras that are all isomophic to each other.
 
 The function, ``about_isomorphic_partitions``, prints out a summary of
 information about the partitions output by
@@ -1405,27 +1480,27 @@ was created earlier.
 .. parsed-literal::
 
     
-    Subalgebras of <Group:PS3, ID:140454836054864>
+    Subalgebras of <Group:PS3, ID:140226138173904>
       There are 2 unique proper subalgebras, up to isomorphism, out of 14 total subalgebras.
       as shown by the partitions below:
     
     7 Isomorphic Commutative Normal Groups of order 2 with identity '{}':
-          Group: PS3_subalgebra_0: ['{}', '{0, 2}']
-          Group: PS3_subalgebra_2: ['{}', '{1, 2}']
-          Group: PS3_subalgebra_5: ['{}', '{2}']
-          Group: PS3_subalgebra_6: ['{}', '{0, 1}']
-          Group: PS3_subalgebra_10: ['{}', '{0, 1, 2}']
+          Group: PS3_subalgebra_0: ['{}', '{0, 1, 2}']
+          Group: PS3_subalgebra_1: ['{}', '{1}']
+          Group: PS3_subalgebra_7: ['{}', '{1, 2}']
+          Group: PS3_subalgebra_9: ['{}', '{0, 2}']
+          Group: PS3_subalgebra_11: ['{}', '{0, 1}']
           Group: PS3_subalgebra_12: ['{}', '{0}']
-          Group: PS3_subalgebra_13: ['{}', '{1}']
+          Group: PS3_subalgebra_13: ['{}', '{2}']
     
     7 Isomorphic Commutative Normal Groups of order 4 with identity '{}':
-          Group: PS3_subalgebra_1: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
-          Group: PS3_subalgebra_3: ['{}', '{0}', '{1}', '{0, 1}']
-          Group: PS3_subalgebra_4: ['{}', '{0}', '{2}', '{0, 2}']
-          Group: PS3_subalgebra_7: ['{}', '{1}', '{2}', '{1, 2}']
-          Group: PS3_subalgebra_8: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
-          Group: PS3_subalgebra_9: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
-          Group: PS3_subalgebra_11: ['{}', '{2}', '{0, 1}', '{0, 1, 2}']
+          Group: PS3_subalgebra_2: ['{}', '{1}', '{2}', '{1, 2}']
+          Group: PS3_subalgebra_3: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
+          Group: PS3_subalgebra_4: ['{}', '{2}', '{0, 1}', '{0, 1, 2}']
+          Group: PS3_subalgebra_5: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
+          Group: PS3_subalgebra_6: ['{}', '{0}', '{1}', '{0, 1}']
+          Group: PS3_subalgebra_8: ['{}', '{0}', '{2}', '{0, 2}']
+          Group: PS3_subalgebra_10: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
     
 
 
@@ -1444,7 +1519,7 @@ Recall the Semigroup example from above:
     
     ** Semigroup **
     Name: Example 1.4.1
-    Instance ID: 140454836088080
+    Instance ID: 140226264949968
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Identity: None
@@ -1462,23 +1537,26 @@ Recall the Semigroup example from above:
      [5, 2, 5, 2, 5, 2]]
 
 
-It contains 4 unique subalgebras, up to isomorphism, 3 Semigroups and 1
-Group:
+As we will see, below, the Semigroup, sg, contains 4 unique subalgebras,
+up to isomorphism:
+
+-  3 Semigroups and
+-  1 Group
+
+However, instead of running the three commands:
+
+-  sg_proper_subs = sg.proper_subalgebras()
+-  partitions = partition_into_isomorphic_lists(sg_proper_subs)
+-  about_isomorphic_partitions(sg, partitions)
+
+as we did above, we’ll use a single function, ``about_subalgebras``,
+that wraps up those three commands into one, for convenience. It also
+returns the partitions, but we’ll ignore the returned value in this
+example:
 
 .. code:: ipython3
 
-    # >>> sg_proper_subs = sg.proper_subalgebras()
-    # >>> partitions = partition_into_isomorphic_lists(sg_proper_subs)
-    # >>> about_isomorphic_partitions(sg, partitions)
-
-The function, ``about_subalgebras``, wraps up the three lines above into
-one convenience function for summarizing subalgebras of an algebra, as
-shown next. It returns partitions, but they are ignored in the following
-example.
-
-.. code:: ipython3
-
-    from finite_algebras import about_subalgebras
+    >>> from finite_algebras import about_subalgebras
 
 .. code:: ipython3
 
@@ -1488,24 +1566,24 @@ example.
 .. parsed-literal::
 
     
-    Subalgebras of <Semigroup:Example 1.4.1, ID:140454836088080>
+    Subalgebras of <Semigroup:Example 1.4.1, ID:140226264949968>
       There are 4 unique proper subalgebras, up to isomorphism, out of 10 total subalgebras.
       as shown by the partitions below:
     
+    3 Isomorphic Semigroups of order 4:
+          Semigroup: Example 1.4.1_subalgebra_0: ['a', 'c', 'd', 'f']
+          Semigroup: Example 1.4.1_subalgebra_1: ['a', 'b', 'd', 'e']
+          Semigroup: Example 1.4.1_subalgebra_6: ['b', 'c', 'e', 'f']
+    
     3 Isomorphic Commutative Groups of order 2:
-          Group: Example 1.4.1_subalgebra_0: ['a', 'd'] with identity 'a'
-          Group: Example 1.4.1_subalgebra_4: ['b', 'e'] with identity 'e'
-          Group: Example 1.4.1_subalgebra_5: ['c', 'f'] with identity 'c'
+          Group: Example 1.4.1_subalgebra_2: ['c', 'f'] with identity 'c'
+          Group: Example 1.4.1_subalgebra_3: ['a', 'd'] with identity 'a'
+          Group: Example 1.4.1_subalgebra_8: ['b', 'e'] with identity 'e'
     
     3 Isomorphic Semigroups of order 2:
-          Semigroup: Example 1.4.1_subalgebra_1: ['a', 'c']
-          Semigroup: Example 1.4.1_subalgebra_2: ['c', 'e']
-          Semigroup: Example 1.4.1_subalgebra_7: ['a', 'e']
-    
-    3 Isomorphic Semigroups of order 4:
-          Semigroup: Example 1.4.1_subalgebra_3: ['a', 'c', 'd', 'f']
-          Semigroup: Example 1.4.1_subalgebra_6: ['a', 'b', 'd', 'e']
-          Semigroup: Example 1.4.1_subalgebra_8: ['b', 'c', 'e', 'f']
+          Semigroup: Example 1.4.1_subalgebra_4: ['c', 'e']
+          Semigroup: Example 1.4.1_subalgebra_5: ['a', 'e']
+          Semigroup: Example 1.4.1_subalgebra_7: ['a', 'c']
     
     1 Semigroup of order 3:
           Semigroup: Example 1.4.1_subalgebra_9: ['a', 'c', 'e']
@@ -1553,10 +1631,12 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     ======================================================================
 
 
+**Example**:
+
 .. code:: ipython3
 
-    >>> grp = ex[3]
-    >>> grp.about(use_table_names=True)
+    >>> alg = ex[3]  # i.e., the 4th algebra in the list, above.
+    >>> alg.about(use_table_names=True)
 
 
 .. parsed-literal::
@@ -1564,7 +1644,7 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     
     ** Group **
     Name: Pinter29
-    Instance ID: 140454836187472
+    Instance ID: 140226264994064
     Description: Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
     Order: 6
     Identity: I

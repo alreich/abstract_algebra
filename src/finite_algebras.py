@@ -1322,7 +1322,6 @@ class Module(MultipleElementSetAlgebra):
         print(f"\n{self.__class__.__name__}: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
-        print(f"Order: {self.scalar.order}")
         print(f"\nSCALARS:")
         self.scalar.about(max_size, use_table_names)
         print(f"\nVECTORS:")
@@ -1338,22 +1337,25 @@ class VectorSpace(Module):
             raise ValueError(f"{field} must be a Field.")
 
 
-def generate_n_dim_module(alg, n):
+def generate_n_dim_module(ring_or_field, n, verbose=False):
     """Return a Module or Vector Space over the input algebra (field or ring),
     where the vectors are the n-times direct product of the input algebra"""
-    if isinstance(alg, Field):
+    if isinstance(ring_or_field, Field):
         prefix = "VS"
         kind = "Vector Space"
-    elif isinstance(alg, Ring):
+    elif isinstance(ring_or_field, Ring):
         prefix = "Mod"
         kind = "Module"
     else:
-        raise ValueError(f"{alg} is not a Ring or a Field")
-    name = f"{prefix}{n}-{alg.name}"
-    desc = f"{n}-dimensional {kind} over {alg}"
-    group = alg.power(n)
-    op = make_dp_sv_op(alg)
-    return make_finite_algebra(name, desc, alg, group, op)
+        raise ValueError(f"{ring_or_field} is not a Ring or a Field")
+    name = f"{prefix}{n}-{ring_or_field.name}"
+    desc = f"{n}-dimensional {kind} over {ring_or_field.name}"
+    group = ring_or_field.power(n)
+    op = make_dp_sv_op(ring_or_field)
+    if check_module_conditions(ring_or_field, group, op, verbose):
+        return make_finite_algebra(name, desc, ring_or_field, group, op)
+    else:
+        raise ValueError("Input conditions for module or vector space failed.")
 
 
 def check_module_conditions(ring, group, sv_op, verbose=False):

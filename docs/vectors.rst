@@ -11,9 +11,9 @@ A **Vector Space**,
 consists of the following:
 
 -  an **abelian Group**, :math:`\mathscr{G} = \langle V, \oplus \rangle`
-   (i.e., the *“vectors”*)
+   (i.e., the “vectors”)
 -  a **field**, :math:`\mathscr{F} = \langle S, +, \times \rangle`
-   (i.e., the *“scalars”*)
+   (i.e., the “scalars”)
 -  and a **binary operator**, :math:`\circ : S \times V \to V`
 
 where the following conditions hold:
@@ -27,7 +27,7 @@ where the following conditions hold:
    :math:`s \circ (v_1 \oplus v_2) = (s \circ v_1) \oplus (s \circ v_2)`
 4. Distributivity of Vectors Over Scalar Addition:
    :math:`(s_1 + s_2) \circ v = (s_1 \circ v) \oplus (s_2 \circ v)`
-5. Associativity:
+5. Scalar-Vector Associativity:
    :math:`s_1 \circ (s_2 \circ v) = (s_1 \times s_2) \circ v`
 
 A **Module**,
@@ -39,7 +39,7 @@ replaced by a **Ring**,
 Internal Representation of Vector Spaces & Modules
 --------------------------------------------------
 
-Unlike Groups, Monoids, … , and Magmas, Vector Spaces and Modules have
+Unlike Groups, Rings, Fields, and such, Vector Spaces and Modules have
 more than one set of elements and more than one or two binary
 operations. Within the ``finite_algebra`` implementation, the internal
 representation is as shown below. The five elements listed must be input
@@ -74,7 +74,7 @@ listed in the definition above. The scalar field of :math:`\mathbb{R}^n`
 is :math:`\mathbb{R}` itself, and the abelian group of
 :math:`\mathbb{R}^n` is the direct product,
 :math:`\mathscr{G} = \mathbb{R} \times \dots \times \mathbb{R} \equiv \times^n \mathbb{R}`,
-where the group operation is component-wise addition in
+where the group’s binary operation is component-wise addition in
 :math:`\mathbb{R}`.
 
 A Finite, n-Dimensional Vector Space (similar to :math:`\mathbb{R}^n`)
@@ -91,7 +91,7 @@ Wikipedia) <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>
 
 .. code:: ipython3
 
-    >>> from finite_algebras import make_finite_algebra, generate_n_dim_module
+    >>> from finite_algebras import make_finite_algebra
 
 .. code:: ipython3
 
@@ -136,25 +136,27 @@ If any of them fail, then an exception will be raised.
 
 .. code:: ipython3
 
-    n = 2  # using small dimension to limit the amount of printout below
+    from finite_algebras import generate_n_dim_module
     
-    vs4 = generate_n_dim_module(f4, n)
+    n = 2  # We're using a small number of dimensions to limit the amount of printout below
     
-    vs4.about(max_size=16)
+    vs = generate_n_dim_module(f4, n)
+    
+    vs.about(max_size=16)
 
 
 .. parsed-literal::
 
     
     VectorSpace: VS2-F4
-    Instance ID: 140501808710352
+    Instance ID: 140397124896144
     Description: 2-dimensional Vector Space over F4
     
     SCALARS:
     
     ** Field **
     Name: F4
-    Instance ID: 140501806720912
+    Instance ID: 140397124970704
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: 0
@@ -180,7 +182,7 @@ If any of them fail, then an exception will be raised.
     
     ** Group **
     Name: F4_x_F4
-    Instance ID: 140501808763344
+    Instance ID: 140397124970128
     Description: Direct product of F4 & F4
     Order: 16
     Identity: 0:0
@@ -229,7 +231,7 @@ follows:
 
 .. code:: ipython3
 
-    >>> vs4.scalar.elements
+    >>> vs.scalar.elements
 
 
 
@@ -242,7 +244,7 @@ follows:
 
 .. code:: ipython3
 
-    >>> vs4.vector.elements
+    >>> vs.vector.elements
 
 
 
@@ -274,7 +276,7 @@ VectorSpace (or Module)
 
 .. code:: ipython3
 
-    >>> vs4.scalar.add('1', 'a')
+    >>> vs.scalar.add('1', 'a')
 
 
 
@@ -287,7 +289,7 @@ VectorSpace (or Module)
 
 .. code:: ipython3
 
-    >>> vs4.scalar.mult('a', 'a')
+    >>> vs.scalar.mult('a', 'a')
 
 
 
@@ -303,7 +305,7 @@ to create the Vector Space (or Module)
 
 .. code:: ipython3
 
-    >>> vs4.vector_add('1+a:1', '1:a')  # Same as vs4.vector.op('1+a:1', '1:a')
+    >>> vs.vector_add('1+a:1', '1:a')  # Same as vs.vector.op('1+a:1', '1:a')
 
 
 
@@ -319,7 +321,7 @@ it’s identity elements as follows:
 
 .. code:: ipython3
 
-    >>> vs4.scalar.zero
+    >>> vs.scalar.zero
 
 
 
@@ -332,7 +334,7 @@ it’s identity elements as follows:
 
 .. code:: ipython3
 
-    >>> vs4.scalar.one
+    >>> vs.scalar.one
 
 
 
@@ -344,11 +346,12 @@ it’s identity elements as follows:
 
 
 The scalar-vector operation for scaling Vectors (or Modules) is the
-method, ``sv_op``, and takes two inputs: a scalar and vector, resp.
+VectorSpace method, ``sv_op``, and takes two inputs: a scalar and
+vector, resp.
 
 .. code:: ipython3
 
-    vs4.sv_op('a', '1+a:1')
+    vs.sv_op('a', '1+a:1')
 
 
 
@@ -359,8 +362,14 @@ method, ``sv_op``, and takes two inputs: a scalar and vector, resp.
 
 
 
-Checking the Five VectorSpace/Module Conditions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Checking the VectorSpace/Module Conditions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The following are four examples that illustrate the method calls
+required to check the requirements of a Vector Space or Module. During
+VectorSpace or Module construction, function ``make_finite_algebra``
+automatically calls the function ``check_module_conditions`` to make
+sure that the requirements for a Vector Space or Module are met.
 
 **Scaling by 1**
 
@@ -369,7 +378,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> print(vs4.sv_op(vs4.scalar.one, 'a:1+a'))
+    >>> print(vs.sv_op(vs.scalar.one, 'a:1+a'))
 
 
 .. parsed-literal::
@@ -383,18 +392,31 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> # Example
-    >>> 
     >>> s = 'a'
     >>> v1 = 'a:1+a'
     >>> v2 = 'a:1'
-    >>> print(vs4.sv_op(s, vs4.vector_add(v1, v2)))
-    >>> print(vs4.vector_add(vs4.sv_op(s, v1), vs4.sv_op(s, v2)))
+
+:math:`s \circ (v_1 \oplus v_2)`
+
+.. code:: ipython3
+
+    >>> print(vs.sv_op(s, vs.vector_add(v1, v2)))
 
 
 .. parsed-literal::
 
     0:1+a
+
+
+:math:`(s \circ v_1) \oplus (s \circ v_2)`
+
+.. code:: ipython3
+
+    >>> print(vs.vector_add(vs.sv_op(s, v1), vs.sv_op(s, v2)))
+
+
+.. parsed-literal::
+
     0:1+a
 
 
@@ -404,18 +426,31 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> # Example
-    >>> 
     >>> s1 = 'a'
     >>> s2 = '1+a'
     >>> v = 'a:1'
-    >>> print(vs4.sv_op(vs4.scalar.add(s1, s2), v))
-    >>> print(vs4.vector_add(vs4.sv_op(s1, v), vs4.sv_op(s2, v)))
+
+:math:`(s_1 + s_2) \circ v`
+
+.. code:: ipython3
+
+    >>> print(vs.sv_op(vs.scalar.add(s1, s2), v))
 
 
 .. parsed-literal::
 
     a:1
+
+
+:math:`(s_1 \circ v) \oplus (s_2 \circ v)`
+
+.. code:: ipython3
+
+    >>> print(vs.vector_add(vs.sv_op(s1, v), vs.sv_op(s2, v)))
+
+
+.. parsed-literal::
+
     a:1
 
 
@@ -425,18 +460,31 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> # Example
-    >>> 
     >>> s1 = 'a'
     >>> s2 = '1+a'
     >>> v = 'a:1'
-    >>> print(vs4.sv_op(s1, vs4.sv_op(s2, v)))
-    >>> print(vs4.sv_op(vs4.scalar.mult(s1, s2), v))
+
+:math:`s_1 \circ (s_2 \circ v)`
+
+.. code:: ipython3
+
+    >>> print(vs.sv_op(s1, vs.sv_op(s2, v)))
 
 
 .. parsed-literal::
 
     a:1
+
+
+:math:`(s_1 \times s_2) \circ v`
+
+.. code:: ipython3
+
+    >>> print(vs.sv_op(vs.scalar.mult(s1, s2), v))
+
+
+.. parsed-literal::
+
     a:1
 
 
@@ -445,6 +493,8 @@ Module based on a Ring
 
 Another example, using the technique presented above, but this time with
 a Ring, instead of a Field.
+
+Here’s the Ring:
 
 .. code:: ipython3
 
@@ -458,7 +508,7 @@ a Ring, instead of a Field.
     
     ** Ring **
     Name: PSRing2
-    Instance ID: 140502879843728
+    Instance ID: 140397125214928
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
@@ -480,6 +530,8 @@ a Ring, instead of a Field.
     [[0, 0, 0, 0], [0, 1, 0, 1], [0, 0, 2, 2], [0, 1, 2, 3]]
 
 
+And here’s the finite, n-dimensional Module based on the Ring, above:
+
 .. code:: ipython3
 
     >>> n = 2
@@ -491,14 +543,14 @@ a Ring, instead of a Field.
 
     
     Module: Mod2-PSRing2
-    Instance ID: 140501808829008
+    Instance ID: 140397124898448
     Description: 2-dimensional Module over PSRing2
     
     SCALARS:
     
     ** Ring **
     Name: PSRing2
-    Instance ID: 140502879843728
+    Instance ID: 140397125214928
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
@@ -523,7 +575,7 @@ a Ring, instead of a Field.
     
     ** Group **
     Name: PSRing2_x_PSRing2
-    Instance ID: 140502879845904
+    Instance ID: 140396582343120
     Description: Direct product of PSRing2 & PSRing2
     Order: 16
     Identity: {}:{}

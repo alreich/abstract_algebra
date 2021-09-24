@@ -1442,22 +1442,47 @@ def make_finite_algebra(*args):
     It analyzes the input and returns the appropriate finite algebra:
     Group, Ring, Field, VectorSpace, Module, Monoid, Semigroup, or Magma.
 
-    If only 1 input argument, it must a string (str) path to a JSON file
-    that defines an algebra.
+    If only 1 input argument, then it must either be a string or a Python
+    dictionary.  If it's a string, then it must be a path to a JSON file
+    that defines a SingleElementSetAlgebra (i.e., Magma, Semigroup, Monoid,
+    Group, Ring, or Field), as described below for the first five arguments.
+    If it's a Python dictionary, then it must be the dictionary version of
+    such a JSON file. (No JSON or dictionary formats are defined for
+    MultipleElementSetAlgebras.)
 
-    If more than 1 argument is input, the first two should be a name (str)
-    and a description (str) of the algebra.
+    Otherwise, the first argument should always be the name (str) of the
+    algebra and the second argument should be a description (str) of the
+    algebra.
 
-    If 4 input arguments, then the first two should be as specified above,
-    and the 3rd should be a list of element names (list of str) and the 4th
-    a square Python array of int or str that represents a Cayley Table.
+    The remaining arguments depend on whether the algebra being constructed
+    is a SingleElementSetAlgebra (i.e, Magma, Semigroup, Monoid, Group,
+    Ring, or Field) or a MultipleElementSetAlgebra (i.e., Module or Vector
+    Space).
 
-    If 5 input arguments, then either the first 4 should be as described
-    above and the 5th another table (i.e., defining a Ring or Field) or
-    the 3rd, 4th, and 5th arguments should be a Ring (or Field), Group,
-    and a operator that "multiplies" scalars with vectors.
+    If constructing a SingleElementSetAlgebra:
 
-    See the examples at https://abstract-algebra.readthedocs.io
+    The third argument should be a list of element names (str).
+
+    The fourth argument should be a list of lists of either all integers
+    or all strings that represent a finite binary operation.  That is, a
+    2-dimensional, square "table" (Cayley table).  The meaning of a table
+    entry C corresponding to row A and column B, is that A * B = C, where
+    * is the binary operator.
+
+    A fifth argument is required only if a Ring or Field is being
+    constructed, and it should also be a table with structure similar to
+    the fourth argument.
+
+    If constructing a MultipleElementSetAlgebra:
+
+    The third argument should be a Ring or Field (the "scalars").
+
+    The fourth argument should be a Group (the "vectors").
+
+    And the fifth argument should be a function that implements the binary
+    operation for "scaling vectors".
+
+    See the definitions and examples at https://abstract-algebra.readthedocs.io
     """
 
     if len(args) == 1:

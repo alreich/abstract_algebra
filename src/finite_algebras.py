@@ -63,6 +63,9 @@ class FiniteOperator:
 # =================
 
 class FiniteAlgebra:
+    """The top-level class for all algebras in this module.
+    THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
+    """
 
     def __init__(self, name, description):
         self.name = name
@@ -71,11 +74,7 @@ class FiniteAlgebra:
 
 class SingleElementSetAlgebra(FiniteAlgebra):
     """A top-level container class for functionality that is common to all finite algebras
-    that only have one set of elements: THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
-    (It is not actually an algebra; it lacks a binary operation.)
-
-    Class Hierarchy:
-       FiniteAlgebra --> Magma --> Semigroup --> Monoid --> Group --> Ring --> Field
+    that only have one set of elements. THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
     """
 
     def __init__(self, name, description, elements, table):
@@ -181,6 +180,9 @@ class SingleElementSetAlgebra(FiniteAlgebra):
             return None
 
     def to_dict(self, include_classname=False):
+        """Returns a dictionary that represents the algebra.  The dictionary
+        can be fed back into make_finite_algebra and it will return a copy of
+        this algebra."""
         result = {'name': self.name,
                   'description': self.description,
                   'elements': self.elements,
@@ -328,31 +330,6 @@ class Magma(SingleElementSetAlgebra):
         else:
             return False
 
-    # def closure_OLD(self, subset_of_elements, include_inverses):
-    #     """Given a subset (in list form) of the group's elements (name strings),
-    #     return the smallest possible set of elements, containing the subset,
-    #     that is closed under multiplication.  If include_inverses is True
-    #     and the algebra has inverses, then they will be added to the closure."""
-    #
-    #     result = set(subset_of_elements)
-    #
-    #     # Include inverses, maybe.
-    #     if include_inverses and self.has_inverses():
-    #         for elem in subset_of_elements:
-    #             result.add(self.inv(elem))
-    #
-    #     # Add the products of all possible pairs
-    #     for pair in it.product(result, result):
-    #         result.add(self.op(*pair))
-    #
-    #     # If the input set of elements increased, recurse ...
-    #     if len(result) > len(subset_of_elements):
-    #         return self.closure(list(result), include_inverses)
-    #
-    #     # ...otherwise, stop and return the result
-    #     else:
-    #         return list(result)
-
     def closure(self, subset_of_elements, include_inverses):
         """Given a subset (in list form) of the group's elements (name strings),
         return the smallest possible set of elements, containing the subset,
@@ -404,19 +381,6 @@ class Magma(SingleElementSetAlgebra):
                 if len(clo) < n:  # Don't include closures consisting of all elements
                     closed.add(clo)
         return list(map(lambda x: list(x), closed))
-
-    # def subalgebra_from_elements_OLD(self, closed_subset_of_elements, name="No name", desc="No description"):
-    #     """Return the algebra constructed from the given closed subset of elements."""
-    #     # Make sure the elements are sorted according to their order in the parent Group (self)
-    #     elements_sorted = sorted(closed_subset_of_elements, key=lambda x: self.elements.index(x))
-    #     table = []
-    #     for a in elements_sorted:
-    #         row = []
-    #         for b in elements_sorted:
-    #             # The table entry is the index of the product in the sorted elements list
-    #             row.append(elements_sorted.index(self.op(a, b)))
-    #         table.append(row)
-    #     return make_finite_algebra(name, desc, elements_sorted, table)
 
     def subalgebra_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
         """Return the algebra constructed from the given closed subset of elements."""
@@ -524,7 +488,7 @@ class Magma(SingleElementSetAlgebra):
 # =============
 
 class Semigroup(Magma):
-    """A semigroup is an associative Magma."""
+    """A Semigroup is an associative Magma."""
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table)
@@ -550,7 +514,7 @@ class Semigroup(Magma):
 # ==========
 
 class Monoid(Semigroup):
-    """A monoid is a semigroup with an identity element.  With an identity element
+    """A Monoid is a Semigroup with an identity element.  With an identity element
     we can compute element orders.  So, that happens here."""
 
     def __init__(self, name, description, elements, table, check_inputs=True):
@@ -601,7 +565,7 @@ class Monoid(Semigroup):
 # =========
 
 class Group(Monoid):
-    """A group is a monoid with inverses."""
+    """A Group is a Monoid with inverses."""
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table, check_inputs)
@@ -810,7 +774,7 @@ def are_n(n):
 
 
 def add_s(string, n):
-    """Adds an 's' to 'string', or not, depending on 'n'."""
+    """Make a string plural by adding an 's' to it, or not, depending on 'n'."""
     if n == 1:
         return string
     else:
@@ -957,8 +921,7 @@ class Ring(Group):
                 raise ValueError(f"CHECK INPUTS: Multiplication does not distribute over addition. {self}")
 
     def __repr__(self):
-        nm, desc, elems, tbl = get_name_desc_elements_table(self)
-        tbl2 = self.mult_table.tolist()
+        nm, desc, elems, tbl, tbl2 = get_name_desc_elements_table(self)
         return f"{self.__class__.__name__}(\n'{nm}',\n'{desc}',\n{elems},\n{tbl},\n{tbl2}\n)"
 
     @property
@@ -1028,7 +991,7 @@ class Ring(Group):
         return make_finite_algebra(nm, desc, self.elements, self.mult_table.table)
 
     def zero_divisors(self):
-        """Return the Ring's zero divisors. i.e., if a != 0 and b != 0, but a*b == 0, then
+        """Return the Ring's zero divisors. i.e., if neither a nor b are 0, but a*b == 0, then
         a and b are zero divisors."""
 
         # Get the index of the additive identity element ("zero")
@@ -1145,6 +1108,7 @@ def generate_all_group_tables(order):
 
 # TODO: Reconcile this version with the similar method in CayleyTable.
 def is_table_associative(table):
+    """Determine whether the table supports an associative operation."""
     result = True
     elements = table[0]  # The first row should correspond to the elements of a group
     for a in elements:
@@ -1190,6 +1154,10 @@ def get_int_forms(ref_group, isomorphisms):
 # =========
 
 def is_field(add_id, elements, table):
+    """The elements of a Field, minus the additive identity, form a commutative Group
+    under multiplication. This function takes the additive identity, the list of all
+    elements, and a field's multiplication table as input, and returns the Group under
+    multiplication, if it exists, otherwise it returns False."""
     mult = make_finite_algebra("tmp", "temporary", elements, table)
     elems_copy = elements.copy()
     elems_copy.remove(add_id)
@@ -1205,6 +1173,8 @@ def is_field(add_id, elements, table):
 
 
 class Field(Ring):
+    """A Field is a Ring, where the elements, minus the additive identity, form a commutative Group
+    under multiplication."""
 
     def __init__(self, name, description, elements, table, table2, check_inputs=True, mult_sub_grp=None):
         super().__init__(name, description, elements, table, table2, check_inputs)
@@ -1251,6 +1221,8 @@ class Field(Ring):
 
 
 def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
+    """Generate a Ring (or Field) based on integer addition and multiplication modulo n.
+    If n is prime, then result will be a Field, otherwise it will be a Ring."""
 
     if is_prime(n):
         prime = True
@@ -1283,17 +1255,27 @@ def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
 
 def make_dp_sv_op(alg):
     """Return a scalar-vector operator based on the direct product of a Ring or
-    Field with itself.  That is, op:SxV-->V
+    Field with itself.  That is, op:SxV-->V.
+
+    Basically, this function takes an element created from a direct product
+    (e.g., s = "a:b:c"), splits it into a list (e.g., ["a", "b", "c"]), then
+    maps the multiplication of another element, say "x", over the list (e.g.,
+    ["x" * "a", "x" * "b", "x" * "c"]) and then joins the list back together
+    into a single string (e.g., "xa:xb:xc"), where xa, xb, & xc represent the
+    result of the multiplications.
     """
     delimiter = alg.direct_product_delimiter()
     return lambda s, v: delimiter.join([alg.mult(s, x) for x in v.split(delimiter)])
 
 
 class MultipleElementSetAlgebra(FiniteAlgebra):
+    """This class represents Finite Algebras that do not have single element lists,
+    such as VectorSpaces and Modules."""
     pass
 
 
 class Module(MultipleElementSetAlgebra):
+    """See https://abstract-algebra.readthedocs.io for the definition of a Module"""
 
     def __init__(self, name, description, ring, group, operator):
         super().__init__(name, description)
@@ -1330,6 +1312,7 @@ class Module(MultipleElementSetAlgebra):
 
 
 class VectorSpace(Module):
+    """See https://abstract-algebra.readthedocs.io for the definition of a VectorSpace."""
 
     def __init__(self, name, description, field, group, operator):
         super().__init__(name, description, field, group, operator)
@@ -1359,7 +1342,8 @@ def generate_n_dim_module(ring_or_field, n, verbose=False):
 
 
 def check_module_conditions(ring, group, sv_op, verbose=False):
-    """Check all four conditions required of a Module."""
+    """Returns True if all four conditions required of a Module hold true,
+    otherwise this function returns False."""
 
     check1 = check_scaling_by_one(ring, group, sv_op, verbose)
     if verbose:
@@ -1381,6 +1365,7 @@ def check_module_conditions(ring, group, sv_op, verbose=False):
 
 
 def check_scaling_by_one(ring, group, sv_op, verbose=False):
+    """Returns True if scaling by one holds true in all cases, otherwise False is Returned."""
     is_ok = True
     one = ring.one
     for v in group:
@@ -1392,6 +1377,8 @@ def check_scaling_by_one(ring, group, sv_op, verbose=False):
 
 
 def check_dist_of_scalars_over_vec_add(ring, group, sv_op, verbose=False):
+    """Returns True if distributivity of scalars over vector addition holds true in all cases,
+    otherwise False is Returned."""
     is_ok = True
     for s in ring:
         for v1 in group:
@@ -1406,6 +1393,8 @@ def check_dist_of_scalars_over_vec_add(ring, group, sv_op, verbose=False):
 
 
 def check_dist_of_vec_over_scalar_add(ring, group, sv_op, verbose=False):
+    """Returns True if distributivity of vectors over scalar addition holds true in all cases,
+    otherwise False is Returned."""
     is_ok = True
     for s1 in ring:
         for s2 in ring:
@@ -1420,6 +1409,8 @@ def check_dist_of_vec_over_scalar_add(ring, group, sv_op, verbose=False):
 
 
 def check_associativity(ring, group, sv_op, verbose=False):
+    """Return True if the special associativity condition on scalars and vectors holds true,
+    otherwise return False."""
     is_ok = True
     for s1 in ring:
         for s2 in ring:
@@ -1622,14 +1613,23 @@ def delete_row_col(np_arr, row, col):
 
 
 def get_name_desc_elements_table(finalg):
-    """Returns an algebras name, description, elements, and table (in list form)
-    For example: nm, desc, elems, tbl = get_name_desc_elements_table(alg)
+    """A convenience function. It unpacks a SingleElementSetAlgebra
+    and returns it's components: name, description, elements, and
+    table(s) (in list form).
     """
-    name = finalg.name
-    description = finalg.description
-    elements = finalg.elements
-    table_as_list = finalg.table.tolist()
-    return name, description, elements, table_as_list
+    if isinstance(finalg, SingleElementSetAlgebra):
+        name = finalg.name
+        description = finalg.description
+        elements = finalg.elements
+        table_as_list = finalg.table.tolist()
+        if isinstance(finalg, Ring):
+            table2_as_list = finalg.mult_table.tolist()
+            return name, description, elements, table_as_list, table2_as_list
+        else:
+            return name, description, elements, table_as_list
+    else:
+        raise ValueError(f"{finalg} is not a SingleElementSetAlgebra.")
+
 
 
 def make_cayley_table(table, elements):

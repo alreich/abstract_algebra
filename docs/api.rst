@@ -20,49 +20,64 @@ FiniteAlgebra
 
 .. autoclass:: finite_algebras.FiniteAlgebra
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
+
 
 Magma
 -----
 
 .. autoclass:: finite_algebras.Magma
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
 
 Semigroup
 ---------
 
 .. autoclass:: finite_algebras.Semigroup
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
 
 Monoid
 ------
 
 .. autoclass:: finite_algebras.Monoid
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
 
 Group
 -----
 
 .. autoclass:: finite_algebras.Group
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
 
 Ring
 ----
 
 .. autoclass:: finite_algebras.Ring
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
 
 Field
 -----
 
 .. autoclass:: finite_algebras.Field
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
 
 Module
 ------
@@ -70,7 +85,9 @@ Module
 .. autofunction:: finite_algebras.make_dp_sv_op
 .. autoclass:: finite_algebras.Module
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
 .. autofunction:: finite_algebras.check_module_conditions
 
 VectorSpace
@@ -78,7 +95,9 @@ VectorSpace
 
 .. autoclass:: finite_algebras.VectorSpace
     :members:
+    :inherited-members:
     :undoc-members:
+    :show-inheritance:
 
 Algebra Generators
 ------------------

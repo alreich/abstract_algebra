@@ -13,9 +13,7 @@ Operator
 
 .. autoclass:: finite_algebras.FiniteOperator
     :members:
-    :special-members: __call__
     :undoc-members:
-    :private-members:
 
 FiniteAlgebra
 -------------
@@ -23,61 +21,48 @@ FiniteAlgebra
 .. autoclass:: finite_algebras.FiniteAlgebra
     :members:
     :undoc-members:
-    :private-members:
 
 Magma
 -----
 
 .. autoclass:: finite_algebras.Magma
     :members:
-    :special-members: __contains__, __eq__, __getitem__, __len__, __mul__
     :undoc-members:
-    :private-members:
 
 Semigroup
 ---------
 
 .. autoclass:: finite_algebras.Semigroup
     :members:
-    :special-members:
     :undoc-members:
-    :private-members:
 
 Monoid
 ------
 
 .. autoclass:: finite_algebras.Monoid
     :members:
-    :special-members:
     :undoc-members:
-    :private-members:
 
 Group
 -----
 
 .. autoclass:: finite_algebras.Group
     :members:
-    :special-members:
     :undoc-members:
-    :private-members:
 
 Ring
 ----
 
 .. autoclass:: finite_algebras.Ring
     :members:
-    :special-members:
     :undoc-members:
-    :private-members:
 
 Field
 -----
 
 .. autoclass:: finite_algebras.Field
     :members:
-    :special-members:
     :undoc-members:
-    :private-members:
 
 Module
 ------
@@ -85,9 +70,7 @@ Module
 .. autofunction:: finite_algebras.make_dp_sv_op
 .. autoclass:: finite_algebras.Module
     :members:
-    :special-members:
     :undoc-members:
-    :private-members:
 .. autofunction:: finite_algebras.check_module_conditions
 
 VectorSpace
@@ -95,9 +78,7 @@ VectorSpace
 
 .. autoclass:: finite_algebras.VectorSpace
     :members:
-    :special-members:
     :undoc-members:
-    :private-members:
 
 Algebra Generators
 ------------------
@@ -115,27 +96,21 @@ Cayley Table
 
 .. autoclass:: cayley_table.CayleyTable
     :members:
-    :special-members: __eq__, __repr__, __str__, __getitem__
     :undoc-members:
-    :private-members:
 
 Permutations
 ------------
 
 .. autoclass:: permutations.Perm
     :members:
-    :special-members: __eq__, __len__, __hash__, __mul__, __repr__
     :undoc-members:
-    :private-members:
 
 Examples
 --------
 
 .. autoclass:: finite_algebras.Examples
     :members:
-    :special-members: __init__
     :undoc-members:
-    :private-members:
 
 Misc Utilities
 --------------

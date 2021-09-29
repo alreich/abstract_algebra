@@ -1320,6 +1320,42 @@ class VectorSpace(Module):
             raise ValueError(f"{field} must be a Field.")
 
 
+class NDimensionalVectorSpace(VectorSpace):
+
+    def __init__(self, field, n, check_input_conditions=True):
+        name = f"{n}D-VS-{field.name}"
+        desc = f"{n}-dimensional Vector Space over {field.name}"
+        delim = field.direct_product_delimiter()
+        self.__dimensions = n
+
+        # Group from the n-fold direct product of the Field with itself
+        group = field.power(n)
+
+        # Maybe check input conditions
+        # if check_input_conditions:
+        #     if not check_module_conditions(field, group, op):
+        #         raise ValueError("Inputs don't meet required conditions.")
+
+        super().__init__(name, desc, field, group,
+                         # Create scalar-vector operation
+                         lambda s, v: delim.join([field.mult(s, x)
+                                                  for x in v.split(delim)]))
+
+    @property
+    def dimensions(self):
+        return self.__dimensions
+
+    @property
+    def origin(self):
+        return self.vector.identity
+
+    def dot_product(self, u, v):
+        delim = self.scalar.direct_product_delimiter()
+        return functools.reduce(lambda a, b: self.scalar.add(a, b),
+                                map(lambda pair: self.scalar.mult(*pair),
+                                    zip(u.split(delim), v.split(delim))))
+
+
 def generate_n_dim_module(ring_or_field, n, verbose=False):
     """Return a Module or Vector Space over the input algebra (field or ring),
     where the vectors are the n-times direct product of the input algebra"""

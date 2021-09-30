@@ -1253,19 +1253,35 @@ def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
 # Modules and Vector Spaces
 # ==========================
 
-def make_sv_mult(alg):
-    """Return a scalar-vector operator based on the direct product of a Ring or
-    Field with itself.  That is, op:SxV-->V.
+# def make_sv_mult(alg):
+#     """Return a scalar-vector operator based on the direct product of a Ring or
+#     Field with itself.  That is, op:SxV-->V.
+#
+#     Basically, this function takes an element created from a direct product
+#     (e.g., s = "a:b:c"), splits it into a list (e.g., ["a", "b", "c"]), then
+#     maps the multiplication of another element, say "x", over the list (e.g.,
+#     ["x" * "a", "x" * "b", "x" * "c"]) and then joins the list back together
+#     into a single string (e.g., "xa:xb:xc"), where xa, xb, & xc represent the
+#     result of the multiplications.
+#     """
+#     delimiter = alg.direct_product_delimiter()
+#     return lambda s, v: delimiter.join([alg.mult(s, x) for x in v.split(delimiter)])
 
-    Basically, this function takes an element created from a direct product
-    (e.g., s = "a:b:c"), splits it into a list (e.g., ["a", "b", "c"]), then
-    maps the multiplication of another element, say "x", over the list (e.g.,
-    ["x" * "a", "x" * "b", "x" * "c"]) and then joins the list back together
-    into a single string (e.g., "xa:xb:xc"), where xa, xb, & xc represent the
-    result of the multiplications.
-    """
-    delimiter = alg.direct_product_delimiter()
-    return lambda s, v: delimiter.join([alg.mult(s, x) for x in v.split(delimiter)])
+
+def module_sv_mult(ring):
+    delimiter = ring.direct_product_delimiter()
+
+    def sv_mult(s, v):
+        return delimiter.join([ring.mult(s, x) for x in v.split(delimiter)])
+
+    return sv_mult
+
+
+def module_dot_product(ring, vec1, vec2):
+    delim = ring.scalar.direct_product_delimiter()
+    return functools.reduce(lambda a, b: ring.scalar.add(a, b),
+                            map(lambda pair: ring.scalar.mult(*pair),
+                                zip(vec1.split(delim), vec2.split(delim))))
 
 
 class MultipleElementSetAlgebra(FiniteAlgebra):
@@ -1359,18 +1375,14 @@ class VectorSpace(Module):
 class NDimensionalModule(Module):
 
     def __init__(self, ring, n, check_input_conditions=True):
-        name = f"{n}D-M-{ring.name}"
+        name = f"{n}D-{ring.name}"
         desc = f"{n}-dimensional Module over {ring.name}"
-        delim = ring.direct_product_delimiter()
         self.__dimensions = n
 
         # Group from the n-fold direct product of the Field with itself
         group = ring.power(n)
 
-        super().__init__(name, desc, ring, group,
-                         # Create scalar-vector operation
-                         lambda s, v: delim.join([ring.mult(s, x)
-                                                  for x in v.split(delim)]))
+        super().__init__(name, desc, ring, group, module_sv_mult(ring))
 
         # Check input conditions, maybe
         if check_input_conditions:
@@ -1386,31 +1398,57 @@ class NDimensionalModule(Module):
         return self.vector.identity
 
     def dot_product(self, u, v):
-        delim = self.scalar.direct_product_delimiter()
-        return functools.reduce(lambda a, b: self.scalar.add(a, b),
-                                map(lambda pair: self.scalar.mult(*pair),
-                                    zip(u.split(delim), v.split(delim))))
+        return module_dot_product(self, u, v)
 
 
-def generate_n_dim_module(ring_or_field, n, verbose=False):
-    """Return a Module or Vector Space over the input algebra (field or ring),
-    where the vectors are the n-times direct product of the input algebra"""
-    if isinstance(ring_or_field, Field):
-        prefix = "VS"
-        kind = "Vector Space"
-    elif isinstance(ring_or_field, Ring):
-        prefix = "Mod"
-        kind = "Module"
-    else:
-        raise ValueError(f"{ring_or_field} is not a Ring or a Field")
-    name = f"{prefix}{n}-{ring_or_field.name}"
-    desc = f"{n}-dimensional {kind} over {ring_or_field.name}"
-    group = ring_or_field.power(n)
-    op = make_sv_mult(ring_or_field)
-    if check_module_conditions(ring_or_field, group, op, verbose):
-        return make_finite_algebra(name, desc, ring_or_field, group, op)
-    else:
-        raise ValueError("Input conditions for module or vector space failed.")
+class NDimensionalVectorSpace(VectorSpace):
+
+    def __init__(self, field, n, check_input_conditions=True):
+        name = f"{n}D-{field.name}"
+        desc = f"{n}-dimensional Vector Space over {field.name}"
+        self.__dimensions = n
+
+        # Group from the n-fold direct product of the Field with itself
+        group = field.power(n)
+
+        super().__init__(name, desc, field, group, module_sv_mult(field))
+
+        # Check input conditions, maybe
+        if check_input_conditions:
+            if not check_module_conditions(field, group, self.sv_mult):
+                raise ValueError("Inputs don't meet required conditions.")
+
+    @property
+    def dimensions(self):
+        return self.__dimensions
+
+    @property
+    def origin(self):
+        return self.vector.identity
+
+    def dot_product(self, u, v):
+        return module_dot_product(self, u, v)
+
+
+# def generate_n_dim_module(ring_or_field, n, verbose=False):
+#     """Return a Module or Vector Space over the input algebra (field or ring),
+#     where the vectors are the n-times direct product of the input algebra"""
+#     if isinstance(ring_or_field, Field):
+#         prefix = "VS"
+#         kind = "Vector Space"
+#     elif isinstance(ring_or_field, Ring):
+#         prefix = "Mod"
+#         kind = "Module"
+#     else:
+#         raise ValueError(f"{ring_or_field} is not a Ring or a Field")
+#     name = f"{prefix}{n}-{ring_or_field.name}"
+#     desc = f"{n}-dimensional {kind} over {ring_or_field.name}"
+#     group = ring_or_field.power(n)
+#     op = module_sv_mult(ring_or_field)
+#     if check_module_conditions(ring_or_field, group, op, verbose):
+#         return make_finite_algebra(name, desc, ring_or_field, group, op)
+#     else:
+#         raise ValueError("Input conditions for module or vector space failed.")
 
 
 def check_module_conditions(ring, group, sv_mult, verbose=False):
@@ -1701,7 +1739,6 @@ def get_name_desc_elements_table(finalg):
             return name, description, elements, table_as_list
     else:
         raise ValueError(f"{finalg} is not a SingleElementSetAlgebra.")
-
 
 
 def make_cayley_table(table, elements):

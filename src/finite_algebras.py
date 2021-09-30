@@ -1253,7 +1253,7 @@ def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
 # Modules and Vector Spaces
 # ==========================
 
-def make_dp_sv_op(alg):
+def make_sv_mult(alg):
     """Return a scalar-vector operator based on the direct product of a Ring or
     Field with itself.  That is, op:SxV-->V.
 
@@ -1287,7 +1287,7 @@ class Module(MultipleElementSetAlgebra):
             raise ValueError("Inputs don't meet requirements for a Module.")
         self.scalar = ring
         self.vector = group
-        self.sv_op = operator  # scalar-vector operator
+        self.sv_mult = operator  # scalar-vector operator
 
     def __repr__(self):
         sname = self.scalar.name
@@ -1320,26 +1320,62 @@ class VectorSpace(Module):
             raise ValueError(f"{field} must be a Field.")
 
 
-class NDimensionalVectorSpace(VectorSpace):
+# class NDimensionalVectorSpace(VectorSpace):
+#
+#     def __init__(self, field, n, check_input_conditions=True):
+#         name = f"{n}D-VS-{field.name}"
+#         desc = f"{n}-dimensional Vector Space over {field.name}"
+#         delim = field.direct_product_delimiter()
+#         self.__dimensions = n
+#
+#         # Group from the n-fold direct product of the Field with itself
+#         group = field.power(n)
+#
+#         super().__init__(name, desc, field, group,
+#                          # Create scalar-vector operation
+#                          lambda s, v: delim.join([field.mult(s, x)
+#                                                   for x in v.split(delim)]))
+#
+#         # Check input conditions, maybe
+#         if check_input_conditions:
+#             if not check_module_conditions(field, group, self.sv_mult):
+#                 raise ValueError("Inputs don't meet required conditions.")
+#
+#     @property
+#     def dimensions(self):
+#         return self.__dimensions
+#
+#     @property
+#     def origin(self):
+#         return self.vector.identity
+#
+#     def dot_product(self, u, v):
+#         delim = self.scalar.direct_product_delimiter()
+#         return functools.reduce(lambda a, b: self.scalar.add(a, b),
+#                                 map(lambda pair: self.scalar.mult(*pair),
+#                                     zip(u.split(delim), v.split(delim))))
 
-    def __init__(self, field, n, check_input_conditions=True):
-        name = f"{n}D-VS-{field.name}"
-        desc = f"{n}-dimensional Vector Space over {field.name}"
-        delim = field.direct_product_delimiter()
+
+class NDimensionalModule(Module):
+
+    def __init__(self, ring, n, check_input_conditions=True):
+        name = f"{n}D-M-{ring.name}"
+        desc = f"{n}-dimensional Module over {ring.name}"
+        delim = ring.direct_product_delimiter()
         self.__dimensions = n
 
         # Group from the n-fold direct product of the Field with itself
-        group = field.power(n)
+        group = ring.power(n)
 
-        # Maybe check input conditions
-        # if check_input_conditions:
-        #     if not check_module_conditions(field, group, op):
-        #         raise ValueError("Inputs don't meet required conditions.")
-
-        super().__init__(name, desc, field, group,
+        super().__init__(name, desc, ring, group,
                          # Create scalar-vector operation
-                         lambda s, v: delim.join([field.mult(s, x)
+                         lambda s, v: delim.join([ring.mult(s, x)
                                                   for x in v.split(delim)]))
+
+        # Check input conditions, maybe
+        if check_input_conditions:
+            if not check_module_conditions(ring, group, self.sv_mult):
+                raise ValueError("Inputs don't meet required conditions.")
 
     @property
     def dimensions(self):
@@ -1370,57 +1406,57 @@ def generate_n_dim_module(ring_or_field, n, verbose=False):
     name = f"{prefix}{n}-{ring_or_field.name}"
     desc = f"{n}-dimensional {kind} over {ring_or_field.name}"
     group = ring_or_field.power(n)
-    op = make_dp_sv_op(ring_or_field)
+    op = make_sv_mult(ring_or_field)
     if check_module_conditions(ring_or_field, group, op, verbose):
         return make_finite_algebra(name, desc, ring_or_field, group, op)
     else:
         raise ValueError("Input conditions for module or vector space failed.")
 
 
-def check_module_conditions(ring, group, sv_op, verbose=False):
+def check_module_conditions(ring, group, sv_mult, verbose=False):
     """Returns True if all four conditions required of a Module hold true,
     otherwise this function returns False."""
 
-    check1 = check_scaling_by_one(ring, group, sv_op, verbose)
+    check1 = check_scaling_by_one(ring, group, sv_mult, verbose)
     if verbose:
         print(f"* Scaling by 1 OK? {yes_or_no(check1)}")
 
-    check2 = check_dist_of_scalars_over_vec_add(ring, group, sv_op, verbose)
+    check2 = check_dist_of_scalars_over_vec_add(ring, group, sv_mult, verbose)
     if verbose:
         print(f"* Distributivity of scalars over vector addition OK? {yes_or_no(check2)}")
 
-    check3 = check_dist_of_vec_over_scalar_add(ring, group, sv_op, verbose)
+    check3 = check_dist_of_vec_over_scalar_add(ring, group, sv_mult, verbose)
     if verbose:
         print(f"* Distributivity of vectors over scalar addition OK? {yes_or_no(check3)}")
 
-    check4 = check_associativity(ring, group, sv_op, verbose)
+    check4 = check_associativity(ring, group, sv_mult, verbose)
     if verbose:
         print(f"* Scaling by 1 OK? {yes_or_no(check4)}")
 
     return check1 & check2 & check3 & check4
 
 
-def check_scaling_by_one(ring, group, sv_op, verbose=False):
+def check_scaling_by_one(ring, group, sv_mult, verbose=False):
     """Returns True if scaling by one holds true in all cases, otherwise False is Returned."""
     is_ok = True
     one = ring.one
     for v in group:
-        if v != sv_op(one, v):
+        if v != sv_mult(one, v):
             is_ok = False
             if verbose:
-                print(f"{one} x {v} = {sv_op(one, v)}")
+                print(f"{one} x {v} = {sv_mult(one, v)}")
     return is_ok
 
 
-def check_dist_of_scalars_over_vec_add(ring, group, sv_op, verbose=False):
+def check_dist_of_scalars_over_vec_add(ring, group, sv_mult, verbose=False):
     """Returns True if distributivity of scalars over vector addition holds true in all cases,
     otherwise False is Returned."""
     is_ok = True
     for s in ring:
         for v1 in group:
             for v2 in group:
-                a = sv_op(s, group.op(v1, v2))
-                b = group.op(sv_op(s, v1), sv_op(s, v2))
+                a = sv_mult(s, group.op(v1, v2))
+                b = group.op(sv_mult(s, v1), sv_mult(s, v2))
                 if a != b:
                     is_ok = False
                     if verbose:
@@ -1428,15 +1464,15 @@ def check_dist_of_scalars_over_vec_add(ring, group, sv_op, verbose=False):
     return is_ok
 
 
-def check_dist_of_vec_over_scalar_add(ring, group, sv_op, verbose=False):
+def check_dist_of_vec_over_scalar_add(ring, group, sv_mult, verbose=False):
     """Returns True if distributivity of vectors over scalar addition holds true in all cases,
     otherwise False is Returned."""
     is_ok = True
     for s1 in ring:
         for s2 in ring:
             for v in group:
-                a = sv_op(ring.add(s1, s2), v)
-                b = group.op(sv_op(s1, v), sv_op(s2, v))
+                a = sv_mult(ring.add(s1, s2), v)
+                b = group.op(sv_mult(s1, v), sv_mult(s2, v))
                 if a != b:
                     is_ok = False
                     if verbose:
@@ -1444,15 +1480,15 @@ def check_dist_of_vec_over_scalar_add(ring, group, sv_op, verbose=False):
     return is_ok
 
 
-def check_associativity(ring, group, sv_op, verbose=False):
+def check_associativity(ring, group, sv_mult, verbose=False):
     """Return True if the special associativity condition on scalars and vectors holds true,
     otherwise return False."""
     is_ok = True
     for s1 in ring:
         for s2 in ring:
             for v in group:
-                a = sv_op(ring.add(s1, s2), v)
-                b = group.op(sv_op(s1, v), sv_op(s2, v))
+                a = sv_mult(ring.add(s1, s2), v)
+                b = group.op(sv_mult(s1, v), sv_mult(s2, v))
                 if a != b:
                     is_ok = False
                     if verbose:

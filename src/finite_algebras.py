@@ -1269,15 +1269,20 @@ def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
 
 
 def module_sv_mult(ring):
+    """Returns a function that scales a vector.  That is, a function that takes
+    a scalar and a vector and their product, a vector."""
     delimiter = ring.direct_product_delimiter()
 
     def sv_mult(s, v):
+        """Scalar-Vector product function"""
         return delimiter.join([ring.mult(s, x) for x in v.split(delimiter)])
 
     return sv_mult
 
 
 def module_dot_product(ring, vec1, vec2):
+    """Returns a scalar (ring element) that represents the dot-product of the
+    two input vectors."""
     delim = ring.scalar.direct_product_delimiter()
     return functools.reduce(lambda a, b: ring.scalar.add(a, b),
                             map(lambda pair: ring.scalar.mult(*pair),

@@ -807,6 +807,12 @@ def about_subalgebras(alg):
     return partitions
 
 
+def cosets(group, normal_subgroup):
+    """Returns an iterator that returns lists of cosets."""
+    return map(lambda s: sorted(list(s)),
+               {frozenset([group.op(x, y) for y in normal_subgroup])
+                for x in group})
+
 # -----------------
 # Group Generators
 # -----------------

@@ -1,0 +1,89 @@
+Methods & where they're defined
+
+FiniteAlgebra
+    name -- string name of algebra
+    description -- string description of algebra
+
+SingleElementSetAlgebra( FiniteAlgebra ) -- algebra with single set of elements
+    about -- prints info about the algebra
+    deepcopy
+    dump -- saves algebra to file in JSON format
+    dumps -- outputs algebra as JSON string
+    elements -- list of names of the algebra's elements (strings)
+    has_identity -- returns True if the algebra has an identity
+    has_inverses -- returns True if the algebra has inverses
+    identity -- returns the algebra's identity element, if it exists
+    inv -- returns and element's inverse element
+    is_abelian -- returns True if the algebra is abelian
+    is_associative -- returns True if the algebra is associative
+    is_commutative -- same as is_abelian
+    order -- returns the order of the algebra
+    table -- returns the algebra's Cayley table
+    to_dict -- outputs the algebra as a Python dictionary
+
+Magma( SingleElementSetAlgebra ) -- a set with a binary operation
+    center
+    center_algebra
+    closure
+    closed_subsets_of_elements
+    direct_product
+    is_cyclic
+    is_division_algebra
+    isomorphic
+    op
+    power
+    proper_subalgebras
+    reorder_elements
+    generators
+    subalgebra_from_elements
+
+Semigroup( Magma ) - an associative Magma
+    is_regular
+    weak_inverses
+
+Monoid( Semigroup ) -- a Semigroup with identity
+    element_order
+
+Group( Monoid ) -- a Monoid with inverses
+    inverse_mapping
+    inv
+    sub
+    conjugate
+    is_normal
+    trivial_subgroups
+    subgroups
+    unique_proper_subgroups
+    about
+
+Ring
+    add_identity
+    mult_identity
+    zero
+    one
+    has_mult_identity
+    add_table
+    mult_table
+    add
+    mult
+    mult_is_commutative
+    extract_additive_algebra
+    extract_multiplicative_algebra
+    zero_divisors
+    about
+
+Field
+    mult_abelian_subgroup
+    mult_inv
+    div
+
+MultipleElementSetAlgebra
+
+Module( MultipleElementSetAlgebra )
+    about -- prints info about the Module
+    vector_add -- vector addition operator (the Group's operator)
+    sv_mult -- scalar-vector multiplication operator
+    scalar -- returns the Module's Field
+    vector -- returns the Module's Group
+
+VectorSpace( Module )
+

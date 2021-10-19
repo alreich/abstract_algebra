@@ -11,9 +11,11 @@ The following list of algebraic structures is ordered such that each
 successive structure builds on the previous one. The class hierarchy of
 the ``finite_algebra`` module is modeled on this progression.
 
--  **Magma** – a set, :math:`S`, with a binary operation,
-   :math:`\circ: S \times S \to S`, such that
-   :math:`\forall (a,b) \in S \times S \Rightarrow a \circ b \in S`
+-  **Magma** – :math:`\langle S, \circ \rangle`, where :math:`S` is a
+   set and :math:`\circ` is a binary operation,
+   :math:`\circ: S \times S \to S`, such that for each
+   :math:`a,b \in S`, :math:`\exists! c \in S` such that
+   :math:`a \circ b = c`
 
 -  **Semigroup** – an associative Magma:
    :math:`\forall a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
@@ -26,14 +28,35 @@ the ``finite_algebra`` module is modeled on this progression.
    :math:`\forall a \in S, \exists a^{-1} \in S`, such that,
    :math:`a \circ a^{-1} = a^{-1} \circ a = e`
 
--  **Ring** – :math:`\langle S, +, \times \rangle`, where
-   :math:`\langle S, + \rangle` is a commutative Group,
-   :math:`\langle S, \times \rangle` is a Semigroup, and :math:`\times`
+-  **Ring** – :math:`\langle S, +, \cdot \rangle`, where
+   :math:`\langle S, + \rangle` is an abelian\ :math:`\dagger` Group,
+   :math:`\langle S, \cdot \rangle` is a Semigroup, and :math:`\cdot`
    distributes over :math:`+`
 
--  **Field** – a Ring :math:`\langle S, +, \times \rangle`, where
-   :math:`\langle S\setminus{\{0\}}, \times \rangle` is a commutative
+-  **Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
+   :math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative
    Group
+
+:math:`\dagger` An algebra is *abelian* (or *commutative*) for a binary
+operation, :math:`\circ`, if :math:`a \circ b = b \circ a` for all
+:math:`a,b \in S`.
+
+For **Magmas**, **Semigroups**, **Monoids**, and **Groups**, the binary
+operation is often referred to as “*multiplication*”, but may sometimes
+be called “*addition*”. Also, instead of :math:`e`, the identity element
+may be denoted by :math:`0` or :math:`1`, depending on whether the
+operation is called addition or multiplication, resp.
+
+For **Rings** and **Fields**, the two operations, :math:`+` and
+:math:`\cdot`, are usually referred to as addition and multiplication,
+resp. The identity element for :math:`+` is often denoted by :math:`0`,
+and :math:`1` for :math:`\cdot`, if a multiplicative identity exists.
+
+Regarding a **Ring’s** Semigroup, :math:`\langle S, \cdot \rangle`: \*
+if the Semigroup is abelian, then the Ring is called a “*commutative
+Ring*” \* if the Semigroup is actually a Monoid (i.e., has an identity
+element), then the Ring is called a “*unit Ring*” or “*Ring with
+identity*”
 
 Vector Spaces and Modules
 -------------------------
@@ -47,8 +70,8 @@ consists of the following:
 
 -  an **abelian Group**, :math:`\mathscr{G} = \langle V, \oplus \rangle`
    (i.e., the *“vectors”*)
--  a **field**, :math:`\mathscr{F} = \langle S, +, \times \rangle`
-   (i.e., the *“scalars”*)
+-  a **field**, :math:`\mathscr{F} = \langle S, +, \cdot \rangle` (i.e.,
+   the *“scalars”*)
 -  and a **binary operator**, :math:`\circ : S \times V \to V`
 
 where the following conditions hold:
@@ -63,13 +86,13 @@ where the following conditions hold:
 4. Distributivity of Vectors Over Scalar Addition:
    :math:`(s_1 + s_2) \circ v = (s_1 \circ v) \oplus (s_2 \circ v)`
 5. Associativity:
-   :math:`s_1 \circ (s_2 \circ v) = (s_1 \times s_2) \circ v`
+   :math:`s_1 \circ (s_2 \circ v) = (s_1 \cdot s_2) \circ v`
 
 A **Module**,
 :math:`\mathscr{M} = \langle \mathscr{G}, \mathscr{R}, \circ \rangle`,
 has the same conditions as a Vector Space, except that the Field is
 replaced by a **Ring**,
-:math:`\mathscr{R} = \langle S, +, \times \rangle`.
+:math:`\mathscr{R} = \langle S, +, \cdot \rangle`.
 
 Class Hierarchy
 ---------------

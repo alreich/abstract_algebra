@@ -29,7 +29,7 @@ the ``finite_algebra`` module is modeled on this progression.
    :math:`a \circ a^{-1} = a^{-1} \circ a = e`
 
 -  **Ring** – :math:`\langle S, +, \cdot \rangle`, where
-   :math:`\langle S, + \rangle` is an abelian\ :math:`\dagger` Group,
+   :math:`\langle S, + \rangle` is an abelian\ :math:`^\dagger` Group,
    :math:`\langle S, \cdot \rangle` is a Semigroup, and :math:`\cdot`
    distributes over :math:`+`
 
@@ -37,7 +37,7 @@ the ``finite_algebra`` module is modeled on this progression.
    :math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative
    Group
 
-:math:`\dagger` An algebra is *abelian* (or *commutative*) for a binary
+:math:`^\dagger` An algebra is *abelian* (or *commutative*) for a binary
 operation, :math:`\circ`, if :math:`a \circ b = b \circ a` for all
 :math:`a,b \in S`.
 
@@ -52,11 +52,13 @@ For **Rings** and **Fields**, the two operations, :math:`+` and
 resp. The identity element for :math:`+` is often denoted by :math:`0`,
 and :math:`1` for :math:`\cdot`, if a multiplicative identity exists.
 
-Regarding a **Ring’s** Semigroup, :math:`\langle S, \cdot \rangle`: \*
-if the Semigroup is abelian, then the Ring is called a “*commutative
-Ring*” \* if the Semigroup is actually a Monoid (i.e., has an identity
-element), then the Ring is called a “*unit Ring*” or “*Ring with
-identity*”
+Regarding a **Ring’s** Semigroup, :math:`\langle S, \cdot \rangle`:
+
+-  if the Semigroup is abelian, then the Ring is called a “*commutative
+   Ring*”
+-  if the Semigroup is actually a Monoid (i.e., has an identity
+   element), then the Ring is called a “*unit Ring*” or “*Ring with
+   identity*”
 
 Vector Spaces and Modules
 -------------------------

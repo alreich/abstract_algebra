@@ -1,6 +1,8 @@
 # Abstract Algebra
 
-A Python implementation of **Finite Algebras**: Groups, Rings, Fields, Vector Spaces, Modules, Monoids, Semigroups, and Magmas.
+A pedagogical implementation of **Finite Algebras** in Python: Groups, Rings, Fields, Vector Spaces, Modules, Monoids, Semigroups, and Magmas.
+
+Currently the representation of an algebra here depends on being able to explicitely represent its Cayley table.  Consequently, only relatively small algebras can be represented - few hundred elements at most.
 
 ## Summary
 

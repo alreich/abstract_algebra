@@ -600,6 +600,25 @@ class Group(Monoid):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
         return self.op(g, self.op(a, self.inv(g)))
 
+    def commutator(self, g, h):
+        """Return [g,h] = inv(g) * inv(h) * g * h, the commutator of {g, h}"""
+        return self.op(self.inv(g), self.inv(h), g, h)
+
+    def commutators(self):
+        """Return the list of commutators of the group."""
+        result = set()
+        for g in self:
+            for h in self:
+                result.add(self.commutator(g, h))
+        return result
+
+    def commutator_subgroup(self):
+        """Return the commutator subgroup of the group."""
+        commutators = self.commutators()
+        return self.subalgebra_from_elements(self.closure(commutators, include_inverses=True),
+                                             name=f"{self.name}_CG",
+                                             desc=f"{self.name} commutator subgroup")
+
     def is_normal(self, subgrp):
         """Returns True if the subgroup is normal, otherwise False is returned"""
         result = True

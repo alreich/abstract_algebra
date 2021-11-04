@@ -24,6 +24,14 @@ FiniteAlgebra
     :undoc-members:
     :show-inheritance:
 
+SingleElementSetAlgebra
+-----------------------
+
+.. autoclass:: finite_algebras.SingleElementSetAlgebra
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
 
 Magma
 -----
@@ -79,10 +87,21 @@ Field
     :undoc-members:
     :show-inheritance:
 
+MultipleElementSetAlgebra
+-------------------------
+
+.. autoclass:: finite_algebras.MultipleElementSetAlgebra
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
+
 Module
 ------
 
-.. autofunction:: finite_algebras.make_dp_sv_op
+.. autofunction:: finite_algebras.module_sv_mult
+.. autofunction:: finite_algebras.module_dot_product
+
 .. autoclass:: finite_algebras.Module
     :members:
     :inherited-members:
@@ -90,10 +109,28 @@ Module
     :show-inheritance:
 .. autofunction:: finite_algebras.check_module_conditions
 
+NDimensionalModule
+------------------
+
+.. autoclass:: finite_algebras.NDimensionalModule
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
+
 VectorSpace
 -----------
 
 .. autoclass:: finite_algebras.VectorSpace
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
+
+NDimensionalVectorSpace
+-----------------------
+
+.. autoclass:: finite_algebras.NDimensionalVectorSpace
     :members:
     :inherited-members:
     :undoc-members:
@@ -108,7 +145,6 @@ Algebra Generators
 .. autofunction:: finite_algebras.generate_commutative_monoid
 .. autofunction:: finite_algebras.generate_powerset_ring
 .. autofunction:: finite_algebras.generate_algebra_mod_n
-.. autofunction:: finite_algebras.generate_n_dim_module
 
 Cayley Table
 ------------

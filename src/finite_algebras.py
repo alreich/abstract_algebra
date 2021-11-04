@@ -600,16 +600,16 @@ class Group(Monoid):
         """Return g * a * inv(g), the conjugate of a with respect to g"""
         return self.op(g, self.op(a, self.inv(g)))
 
-    def commutator(self, g, h):
-        """Return [g,h] = inv(g) * inv(h) * g * h, the commutator of {g, h}"""
-        return self.op(self.inv(g), self.inv(h), g, h)
+    def commutator(self, a, b):
+        """Return [a, b] = a * b * inv(a) * inv(b), the commutator of a & b"""
+        return self.op(a, b, self.inv(a), self.inv(b))
 
     def commutators(self):
         """Return the list of commutators of the group."""
         result = set()
-        for g in self:
-            for h in self:
-                result.add(self.commutator(g, h))
+        for a in self:
+            for b in self:
+                result.add(self.commutator(a, b))
         return result
 
     def commutator_subgroup(self):
@@ -1031,6 +1031,10 @@ class Ring(Group):
 
         # Return all elements corresponding to the union of the the row & column indices
         return [self.elements[index + 1] for index in list(a | b)]
+
+    def commutator(self, a, b):
+        """Return [a, b] = (a * b) - (b * a), the ring commutator of a & b"""
+        return self.sub(self.mult(a, b), self.mult(b, a))
 
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Ring."""

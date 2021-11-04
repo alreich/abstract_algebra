@@ -1,8 +1,12 @@
 Abstract Algebra
 ================
 
-A Python implementation of **Finite Algebras**: Groups, Rings, Fields,
-Vector Spaces, Modules, Monoids, Semigroups, and Magmas.
+A pedagogical implementation of **Finite Algebras** in Python: Groups,
+Rings, Fields, Vector Spaces, Modules, Monoids, Semigroups, and Magmas.
+
+Currently the representation of an algebra here depends on being able to
+explicitely represent its Cayley table. Consequently, only relatively
+small algebras can be represented - few hundred elements at most.
 
 Summary
 -------
@@ -21,7 +25,8 @@ elements**.
    that defines a binary operation (``list`` of ``lists`` of ``int``).
    Rings & Fields have two such tables.
 -  Each algebra has methods for examining its properties (e.g.,
-   ``is_associative()``, ``is_commutative()``)
+   ``is_associative``, ``is_commutative``, ``center``, ``commutators``,
+   etc.)
 -  Algebraic elements can be “added” (or “multiplied”) via their binary
    operations (e.g., ``v4.op('h','v') ==> 'r'``).
 -  Inverses & identities can be obtained, if the algebra supports them
@@ -35,6 +40,9 @@ elements**.
    supported (e.g., symmetric, cyclic).
 -  Subalgebras (e.g., subgroups) can be determined, along with related
    functionality (e.g, ``is_normal()``).
+-  Groups, Rings, and Fields can be used to construct Modules and Vector
+   Spaces, including n-dimensional Modules and Vector Spaces using the
+   direct products of Rings and Fields, resp.
 
 Installation
 ------------

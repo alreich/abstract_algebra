@@ -1,5 +1,5 @@
 """
-@summary:  Finite Algebras: Magma, Semigroup, Monoid, Group, Ring, and Field
+@summary:  Finite Algebras: Magma, Semigroup, Monoid, Group, Ring, Field, Module, VectorSpace
 @author:   Alfred J. Reich, Ph.D.
 @contact:  al.reich@gmail.com
 @copyright: Copyright (C) 2021 Alfred J. Reich, Ph.D.
@@ -10,8 +10,8 @@
 """
 
 import copy
-import collections as co
-import functools
+import collections
+from functools import reduce
 import itertools as it
 import json
 import numpy as np
@@ -55,7 +55,7 @@ class FiniteOperator:
         elif len(args) == 2:
             return self.__binary_operation(args[0], args[1])
         else:
-            return functools.reduce(lambda a, b: self.__op(a, b), args)
+            return reduce(lambda a, b: self.__op(a, b), args)
 
 
 # =================
@@ -535,6 +535,24 @@ class Monoid(Semigroup):
             self.__element_orders[element] = order_aux(element, element, 1)
         return self.__element_orders[element]
 
+    def units(self, return_names=True):
+        """Return a sorted list of the Monoid's units.
+        By default, the names of elements are returned.
+        Setting 'return_names' to False will return element indices instead.
+        NOTE: This method is used to compute the units of a Ring.
+        """
+        # Find the xy-pairs whose product is the Monoid's identity element
+        xs, ys = np.where(self.table.table == self.elements.index(self.identity))
+        xy_pairs = list(zip(xs, ys))  # e.g., [(1, 2), (2, 1), (5,3), (7, 4), (4, 7)]
+
+        # Collect all x for (x,y) in xy_pairs, if (y,x) is also in xy_pairs
+        # e.g., [(1, 2), (2, 1), (5,3), (7, 4), (4, 7)] ==> [1, 2, 4, 7]
+        unit_indices = sorted(list({xy[0] for xy in xy_pairs if (xy[1], xy[0]) in xy_pairs}))
+        if return_names:
+            return [self.elements[index] for index in unit_indices]
+        else:
+            return unit_indices
+
     # ---------------------
     # Monoid Isomorphisms
     # ---------------------
@@ -803,7 +821,7 @@ def add_s(string, n):
 def about_isomorphic_partitions(alg, partitions):
     """Print a summary of the isomorphic partitions of an algebra."""
     if len(partitions) != 0:
-        n_subs = functools.reduce(lambda x, y: x + y, [len(p) for p in partitions])
+        n_subs = reduce(lambda x, y: x + y, [len(p) for p in partitions])
         n_parts = len(partitions)
         print(f"\nSubalgebras of {alg}")
         what = f"  There {are_n(n_parts)} unique proper {add_s('subalgebra', n_parts)}, up to isomorphism, "
@@ -835,6 +853,7 @@ def cosets(group, normal_subgroup):
 # -----------------
 # Group Generators
 # -----------------
+
 
 def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, description=None):
     """Generates a cyclic group with the given order."""
@@ -1031,6 +1050,16 @@ class Ring(Group):
 
         # Return all elements corresponding to the union of the the row & column indices
         return [self.elements[index + 1] for index in list(a | b)]
+
+    def units(self, return_names=True, verbose=False):
+        """Return a list of the Ring's units."""
+        mult_alg = self.extract_multiplicative_algebra()
+        if mult_alg.has_identity():
+            return mult_alg.units(return_names)
+        else:
+            if verbose:
+                print(f"There is no multiplicative identity element.")
+            return None
 
     def commutator(self, a, b):
         """Return [a, b] = (a * b) - (b * a), the ring commutator of a & b"""
@@ -1313,7 +1342,7 @@ def module_dot_product(ring, vec1, vec2):
     """Returns a scalar (ring element) that represents the dot-product of the
     two input vectors."""
     delim = ring.scalar.direct_product_delimiter()
-    return functools.reduce(lambda a, b: ring.scalar.add(a, b),
+    return reduce(lambda a, b: ring.scalar.add(a, b),
                             map(lambda pair: ring.scalar.mult(*pair),
                                 zip(vec1.split(delim), vec2.split(delim))))
 
@@ -1368,42 +1397,6 @@ class VectorSpace(Module):
         super().__init__(name, description, field, group, operator)
         if not isinstance(field, Field):
             raise ValueError(f"{field} must be a Field.")
-
-
-# class NDimensionalVectorSpace(VectorSpace):
-#
-#     def __init__(self, field, n, check_input_conditions=True):
-#         name = f"{n}D-VS-{field.name}"
-#         desc = f"{n}-dimensional Vector Space over {field.name}"
-#         delim = field.direct_product_delimiter()
-#         self.__dimensions = n
-#
-#         # Group from the n-fold direct product of the Field with itself
-#         group = field.power(n)
-#
-#         super().__init__(name, desc, field, group,
-#                          # Create scalar-vector operation
-#                          lambda s, v: delim.join([field.mult(s, x)
-#                                                   for x in v.split(delim)]))
-#
-#         # Check input conditions, maybe
-#         if check_input_conditions:
-#             if not check_module_conditions(field, group, self.sv_mult):
-#                 raise ValueError("Inputs don't meet required conditions.")
-#
-#     @property
-#     def dimensions(self):
-#         return self.__dimensions
-#
-#     @property
-#     def origin(self):
-#         return self.vector.identity
-#
-#     def dot_product(self, u, v):
-#         delim = self.scalar.direct_product_delimiter()
-#         return functools.reduce(lambda a, b: self.scalar.add(a, b),
-#                                 map(lambda pair: self.scalar.mult(*pair),
-#                                     zip(u.split(delim), v.split(delim))))
 
 
 class NDimensionalModule(Module):
@@ -1462,27 +1455,6 @@ class NDimensionalVectorSpace(VectorSpace):
 
     def dot_product(self, u, v):
         return module_dot_product(self, u, v)
-
-
-# def generate_n_dim_module(ring_or_field, n, verbose=False):
-#     """Return a Module or Vector Space over the input algebra (field or ring),
-#     where the vectors are the n-times direct product of the input algebra"""
-#     if isinstance(ring_or_field, Field):
-#         prefix = "VS"
-#         kind = "Vector Space"
-#     elif isinstance(ring_or_field, Ring):
-#         prefix = "Mod"
-#         kind = "Module"
-#     else:
-#         raise ValueError(f"{ring_or_field} is not a Ring or a Field")
-#     name = f"{prefix}{n}-{ring_or_field.name}"
-#     desc = f"{n}-dimensional {kind} over {ring_or_field.name}"
-#     group = ring_or_field.power(n)
-#     op = module_sv_mult(ring_or_field)
-#     if check_module_conditions(ring_or_field, group, op, verbose):
-#         return make_finite_algebra(name, desc, ring_or_field, group, op)
-#     else:
-#         raise ValueError("Input conditions for module or vector space failed.")
 
 
 def check_module_conditions(ring, group, sv_mult, verbose=False):
@@ -1792,7 +1764,7 @@ def index_table_from_name_table(elements, name_table):
 
 def get_duplicates(lst):
     """Return a list of the duplicate items in the input list."""
-    return [item for item, count in co.Counter(lst).items() if count > 1]
+    return [item for item, count in collections.Counter(lst).items() if count > 1]
 
 
 def yes_or_no(true_or_false):

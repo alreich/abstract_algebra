@@ -203,43 +203,6 @@ class SingleElementSetAlgebra(FiniteAlgebra):
         with open(json_filename, 'w') as fout:
             json.dump(self.to_dict(), fout)
 
-    # This 'about' method differs from the one in Groups in that it does not print out
-    # as much detailed information about elements.
-    # TODO: Combine the 'about' method, below, with the one in Groups.
-    def about(self, max_size=12, use_table_names=False):
-        """Prints out information about the algebra. Tables larger than
-        max_size are not printed out."""
-        print(f"\n** {self.__class__.__name__} **")
-        print(f"Name: {self.name}")
-        print(f"Instance ID: {id(self)}")
-        print(f"Description: {self.description}")
-        print(f"Order: {self.order}")
-        if self.identity is None:
-            print("Identity: None")
-        else:
-            print(f"Identity: {self.identity}")
-        print(f"Associative? {yes_or_no(self.is_associative())}")
-        print(f"Commutative? {yes_or_no(self.is_commutative())}")
-        generators = self.is_cyclic()
-        if generators:
-            print("Cyclic?: Yes")
-            print(f"  Generators: {sorted(generators)}")
-        else:
-            print("Cyclic?: No")
-        print(f"Elements: {self.elements}")
-        print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
-        size = len(self.elements)
-        if size <= max_size:  # Don't print table if too large
-            if use_table_names:
-                print(f"Cayley Table (showing names):")
-                pp.pprint(self.table.to_list_with_names(self.elements))
-            else:
-                print(f"Cayley Table (showing indices):")
-                pp.pprint(self.table.tolist())
-        else:
-            print(f"{self.__class__.__name__} order is {size} > {max_size}, so the table is not output.")
-        return None
-
 
 # =========
 #   Magma
@@ -481,6 +444,43 @@ class Magma(SingleElementSetAlgebra):
                 if verbose:
                     print(f"{ab} fail")
         return result
+
+    # This 'about' method differs from the one in Groups in that it does not print out
+    # as much detailed information about elements.
+    # TODO: Combine the 'about' method, below, with the one in Groups.
+    def about(self, max_size=12, use_table_names=False):
+        """Prints out information about the algebra. Tables larger than
+        max_size are not printed out."""
+        print(f"\n** {self.__class__.__name__} **")
+        print(f"Name: {self.name}")
+        print(f"Instance ID: {id(self)}")
+        print(f"Description: {self.description}")
+        print(f"Order: {self.order}")
+        if self.identity is None:
+            print("Identity: None")
+        else:
+            print(f"Identity: {self.identity}")
+        print(f"Associative? {yes_or_no(self.is_associative())}")
+        print(f"Commutative? {yes_or_no(self.is_commutative())}")
+        generators = self.is_cyclic()
+        if generators:
+            print("Cyclic?: Yes")
+            print(f"  Generators: {sorted(generators)}")
+        else:
+            print("Cyclic?: No")
+        print(f"Elements: {self.elements}")
+        print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
+        size = len(self.elements)
+        if size <= max_size:  # Don't print table if too large
+            if use_table_names:
+                print(f"Cayley Table (showing names):")
+                pp.pprint(self.table.to_list_with_names(self.elements))
+            else:
+                print(f"Cayley Table (showing indices):")
+                pp.pprint(self.table.tolist())
+        else:
+            print(f"{self.__class__.__name__} order is {size} > {max_size}, so the table is not output.")
+        return None
 
 
 # =============

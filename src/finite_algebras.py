@@ -553,6 +553,20 @@ class Monoid(Semigroup):
         else:
             return unit_indices
 
+    def units_subgroup(self):
+        """Return the Unit Subgroup of this algebra.  Makes sense for Monoids or Rings, where
+        the multiplicative portion of the Ring is a Monoid.  It will also work for Groups and
+        Fields, but will return the entire Group or the entire multiplicative Group of a Field.
+        """
+        nm = f"{self.name}_Units"
+        description = f"Unit subgroup of {self.__class__.__name__}: {self.name}"
+
+        monoid = self
+        if isinstance(self, Ring):
+            monoid = self.extract_multiplicative_algebra()
+
+        return monoid.subalgebra_from_elements(monoid.units(), name=nm, desc=description)
+
     # ---------------------
     # Monoid Isomorphisms
     # ---------------------

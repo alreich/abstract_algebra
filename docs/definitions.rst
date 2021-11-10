@@ -207,3 +207,24 @@ commutators** are elements of the form,
 :math:`(a \cdot b) + (b \cdot a)^{-1} \equiv (a \cdot b) - (b \cdot a)`.
 It is also denoted by :math:`[a, b]`.
 
+Units of a Ring
+~~~~~~~~~~~~~~~
+
+Let :math:`\mathscr{R} = \langle S, +, \cdot \rangle` be a *Ring with
+identity* (or *Unit Ring*),
+
+then :math:`x \in S` is a **unit** if :math:`x \cdot y = 1` and
+:math:`y \cdot x = 1` for some :math:`y \in S`.
+
+The set of all units of :math:`\mathscr{R}` are denoted by
+:math:`S^\times` and form an abelian Group under multiplication,
+:math:`\mathscr{R}^\times = \langle S^\times, \cdot \rangle`, called the
+**Units Subgroup** of :math:`\mathscr{R}`.
+
+The method, ``units``, will return the units of a Ring as a list of
+element names, or optionally, element indices. And, since the only
+requirement for an algebra to have units is that it have an identity
+element, the ``units`` method also works for Monoids.
+
+The method, ``units_subgroup``, will return the units subgroup of a Ring
+(or Monoid).

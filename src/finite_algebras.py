@@ -25,9 +25,21 @@ from permutations import Perm
 
 class FiniteOperator:
     """A callable class that implements a binary operation based on a Cayley table.
-    It can be called with zero, one, or two (or more) arguments. It will return
-    the identity (if one exists; or None), the calling argument itself (if it's a
-    valid element), or the sum of the two or more arguments, respectively."""
+    It can be called with zero, one, or two (or more) arguments.
+
+    If no arguments are provided it will return the identity element, if it exists;
+    otherwise it will return None.  e.g., op() ==> e | None
+
+    If only one argument is provided it will return that same value, assuming it is
+    a valid element of the algebra. op(a) ==> a | ValueError
+
+    If two arguments are provided, it will return their "product".
+    e.g., op(a, b) ==> ab
+
+    If more than two arguments are provided, it will return their product by associating
+    from left-to-right. e.g., op(a, b, c, d) = (((ab)c)d)  This is important only
+    when it comes to Magmas, because all other algebras supported here are associative.
+    """
 
     def __init__(self, elements, identity, table):
         self.__elements = elements

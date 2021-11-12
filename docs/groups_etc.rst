@@ -244,8 +244,18 @@ Binary Operation
 The binary operation, implicitely defined by a Cayley table, is made
 explicit by an algebra’s ``op`` method. Obviously, ``op`` should be able
 to take two algebraic elements as input, and it does, but it can also
-take any number of inputs from none to as many as needed, as shown
-below.
+take any number of inputs from none to as many as needed. This was done
+as a convenience, because the binary operation here is implemented as a
+function, e.g., ``op('a', 'a^2')``, rather than as an infix operator.
+This way, expressions such as :math:`b \cdot a \cdot b^{-1}`, can be
+computed by ``op('b', 'a', g.inv('b'))``, instead of
+``op(op('b', 'a'), g.inv('b'))``.
+
+Note, however, that for more than two arguments, the binary operation is
+performed left-to-right. That is,
+:math:`b \cdot a \cdot b^{-1} \equiv (b \cdot a) \cdot b^{-1}`. This
+really only matters for Magmas, though, since all of the other algebras
+supported here are associative.
 
 For the example Group, Z3, created above, we have that
 :math:`a \circ a = a^2` and this is verified below.
@@ -328,13 +338,6 @@ string in Z3’s element list, it cannot be used in ``op``.
 
     a^3 is not a valid element name
 
-
-**A final word on ``op``**
-
-Since the binary operation here is implemented as a function (i.e., in
-prefix notation) rather than an infix operator, the convention for
-handling none, one, or more arguments is borrowed from the long-standing
-Lisp convention for addition and subtraction.
 
 “Subtraction” in Groups
 ~~~~~~~~~~~~~~~~~~~~~~~

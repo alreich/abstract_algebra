@@ -41,30 +41,6 @@ class Term:
         else:
             return f"{sign}{self.__coefficient}{self.__varname}^{self.__order}"
 
-    # def __str__(self):
-    #     coeff = self.__coefficient
-    #     if isinstance(coeff, complex):
-    #         if coeff.real > 0:
-    #             sign = "+"
-    #         elif coeff.real == 0:
-    #             if coeff.imag > 0:
-    #                 sign = "+"
-    #             else:
-    #                 sign = ""
-    #         else:
-    #             sign = ""
-    #     else:
-    #         if coeff > 0:
-    #             sign = "+"
-    #         else:
-    #             sign = ""
-    #     if self.__order == 0:
-    #         return f"{sign}{coeff}"
-    #     elif self.__order == 1:
-    #         return f"{sign}{coeff}{self.__varname}"
-    #     else:
-    #         return f"{sign}{coeff}{self.__varname}^{self.__order}"
-
     def __call__(self, x):
         """Compute and return the value of the term for x"""
         return self.__coefficient * pow(x, self.__order)

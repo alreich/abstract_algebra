@@ -43,7 +43,8 @@ class Term:
 
     def __call__(self, x):
         """Compute and return the value of the term for x"""
-        return self.__coefficient * pow(x, self.__order)
+        # return self.__coefficient * pow(x, self.__order)
+        return self.__coefficient * (x ** self.__order)
     
     def __add__(self, other):
         """If two terms have the same order, add them and return the resulting term."""
@@ -81,6 +82,10 @@ class Term:
         return (self.__varname == other.__varname and
                 self.__order == other.__order and
                 self.__coefficient == other.__coefficient)
+
+    def like(self, other):
+        """Return True if self & other are like terms (same variable and same order)."""
+        return (self.__varname == other.varname()) and (self.__order == other.order)
     
     @property
     def coefficient(self):
@@ -93,7 +98,7 @@ class Term:
         return self.__order
     
     def varname(self, new_varname=None):
-        """Return or change the string (character) used for the term's variable."""
+        """Return or change the varname used for the term's variable."""
         if new_varname is not None:
             if isinstance(new_varname, str):
                 self.__varname = new_varname
@@ -102,7 +107,7 @@ class Term:
         return self.__varname
 
     def copy(self):
-        return Term(self.__coefficient, self.__order, self.varname())
+        return Term(self.__coefficient, self.__order, self.__varname)
 
     def is_of_order_n(self, n):
         """Return the coefficient if the Term's order is n.  Return False, otherwise."""
@@ -123,6 +128,7 @@ class Term:
         """Return True if the term is quadratic in the variable.  Return False, otherwise."""
         return self.is_of_order_n(2)
 
+    # TODO: Add optional int arg, n, to differentiate n times
     def derivative(self):
         """Return a Term that represents the derivative of this term."""
         if self.__order == 0:
@@ -134,6 +140,12 @@ class Term:
         """Return a Term that represents the antiderivative of this term."""
         order_p_1 = self.__order + 1
         return Term(self.coefficient / order_p_1, order_p_1, self.__varname)
+
+
+class Constant(Term):
+
+    def __init__(self, constant):
+        super().__init__(constant, 0, '')
 
 
 class Poly:

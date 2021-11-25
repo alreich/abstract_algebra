@@ -1,5 +1,5 @@
 """
-@summary:  An experimental prototype of polynomials (still a work-in-progress)
+@summary:  An experimental prototype of polynomials (a Work-In-Progress)
 @author:   Alfred J. Reich, Ph.D.
 @contact:  al.reich@gmail.com
 @copyright: Copyright (C) 2021 Alfred J. Reich, Ph.D.
@@ -92,7 +92,14 @@ class Term:
         return Term(self.__coefficient * other.__coefficient,
                     self.__order + other.__order,
                     self.__varname)
-    
+
+    def __pow__(self, n):
+        """Return the nth power of this term."""
+        result = 1
+        for n in range(n, 0, -1):
+            result *= self
+        return result
+
     def __eq__(self, other):
         """Return True if the two terms are equal; return False otherwise."""
         return (self.__varname == other.__varname and
@@ -253,13 +260,24 @@ class Poly:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
 
     def __mul__(self, other):
-        if self.__varname == other.varname():
+        if isinstance(other, int) or isinstance(other, float):
+            return self.__mul__(Poly([other, 0], self.varname()))
+        elif self.__varname == other.varname():
             prod_terms = list()
             for t1 in self.__terms:
                 prod_terms += [t1 * t2 for t2 in other.terms]
             return Poly(prod_terms, self.__varname)
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
+
+    __rmul__ = __mul__  # Handles Number * Poly, whereas the above handles Poly * Number
+
+    def __pow__(self, n):
+        """Return the nth power of this polynomial."""
+        result = Poly([1, 0], varname=self.varname())
+        for n in range(n, 0, -1):
+            result *= self
+        return result
 
     @property
     def order(self):
@@ -364,7 +382,7 @@ def parse_term(term_str, varname):
     else:
         args = [num(term_str), 0]
 
-    return Term(args[0], args[1])
+    return Term(args[0], args[1], varname)
 
 
 def parse_polynomial(poly_str, varname):

@@ -19,9 +19,12 @@ class Term:
     """
     
     def __init__(self, coefficient, order, varname='x'):
-        self.__coefficient = coefficient
-        self.__order = order
-        self.__varname = varname
+        if (order < 0) or not isinstance(order, int):
+            raise ValueError("Order must be a non-negative integer.")
+        else:
+            self.__coefficient = coefficient
+            self.__order = order
+            self.__varname = varname
         
     def __repr__(self):
         if self.__varname == 'x':
@@ -43,22 +46,21 @@ class Term:
 
     def __call__(self, x):
         """Compute and return the value of the term for x"""
-        # return self.__coefficient * pow(x, self.__order)
         return self.__coefficient * (x ** self.__order)
     
     def __add__(self, other):
-        """If two terms have the same order, add them and return the resulting term."""
-        if self.__order == other.__order:
-            return Term(self.__coefficient + other.__coefficient, self.__order)
+        """Add two like terms and return the resulting term."""
+        if self.like_term(other):
+            return Term(self.__coefficient + other.coefficient, self.__order)
         else:
-            raise ValueError(f"Terms must be of the same order, {self.__order} != {other.__order}")
+            raise ValueError(f"Add: {self} not like {other}")
 
     def __sub__(self, other):
-        """If two terms have the same order, subtract other from self and return the resulting term."""
-        if self.__order == other.__order:
-            return Term(self.__coefficient - other.__coefficient, self.__order)
+        """Subtract two like terms and return the resulting term."""
+        if self.like_term(other):
+            return Term(self.__coefficient - other.coefficient, self.__order)
         else:
-            raise ValueError(f"Terms must be of the same order, {self.__order} != {other.__order}")
+            raise ValueError(f"Sub: {self} not like {other}")
 
     def __neg__(self):
         """Return a copy of this term, where the coefficient has been negated."""
@@ -66,13 +68,16 @@ class Term:
 
     def __mul__(self, other):
         """Multiply two terms and return the resulting term."""
-        return Term(self.__coefficient * other.__coefficient,
-                    self.__order + other.__order,
-                    self.__varname)
+        if self.__varname == other.varname():
+            return Term(self.__coefficient * other.coefficient,
+                        self.__order + other.order,
+                        self.__varname)
+        else:
+            raise ValueError(f"Mult: Variables must be the same, {self.__varname} != {other.varname()}")
 
     def __pow__(self, n):
         """Return the nth power of this term."""
-        result = 1
+        result = Term(1, 0, varname=self.__varname)
         for n in range(n, 0, -1):
             result *= self
         return result
@@ -83,7 +88,7 @@ class Term:
                 self.__order == other.__order and
                 self.__coefficient == other.__coefficient)
 
-    def like(self, other):
+    def like_term(self, other):
         """Return True if self & other are like terms (same variable and same order)."""
         return (self.__varname == other.varname()) and (self.__order == other.order)
     
@@ -109,7 +114,7 @@ class Term:
     def copy(self):
         return Term(self.__coefficient, self.__order, self.__varname)
 
-    def is_of_order_n(self, n):
+    def is_order_n(self, n):
         """Return the coefficient if the Term's order is n.  Return False, otherwise."""
         if self.__order == n:
             return self.__coefficient
@@ -118,15 +123,15 @@ class Term:
 
     def is_constant(self):
         """Return True if the term represents a constant value.  Return False, otherwise."""
-        return self.is_of_order_n(0)
+        return self.is_order_n(0)
         
     def is_linear(self):
         """Return True if the term is linear in the variable.  Return False, otherwise."""
-        return self.is_of_order_n(1)
+        return self.is_order_n(1)
 
     def is_quadratic(self):
         """Return True if the term is quadratic in the variable.  Return False, otherwise."""
-        return self.is_of_order_n(2)
+        return self.is_order_n(2)
 
     # TODO: Add optional int arg, n, to differentiate n times
     def derivative(self):
@@ -140,12 +145,6 @@ class Term:
         """Return a Term that represents the antiderivative of this term."""
         order_p_1 = self.__order + 1
         return Term(self.coefficient / order_p_1, order_p_1, self.__varname)
-
-
-class Constant(Term):
-
-    def __init__(self, constant):
-        super().__init__(constant, 0, '')
 
 
 class Poly:
@@ -179,28 +178,51 @@ class Poly:
         number is a 1.
         """
 
-        # if isinstance(poly_spec[0], int) or isinstance(poly_spec[0], float) or isinstance(poly_spec[0], complex):
+        term_list = None
+
+        # The following sequence of if-else statements will set the values of
+        # 'term_list' and 'varname'. In the latter case, possibly overriding
+        # the input varname.
+
+        # e.g., poly_spec = [-2, -4, 7, 0, -3]
         if isinstance(poly_spec[0], int) or isinstance(poly_spec[0], float):
-                terms = [Term(coeff, order, varname) for order, coeff in enumerate(poly_spec)]
+            term_list = [Term(coeff, order, varname) for order, coeff in enumerate(poly_spec)]
 
+        # e.g., poly_spec = [(-3, 4), (-4, 1), (7, 2), (-2, 0)]
+        #                or [[-4, 1], [7, 2], [-2, 0], [-3, 4]]
         elif isinstance(poly_spec[0], tuple) or isinstance(poly_spec[0], list):
-            terms = [Term(tup[0], tup[1], varname) for tup in poly_spec]
+            term_list = [Term(tup[0], tup[1], varname) for tup in poly_spec]
 
+        # e.g., poly_spec = [Term(-2,0), Term(-4,1), Term(7,2), Term(-3,4)]
+        # NOTE: All terms should use the same variable name.  The default varname,
+        # or whatever varname is input to the constructor, is ignored in favor of the
+        # varname used in the list of terms.
         elif isinstance(poly_spec[0], Term):
-            if all([trm.varname() == varname for trm in poly_spec]):
-                terms = poly_spec
-            else:
-                raise ValueError(f"All variable names must be the same as '{varname}'")
+            # Get list of all unique term variable names
+            varnames = list({trm.varname() for trm in poly_spec})
+            # If all the terms use the same variable name, then use it for the polynomial's
+            # variable name, overriding whatever varname was input.
+            if len(varnames) == 1:
+                varname = varnames[0]
+                term_list = poly_spec
 
-        elif isinstance(poly_spec[0], str):
-            terms = parse_polynomial(poly_spec, varname)
+        # e.g., poly_spec = "-2 -4x +7x^2 -3x^4"
+        elif isinstance(poly_spec, str):
+            # Extract unique characters from poly_spec
+            var_list = list({char for char in poly_spec if char.isalpha()})
+            # There should only be one character in var_list, e.g., ['x']
+            if len(var_list) == 1:
+                varname = var_list[0]
+                term_list = parse_polynomial(poly_spec, varname)
+            else:
+                raise ValueError(f"Too many variables in polynomial specification: {var_list}")
 
         else:
             raise ValueError("Input to Polynomial constructor not valid")
 
         self.__varname = varname
 
-        self.__terms = [term for term in combine_like_terms(terms) if term.coefficient != 0]
+        self.__terms = [term for term in combine_like_terms(term_list) if term.coefficient != 0]
         if len(self.__terms) == 0:
             self.__terms.append(Term(0, 0))
 
@@ -209,8 +231,10 @@ class Poly:
         self.__lookup_term = {t.order: t for t in self.__terms}
 
     def __repr__(self):
+        # Estimate the size of the two possible representations
         chars_using_tuples = 8 * len(self.__terms)
         chars_using_coeffs = 3 * self.__order
+        # Use the representation that is estimated to be the shortest
         if chars_using_tuples < chars_using_coeffs:
             if self.__varname == 'x':
                 return f"Poly({self.term_tuples()})"
@@ -304,7 +328,7 @@ class Poly:
 
     def copy(self):
         """Return a copy of this polynomial."""
-        return Poly([Term(t.coefficient, t.order, t.varname)
+        return Poly([Term(t.coefficient, t.order, t.varname())
                      for t in self.__terms],
                     self.__varname)
 
@@ -330,22 +354,6 @@ def num(st):
     return result
 
 
-# def num(st):
-#     """Figure out if the input string represents an int or float,
-#     and return the appropriate numeric value."""
-#     try:
-#         result = int(st)
-#     except ValueError:
-#         try:
-#             result = float(st)
-#         except ValueError:
-#             try:
-#                 result = complex(st)
-#             except ValueError:
-#                 raise ValueError(f"Could not convert {st} to int or float.")
-#     return result
-
-
 def parse_term(term_str, varname):
     """A very hacky term string parser.  Returns a Term from the input string."""
 
@@ -358,7 +366,6 @@ def parse_term(term_str, varname):
             elif foo[0] == '-':
                 args = [-1, num(foo[1])]  # e.g., '-x^2' ==> ('-1', '2')
             else:
-                # args = list(map(lambda x: num(x), foo))
                 args = [num(foo[0]), num(foo[1])]  # e.g., '-3x^4' ==> ('-3', '4')
         else:
             foo = term_str.split(varname)[0]
@@ -395,13 +402,5 @@ def combine_like_terms(terms):
     return result
 
 
-def fromroots(roots, varname='x'):
+def from_roots(roots, varname='x'):
     return fnc.reduce(lambda p, q: p * q, [Poly([r, -1], varname) for r in roots])
-
-
-# def power(x, n):
-#     """Return the value of x to the n power."""
-#     result = 1
-#     for _ in range(n):
-#         result = result * x
-#     return result

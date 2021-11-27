@@ -256,22 +256,31 @@ class Poly:
         return fnc.reduce(lambda a, b: a + b, map(lambda term: term(x), self.__terms))
 
     def __add__(self, other):
-        if self.__varname == other.varname():
+        if isinstance(other, int) or isinstance(other, float):
+            return self.__add__(Poly([other, 0], self.varname()))
+        elif self.__varname == other.varname():
             return Poly(self.__terms + other.terms)
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
+
+    __radd__ = __add__  # Handles Number + Poly, whereas the above handles Poly + Number
 
     def __neg__(self):
         """Return a copy of this polynomial where all of the terms have been negated."""
         return Poly([-t for t in self.terms], self.__varname)
 
     def __sub__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return self.__sub__(Poly([other, 0], self.varname()))
         if self.__varname == other.varname():
             return Poly(self.terms + (- other).terms, self.__varname)
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
 
+    __rsub__ = __sub__  # Handles Number - Poly, whereas the above handles Poly - Number
+
     def __mul__(self, other):
+        """Return the product of the polynomials, self and other."""
         if isinstance(other, int) or isinstance(other, float):
             return self.__mul__(Poly([other, 0], self.varname()))
         elif self.__varname == other.varname():

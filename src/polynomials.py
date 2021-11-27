@@ -12,7 +12,6 @@
 import functools as fnc
 import itertools as it
 
-
 class Term:
     """Represents a term of a polynomial.  Here's an example polynomial with four
     terms, separated by spaces: -2 -4x +7x^2 -3x^4
@@ -211,7 +210,11 @@ class Poly:
             # Extract unique characters from poly_spec
             var_list = list({char for char in poly_spec if char.isalpha()})
             # There should only be one character in var_list, e.g., ['x']
-            if len(var_list) == 1:
+            num_vars = len(var_list)
+            if num_vars == 0:
+                if isnumeric(poly_spec):
+
+            if num_vars == 1:
                 varname = var_list[0]
                 term_list = parse_polynomial(poly_spec, varname)
             else:

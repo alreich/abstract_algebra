@@ -12,6 +12,7 @@
 import functools as fnc
 import itertools as it
 
+
 class Term:
     """Represents a term of a polynomial.  Here's an example polynomial with four
     terms, separated by spaces: -2 -4x +7x^2 -3x^4
@@ -43,10 +44,6 @@ class Term:
         else:
             return f"{sign}{self.__coefficient}{self.__varname}^{self.__order}"
 
-    def __call__(self, x):
-        """Compute and return the value of the term for x"""
-        return self.__coefficient * (x ** self.__order)
-    
     def __add__(self, other):
         """Add two like terms and return the resulting term."""
         if self.like_term(other):
@@ -67,12 +64,18 @@ class Term:
 
     def __mul__(self, other):
         """Multiply two terms and return the resulting term."""
-        if self.__varname == other.varname():
+        if is_number(other):
+            return Term(self.__coefficient * other,
+                        self.__order,
+                        self.__varname)
+        elif isinstance(other, Term) and (self.__varname == other.varname()):
             return Term(self.__coefficient * other.coefficient,
                         self.__order + other.order,
                         self.__varname)
         else:
             raise ValueError(f"Mult: Variables must be the same, {self.__varname} != {other.varname()}")
+
+    __rmul__ = __mul__
 
     def __pow__(self, n):
         """Return the nth power of this term."""
@@ -83,13 +86,23 @@ class Term:
 
     def __eq__(self, other):
         """Return True if the two terms are equal; return False otherwise."""
-        return (self.__varname == other.__varname and
-                self.__order == other.__order and
-                self.__coefficient == other.__coefficient)
+        return (self.__coefficient == other.coefficient and
+                self.__order == other.order and
+                self.__varname == other.varname())
+
+    def __call__(self, x):
+        """Compute and return the value of the term for x"""
+        return self.__coefficient * (x ** self.__order)
 
     def like_term(self, other):
         """Return True if self & other are like terms (same variable and same order)."""
-        return (self.__varname == other.varname()) and (self.__order == other.order)
+        if isinstance(other, Term):
+            return (self.__varname == other.varname()) and (self.__order == other.order)
+        elif is_number(other):
+            if self.is_constant():
+                return True
+            else:
+                return False
     
     @property
     def coefficient(self):
@@ -110,7 +123,12 @@ class Term:
                 raise ValueError("Variable name must be a string.")
         return self.__varname
 
+    def unpack(self):
+        """Return all three quantities that make up the Term."""
+        return self.__coefficient, self.__order, self.__varname
+
     def copy(self):
+        """Return an exact copy of the Term."""
         return Term(self.__coefficient, self.__order, self.__varname)
 
     def is_order_n(self, n):
@@ -211,9 +229,6 @@ class Poly:
             var_list = list({char for char in poly_spec if char.isalpha()})
             # There should only be one character in var_list, e.g., ['x']
             num_vars = len(var_list)
-            if num_vars == 0:
-                if isnumeric(poly_spec):
-
             if num_vars == 1:
                 varname = var_list[0]
                 term_list = parse_polynomial(poly_spec, varname)
@@ -285,7 +300,7 @@ class Poly:
     def __mul__(self, other):
         """Return the product of the polynomials, self and other."""
         if isinstance(other, int) or isinstance(other, float):
-            return self.__mul__(Poly([other, 0], self.varname()))
+            return self.__mul__(Poly([other], self.varname()))
         elif self.__varname == other.varname():
             prod_terms = list()
             for t1 in self.__terms:
@@ -364,6 +379,10 @@ def num(st):
         except ValueError:
             raise ValueError(f"Could not convert {st} to int or float.")
     return result
+
+
+def is_number(x):
+    return isinstance(x, int) or isinstance(x, float)
 
 
 def parse_term(term_str, varname):

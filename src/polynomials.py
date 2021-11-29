@@ -11,6 +11,7 @@
 
 import functools as fnc
 import itertools as it
+from IPython.display import display, Math  # For Latex output in Jupyter notebooks
 
 
 class Term:
@@ -90,9 +91,16 @@ class Term:
                 self.__order == other.order and
                 self.__varname == other.varname())
 
-    def __call__(self, x):
+    # def __call__(self, x):
+    #     """Compute and return the value of the term for x"""
+    #     return self.__coefficient * (x ** self.__order)
+
+    def __call__(self, val):
         """Compute and return the value of the term for x"""
-        return self.__coefficient * (x ** self.__order)
+        if isinstance(val, Term):
+            return self.__coefficient * (val ** self.__order)
+        elif isinstance(val, List):
+            return [self(trm) for trm in val]
 
     def like_term(self, other):
         """Return True if self & other are like terms (same variable and same order)."""
@@ -366,6 +374,11 @@ class Poly:
     def antiderivative(self, constant_term=0):
         """Return an antiderivative of this polynomial."""
         return Poly([t.antiderivative() for t in self.__terms] + [Term(constant_term, 0)], self.__varname)
+
+
+def latex(str):
+    """Print the string, str, using Latex."""
+    display(Math(rf"{str}"))
 
 
 def num(st):

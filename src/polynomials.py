@@ -91,16 +91,9 @@ class Term:
                 self.__order == other.order and
                 self.__varname == other.varname())
 
-    # def __call__(self, x):
-    #     """Compute and return the value of the term for x"""
-    #     return self.__coefficient * (x ** self.__order)
-
-    def __call__(self, val):
+    def __call__(self, x):
         """Compute and return the value of the term for x"""
-        if isinstance(val, Term):
-            return self.__coefficient * (val ** self.__order)
-        elif isinstance(val, List):
-            return [self(trm) for trm in val]
+        return self.__coefficient * (x ** self.__order)
 
     def like_term(self, other):
         """Return True if self & other are like terms (same variable and same order)."""
@@ -297,13 +290,19 @@ class Poly:
 
     def __sub__(self, other):
         if isinstance(other, int) or isinstance(other, float):
-            return self.__sub__(Poly([other, 0], self.varname()))
+            # return self.__sub__(Poly([other, 0], self.varname()))
+            return self.__sub__(Poly([other], self.varname()))
         if self.__varname == other.varname():
             return Poly(self.terms + (- other).terms, self.__varname)
         else:
             raise ValueError(f"Variable names must be equal, {self.__varname} != {other.varname()}")
 
-    __rsub__ = __sub__  # Handles Number - Poly, whereas the above handles Poly - Number
+    def __rsub__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            other_poly = Poly([other], self.varname())
+            return other_poly.__sub__(self)
+        else:
+            raise ValueError(f"Cannot subtract from, {other}")
 
     def __mul__(self, other):
         """Return the product of the polynomials, self and other."""

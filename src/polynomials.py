@@ -230,11 +230,13 @@ class Poly:
             var_list = list({char for char in poly_spec if char.isalpha()})
             # There should only be one character in var_list, e.g., ['x']
             num_vars = len(var_list)
-            if num_vars == 1:
+            if num_vars == 0:
+                pass  # Use the input or default varname
+            elif num_vars == 1:
                 varname = var_list[0]
-                term_list = parse_polynomial(poly_spec, varname)
             else:
                 raise ValueError(f"Too many variables in polynomial specification: {var_list}")
+            term_list = parse_polynomial(poly_spec, varname)
 
         else:
             raise ValueError("Input to Polynomial constructor not valid")
@@ -378,6 +380,14 @@ class Poly:
 def latex(str):
     """Print the string, str, using Latex."""
     display(Math(rf"{str}"))
+
+
+def show_subst(u, v):
+    """A convenience function for displaying term & polynomial substitutions,
+    u & v must both be callable."""
+    subst = u(v)
+    print(f"({u})({u.varname()}={v}) ==> {subst}")
+    return subst
 
 
 def num(st):

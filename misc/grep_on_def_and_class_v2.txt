@@ -1,0 +1,258 @@
+cayley_table.py:class CayleyTable:
+cayley_table.py:    def __init__(self, arr):
+cayley_table.py:    def __repr__(self):
+cayley_table.py:    def __str__(self):
+cayley_table.py:    def __eq__(self, other):
+cayley_table.py:    def __getitem__(self, tup):
+cayley_table.py:    def order(self):
+cayley_table.py:    def table(self):
+cayley_table.py:    def tolist(self):
+cayley_table.py:    def to_list_with_names(self, elements):
+cayley_table.py:    def is_associative(self):
+cayley_table.py:    def is_commutative(self):
+cayley_table.py:    def distributes_over(self, other, verbose=False):
+cayley_table.py:    def left_identity(self):
+cayley_table.py:    def right_identity(self):
+cayley_table.py:    def identity(self):
+cayley_table.py:    def has_inverses(self):
+cayley_table.py:    def inverse_lookup_dict(self, identity):
+cayley_table.py:    def about(self, printout=False):
+cayley_table.py:def about_tables(list_of_cayley_tables):
+finite_algebras.py:class FiniteOperator:
+finite_algebras.py:    def __init__(self, elements, identity, table):
+finite_algebras.py:    def __call__(self, *args):
+finite_algebras.py:    def __binary_operation(self, elem1, elem2):
+finite_algebras.py:    def __op(self, *args):
+finite_algebras.py:class FiniteAlgebra:
+finite_algebras.py:    def __init__(self, name, description):
+finite_algebras.py:class SingleElementSetAlgebra(FiniteAlgebra):
+finite_algebras.py:    def __init__(self, name, description, elements, table):
+finite_algebras.py:    def __eq__(self, other):
+finite_algebras.py:    def __contains__(self, element):
+finite_algebras.py:    def __getitem__(self, index):
+finite_algebras.py:    def __repr__(self):
+finite_algebras.py:    def __str__(self):
+finite_algebras.py:    def deepcopy(self):
+finite_algebras.py:    def elements(self):
+finite_algebras.py:    def table(self):
+finite_algebras.py:    def identity(self):
+finite_algebras.py:    def has_identity(self):
+finite_algebras.py:    def order(self):
+finite_algebras.py:    def is_associative(self):
+finite_algebras.py:    def is_commutative(self):
+finite_algebras.py:    def is_abelian(self):
+finite_algebras.py:    def has_inverses(self):
+finite_algebras.py:    def inv(self, element):
+finite_algebras.py:    def to_dict(self, include_classname=False):
+finite_algebras.py:    def dumps(self):
+finite_algebras.py:    def dump(self, json_filename):
+finite_algebras.py:class Magma(SingleElementSetAlgebra):
+finite_algebras.py:    def __init__(self, name, description, elements, table):
+finite_algebras.py:    def direct_product_delimiter(self, delimiter=None):
+finite_algebras.py:    def __mul__(self, other):  # Direct Product of two Magmas
+finite_algebras.py:    def power(self, n):
+finite_algebras.py:    def reorder_elements(self, reordered_elements):
+finite_algebras.py:    def __element_mappings(self, other):
+finite_algebras.py:    def __isomorphic_mapping(self, other, mapping):
+finite_algebras.py:    def isomorphic(self, other):
+finite_algebras.py:    def closure(self, subset_of_elements, include_inverses):
+finite_algebras.py:    def closed_subsets_of_elements(self, divisors_only, include_inverses):
+finite_algebras.py:    def subalgebra_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
+finite_algebras.py:    def proper_subalgebras(self, divisors_only=True, include_inverses=True):
+finite_algebras.py:    def generators(self):
+finite_algebras.py:    def is_cyclic(self):
+finite_algebras.py:    def center(self):
+finite_algebras.py:    def center_algebra(self, verbose=False):
+finite_algebras.py:    def is_division_algebra(self, verbose=False):
+finite_algebras.py:    def about(self, max_size=12, use_table_names=False):
+finite_algebras.py:class Semigroup(Magma):
+finite_algebras.py:    def __init__(self, name, description, elements, table, check_inputs=True):
+finite_algebras.py:    def is_regular(self):
+finite_algebras.py:    def weak_inverses(self):
+finite_algebras.py:class Monoid(Semigroup):
+finite_algebras.py:    def __init__(self, name, description, elements, table, check_inputs=True):
+finite_algebras.py:    def element_order(self, element):
+finite_algebras.py:        def order_aux(elem, prod, order):
+finite_algebras.py:    def units(self, return_names=True):
+finite_algebras.py:    def units_subgroup(self):
+finite_algebras.py:    def __element_mappings(self, other):
+finite_algebras.py:class Group(Monoid):
+finite_algebras.py:    def __init__(self, name, description, elements, table, check_inputs=True):
+finite_algebras.py:    def __create_inverse_lookup_dict(self):
+finite_algebras.py:    def inverse_mapping(self):
+finite_algebras.py:    def inv(self, element):
+finite_algebras.py:    def sub(self, x, y):
+finite_algebras.py:    def conjugate(self, a, g):
+finite_algebras.py:    def commutator(self, a, b):
+finite_algebras.py:    def commutators(self):
+finite_algebras.py:    def commutator_subgroup(self):
+finite_algebras.py:    def is_normal(self, subgrp):
+finite_algebras.py:    def trivial_subgroups(self):
+finite_algebras.py:    def subgroups(self):
+finite_algebras.py:    def unique_proper_subgroups(self, subgroups=None):
+finite_algebras.py:    def about(self, max_size=12, use_table_names=False):
+finite_algebras.py:def partition_into_isomorphic_lists(list_of_groups):
+finite_algebras.py:    def iso_and_not_iso(gp, gps):
+finite_algebras.py:    def aux(result, remainder):
+finite_algebras.py:def about_isomorphic_partition(alg, part):
+finite_algebras.py:def are_n(n):
+finite_algebras.py:def add_s(string, n):
+finite_algebras.py:def about_isomorphic_partitions(alg, partitions):
+finite_algebras.py:def about_subalgebras(alg):
+finite_algebras.py:def cosets(group, normal_subgroup):
+finite_algebras.py:def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, description=None):
+finite_algebras.py:def generate_symmetric_group(n, name=None, description=None, base=1):
+finite_algebras.py:def generate_powerset_group(n, name=None, description=None):
+finite_algebras.py:def generate_commutative_monoid(order, elem_name='a', name=None, description=None):
+finite_algebras.py:class Ring(Group):
+finite_algebras.py:    def __init__(self, name, description, elements, table, table2, check_inputs=True):
+finite_algebras.py:    def __repr__(self):
+finite_algebras.py:    def add_identity(self):
+finite_algebras.py:    def zero(self):
+finite_algebras.py:    def mult_identity(self):
+finite_algebras.py:    def one(self):
+finite_algebras.py:    def has_mult_identity(self):
+finite_algebras.py:    def add_table(self):
+finite_algebras.py:    def mult_table(self):
+finite_algebras.py:    def add(self, *args):
+finite_algebras.py:    def mult(self, *args):
+finite_algebras.py:    def mult_is_commutative(self):
+finite_algebras.py:    def extract_additive_algebra(self):
+finite_algebras.py:    def extract_multiplicative_algebra(self):
+finite_algebras.py:    def zero_divisors(self):
+finite_algebras.py:    def units(self, return_names=True, verbose=False):
+finite_algebras.py:    def commutator(self, a, b):
+finite_algebras.py:    def about(self, max_size=12, use_table_names=False):
+finite_algebras.py:def generate_powerset_ring(n, name=None, description=None):
+finite_algebras.py:def __no_conflict(p1, p2):
+finite_algebras.py:def __no_conflicts(items):
+finite_algebras.py:def __filter_out_conflicts(perms, perm, n):
+finite_algebras.py:def generate_all_group_tables(order):
+finite_algebras.py:def is_table_associative(table):
+finite_algebras.py:def tables_to_groups(tables, identity_name="e", elem_name="a"):
+finite_algebras.py:def get_integer_form(elem_list):
+finite_algebras.py:def get_int_forms(ref_group, isomorphisms):
+finite_algebras.py:def is_field(add_id, elements, table):
+finite_algebras.py:class Field(Ring):
+finite_algebras.py:    def __init__(self, name, description, elements, table, table2, check_inputs=True, mult_sub_grp=None):
+finite_algebras.py:    def __eq__(self, other):
+finite_algebras.py:    def mult_abelian_subgroup(self):
+finite_algebras.py:    def mult_inv(self, element):
+finite_algebras.py:    def div(self, x, y):
+finite_algebras.py:def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
+finite_algebras.py:# def make_sv_mult(alg):
+finite_algebras.py:def module_sv_mult(ring):
+finite_algebras.py:    def sv_mult(s, v):
+finite_algebras.py:def module_dot_product(ring, vec1, vec2):
+finite_algebras.py:class MultipleElementSetAlgebra(FiniteAlgebra):
+finite_algebras.py:class Module(MultipleElementSetAlgebra):
+finite_algebras.py:    def __init__(self, name, description, ring, group, operator):
+finite_algebras.py:    def __repr__(self):
+finite_algebras.py:    def vector_add(self, v1, v2):
+finite_algebras.py:    def about(self, max_size=12, use_table_names=False):
+finite_algebras.py:class VectorSpace(Module):
+finite_algebras.py:    def __init__(self, name, description, field, group, operator):
+finite_algebras.py:class NDimensionalModule(Module):
+finite_algebras.py:    def __init__(self, ring, n, check_input_conditions=True):
+finite_algebras.py:    def dimensions(self):
+finite_algebras.py:    def origin(self):
+finite_algebras.py:    def dot_product(self, u, v):
+finite_algebras.py:class NDimensionalVectorSpace(VectorSpace):
+finite_algebras.py:    def __init__(self, field, n, check_input_conditions=True):
+finite_algebras.py:    def dimensions(self):
+finite_algebras.py:    def origin(self):
+finite_algebras.py:    def dot_product(self, u, v):
+finite_algebras.py:def check_module_conditions(ring, group, sv_mult, verbose=False):
+finite_algebras.py:def check_scaling_by_one(ring, group, sv_mult, verbose=False):
+finite_algebras.py:def check_dist_of_scalars_over_vec_add(ring, group, sv_mult, verbose=False):
+finite_algebras.py:def check_dist_of_vec_over_scalar_add(ring, group, sv_mult, verbose=False):
+finite_algebras.py:def check_associativity(ring, group, sv_mult, verbose=False):
+finite_algebras.py:def make_finite_algebra(*args):
+finite_algebras.py:def is_prime(n):
+finite_algebras.py:def divisors(n, non_trivial=False):
+finite_algebras.py:def delete_row_col(np_arr, row, col):
+finite_algebras.py:def get_name_desc_elements_table(finalg):
+finite_algebras.py:def make_cayley_table(table, elements):
+finite_algebras.py:def index_table_from_name_table(elements, name_table):
+finite_algebras.py:def get_duplicates(lst):
+finite_algebras.py:def yes_or_no(true_or_false):
+finite_algebras.py:def powerset(iterable):
+finite_algebras.py:def make_table_from_xml(table_string):
+finite_algebras.py:class Examples:
+finite_algebras.py:    def __init__(self, algebras_dir, filenames_json='examples.json'):
+finite_algebras.py:    def __len__(self):
+finite_algebras.py:    def __getitem__(self, index):
+finite_algebras.py:    # def get_example(self, index):
+finite_algebras.py:    def about(self):
+permutations.py:class Perm:
+permutations.py:    def __init__(self, permutation):
+permutations.py:    def __eq__(self, other):
+permutations.py:    def __hash__(self):
+permutations.py:    def __repr__(self):
+permutations.py:    def __len__(self):
+permutations.py:    def __mul__(self, other):
+test_cayley_table.py:class TestCayleyTable(TestCase):
+test_cayley_table.py:    def setUp(self) -> None:
+test_cayley_table.py:    def test_inverse_lookup_dict_1(self):
+test_cayley_table.py:    def test_inverse_lookup_dict_2(self):
+test_cayley_table.py:    def test_table_order(self):
+test_cayley_table.py:    def test_table_associative(self):
+test_cayley_table.py:    def test_table_left_id(self):
+test_cayley_table.py:    def test_table_right_id(self):
+test_cayley_table.py:    def test_table_identity(self):
+test_cayley_table.py:    def test_table_has_inverses(self):
+test_cayley_table.py:    def test_cayley_table_to_str(self):
+test_cayley_table.py:    def test_equal(self):
+test_cayley_table.py:    def test_mult_distributes_over_add(self):
+test_cayley_table.py:    def test_add_distributes_over_mult(self):
+test_cayley_table.py:    # def test_about_tables(self):
+test_finite_algebras.py:class TestMagma(TestCase):
+test_finite_algebras.py:    def setUp(self) -> None:
+test_finite_algebras.py:    def test_elements(self):
+test_finite_algebras.py:    def test_table(self):
+test_finite_algebras.py:    def test_rps_is_not_associative(self):
+test_finite_algebras.py:    def test_table_with_names(self):
+test_finite_algebras.py:    def test_is_associative(self):
+test_finite_algebras.py:    def test_is_commutative(self):
+test_finite_algebras.py:    def test_identity(self):
+test_finite_algebras.py:    def test_make_finite_algebra_1(self):
+test_finite_algebras.py:class TestSemigroup(TestCase):
+test_finite_algebras.py:    def setUp(self) -> None:
+test_finite_algebras.py:    def test_rps_is_associative(self):
+test_finite_algebras.py:    def test_rps_is_not_commutative(self):
+test_finite_algebras.py:    def test_rps_has_no_identity(self):
+test_finite_algebras.py:    def test_ex141_is_associative(self):
+test_finite_algebras.py:    def test_fail_to_create_semigroup_from_rps(self):
+test_finite_algebras.py:class TestGroup(TestCase):
+test_finite_algebras.py:    def setUp(self) -> None:
+test_finite_algebras.py:    def test_elements_accessor_ps3(self):
+test_finite_algebras.py:    def test_table_accessor_ps3(self):
+test_finite_algebras.py:    def test_is_associative_ps3(self):
+test_finite_algebras.py:    def test_is_commutative_ps3(self):
+test_finite_algebras.py:    def test_identity_accessor_ps3(self):
+test_finite_algebras.py:    def test_elements_accessor_z4(self):
+test_finite_algebras.py:    def test_table_accessor_z4(self):
+test_finite_algebras.py:    def test_is_associative_z4(self):
+test_finite_algebras.py:    def test_is_commutative_z4(self):
+test_finite_algebras.py:    def test_identity_accessor_z4(self):
+test_finite_algebras.py:    def test_elements_accessor_s3(self):
+test_finite_algebras.py:    def test_table_accessor_s3(self):
+test_finite_algebras.py:    def test_is_associative_s3(self):
+test_finite_algebras.py:    def test_is_commutative_s3(self):
+test_finite_algebras.py:    def test_identity_accessor_s3(self):
+test_finite_algebras.py:    def test_direct_product_and_isomorphic(self):
+test_finite_algebras.py:    def test_not_isomorphic(self):
+test_finite_algebras.py:class TestRing(TestCase):
+test_finite_algebras.py:    def setUp(self) -> None:
+test_finite_algebras.py:    def test_ring_elements(self):
+test_finite_algebras.py:    def test_powerset_mult_table(self):
+test_finite_algebras.py:    def test_add_identity(self):
+test_finite_algebras.py:    def test_add(self):
+test_finite_algebras.py:    def test_mult(self):
+test_finite_algebras.py:    def test_mult_identity(self):
+test_finite_algebras.py:    def test_has_mult_identity(self):
+test_finite_algebras.py:    def test_ring_zero_divisors(self):
+test_permutations.py:class TestPermutations(TestCase):
+test_permutations.py:    def setUp(self) -> None:
+test_permutations.py:    def test_multiplication(self):
+test_permutations.py:    def test_mult_table_for_s3(self):

@@ -94,7 +94,7 @@ class SingleElementSetAlgebra(FiniteAlgebra):
         self.__elements = elements
         self.__inverses = dict()
 
-        # Setup the multiplication table
+        # Set up the multiplication table
         if isinstance(table, CayleyTable):
             self.__table = table
         else:
@@ -193,7 +193,7 @@ class SingleElementSetAlgebra(FiniteAlgebra):
 
     def to_dict(self, include_classname=False):
         """Returns a dictionary that represents the algebra.  The dictionary
-        can be fed back into make_finite_algebra and it will return a copy of
+        can be fed back into make_finite_algebra, and it will return a copy of
         this algebra."""
         result = {'name': self.name,
                   'description': self.description,
@@ -433,7 +433,7 @@ class Magma(SingleElementSetAlgebra):
 
     def is_division_algebra(self, verbose=False):
         """Return True if, for every a & b in the algebra, there is an x and y in the algebra
-        such that ax=b and ya=b.  Otherwise, return False.  If False is returned and you need to
+        such that ax=b and ya=b.  Otherwise, return False.  If False is returned, and you need to
         see why, set verbose to True and look for 'fail' in the output."""
         if verbose:
             print(f"\n{self}\n")
@@ -975,7 +975,7 @@ class Ring(Group):
         else:
             self.__ring_mult_table = make_cayley_table(table2, elements)
 
-        # If it exists, setup the Ring's multiplicative identity element
+        # If it exists, set up the Ring's multiplicative identity element
         mult_id_index = self.__ring_mult_table.identity()
         if mult_id_index is not None:
             self.__mult_identity = self.elements[mult_id_index]
@@ -1076,7 +1076,7 @@ class Ring(Group):
         # Get the row & column indices where the product equals "zero" in the remaining table
         a, b = list(map(set, np.where(mult_table_without_add_id == zero_index)))
 
-        # Return all elements corresponding to the union of the the row & column indices
+        # Return all elements corresponding to the union of the row & column indices
         return [self.elements[index + 1] for index in list(a | b)]
 
     def units(self, return_names=True, verbose=False):
@@ -1181,7 +1181,7 @@ def generate_all_group_tables(order):
     """Experimental Code: Return a list of all arrays that correspond to multiplication tables for groups
     of a specific order.
 
-    WARNING: The algorithm here is not efficient, so even very small values of 'order' will result in very
+    WARNING: The algorithm here is inefficient, so even very small values of 'order' will result in very
     long runtimes (e.g., order=6 ==> ~5-6 hrs runtime).
     """
     row0 = list(range(order))
@@ -1209,7 +1209,7 @@ def is_table_associative(table):
 
 
 def tables_to_groups(tables, identity_name="e", elem_name="a"):
-    """Given a list of multiplication tables, all of the same size, turn them into a list of groups."""
+    """Given a list of multiplication tables, all the same size, turn them into a list of groups."""
     order = len(tables[0])
     groups = []
     for j in range(len(tables)):
@@ -1698,7 +1698,7 @@ def make_finite_algebra(*args):
         if identity is not None:
             if inverses:
                 if table2 is not None and is_assoc2:
-                    # is_field will either build the abelian Group, mentioned in the Field definition
+                    # is_field will either build the abelian Group, mentioned in the Field definition,
                     # or it will return False.  In the latter case, this becomes a Ring, instead of a Field.
                     abelian_group = is_field(elems[identity], elems, table2.table)
                     if abelian_group:
@@ -1759,7 +1759,7 @@ def delete_row_col(np_arr, row, col):
 
 def get_name_desc_elements_table(finalg):
     """A convenience function. It unpacks a SingleElementSetAlgebra
-    and returns it's components: name, description, elements, and
+    and returns its components: name, description, elements, and
     table(s) (in list form).
     """
     if isinstance(finalg, SingleElementSetAlgebra):
@@ -1838,9 +1838,9 @@ def make_table_from_xml(table_string):
 
 
 class Examples:
-    """A convenience class for retrieving some of the example algebras in the algebras
+    """A convenience class for retrieving some example algebras in the "algebras"
     directory.  To add or subtract algebras to its default list, see the file,
-    'examples.json', in the algebras directory."""
+    'examples.json', in the "algebras" directory."""
 
     def __init__(self, algebras_dir, filenames_json='examples.json'):
         examples_path = os.path.join(algebras_dir, filenames_json)

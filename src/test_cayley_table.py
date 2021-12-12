@@ -94,7 +94,7 @@ class TestCayleyTable(TestCase):
 
         test_arrays = [self.tbl1, self.tbl2, self.tbl3, self.tbl4, self.tbl5]
 
-        test_arrays_add  = [self.tbl6a, self.tbl7a, self.tbl8a]
+        test_arrays_add = [self.tbl6a, self.tbl7a, self.tbl8a]
         test_arrays_mult = [self.tbl6m, self.tbl7m, self.tbl8m]
 
         self.test_tables = [CayleyTable(tbl) for tbl in test_arrays]
@@ -133,6 +133,10 @@ class TestCayleyTable(TestCase):
         result = [tbl.is_associative() for tbl in self.all_tables]
         self.assertEqual(result, [False, True, True, True, True, True, True, True, True, True, True])
 
+    def test_table_commutative(self):
+        result = [tbl.is_commutative() for tbl in self.all_tables]
+        self.assertEqual(result, [True, False, True, True, False, True, True, True, True, False, True])
+
     def test_table_left_id(self):
         result = [tbl.left_identity() for tbl in self.test_tables]
         self.assertEqual(result, [None, 0, 0, 0, None])
@@ -152,6 +156,18 @@ class TestCayleyTable(TestCase):
     def test_cayley_table_to_str(self):
         result = str(CayleyTable(self.tbl3))
         self.assertEqual(result[:26], '<CayleyTable, order 4, ID:')
+
+    def test_cayley_table_to_list(self):
+        result = CayleyTable(self.tbl3).tolist()
+        self.assertEqual(result, [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]])
+
+    def test_cayley_table_to_list_with_names(self):
+        result = CayleyTable(self.tbl3).to_list_with_names(["e", "a", "a^2", "a^3"])
+        answer = [['e', 'a', 'a^2', 'a^3'],
+                  ['a', 'a^2', 'a^3', 'e'],
+                  ['a^2', 'a^3', 'e', 'a'],
+                  ['a^3', 'e', 'a', 'a^2']]
+        self.assertEqual(result, answer)
 
     def test_equal(self):
         self.assertEqual(CayleyTable(self.tbl1), CayleyTable(self.tbl1_copy))

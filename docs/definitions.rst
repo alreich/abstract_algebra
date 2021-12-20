@@ -31,7 +31,7 @@ the ``finite_algebra`` module is modeled on this progression.
 -  **Ring** – :math:`\langle S, +, \cdot \rangle`, where
    :math:`\langle S, + \rangle` is an abelian\ :math:`^\dagger` Group,
    :math:`\langle S, \cdot \rangle` is a Semigroup, and :math:`\cdot`
-   distributes over :math:`+`
+   distributes\ :math:`^\ddagger` over :math:`+`
 
 -  **Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
    :math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative
@@ -41,11 +41,16 @@ the ``finite_algebra`` module is modeled on this progression.
 operation, :math:`\circ`, if :math:`a \circ b = b \circ a` for all
 :math:`a,b \in S`.
 
+:math:`^\ddagger` An operation, :math:`\cdot`, *distributes* over
+another operation, :math:`+`, if
+:math:`a \cdot (b + c) = (a \cdot b) + (a \cdot c)` for all
+:math:`a,b,c \in S`.
+
 For **Magmas**, **Semigroups**, **Monoids**, and **Groups**, the binary
 operation is often referred to as “*multiplication*”, but may sometimes
-be called “*addition*”. Also, instead of :math:`e`, the identity element
-may be denoted by :math:`0` or :math:`1`, depending on whether the
-operation is called addition or multiplication, resp.
+be called “*addition*”. Also, the identity element may be denoted by
+:math:`0` or :math:`1`, rather than :math:`e`, depending on whether the
+operation is called *addition* or *multiplication*, resp.
 
 For **Rings** and **Fields**, the two operations, :math:`+` and
 :math:`\cdot`, are usually referred to as addition and multiplication,
@@ -80,14 +85,13 @@ where the following conditions hold:
 
 1. Scaled Vectors: For all :math:`s \in S` and
    :math:`v \in V \Rightarrow s \circ v \in V`
-2. Scaling by One: If :math:`\underline{1} \in S` is the multiplicative
-   identity element of :math:`\mathscr{F}`, then
-   :math:`\underline{1} \circ v = v`
+2. Scaling by One: If :math:`1 \in S` is the multiplicative identity
+   element of :math:`\mathscr{F}`, then :math:`1 \circ v = v`
 3. Distributivity of Scalars Over Vector Addition:
    :math:`s \circ (v_1 \oplus v_2) = (s \circ v_1) \oplus (s \circ v_2)`
 4. Distributivity of Vectors Over Scalar Addition:
    :math:`(s_1 + s_2) \circ v = (s_1 \circ v) \oplus (s_2 \circ v)`
-5. Associativity:
+5. Scalar-Vector Associativity:
    :math:`s_1 \circ (s_2 \circ v) = (s_1 \cdot s_2) \circ v`
 
 A **Module**,
@@ -112,6 +116,34 @@ Class Hierarchy
 .. image:: output_10_0.jpg
 
 
+
+Note that, a Field is also a Ring, and a Group, and a Monoid, and so on,
+since the hierarchy of subclasses of a ``SingleElementSetAlgebra``
+extend from each other, as shown above. A similar situation holds for a
+``MultipleElementSetAlgebra``: a VectorSpace is a Module. And, since
+inheritance “flows” against the arrows of the figure above, a method
+that may be usually associated with a particular class might actually be
+defined in its parent class, or one of its ancestor classes.
+
+For example, the method, ``is_commutative()``, answers a question we
+often ask of the ``Group`` class, but to answer it only requires that
+there be a binary operation that can be used to check it. So,
+``is_commutative()`` is defined in the class, ``Magma``.
+``is_commutative()`` is inherited by, and applies to, all of the classes
+that extend from ``Magma`` (from ``Semigroup`` to ``Field``). Similar
+for ``is_associative()``, ``identity()``, ``inv()``, ``center()``,
+``isomorphic()``, etc.
+
+Another example, is given by *units*, which are usually assocated with
+Rings. But the only property an algebra requires to be able to identify
+*units*, is that it have an identity element. Identity elements first
+appear in the class hierarchy with the ``Monoid`` class, so the method,
+``units()`` is defined for Monoids. And so, units can be identified for
+Monoids, Groups, Rings, and Fields. Of course, the concept of units is
+not that interesting for Groups, since every element of a Group is a
+unit, but they are interesting in Monoids, and in Rings under
+multiplication. The ``unit()`` method for Rings applies only to the
+multiplicative operation and identity element.
 
 Properties of Algebras
 ----------------------

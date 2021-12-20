@@ -247,8 +247,8 @@ multiplication instead. But, :math:`\langle S, \cdot \rangle` is a
 Semigroup, or at best, a Monoid, which means that we can’t use
 *division* in the definition of a Ring’s commutator. So, **Ring
 commutators** are defined to be elements of the form,
-:math:`(a \cdot b) + (b \cdot a)^{-1} \equiv (a \cdot b) - (b \cdot a)`,
-and are also denoted by :math:`[a, b]`.
+:math:`(a \cdot b) - (b \cdot a)`, and are also denoted by
+:math:`[a, b]`.
 
 The Ring method, ``commutator``, will return the commutator of two ring
 elements according to this definition.

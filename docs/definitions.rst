@@ -13,9 +13,8 @@ the ``finite_algebra`` module is modeled on this progression.
 
 -  **Magma** – :math:`\langle S, \circ \rangle`, where :math:`S` is a
    set and :math:`\circ` is a binary operation,
-   :math:`\circ: S \times S \to S`, such that for each
-   :math:`a,b \in S`, :math:`\exists! c \in S` such that
-   :math:`a \circ b = c`
+   :math:`\circ: S \times S \to S`, where for each :math:`a,b \in S`,
+   :math:`\exists ! c \in S`, such that :math:`a \circ b = c`
 
 -  **Semigroup** – an associative Magma:
    :math:`\forall a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
@@ -65,20 +64,22 @@ Regarding a **Ring’s** Semigroup, :math:`\langle S, \cdot \rangle`:
    element), then the Ring is called a “*unit Ring*” or “*Ring with
    identity*”
 
+For examples, see the sections **“Groups, Monoids, Semigroups, &
+Magmas”** and **“Rings and Fields”**.
+
 Vector Spaces and Modules
 -------------------------
 
 In the definitions, below, care is taken to not conflate the
 scalar-scalar, vector-vector, and scalar-vector operations.
 
-A **Vector Space**,
-:math:`\mathscr{V} = \langle \mathscr{G}, \mathscr{F}, \circ \rangle`,
+A **Vector Space**, :math:`\mathscr{V} = \langle G, F, \circ \rangle`,
 consists of the following:
 
--  an **abelian Group**, :math:`\mathscr{G} = \langle V, \oplus \rangle`
-   (i.e., the *“vectors”*)
--  a **field**, :math:`\mathscr{F} = \langle S, +, \cdot \rangle` (i.e.,
-   the *“scalars”*)
+-  an **abelian Group**, :math:`G = \langle V, \oplus \rangle` (i.e.,
+   the *“vectors”*)
+-  a **field**, :math:`F = \langle S, +, \cdot \rangle` (i.e., the
+   *“scalars”*)
 -  and a **binary operator**, :math:`\circ : S \times V \to V`
 
 where the following conditions hold:
@@ -86,7 +87,7 @@ where the following conditions hold:
 1. Scaled Vectors: For all :math:`s \in S` and
    :math:`v \in V \Rightarrow s \circ v \in V`
 2. Scaling by One: If :math:`1 \in S` is the multiplicative identity
-   element of :math:`\mathscr{F}`, then :math:`1 \circ v = v`
+   element of :math:`F`, then :math:`1 \circ v = v`
 3. Distributivity of Scalars Over Vector Addition:
    :math:`s \circ (v_1 \oplus v_2) = (s \circ v_1) \oplus (s \circ v_2)`
 4. Distributivity of Vectors Over Scalar Addition:
@@ -94,11 +95,11 @@ where the following conditions hold:
 5. Scalar-Vector Associativity:
    :math:`s_1 \circ (s_2 \circ v) = (s_1 \cdot s_2) \circ v`
 
-A **Module**,
-:math:`\mathscr{M} = \langle \mathscr{G}, \mathscr{R}, \circ \rangle`,
-has the same conditions as a Vector Space, except that the Field is
-replaced by a **Ring**,
-:math:`\mathscr{R} = \langle S, +, \cdot \rangle`.
+A **Module**, :math:`\mathscr{M} = \langle G, R, \circ \rangle`, has the
+same conditions as a Vector Space, except that the Field is replaced by
+a **Ring**, :math:`R`.
+
+For examples, see the section **“Vector Spaces and Modules”**.
 
 Class Hierarchy
 ---------------
@@ -125,25 +126,55 @@ inheritance “flows” against the arrows of the figure above, a method
 that may be usually associated with a particular class might actually be
 defined in its parent class, or one of its ancestor classes.
 
-For example, the method, ``is_commutative()``, answers a question we
-often ask of the ``Group`` class, but to answer it only requires that
-there be a binary operation that can be used to check it. So,
-``is_commutative()`` is defined in the class, ``Magma``.
-``is_commutative()`` is inherited by, and applies to, all of the classes
-that extend from ``Magma`` (from ``Semigroup`` to ``Field``). Similar
-for ``is_associative()``, ``identity()``, ``inv()``, ``center()``,
-``isomorphic()``, etc.
+For example, the method, ``is_commutative``, answers a question we often
+ask of Groups, but to answer it only requires that there be a binary
+operation that can be used to check it. So, ``is_commutative`` is
+defined for Magma. But, since Magma methods and properties are inherited
+by all classes that extend from Magma (from Semigroup to Field),
+``is_commutative`` applies to them also. Similar for ``is_associative``,
+``identity``, ``inv``, ``center``, ``isomorphic``, etc.
 
-Another example is given by *units*, which are usually assocated with
+Another example is given by *units*, which are usually associated with
 Rings. But the only property an algebra requires to be able to identify
-*units*, is that it have an identity element. Identity elements first
-appear in the class hierarchy with the ``Monoid`` class, so the method,
-``units()`` is defined for Monoids. And so, units can be identified for
-Monoids, Groups, Rings, and Fields. Of course, the concept of units is
-not that interesting for Groups, since every element of a Group is a
-unit, but they are interesting in Monoids, and in Rings under
-multiplication. The ``unit()`` method for Rings applies only to the
-multiplicative operation and multiplicative identity element.
+*units*, is that of having an identity element. Identity elements first
+appear in the class hierarchy in Monoids, so the method, ``units``, is
+defined for Monoids, and then inherits down through its subclasses. That
+is, units can be identified for Monoids, Groups, Rings, and Fields. Of
+course, the concept of units is not that interesting for Groups, since
+every element of a Group is a unit, but they are interesting in Monoids,
+and, under multiplication, in Rings. The ``unit`` method for Rings
+applies only to the multiplicative operation and multiplicative identity
+element, if it exists.
+
+Direct Products
+---------------
+
+If :math:`G = \langle S, \oplus \rangle` and
+:math:`H = \langle T, \odot \rangle` are two Groups, then their **direct
+product**, denoted by :math:`G \times H`, is also a Group, where
+
+-  :math:`G \times H \equiv \langle U, \bullet \rangle`
+-  :math:`U = \{(g,h): g \in S, h \in T\}`
+-  :math:`(g, h) \bullet (g', h') = (g \oplus g', h \odot h')` for all
+   :math:`(g, h), (g', h') \in U`
+
+Since the only requirement needed to form a direct product is that there
+be two *algebras*, each with its own set of elements and binary
+operation, the direct product definition works for any
+``SingleElementSetAlgebra`` (Magma through Field). So, if ``G`` and
+``H`` are two *SingleElementSetAlgebras*, then their direct product can
+be obtained by multiplying the two objects using Python’s multplication
+operator, ``G * H``.
+
+We can also define the direct product of two Rings,
+:math:`R_1 = \langle S_1, +, \cdot \rangle` and
+:math:`R_2 = \langle S_2, \oplus, \odot \rangle`, as follows:
+
+-  :math:`R_1 \times R_2 \equiv \langle U, \circ, \bullet \rangle`
+-  :math:`U = \{(s_1, s_2): s_1 \in S_1, s_2 \in S_2\}`
+-  :math:`(s_1, s_2) \circ (s_1', s_2') = (s_1 + s_1', s_2 \oplus s_2')`,
+   for all :math:`s_1, s_1' \in S_1` and :math:`s_2, s_2' \in S_2`
+-  :math:`(s_1, s_2) \bullet (s_1', s_2') = (s_1 \cdot s_1', s_2 \odot s_2')`
 
 Properties of Algebras
 ----------------------
@@ -177,43 +208,6 @@ There are two Magma methods related to the center:
    if the center is empty
 -  ``center_algebra`` returns the algebra defined by the center, if the
    center exists and is closed, otherwise it returns ``None``.
-
-Division Algebra
-~~~~~~~~~~~~~~~~
-
-**[NOTE: Need good references for divisibility and cancellation]**
-
-A Magma, :math:`M = \langle S, \circ \rangle` is a **division Algebra**
-if :math:`\forall a,b \in S, \exists x,y \in S` such that
-:math:`a \circ x = b` and :math:`y \circ a = b`.
-
-This property is trivially true for Groups.
-
-The Magma method, ``is_division_algebra``, tests for this property.
-
-Regularity in Semigroups
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-A Semigroup, :math:`\langle S, \circ \rangle` is **regular** if for each
-:math:`a \in S, \exists \bar{a} \in S` such that
-:math:`a \circ \bar{a} \circ a = a`.
-
-The element :math:`\bar{a}` is called a **weak inverse** of :math:`a`. A
-weak inverse may not exist or there may be more than one for any
-particular element. If the algebra is regular, then there will be at
-least 1 weak inverse for each element, otherwise some elements may not
-have a weak inverse.
-
-See the paper, `“Why Study Semigroups” by John M.
-Howie <http://www.thebookshelf.auckland.ac.nz/docs/Maths/PDF2/mathschron016-001.pdf>`__
-
-Here are some Semigroup methods related to regularity:
-
--  ``is_regular`` returns True or False, depending on whether the
-   Semigroup is regular
--  ``weak_inverses`` returns a dictionary of weak inverses, where each
-   key is one of the algebra’s elements and its value is a list of its
-   weak inverses.
 
 Commutators
 ~~~~~~~~~~~
@@ -274,3 +268,40 @@ element, the ``units`` method also works for Monoids.
 
 The method, ``units_subgroup``, will return the units subgroup of a Ring
 (or Monoid).
+
+Division Algebra
+~~~~~~~~~~~~~~~~
+
+**[NOTE: Need good references for divisibility and cancellation]**
+
+A Magma, :math:`M = \langle S, \circ \rangle` is a **division Algebra**
+if :math:`\forall a,b \in S, \exists x,y \in S` such that
+:math:`a \circ x = b` and :math:`y \circ a = b`.
+
+This property is trivially true for Groups.
+
+The Magma method, ``is_division_algebra``, tests for this property.
+
+Regularity in Semigroups
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+A Semigroup, :math:`\langle S, \circ \rangle` is **regular** if for each
+:math:`a \in S, \exists \bar{a} \in S` such that
+:math:`a \circ \bar{a} \circ a = a`.
+
+The element :math:`\bar{a}` is called a **weak inverse** of :math:`a`. A
+weak inverse may not exist or there may be more than one for any
+particular element. If the algebra is regular, then there will be at
+least 1 weak inverse for each element, otherwise some elements may not
+have a weak inverse.
+
+See the paper, `“Why Study Semigroups” by John M.
+Howie <http://www.thebookshelf.auckland.ac.nz/docs/Maths/PDF2/mathschron016-001.pdf>`__
+
+Here are some Semigroup methods related to regularity:
+
+-  ``is_regular`` returns True or False, depending on whether the
+   Semigroup is regular
+-  ``weak_inverses`` returns a dictionary of weak inverses, where each
+   key is one of the algebra’s elements and its value is a list of its
+   weak inverses.

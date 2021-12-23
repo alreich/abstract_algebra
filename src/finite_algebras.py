@@ -1513,7 +1513,7 @@ def check_scaling_by_one(ring, group, sv_mult, verbose=False):
     """Returns True if scaling by one holds true in all cases, otherwise False is Returned."""
     is_ok = True
     one = ring.one
-    for v in group:
+    for v in group.elements:
         if v != sv_mult(one, v):
             is_ok = False
             if verbose:
@@ -1525,9 +1525,9 @@ def check_dist_of_scalars_over_vec_add(ring, group, sv_mult, verbose=False):
     """Returns True if distributivity of scalars over vector addition holds true in all cases,
     otherwise False is Returned."""
     is_ok = True
-    for s in ring:
-        for v1 in group:
-            for v2 in group:
+    for s in ring.elements:
+        for v1 in group.elements:
+            for v2 in group.elements:
                 a = sv_mult(s, group.op(v1, v2))
                 b = group.op(sv_mult(s, v1), sv_mult(s, v2))
                 if a != b:

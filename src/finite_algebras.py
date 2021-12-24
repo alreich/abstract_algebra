@@ -996,6 +996,29 @@ class Ring(Group):
         nm, desc, elems, tbl, tbl2 = get_name_desc_elements_table(self)
         return f"{self.__class__.__name__}(\n'{nm}',\n'{desc}',\n{elems},\n{tbl},\n{tbl2}\n)"
 
+    def __mul__(self, other):  # Direct Product of two Rings
+        """Return direct product of this Ring with the `other` Ring."""
+        if not isinstance(other, Ring):
+            raise ValueError(f"{other.name} must be a Ring")
+        dp_name = f"{self.name}_x_{other.name}"
+        dp_description = "Direct product of " + self.name + " & " + other.name
+        dp_element_names = list(it.product(self.elements, other.elements))  # Cross product
+        dp_add_table = list()
+        dp_mul_table = list()
+        for a in dp_element_names:
+            dp_add_table_row = list()  # Start new rows in the add and mult tables
+            dp_mul_table_row = list()
+            for b in dp_element_names:
+                dp_add_table_row.append(dp_element_names.index((self.add(a[0], b[0]), other.add(a[1], b[1]))))
+                dp_mul_table_row.append(dp_element_names.index((self.mult(a[0], b[0]), other.mult(a[1], b[1]))))
+            dp_add_table.append(dp_add_table_row)  # Append the new rows to each table
+            dp_mul_table.append(dp_mul_table_row)
+        return make_finite_algebra(dp_name,
+                                   dp_description,
+                                   list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
+                                   dp_add_table,
+                                   dp_mul_table)
+
     @property
     def add_identity(self):
         """Returns the additive identity element"""

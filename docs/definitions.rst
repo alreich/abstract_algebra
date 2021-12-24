@@ -173,7 +173,7 @@ We can also define the direct product of two Rings,
 -  :math:`R_1 \times R_2 \equiv \langle U, \circ, \bullet \rangle`
 -  :math:`U = \{(s_1, s_2): s_1 \in S_1, s_2 \in S_2\}`
 -  :math:`(s_1, s_2) \circ (s_1', s_2') = (s_1 + s_1', s_2 \oplus s_2')`,
-   for all :math:`s_1, s_1' \in S_1` and :math:`s_2, s_2' \in S_2`
+   for all :math:`(s_1, s_2), (s_1', s_2') \in U`
 -  :math:`(s_1, s_2) \bullet (s_1', s_2') = (s_1 \cdot s_1', s_2 \odot s_2')`
 
 Properties of Algebras

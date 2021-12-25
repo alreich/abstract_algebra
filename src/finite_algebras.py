@@ -705,7 +705,7 @@ class Group(Monoid):
         print(f"Description: {self.description}")
         print(f"Order: {self.order}")
         print(f"Identity: {self.identity}")
-        print(f"Associative? {yes_or_no(self.is_associative())}")
+        # print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
         generators = self.is_cyclic()
         if generators:
@@ -1015,7 +1015,8 @@ class Ring(Group):
             dp_mul_table.append(dp_mul_table_row)
         return make_finite_algebra(dp_name,
                                    dp_description,
-                                   list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
+                                   list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"
+                                         for elem in dp_element_names]),
                                    dp_add_table,
                                    dp_mul_table)
 

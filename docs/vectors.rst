@@ -6,35 +6,31 @@ Vector Spaces and Modules are defined using Groups, Rings, and Fields.
 Vector Space
 ------------
 
-A **Vector Space**,
-:math:`\mathscr{V} = \langle \mathscr{G}, \mathscr{F}, \circ \rangle`,
+A **Vector Space**, :math:`\mathscr{V} = \langle G, F, \circ \rangle`,
 consists of the following:
 
--  an **abelian Group**, :math:`\mathscr{G} = \langle V, \oplus \rangle`
-   (i.e., the “vectors”)
--  a **field**, :math:`\mathscr{F} = \langle S, +, \times \rangle`
-   (i.e., the “scalars”)
+-  an **abelian Group**, :math:`G = \langle V, \oplus \rangle` (i.e.,
+   the *“vectors”*)
+-  a **field**, :math:`F = \langle S, +, \cdot \rangle` (i.e., the
+   *“scalars”*)
 -  and a **binary operator**, :math:`\circ : S \times V \to V`
 
 where the following conditions hold:
 
 1. Scaled Vectors: For all :math:`s \in S` and
    :math:`v \in V \Rightarrow s \circ v \in V`
-2. Scaling by One: If :math:`\underline{1} \in S` is the multiplicative
-   identity element of :math:`\mathscr{F}`, then
-   :math:`\underline{1} \circ v = v`
+2. Scaling by One: If :math:`1 \in S` is the multiplicative identity
+   element of :math:`F`, then :math:`1 \circ v = v`
 3. Distributivity of Scalars Over Vector Addition:
    :math:`s \circ (v_1 \oplus v_2) = (s \circ v_1) \oplus (s \circ v_2)`
 4. Distributivity of Vectors Over Scalar Addition:
    :math:`(s_1 + s_2) \circ v = (s_1 \circ v) \oplus (s_2 \circ v)`
 5. Scalar-Vector Associativity:
-   :math:`s_1 \circ (s_2 \circ v) = (s_1 \times s_2) \circ v`
+   :math:`s_1 \circ (s_2 \circ v) = (s_1 \cdot s_2) \circ v`
 
-A **Module**,
-:math:`\mathscr{M} = \langle \mathscr{G}, \mathscr{R}, \circ \rangle`,
-has the same conditions as a Vector Space, except that the Field is
-replaced by a **Ring**,
-:math:`\mathscr{R} = \langle S, +, \times \rangle`.
+A **Module**, :math:`\mathscr{M} = \langle G, R, \circ \rangle`, has the
+same conditions as a Vector Space, except that the Field is replaced by
+a **Ring**, :math:`R`.
 
 Internal Representation of Vector Spaces & Modules
 --------------------------------------------------

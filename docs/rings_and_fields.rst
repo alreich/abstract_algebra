@@ -31,10 +31,19 @@ multiplication.
 Ring
 ----
 
-**Ring** - :math:`\langle S, +, \times \rangle`, where
-:math:`\langle S, + \rangle` is a commutative Group,
-:math:`\langle S, \times \rangle` is a Semigroup, and :math:`\times`
-distributes over :math:`+`
+**Ring** – :math:`\langle S, +, \cdot \rangle`, where
+:math:`\langle S, + \rangle` is an abelian\ :math:`^\dagger` Group,
+:math:`\langle S, \cdot \rangle` is a Semigroup, and :math:`\cdot`
+distributes\ :math:`^\ddagger` over :math:`+`
+
+:math:`^\dagger` An algebra is *abelian* (or *commutative*) for a binary
+operation, :math:`\circ`, if :math:`a \circ b = b \circ a` for all
+:math:`a,b \in S`.
+
+:math:`^\ddagger` An operation, :math:`\cdot`, *distributes* over
+another operation, :math:`+`, if
+:math:`a \cdot (b + c) = (a \cdot b) + (a \cdot c)` for all
+:math:`a,b,c \in S`.
 
 Ring Based on Powerset of a Set
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -613,12 +622,12 @@ to obtain a Monoid, instead of a Semigroup, and we do, as shown below.
 Field
 -----
 
-**Field** – a Ring :math:`\langle S, +, \times \rangle`, where
-:math:`\langle S\setminus{\{0\}}, \times \rangle` is a commutative
-Group.
+**Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
+:math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative
+Group\ :math:`^{\dagger\dagger}`
 
-:math:`S\setminus{\{0\}}` is the set :math:`S` with the additive
-identity element removed.
+:math:`^{\dagger\dagger}S\setminus{\{0\}}` is the set :math:`S` with the
+additive identity element removed.
 
 Example: A field with four elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

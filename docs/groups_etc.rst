@@ -379,9 +379,10 @@ Magma
 A Magma is the most fundamental type of algebra that we can instantiate
 with ``make_finite_algebra``.
 
-**Magma** - a set with a binary operation:
-:math:`\langle S, \circ \rangle`, where :math:`S` is a finite set and
-:math:`\circ: S \times S \to S`
+**Magma** – :math:`\langle S, \circ \rangle`, where :math:`S` is a set
+and :math:`\circ` is a binary operation,
+:math:`\circ: S \times S \to S`, where for each :math:`a,b \in S`,
+:math:`\exists ! c \in S`, such that :math:`a \circ b = c`
 
 **Example: Rock-Paper-Scissors**
 

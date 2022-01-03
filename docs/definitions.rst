@@ -34,7 +34,7 @@ the ``finite_algebra`` module is modeled on this progression.
 
 -  **Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
    :math:`\langle S\setminus{\{0\}}, \cdot \rangle` is a commutative
-   Group
+   Group\ :math:`^{\dagger\dagger}`
 
 :math:`^\dagger` An algebra is *abelian* (or *commutative*) for a binary
 operation, :math:`\circ`, if :math:`a \circ b = b \circ a` for all
@@ -44,6 +44,9 @@ operation, :math:`\circ`, if :math:`a \circ b = b \circ a` for all
 another operation, :math:`+`, if
 :math:`a \cdot (b + c) = (a \cdot b) + (a \cdot c)` for all
 :math:`a,b,c \in S`.
+
+:math:`^{\dagger\dagger}S\setminus{\{0\}}` is the set :math:`S` with the
+additive identity element removed.
 
 For **Magmas**, **Semigroups**, **Monoids**, and **Groups**, the binary
 operation is often referred to as “*multiplication*”, but may sometimes

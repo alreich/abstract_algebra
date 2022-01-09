@@ -48,6 +48,11 @@ another operation, :math:`+`, if
 :math:`^{\dagger\dagger}S\setminus{\{0\}}` is the set :math:`S` with the
 additive identity element removed.
 
+**Note**: Although it is possible to have a *trivial Ring*, consisting
+of only the additive identity, :math:`S = \{0\}`), it is not possible to
+have a *trivial Field*, because we can’t define a Group over the empty
+set, :math:`S\setminus{\{0\}} = \emptyset.`
+
 For **Magmas**, **Semigroups**, **Monoids**, and **Groups**, the binary
 operation is often referred to as “*multiplication*”, but may sometimes
 be called “*addition*”. Also, the identity element may be denoted by

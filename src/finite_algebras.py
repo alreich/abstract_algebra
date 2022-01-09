@@ -656,12 +656,12 @@ class Group(Monoid):
                 result.add(self.commutator(a, b))
         return result
 
-    def commutator_subgroup(self):
-        """Return the commutator subgroup of the group."""
+    def commutator_subalgebra(self):
+        """Return the commutator subalgebra (Group, Ring, or Field) of this Group, Ring, or Field."""
         commutators = self.commutators()
         return self.subalgebra_from_elements(self.closure(commutators, include_inverses=True),
-                                             name=f"{self.name}_CG",
-                                             desc=f"{self.name} commutator subgroup")
+                                             name=f"{self.name}_Comm",
+                                             desc=f"{self.name} commutator subalgebra")
 
     def is_normal(self, subgrp):
         """Returns True if the subgroup is normal, otherwise False is returned"""
@@ -1263,23 +1263,47 @@ def get_int_forms(ref_group, isomorphisms):
 #   Field
 # =========
 
+# def is_field(add_id, elements, table):
+#     """The elements of a Field, minus the additive identity, form a commutative Group
+#     under multiplication. This function takes the additive identity, the list of all
+#     elements, and a field's multiplication table as input, and returns the Group under
+#     multiplication, if it exists, otherwise it returns False."""
+#     mult = make_finite_algebra("tmp", "temporary", elements, table)
+#     elems_copy = elements.copy()
+#     elems_copy.remove(add_id)
+#     elems_copy_clo = mult.closure(elems_copy, True)  # Includes inverse elements
+#     if set(elems_copy) == set(elems_copy_clo):
+#         mult_sub = mult.subalgebra_from_elements(elems_copy)
+#         if isinstance(mult_sub, Group) and mult_sub.is_commutative():
+#             return mult_sub
+#         else:
+#             return False
+#     else:
+#         return False
+
+
 def is_field(add_id, elements, table):
     """The elements of a Field, minus the additive identity, form a commutative Group
     under multiplication. This function takes the additive identity, the list of all
     elements, and a field's multiplication table as input, and returns the Group under
-    multiplication, if it exists, otherwise it returns False."""
-    mult = make_finite_algebra("tmp", "temporary", elements, table)
-    elems_copy = elements.copy()
-    elems_copy.remove(add_id)
-    elems_copy_clo = mult.closure(elems_copy, True)  # Includes inverse elements
-    if set(elems_copy) == set(elems_copy_clo):
-        mult_sub = mult.subalgebra_from_elements(elems_copy)
-        if isinstance(mult_sub, Group) and mult_sub.is_commutative():
-            return mult_sub
+    multiplication, if it exists, otherwise it returns False.  If the proposed Field
+    inputs are trivial (only one element and a 1x1 table) then False is returned.  That
+    is, a trivial Field is not allowed."""
+    if len(elements) == 1:
+        return False
+    else:
+        mult = make_finite_algebra("tmp", "temporary", elements, table)
+        elems_copy = elements.copy()
+        elems_copy.remove(add_id)
+        elems_copy_clo = mult.closure(elems_copy, True)  # Includes inverse elements
+        if set(elems_copy) == set(elems_copy_clo):
+            mult_sub = mult.subalgebra_from_elements(elems_copy)
+            if isinstance(mult_sub, Group) and mult_sub.is_commutative():
+                return mult_sub
+            else:
+                return False
         else:
             return False
-    else:
-        return False
 
 
 class Field(Ring):

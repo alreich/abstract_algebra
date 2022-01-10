@@ -49,7 +49,7 @@ another operation, :math:`+`, if
 additive identity element removed.
 
 **Note**: Although it is possible to have a *trivial Ring*, consisting
-of only the additive identity, :math:`S = \{0\}`), it is not possible to
+of only the additive identity, :math:`S = \{0\}`, it is not possible to
 have a *trivial Field*, because we can’t define a Group over the empty
 set, :math:`S\setminus{\{0\}} = \emptyset.`
 
@@ -62,7 +62,7 @@ operation is called *addition* or *multiplication*, resp.
 For **Rings** and **Fields**, the two operations, :math:`+` and
 :math:`\cdot`, are usually referred to as addition and multiplication,
 resp. The identity element for :math:`+` is often denoted by :math:`0`,
-and :math:`1` for :math:`\cdot`, if a multiplicative identity exists.
+and, if a multiplicative identity exists, :math:`1` for :math:`\cdot`.
 
 Regarding a **Ring’s** Semigroup, :math:`\langle S, \cdot \rangle`:
 

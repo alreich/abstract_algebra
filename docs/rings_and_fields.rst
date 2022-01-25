@@ -1030,8 +1030,10 @@ Python’s multiplication operator, ``*``:
 Direct Product of Multiple Fields
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The direct product of a finite Field with itself will produce a finite
-abelian Group.
+The direct product of a Ring with another Ring, including itself, will
+produce a Ring. Since a Field is also a Ring, the direct product of two
+or more fields will produce a Ring, but not a Field. See the following
+example.
 
 .. code:: ipython3
 
@@ -1108,8 +1110,8 @@ abelian Group.
      [0, 3, 1, 2, 12, 15, 13, 14, 4, 7, 5, 6, 8, 11, 9, 10]]
 
 
-Cayley Tables
--------------
+More on Cayley Tables
+---------------------
 
 Under normal usage, there should be no need to directly create Cayley
 Tables. This section, however, provides a brief glimse at the

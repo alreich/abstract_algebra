@@ -174,16 +174,8 @@ product**, denoted by :math:`G \times H`, is also a Group, where
 -  :math:`(g, h) \bullet (g', h') = (g \oplus g', h \odot h')` for all
    :math:`(g, h), (g', h') \in U`
 
-Since the only requirement needed to form a direct product is that there
-be two *algebras*, each with its own set of elements and binary
-operation, the direct product definition works for any
-``SingleElementSetAlgebra`` (Magma through Field). So, if ``G`` and
-``H`` are two *SingleElementSetAlgebras*, then their direct product can
-be obtained by multiplying the two objects using Python’s multplication
-operator, ``G * H``.
-
-We can also define the direct product of two Rings,
-:math:`R_1 = \langle S_1, +, \cdot \rangle` and
+We can also define the direct product, :math:`R_1 \times R_2`, of two
+Rings, :math:`R_1 = \langle S_1, +, \cdot \rangle` and
 :math:`R_2 = \langle S_2, \oplus, \odot \rangle`, as follows:
 
 -  :math:`R_1 \times R_2 \equiv \langle U, \circ, \bullet \rangle`
@@ -191,6 +183,14 @@ We can also define the direct product of two Rings,
 -  :math:`(s_1, s_2) \circ (s_1', s_2') = (s_1 + s_1', s_2 \oplus s_2')`,
    for all :math:`(s_1, s_2), (s_1', s_2') \in U`
 -  :math:`(s_1, s_2) \bullet (s_1', s_2') = (s_1 \cdot s_1', s_2 \odot s_2')`
+
+Since the only requirement needed to form a direct product is that there
+be two *algebras*, each with its own set of elements and binary
+operation(s), the direct product definition works for any
+``SingleElementSetAlgebra`` (Magma through Field). So, if ``G`` and
+``H`` are two *SingleElementSetAlgebras*, then their direct product can
+be obtained by multiplying the two objects using Python’s multplication
+operator, ``G * H``.
 
 Properties of Algebras
 ----------------------
@@ -201,16 +201,18 @@ properties.
 Center
 ~~~~~~
 
+The **center** of an algebra is usually defined for Groups, however
+since the definition only requires a set and a binary operation, it has
+been extended here to apply to Magmas, and so applies to all
+*SingleElementSetAlgebras*.
+
 The **center** of a Magma is the subset of elements of the Magma that
 commute with every element in the Magma.
 
-That is, if :math:`C \subseteq S` is the center of Magma,
-:math:`\langle S, \circ \rangle`, then
-:math:`c \in C \Rightarrow \forall x \in S, c \circ x = x \circ c.`
-
-In Pinter’s book, chapter 5, exercise D3, the center of a Group is
-defined. Since the definition only requires a set and a binary
-operation, it has been extended here to Magma’s.
+That is, :math:`C \subseteq S` is the center of the Magma,
+:math:`\langle S, \circ \rangle`, if
+:math:`c \in C \Rightarrow \forall x \in S, c \circ x = x \circ c.` (see
+Pinter’s book, chapter 5, exercise D3)
 
 Note also, the center of a commutative algebra is the entire algebra.
 The gist of Pinter’s exercise is that, for Groups, the center is closed
@@ -228,40 +230,41 @@ There are two Magma methods related to the center:
 Commutators
 ~~~~~~~~~~~
 
-If :math:`G = \langle S, \circ \rangle` is an abelian Group, then for
-all :math:`a,b \in S, a \circ b = b \circ a`.
+Let :math:`G = \langle S, \circ \rangle` be a Group, then for any pair
+of elements, :math:`a, b \in S`, the product,
+:math:`a \circ b \circ a^{-1} \circ b^{-1}`, denoted :math:`[a,b]`, is
+called a **commutator** of the Group.
 
-Rearranging, we have :math:`a \circ b \circ a^{-1} \circ b^{-1} = e`,
-where :math:`e \in S` is the identity element.
+If :math:`G` is abelian, then the identity element, :math:`e`, is the
+only commutator in :math:`G`, because :math:`[a,b] = e` for all possible
+:math:`a,b \in S`.
 
 So, if :math:`G` is non-abelian, then for some :math:`a,b \in S`, we
-have :math:`a \circ b \circ a^{-1} \circ b^{-1} = c \ne e`.
-
-The element, :math:`c`, denoted :math:`[a, b]`, is called a
-**commutator**. For abelian groups, there is only one commutator, the
-identity element.
+have :math:`[a,b] = c \ne e`.
 
 The set of all commutators of a Group is a subgroup, and is called the
 **Commutator Subgroup**.
 
-The following methods apply for a Group:
+The following methods exist for ``Group`` instances:
 
--  ``commutator``, will return the commutator of two elements
--  ``commutators``, will return all the commutators
--  ``commutator_subgroup``, will return the commutator subgroup
+-  ``commutator``, for two elements, :math:`a,b`, this method will
+   return :math:`[a,b]`
+-  ``commutators``, will return a list of all the commutators of a Group
+-  ``commutator_subalgebra``, will return the commutator subgroup of a
+   Group
 
 For a Ring, :math:`R = \langle S, +, \cdot \rangle`, the elements under
-addition, :math:`\langle S, + \rangle` are, by definition (above), an
-abelian Group, so we define commutators for the Ring’s elements under
+addition, :math:`\langle S, + \rangle` are, by definition, an abelian
+Group, so commutators for a Ring’s elements are defined using
 multiplication instead. But, :math:`\langle S, \cdot \rangle` is a
-Semigroup, or at best, a Monoid, which means that we can’t use
-*division* in the definition of a Ring’s commutator. So, **Ring
+Semigroup, or at best, a Monoid, which means that we can’t use inverses
+in the definition of a Ring’s commutator. Consequently, **Ring
 commutators** are defined to be elements of the form,
 :math:`(a \cdot b) - (b \cdot a)`, and are also denoted by
 :math:`[a, b]`.
 
-The Ring method, ``commutator``, will return the commutator of two ring
-elements according to this definition.
+The Ring methods, ``commutator``, ``commutators``, and
+``commutator_subalgebra``, use the Ring definition of a commutator.
 
 There is currently no method to produce a *commutator subring*. (See
 Eroǧlu, Münevver Pınar. “On the subring generated by commutators.”

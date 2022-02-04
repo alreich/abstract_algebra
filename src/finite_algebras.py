@@ -1263,25 +1263,6 @@ def get_int_forms(ref_group, isomorphisms):
 #   Field
 # =========
 
-# def is_field(add_id, elements, table):
-#     """The elements of a Field, minus the additive identity, form a commutative Group
-#     under multiplication. This function takes the additive identity, the list of all
-#     elements, and a field's multiplication table as input, and returns the Group under
-#     multiplication, if it exists, otherwise it returns False."""
-#     mult = make_finite_algebra("tmp", "temporary", elements, table)
-#     elems_copy = elements.copy()
-#     elems_copy.remove(add_id)
-#     elems_copy_clo = mult.closure(elems_copy, True)  # Includes inverse elements
-#     if set(elems_copy) == set(elems_copy_clo):
-#         mult_sub = mult.subalgebra_from_elements(elems_copy)
-#         if isinstance(mult_sub, Group) and mult_sub.is_commutative():
-#             return mult_sub
-#         else:
-#             return False
-#     else:
-#         return False
-
-
 def is_field(add_id, elements, table):
     """The elements of a Field, minus the additive identity, form a commutative Group
     under multiplication. This function takes the additive identity, the list of all
@@ -1388,26 +1369,16 @@ def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
 # Modules and Vector Spaces
 # ==========================
 
-# def make_sv_mult(alg):
-#     """Return a scalar-vector operator based on the direct product of a Ring or
-#     Field with itself.  That is, op:SxV-->V.
-#
-#     Basically, this function takes an element created from a direct product
-#     (e.g., s = "a:b:c"), splits it into a list (e.g., ["a", "b", "c"]), then
-#     maps the multiplication of another element, say "x", over the list (e.g.,
-#     ["x" * "a", "x" * "b", "x" * "c"]) and then joins the list back together
-#     into a single string (e.g., "xa:xb:xc"), where xa, xb, & xc represent the
-#     result of the multiplications.
-#     """
-#     delimiter = alg.direct_product_delimiter()
-#     return lambda s, v: delimiter.join([alg.mult(s, x) for x in v.split(delimiter)])
-
-
 def module_sv_mult(ring):
     """Returns a function that scales a vector.  That is, a function that takes
-    a scalar and a vector and their product, a vector."""
+    a scalar and a vector, and returns their product, also a vector."""
     delimiter = ring.direct_product_delimiter()
 
+    # sv_mult(s, v) takes an element created from a direct product (e.g., v = "a:b:c"),
+    # splits it into a list (e.g., ["a", "b", "c"]), then maps the multiplication of
+    # another element, say "s", over the list (e.g., ["s" * "a", "s" * "b", "s" * "c"])
+    # and then joins the list back together into a single string (e.g., "sa:sb:sc"),
+    # where sa, sb, & sc represent the results of the multiplications.
     def sv_mult(s, v):
         """Scalar-Vector product function"""
         return delimiter.join([ring.mult(s, x) for x in v.split(delimiter)])
@@ -1903,11 +1874,6 @@ class Examples:
 
     def __getitem__(self, index):
         return self.algebras[index]
-
-    # def get_example(self, index):
-    #     """Retrieves an algebra from the Examples instance, based on the index of the algebra.
-    #     Execute the Example's 'about' method to see the list of examples and their indices."""
-    #     return self.algebras[index]
 
     def about(self):
         """Returns a list of example algebras with instructions on how to retrieve them."""

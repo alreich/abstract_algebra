@@ -34,7 +34,7 @@ class Perm:
 
     def __hash__(self):
         """Use the enclosed permutation `tuple` for hashing this object"""
-        return hash(self.perm)
+        return hash(tuple(self.perm))
 
     def __repr__(self):
         """A readable print representation of this permutation."""

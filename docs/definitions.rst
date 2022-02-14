@@ -83,10 +83,10 @@ Vector Space and Modules, however, are hybrids of two algebras, each
 with their own set of elements, called *scalars* and *vectors*. In many
 algebra texts, the notation used to describe *multiplication* (or
 *addition*) in one component algebra is the same as the notation used
-for the other component algebra. Readers are expected to know that two
-implicitely refer to different operations. For a computer program,
+for the other component algebra. Readers are expected to know that the
+two implicitely refer to different operations. For a computer program,
 however, the difference in operators must be made explicit. For that
-reason, in the definitions, below, care is taken to not conflate the
+reason, care is taken in the definitions below to not conflate the
 scalar-scalar, vector-vector, and scalar-vector operations.
 
 A **Vector Space**, :math:`\mathscr{V} = \langle G, F, \circ \rangle`,

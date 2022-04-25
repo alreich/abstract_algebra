@@ -1,3 +1,5 @@
+<a title="WatchduckYou can name the author as &quot;T. Piesk&quot;, &quot;Tilman Piesk&quot; or &quot;Watchduck&quot;., Public domain, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Dih_4_Cayley_Graph;_generators_a,_b.svg"><img width="256" alt="Dih 4 Cayley Graph; generators a, b" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Dih_4_Cayley_Graph%3B_generators_a%2C_b.svg/256px-Dih_4_Cayley_Graph%3B_generators_a%2C_b.svg.png"></a>
+
 # Abstract Algebra
 
 A pedagogical implementation of **Finite Algebras** in Python: Groups, Rings, Fields, Vector Spaces, Modules, Monoids, Semigroups, and Magmas.

@@ -81,69 +81,27 @@ of a Group.
 Group Definition Motivation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In a nutshell, the definition of a Group consists of the minimum set of
+In a nutshell, the definition of a Group,
+:math:`G=\langle S, \circ \rangle`, consists of the minimum set of
 properties required to methodically solve equations involving the
 Group’s elements and its binary operation.
 
-To see this, let :math:`ax = b` be an equation made up of elements of a
-Group and its binary operation.
+To see this, let :math:`\boxed{a \circ x = b}` be an equation made up of
+elements :math:`a,b,x \in S`.
 
 Consider the assumptions required to solve the equation for :math:`x`:
 
 -  First, assume the group’s binary operation is closed; that is,
-   :math:`a, b \in S \Rightarrow ab \in S`
-
--  
-
-   .. raw:: html
-
-      <p>
-
-   Assume every element has an inverse; so, multiplying on both sides,
-   :math:`a^{-1}(ax) = a^{-1}b`
-
-   .. raw:: html
-
-      </p>
-
--  
-
-   .. raw:: html
-
-      <p>
-
-   Assume the group is associatve; therefore
-   :math:`(a^{-1}a)x = a^{-1}b`
-
-   .. raw:: html
-
-      </p>
-
--  
-
-   .. raw:: html
-
-      <p>
-
-   Assume the group has an identity element, :math:`e`; therefore
-   :math:`ex = a^{-1}b`
-
-   .. raw:: html
-
-      </p>
-
--  
-
-   .. raw:: html
-
-      <p>
-
-   And finally, since :math:`e` is an identity element,
-   :math:`ex = x \Rightarrow x = a^{-1}b`
-
-   .. raw:: html
-
-      </p>
+   :math:`a, b \in S \Rightarrow a \circ b \in S`
+-  Assume every element has an inverse; so, multiplying :math:`a^{-1}`
+   on both sides yields
+   :math:`a^{-1} \circ (a \circ x) = a^{-1} \circ b`
+-  Assume the group is associative; therefore
+   :math:`(a^{-1} \circ a) \circ x = a^{-1} \circ b`
+-  Assume the group has an identity element, :math:`e`; therefore
+   :math:`e \circ x = a^{-1} \circ b`
+-  And finally, since :math:`e` is an identity element,
+   :math:`e \circ x = x \Rightarrow \boxed{x = a^{-1} \circ b}`
 
 The assumptions made above are precisely those that make up the
 definition of a Group.
@@ -197,14 +155,9 @@ Class Hierarchy
 ---------------
 
 .. figure:: ../docs/_static/class_hierarchy_sm.png
-   :alt: class hierarchy
+   :alt: Abstract Algebra Class Hierarchy
 
-   class hierarchy
-
-<img src="../docs/_static/class_hierarchy_sm.png" alt="Class Hierarchy" />
-
-from IPython import display
-display.Image("../docs/_static/class_hierarchy_sm.png")
+   Abstract Algebra Class Hierarchy
 
 Note that, a Field is also a Ring, and a Group, and a Monoid, and so on,
 since the hierarchy of subclasses of a ``SingleElementSetAlgebra``

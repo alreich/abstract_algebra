@@ -81,11 +81,11 @@ of a Group.
 Group Definition Motivation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In a nutshell, the properties of a Group are the minimum set of
-properties required to allow for equations, involving the group’s
-elements and its binary operation, to be methodically solved.
+In a nutshell, the definition of a Group consists of the minimum set of
+properties required to methodically solve equations involving the
+Group’s elements and its binary operation.
 
-To see this, let :math:`ax = b` be an equation, made up of elements of a
+To see this, let :math:`ax = b` be an equation made up of elements of a
 Group and its binary operation.
 
 Consider the assumptions required to solve the equation for :math:`x`:

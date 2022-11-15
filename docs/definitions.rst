@@ -75,6 +75,82 @@ Regarding a **Ring’s** Semigroup, :math:`\langle S, \cdot \rangle`:
 For examples, see the sections **“Groups, Monoids, Semigroups, &
 Magmas”** and **“Rings and Fields”**.
 
+Before proceeding, we’ll briefly discuss a motivation for the definition
+of a Group.
+
+Group Definition Motivation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In a nutshell, the properties of a Group are the minimum set of
+properties required to allow for equations, involving the group’s
+elements and its binary operation, to be solved.
+
+To see this, let :math:`ax = b` be an equation, made up of elements of a
+Group and its binary operation.
+
+Consider the assumptions required to solve the equation for :math:`x`:
+
+-  First, assume the group’s binary operation is closed; that is,
+   :math:`a, b \in S \Rightarrow ab \in S`
+
+-  
+
+   .. raw:: html
+
+      <p>
+
+   Assume every element has an inverse; so, multiplying on both sides,
+   :math:`a^{-1}(ax) = a^{-1}b`
+
+   .. raw:: html
+
+      </p>
+
+-  
+
+   .. raw:: html
+
+      <p>
+
+   Assume the group is associatve; therefore
+   :math:`(a^{-1}a)x = a^{-1}b`
+
+   .. raw:: html
+
+      </p>
+
+-  
+
+   .. raw:: html
+
+      <p>
+
+   Assume the group has an identity element, :math:`e`; therefore
+   :math:`ex = a^{-1}b`
+
+   .. raw:: html
+
+      </p>
+
+-  
+
+   .. raw:: html
+
+      <p>
+
+   And finally, since :math:`e` is an identity element,
+   :math:`ex = x \Rightarrow x = a^{-1}b`
+
+   .. raw:: html
+
+      </p>
+
+The assumptions made above are exactly those that make up the definition
+of a Group.
+
+Note that cummutability was not necessary to solve the equation, and so
+it is not required of a Group.
+
 Vector Spaces and Modules
 -------------------------
 
@@ -130,7 +206,7 @@ Class Hierarchy
 
 
 
-.. image:: output_10_0.jpg
+.. image:: output_13_0.jpg
 
 
 

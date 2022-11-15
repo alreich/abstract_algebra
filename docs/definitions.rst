@@ -83,7 +83,7 @@ Group Definition Motivation
 
 In a nutshell, the properties of a Group are the minimum set of
 properties required to allow for equations, involving the group’s
-elements and its binary operation, to be solved.
+elements and its binary operation, to be methodically solved.
 
 To see this, let :math:`ax = b` be an equation, made up of elements of a
 Group and its binary operation.
@@ -145,10 +145,10 @@ Consider the assumptions required to solve the equation for :math:`x`:
 
       </p>
 
-The assumptions made above are exactly those that make up the definition
-of a Group.
+The assumptions made above are precisely those that make up the
+definition of a Group.
 
-Note that cummutability was not necessary to solve the equation, and so
+Note that cummutativity was not necessary to solve the equation, and so
 it is not required of a Group.
 
 Vector Spaces and Modules

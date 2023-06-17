@@ -13,8 +13,7 @@ the ``finite_algebra`` module is modeled on this progression.
 
 -  **Magma** – :math:`\langle S, \circ \rangle`, where :math:`S` is a
    set and :math:`\circ` is a binary operation,
-   :math:`\circ: S \times S \to S`, where for each :math:`a,b \in S`,
-   :math:`\exists ! c \in S`, such that :math:`a \circ b = c`
+   :math:`\circ: S \times S \to S`
 
 -  **Semigroup** – an associative Magma:
    :math:`\forall a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
@@ -74,6 +73,7 @@ Regarding a **Ring’s** Semigroup, :math:`\langle S, \cdot \rangle`:
 
 For examples, see the sections **“Groups, Monoids, Semigroups, &
 Magmas”** and **“Rings and Fields”**.
+
 
 Before proceeding, we’ll briefly discuss a motivation for the definition
 of a Group.
@@ -154,7 +154,7 @@ For examples, see the section **“Vector Spaces and Modules”**.
 Class Hierarchy
 ---------------
 
-.. figure:: ../docs/_static/class_hierarchy_sm.png
+.. figure:: ../docs/_static/class_hierarchy_sm_v2.png
    :alt: Abstract Algebra Class Hierarchy
 
    Abstract Algebra Class Hierarchy

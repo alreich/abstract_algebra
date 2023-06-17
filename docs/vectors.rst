@@ -139,11 +139,11 @@ If any of them fail, then an exception will be raised.
 
 .. code:: ipython3
 
-    >>> from finite_algebras import generate_n_dim_module
+    >>> from finite_algebras import NDimensionalVectorSpace
     
     >>> n = 2  # We're using a small number of dimensions to limit the amount of printout below
     
-    >>> vs = generate_n_dim_module(f4, n)
+    >>> vs = NDimensionalVectorSpace(f4, n)
     
     >>> vs.about(max_size=16)
 
@@ -151,19 +151,18 @@ If any of them fail, then an exception will be raised.
 .. parsed-literal::
 
     
-    VectorSpace: VS2-F4
-    Instance ID: 140359803734416
+    NDimensionalVectorSpace: 2D-F4
+    Instance ID: 140421949949792
     Description: 2-dimensional Vector Space over F4
     
     SCALARS:
     
     ** Field **
     Name: F4
-    Instance ID: 140361151253456
+    Instance ID: 140421949948400
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: 0
-    Associative? Yes
     Commutative? Yes
     Cyclic?: Yes
       Generators: ['1+a', 'a']
@@ -183,13 +182,12 @@ If any of them fail, then an exception will be raised.
     
     VECTORS:
     
-    ** Group **
+    ** Ring **
     Name: F4_x_F4
-    Instance ID: 140361149519888
+    Instance ID: 140421949950416
     Description: Direct product of F4 & F4
     Order: 16
     Identity: 0:0
-    Associative? Yes
     Commutative? Yes
     Cyclic?: No
     Elements:
@@ -227,6 +225,26 @@ If any of them fail, then an exception will be raised.
      [13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2],
      [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1],
      [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+    Mult. Identity: 1:1
+    Mult. Commutative? Yes
+    Zero Divisors: ['0:1', '0:a', '0:1+a', '1:0', 'a:0', '1+a:0']
+    Multiplicative Cayley Table (showing indices):
+    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+     [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3],
+     [0, 2, 3, 1, 0, 2, 3, 1, 0, 2, 3, 1, 0, 2, 3, 1],
+     [0, 3, 1, 2, 0, 3, 1, 2, 0, 3, 1, 2, 0, 3, 1, 2],
+     [0, 0, 0, 0, 4, 4, 4, 4, 8, 8, 8, 8, 12, 12, 12, 12],
+     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+     [0, 2, 3, 1, 4, 6, 7, 5, 8, 10, 11, 9, 12, 14, 15, 13],
+     [0, 3, 1, 2, 4, 7, 5, 6, 8, 11, 9, 10, 12, 15, 13, 14],
+     [0, 0, 0, 0, 8, 8, 8, 8, 12, 12, 12, 12, 4, 4, 4, 4],
+     [0, 1, 2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 4, 5, 6, 7],
+     [0, 2, 3, 1, 8, 10, 11, 9, 12, 14, 15, 13, 4, 6, 7, 5],
+     [0, 3, 1, 2, 8, 11, 9, 10, 12, 15, 13, 14, 4, 7, 5, 6],
+     [0, 0, 0, 0, 12, 12, 12, 12, 4, 4, 4, 4, 8, 8, 8, 8],
+     [0, 1, 2, 3, 12, 13, 14, 15, 4, 5, 6, 7, 8, 9, 10, 11],
+     [0, 2, 3, 1, 12, 14, 15, 13, 4, 6, 7, 5, 8, 10, 11, 9],
+     [0, 3, 1, 2, 12, 15, 13, 14, 4, 7, 5, 6, 8, 11, 9, 10]]
 
 
 The scalar and vector elements of the VectorSpace can be obtained as
@@ -349,12 +367,12 @@ it’s identity elements as follows:
 
 
 The scalar-vector operation for scaling Vectors (or Modules) is the
-VectorSpace method, ``sv_op``, and takes two inputs: a scalar and
+VectorSpace method, ``sv_mult``, and takes two inputs: a scalar and
 vector, resp.
 
 .. code:: ipython3
 
-    vs.sv_op('a', '1+a:1')
+    vs.sv_mult('a', '1+a:1')
 
 
 
@@ -381,7 +399,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> print(vs.sv_op(vs.scalar.one, 'a:1+a'))
+    >>> print(vs.sv_mult(vs.scalar.one, 'a:1+a'))
 
 
 .. parsed-literal::
@@ -403,7 +421,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> print(vs.sv_op(s, vs.vector_add(v1, v2)))
+    >>> print(vs.sv_mult(s, vs.vector_add(v1, v2)))
 
 
 .. parsed-literal::
@@ -415,7 +433,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> print(vs.vector_add(vs.sv_op(s, v1), vs.sv_op(s, v2)))
+    >>> print(vs.vector_add(vs.sv_mult(s, v1), vs.sv_mult(s, v2)))
 
 
 .. parsed-literal::
@@ -437,7 +455,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> print(vs.sv_op(vs.scalar.add(s1, s2), v))
+    >>> print(vs.sv_mult(vs.scalar.add(s1, s2), v))
 
 
 .. parsed-literal::
@@ -449,7 +467,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> print(vs.vector_add(vs.sv_op(s1, v), vs.sv_op(s2, v)))
+    >>> print(vs.vector_add(vs.sv_mult(s1, v), vs.sv_mult(s2, v)))
 
 
 .. parsed-literal::
@@ -471,7 +489,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> print(vs.sv_op(s1, vs.sv_op(s2, v)))
+    >>> print(vs.sv_mult(s1, vs.sv_mult(s2, v)))
 
 
 .. parsed-literal::
@@ -483,7 +501,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 
 .. code:: ipython3
 
-    >>> print(vs.sv_op(vs.scalar.mult(s1, s2), v))
+    >>> print(vs.sv_mult(vs.scalar.mult(s1, s2), v))
 
 
 .. parsed-literal::
@@ -511,11 +529,10 @@ Here’s the Ring:
     
     ** Ring **
     Name: PSRing2
-    Instance ID: 140361151198992
+    Instance ID: 140421950157872
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
-    Associative? Yes
     Commutative? Yes
     Cyclic?: No
     Elements:
@@ -537,27 +554,28 @@ And here’s the finite, n-dimensional Module based on the Ring, above:
 
 .. code:: ipython3
 
+    >>> from finite_algebras import NDimensionalModule
+    
     >>> n = 2
-    >>> psr_mod = generate_n_dim_module(psr2, n)
+    >>> psr_mod = NDimensionalModule(psr2, n)
     >>> psr_mod.about(max_size=16)
 
 
 .. parsed-literal::
 
     
-    Module: Mod2-PSRing2
-    Instance ID: 140359532443536
+    NDimensionalModule: 2D-PSRing2
+    Instance ID: 140421950157920
     Description: 2-dimensional Module over PSRing2
     
     SCALARS:
     
     ** Ring **
     Name: PSRing2
-    Instance ID: 140361151198992
+    Instance ID: 140421950157872
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
-    Associative? Yes
     Commutative? Yes
     Cyclic?: No
     Elements:
@@ -576,13 +594,12 @@ And here’s the finite, n-dimensional Module based on the Ring, above:
     
     VECTORS:
     
-    ** Group **
+    ** Ring **
     Name: PSRing2_x_PSRing2
-    Instance ID: 140361151371344
+    Instance ID: 140421948929888
     Description: Direct product of PSRing2 & PSRing2
     Order: 16
     Identity: {}:{}
-    Associative? Yes
     Commutative? Yes
     Cyclic?: No
     Elements:
@@ -620,4 +637,24 @@ And here’s the finite, n-dimensional Module based on the Ring, above:
      [13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2],
      [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1],
      [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+    Mult. Identity: {0, 1}:{0, 1}
+    Mult. Commutative? Yes
+    Zero Divisors: ['{}:{0}', '{}:{1}', '{}:{0, 1}', '{0}:{}', '{0}:{0}', '{0}:{1}', '{0}:{0, 1}', '{1}:{}', '{1}:{0}', '{1}:{1}', '{1}:{0, 1}', '{0, 1}:{}', '{0, 1}:{0}', '{0, 1}:{1}']
+    Multiplicative Cayley Table (showing indices):
+    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+     [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+     [0, 0, 2, 2, 0, 0, 2, 2, 0, 0, 2, 2, 0, 0, 2, 2],
+     [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3],
+     [0, 0, 0, 0, 4, 4, 4, 4, 0, 0, 0, 0, 4, 4, 4, 4],
+     [0, 1, 0, 1, 4, 5, 4, 5, 0, 1, 0, 1, 4, 5, 4, 5],
+     [0, 0, 2, 2, 4, 4, 6, 6, 0, 0, 2, 2, 4, 4, 6, 6],
+     [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7],
+     [0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 8, 8, 8, 8, 8, 8],
+     [0, 1, 0, 1, 0, 1, 0, 1, 8, 9, 8, 9, 8, 9, 8, 9],
+     [0, 0, 2, 2, 0, 0, 2, 2, 8, 8, 10, 10, 8, 8, 10, 10],
+     [0, 1, 2, 3, 0, 1, 2, 3, 8, 9, 10, 11, 8, 9, 10, 11],
+     [0, 0, 0, 0, 4, 4, 4, 4, 8, 8, 8, 8, 12, 12, 12, 12],
+     [0, 1, 0, 1, 4, 5, 4, 5, 8, 9, 8, 9, 12, 13, 12, 13],
+     [0, 0, 2, 2, 4, 4, 6, 6, 8, 8, 10, 10, 12, 12, 14, 14],
+     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]]
 

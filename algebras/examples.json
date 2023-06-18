@@ -13,5 +13,6 @@
   "ring_based_on_2x2_matrices.json",
   "q8_quaternion_group.json",
   "sd16_semidihedral_group.json",
-  "a5_alternating_group_on_5_letters.json"
+  "a5_alternating_group_on_5_letters.json",
+  "field_of_order_2.json"
 ]

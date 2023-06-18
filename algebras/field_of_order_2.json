@@ -1,0 +1,7 @@
+{"name": "F2",
+ "description": "Field with 2 elements from paper: 236w06fields.pdf",
+  "elements": ["0", "1"],
+   "table": [[0, 1],
+   			 [1, 0]],
+   "table2": [[0, 0],
+   			 [0, 1]]}

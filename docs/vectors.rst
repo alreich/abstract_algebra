@@ -15,7 +15,7 @@ consists of the following:
    *“scalars”*)
 -  and a **binary operator**, :math:`\circ : S \times V \to V`
 
-where the following conditions hold:
+where the following five conditions hold:
 
 1. Scaled Vectors: For all :math:`s \in S` and
    :math:`v \in V \Rightarrow s \circ v \in V`
@@ -83,14 +83,16 @@ be created using a finite Field or Ring.
 A Finite, n-Dimensional Vector Space (similar to :math:`\mathbb{R}^n`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Given a finite Field (or finite Ring) and a positive integer dimension,
-the function, ``generate_n_dim_module``, constructs an n-dimensional
-Vector Space (or Module) similar to how :math:`\mathbb{R}^n` is
-constructed.
+Given a finite Field, F, and a positive integer, n, the expression,
+``NDimensionalVectorSpace(F, n)``, constructs an n-dimensional Vector
+Space similar to how :math:`\mathbb{R}^n` is constructed. Similarly,
+Given a Ring, R, ``NDimensionalModule(R, n)`` constructs an
+n-dimensional Module.
 
-This will be demonstrated using the following `“field with 4 elements”
-(see
-Wikipedia) <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>`__:
+This is demonstrated, below, using a `“field with 4 elements” (see
+Wikipedia) <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>`__.
+
+First, we create the field:
 
 .. code:: ipython3
 
@@ -128,14 +130,8 @@ Wikipedia) <https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements>
 
 
 
-f4 is used, below, to create a finite, n-dimensional VectorSpace.
-
-NOTE: ``generate_n_dim_module`` is a convenience function. Within it,
-the requisite Field (or Ring), Group, and scalar-vector operation are
-constructed and then fed to the all-purpose algebra construction
-function, ``make_finite_algebra``, to create a VectorSpace or Module.
-The five conditions, listed in the definition above, are also checked.
-If any of them fail, then an exception will be raised.
+Now, f4 is used to create a finite, n-dimensional VectorSpace, for
+:math:`n=2`:
 
 .. code:: ipython3
 
@@ -152,14 +148,14 @@ If any of them fail, then an exception will be raised.
 
     
     NDimensionalVectorSpace: 2D-F4
-    Instance ID: 140421949949792
+    Instance ID: 140563549074672
     Description: 2-dimensional Vector Space over F4
     
     SCALARS:
     
     ** Field **
     Name: F4
-    Instance ID: 140421949948400
+    Instance ID: 140563549073616
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: 0
@@ -184,7 +180,7 @@ If any of them fail, then an exception will be raised.
     
     ** Ring **
     Name: F4_x_F4
-    Instance ID: 140421949950416
+    Instance ID: 140563549074048
     Description: Direct product of F4 & F4
     Order: 16
     Identity: 0:0
@@ -247,7 +243,48 @@ If any of them fail, then an exception will be raised.
      [0, 3, 1, 2, 12, 15, 13, 14, 4, 7, 5, 6, 8, 11, 9, 10]]
 
 
-The scalar and vector elements of the VectorSpace can be obtained as
+The scalar and vector components of the Vector Space just created can be
+accessed as follows:
+
+.. code:: ipython3
+
+    >>> vs.scalar
+
+
+
+
+.. parsed-literal::
+
+    Field(
+    'F4',
+    'Field with 4 elements (from Wikipedia)',
+    ['0', '1', 'a', '1+a'],
+    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]],
+    [[0, 0, 0, 0], [0, 1, 2, 3], [0, 2, 3, 1], [0, 3, 1, 2]]
+    )
+
+
+
+.. code:: ipython3
+
+    >>> vs.vector
+
+
+
+
+.. parsed-literal::
+
+    Ring(
+    'F4_x_F4',
+    'Direct product of F4 & F4',
+    ['0:0', '0:1', '0:a', '0:1+a', '1:0', '1:1', '1:a', '1:1+a', 'a:0', 'a:1', 'a:a', 'a:1+a', '1+a:0', '1+a:1', '1+a:a', '1+a:1+a'],
+    [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], [1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14], [2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13], [3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12], [4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11], [5, 4, 7, 6, 1, 0, 3, 2, 13, 12, 15, 14, 9, 8, 11, 10], [6, 7, 4, 5, 2, 3, 0, 1, 14, 15, 12, 13, 10, 11, 8, 9], [7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8], [8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7], [9, 8, 11, 10, 13, 12, 15, 14, 1, 0, 3, 2, 5, 4, 7, 6], [10, 11, 8, 9, 14, 15, 12, 13, 2, 3, 0, 1, 6, 7, 4, 5], [11, 10, 9, 8, 15, 14, 13, 12, 3, 2, 1, 0, 7, 6, 5, 4], [12, 13, 14, 15, 8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3], [13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2], [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1], [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]],
+    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3], [0, 2, 3, 1, 0, 2, 3, 1, 0, 2, 3, 1, 0, 2, 3, 1], [0, 3, 1, 2, 0, 3, 1, 2, 0, 3, 1, 2, 0, 3, 1, 2], [0, 0, 0, 0, 4, 4, 4, 4, 8, 8, 8, 8, 12, 12, 12, 12], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], [0, 2, 3, 1, 4, 6, 7, 5, 8, 10, 11, 9, 12, 14, 15, 13], [0, 3, 1, 2, 4, 7, 5, 6, 8, 11, 9, 10, 12, 15, 13, 14], [0, 0, 0, 0, 8, 8, 8, 8, 12, 12, 12, 12, 4, 4, 4, 4], [0, 1, 2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 4, 5, 6, 7], [0, 2, 3, 1, 8, 10, 11, 9, 12, 14, 15, 13, 4, 6, 7, 5], [0, 3, 1, 2, 8, 11, 9, 10, 12, 15, 13, 14, 4, 7, 5, 6], [0, 0, 0, 0, 12, 12, 12, 12, 4, 4, 4, 4, 8, 8, 8, 8], [0, 1, 2, 3, 12, 13, 14, 15, 4, 5, 6, 7, 8, 9, 10, 11], [0, 2, 3, 1, 12, 14, 15, 13, 4, 6, 7, 5, 8, 10, 11, 9], [0, 3, 1, 2, 12, 15, 13, 14, 4, 7, 5, 6, 8, 11, 9, 10]]
+    )
+
+
+
+And the scalar and vector elements of the VectorSpace can be obtained as
 follows:
 
 .. code:: ipython3
@@ -372,7 +409,7 @@ vector, resp.
 
 .. code:: ipython3
 
-    vs.sv_mult('a', '1+a:1')
+    >>> vs.sv_mult('a', '1+a:1')
 
 
 
@@ -383,16 +420,45 @@ vector, resp.
 
 
 
-Checking the VectorSpace/Module Conditions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+VectorSpace/Module Conditions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following are four examples that illustrate the method calls
-required to check the requirements of a Vector Space or Module. During
-VectorSpace or Module construction, function ``make_finite_algebra``
-automatically calls the function ``check_module_conditions`` to make
-sure that the requirements for a Vector Space or Module are met.
+Recall the five conditions imposed a VectorSpace or Module (listed
+below):
 
-**Scaling by 1**
+1. Scaled Vectors: For all :math:`s \in S` and
+   :math:`v \in V \Rightarrow s \circ v \in V`
+2. Scaling by One: If :math:`1 \in S` is the multiplicative identity
+   element of :math:`F`, then :math:`1 \circ v = v`
+3. Distributivity of Scalars Over Vector Addition:
+   :math:`s \circ (v_1 \oplus v_2) = (s \circ v_1) \oplus (s \circ v_2)`
+4. Distributivity of Vectors Over Scalar Addition:
+   :math:`(s_1 + s_2) \circ v = (s_1 \circ v) \oplus (s_2 \circ v)`
+5. Scalar-Vector Associativity:
+   :math:`s_1 \circ (s_2 \circ v) = (s_1 \cdot s_2) \circ v`
+
+The following five sections provide examples that illustrate each
+condition.
+
+**1. Scaled Vectors**
+
+.. code:: ipython3
+
+    >>> s = 'a'
+    >>> v = 'a:a'
+    >>> sv = vs.sv_mult(s, v)
+    
+    >>> print(f"sv = {s} * {v} = {vs.sv_mult(s, v)}")
+    >>> print(f"Is sv a vector? {sv in vs.vector.elements}")
+
+
+.. parsed-literal::
+
+    sv = a * a:a = 1+a:1+a
+    Is sv a vector? True
+
+
+**2. Scaling by One**
 
 If :math:`\mathscr{1} \in S` is the multiplicative identity element of
 :math:`\mathscr{F}`, then :math:`\mathscr{1} \circ v = v`
@@ -407,7 +473,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
     a:1+a
 
 
-**Distributivity of scalars over vector addition**
+**3. Distributivity of Scalars Over Vector Addition**
 
 :math:`s \circ (v_1 \oplus v_2) = (s \circ v_1) \oplus (s \circ v_2)`
 
@@ -441,7 +507,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
     0:1+a
 
 
-**Distributivity of vectors over scalar addition**
+**4. Distributivity of Vectors Over Scalar Addition**
 
 :math:`(s_1 + s_2) \circ v = (s_1 \circ v) \oplus (s_2 \circ v)`
 
@@ -475,7 +541,7 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
     a:1
 
 
-**Associativity**
+**5. Scalar-Vector Associativity**
 
 :math:`s_1 \circ (s_2 \circ v) = (s_1 \times s_2) \circ v`
 
@@ -509,13 +575,13 @@ If :math:`\mathscr{1} \in S` is the multiplicative identity element of
     a:1
 
 
-Module based on a Ring
-----------------------
+A Finite, n-Dimensional Module
+------------------------------
 
-Another example, using the technique presented above, but this time with
-a Ring, instead of a Field.
+Here’s another example using the technique presented above, but this
+time with a Ring instead of a Field.
 
-Here’s the Ring:
+First, the Ring:
 
 .. code:: ipython3
 
@@ -529,7 +595,7 @@ Here’s the Ring:
     
     ** Ring **
     Name: PSRing2
-    Instance ID: 140421950157872
+    Instance ID: 140562742272304
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
@@ -565,14 +631,14 @@ And here’s the finite, n-dimensional Module based on the Ring, above:
 
     
     NDimensionalModule: 2D-PSRing2
-    Instance ID: 140421950157920
+    Instance ID: 140562742273024
     Description: 2-dimensional Module over PSRing2
     
     SCALARS:
     
     ** Ring **
     Name: PSRing2
-    Instance ID: 140421950157872
+    Instance ID: 140562742272304
     Description: Autogenerated Ring on powerset of {0, 1} w/ symm. diff. (add) & intersection (mult)
     Order: 4
     Identity: {}
@@ -596,7 +662,7 @@ And here’s the finite, n-dimensional Module based on the Ring, above:
     
     ** Ring **
     Name: PSRing2_x_PSRing2
-    Instance ID: 140421948929888
+    Instance ID: 140562742249552
     Description: Direct product of PSRing2 & PSRing2
     Order: 16
     Identity: {}:{}

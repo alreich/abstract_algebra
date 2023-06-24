@@ -26,7 +26,7 @@ from permutations import Perm
 class FiniteOperator:
     """A callable class that implements a binary operation based on a multiplication
     table (i.e., Cayley table).  Although it's intended use is as the binary operation
-    of a finite algebra (e.g., Group operation), its implementation here can be called
+    of a finite algebra (e.g., Group operation), the implementation here can be called
     with zero, one, two, or more arguments (similar to how arithmetic operators work in
     Lisp).
 

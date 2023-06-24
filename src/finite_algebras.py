@@ -24,21 +24,26 @@ from permutations import Perm
 
 
 class FiniteOperator:
-    """A callable class that implements a binary operation based on a Cayley table.
-    It can be called with zero, one, or two (or more) arguments.
+    """A callable class that implements a binary operation based on a multiplication
+    table (i.e., Cayley table).  Although it's intended use is as the binary operation
+    of a finite algebra (e.g., Group operation), its implementation here can be called
+    with zero, one, two, or more arguments (similar to how arithmetic operators work in
+    Lisp).
 
     If no arguments are provided it will return the identity element, if it exists;
     otherwise it will return None.  e.g., op() ==> e | None
 
-    If only one argument is provided it will return that same value, assuming it is
-    a valid element of the algebra. op(a) ==> a | ValueError
+    If only one argument is provided, it will check whether the argument is a valid
+    element of the algebra, and if so, return the same value, otherwise it will
+    raise an exception.  e.g., op(a) ==> a | ValueError
 
-    If two arguments are provided, it will return their "product".
+    If two arguments are provided, it will return their 'product'.
     e.g., op(a, b) ==> ab
 
     If more than two arguments are provided, it will return their product by associating
-    from left-to-right. e.g., op(a, b, c, d) = (((ab)c)d)  This is important only
-    when it comes to Magmas, because all other algebras supported here are associative.
+    from left-to-right. e.g., op(a, b, c, d) = (((ab)c)d)  The order of association is
+    only important for a Magma, because it is the only non-associative algebraic structure
+    supported here.
     """
 
     def __init__(self, elements, identity, table):
@@ -1639,7 +1644,11 @@ def make_finite_algebra(*args):
     or all strings that represent a finite binary operation.  That is, a
     2-dimensional, square "table" (Cayley table).  The meaning of a table
     entry C corresponding to row A and column B, is that A * B = C, where
-    * is the binary operator.
+    * is the binary operator. If the items in the table are all integers,
+    then they must all represent the positions of elements in the element
+    list given by the third argument, above. If they are all strings, then
+    they must all be members of the list of strings given by the third
+    argument.
 
     A fifth argument is required only if a Ring or Field is being
     constructed, and it should also be a table with structure similar to
@@ -1673,7 +1682,8 @@ def make_finite_algebra(*args):
 
     elif len(args) == 4:
 
-        # Create a Group, Monoid, Semigroup, or Magma
+        # The inputs define a Group, Monoid, Semigroup, or Magma.
+        # More checks to come farther below.
         finalg_dict = {'name': args[0],
                        'description': args[1],
                        'elements': args[2],
@@ -1682,7 +1692,8 @@ def make_finite_algebra(*args):
 
     elif len(args) == 5:
 
-        # Create a VectorSpace or Module
+        # The inputs define a VectorSpace or Module.
+        # It gets created & returned immediately, right here.
         if isinstance(args[3], Group):
             if isinstance(args[2], Field):
                 return VectorSpace(args[0], args[1], args[2], args[3], args[4])
@@ -1691,7 +1702,8 @@ def make_finite_algebra(*args):
             else:
                 raise ValueError(f"{args[2]} must be a Ring or a Field")
 
-        # Create a Field or Ring
+        # The inputs define a Field or Ring.
+        # More checks to come farther below.
         else:
             finalg_dict = {'name': args[0],
                            'description': args[1],
@@ -1716,7 +1728,8 @@ def make_finite_algebra(*args):
 
     table = make_cayley_table(tbl, elems)
 
-    # Turn table2 into a CayleyTable and determine if it supports associativity
+    # If a second table was input, turn it into a CayleyTable
+    # and determine if it supports associativity
     table2 = None
     is_assoc2 = False
     if 'table2' in finalg_dict:
@@ -1730,12 +1743,15 @@ def make_finite_algebra(*args):
     else:
         inverses = None
 
+    # Based on the properties of the inputs, create & return the appropriate algebraic structure
     if is_assoc:
         if identity is not None:
             if inverses:
                 if table2 is not None and is_assoc2:
                     # is_field will either build the abelian Group, mentioned in the Field definition,
                     # or it will return False.  In the latter case, this becomes a Ring, instead of a Field.
+                    # NOTE: Additional, required checks for multiplicative associativity and distributivity
+                    # of multiplication over addition are done within the Field & Ring constructors themselves.
                     abelian_group = is_field(elems[identity], elems, table2.table)
                     if abelian_group:
                         return Field(name, desc, elems, table, table2, check_inputs=False,

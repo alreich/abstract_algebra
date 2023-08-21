@@ -1788,9 +1788,9 @@ def is_prime(n):
         raise False
 
 
-def is_relatively_prime(n,m):
+def is_relatively_prime(n, m):
     """Return True if n & m are relatively prime, otherwise return False."""
-    if math.gcd(n,m) == 1:
+    if math.gcd(n, m) == 1:
         return True
     else:
         return False

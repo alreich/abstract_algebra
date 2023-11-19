@@ -1,5 +1,19 @@
+.. _api:
+
 API Reference
 =============
+
+.. autosummary::
+    :nosignatures:
+
+    finite_algebras.Magma
+    finite_algebras.Semigroup
+    finite_algebras.Monoid
+    finite_algebras.Group
+    finite_algebras.Ring
+    finite_algebras.Field
+    finite_algebras.Module
+    finite_algebras.VectorSpace
 
 Primary Algebra Constructors
 ----------------------------

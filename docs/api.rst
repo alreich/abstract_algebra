@@ -184,7 +184,6 @@ Misc Utilities
 .. autofunction:: finite_algebras.get_duplicates
 .. autofunction:: finite_algebras.get_int_forms
 .. autofunction:: finite_algebras.get_integer_form
-.. autofunction:: finite_algebras.index_table_from_name_table
 .. autofunction:: finite_algebras.is_table_associative
 .. autofunction:: finite_algebras.make_table_from_xml
 .. autofunction:: finite_algebras.partition_into_isomorphic_lists

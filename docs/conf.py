@@ -20,7 +20,7 @@ master_doc = 'index'
 
 # -- Project information -----------------------------------------------------
 
-project = 'algebras'
+project = 'abstract_algebra'
 copyright = '2021, Alfred J. Reich'
 author = 'Alfred J. Reich'
 

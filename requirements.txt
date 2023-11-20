@@ -1,5 +1,5 @@
 numpy
 scipy
-finite_algebras
-cayley_table
-permutations
+src/finite_algebras
+src/cayley_table
+src/permutations

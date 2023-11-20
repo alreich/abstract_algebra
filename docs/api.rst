@@ -3,25 +3,17 @@
 API Reference
 =============
 
-.. autosummary::
-    :nosignatures:
-
-    finite_algebras.Magma
-    finite_algebras.Semigroup
-    finite_algebras.Monoid
-    finite_algebras.Group
-    finite_algebras.Ring
-    finite_algebras.Field
-    finite_algebras.Module
-    finite_algebras.VectorSpace
-
 Primary Algebra Constructors
 ----------------------------
+
+The function, make_finite_algebra, is the recommended way to create any finite algebra. It analyzes the input and returns the appropriate finite algebra: Group, Ring, Field, VectorSpace, Module, Monoid, Semigroup, or Magma.
 
 .. autofunction:: finite_algebras.make_finite_algebra
 
 Operator
 --------
+
+The FiniteOperator is a callable class that implements the binary operators used by the various algebras supported here. This class is automatically created whenever an algebra is created.
 
 .. autoclass:: finite_algebras.FiniteOperator
     :members:
@@ -29,6 +21,8 @@ Operator
 
 FiniteAlgebra
 -------------
+
+This is the top-level class of all algebras here. NOT INTENDED TO BE INSTANTIATED.
 
 .. autoclass:: finite_algebras.FiniteAlgebra
     :members:
@@ -38,6 +32,8 @@ FiniteAlgebra
 
 SingleElementSetAlgebra
 -----------------------
+
+This is the top-level class for all algebras that have a single set of elements and a single binary operation (Magma, Semigroup, Monoid, Group). NOT INTENDED TO BE INSTANTIATED.
 
 .. autoclass:: finite_algebras.SingleElementSetAlgebra
     :members:
@@ -101,6 +97,8 @@ Field
 
 MultipleElementSetAlgebra
 -------------------------
+
+This is the top-level class for all algebras that are constructed from more than one single element set algebras (Modules, VectorSpaces). NOT INTENDED TO BE INSTANTIATED.
 
 .. autoclass:: finite_algebras.MultipleElementSetAlgebra
     :members:

@@ -6,7 +6,7 @@ API Reference
 .. autosummary::
     :nosignatures:
 
-    finite_algebras.Magma
+    src.finite_algebras.Magma
     finite_algebras.Semigroup
     finite_algebras.Monoid
     finite_algebras.Group
@@ -18,7 +18,7 @@ API Reference
 Primary Algebra Constructors
 ----------------------------
 
-.. autofunction:: finite_algebras.make_finite_algebra
+.. autofunction:: src.finite_algebras.make_finite_algebra
 
 Operator
 --------

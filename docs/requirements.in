@@ -1,4 +1,6 @@
 # Defining the exact version will make sure things don't break
+numpy
+scipy
 sphinx
 sphinx_rtd_theme
 readthedocs-sphinx-search

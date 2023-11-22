@@ -15,6 +15,7 @@ from functools import reduce
 import itertools as it
 import json
 import numpy as np
+import scipy.sparse as sp
 import os
 import pprint as pp
 import math
@@ -583,6 +584,96 @@ class Monoid(Semigroup):
             monoid = self.extract_multiplicative_algebra()
 
         return monoid.subalgebra_from_elements(monoid.units(), name=nm, desc=description)
+
+    def regular_representation(self, sparse=False):
+        """Given a group, this function returns four things: (1) A dictionary that maps each group
+        element to its corresponding regular representation, (2) A (reverse) dictionary that maps each
+        regular representation (in the form of a tuple of tuples) back to its corresponding group element,
+        (3) A function that maps a group element to its corresponding regular representation matrix, and
+        (4) Another function that maps in the opposite direction, from regular represenation matrix to
+        group element. By default, the matrices are dense arrays. SciPy sparse arrays can be output instead,
+        by setting the input variable, "sparse", to one of the following seven strings: "BSR", "COO", "CSC",
+        "CSR", "DIA", "DOK", or "LIL". Each of the seven strings corresponds to one of the seven classes of
+        sparse array supported by SciPy.
+        """
+        A = self.elements
+        N = self.order
+
+        # Create a list of N Nx1 orthogonal unit vectors
+        id = np.eye(N, dtype=int)  # The NxN identity matrix
+        B = [id[:, [i]] for i in range(N)]  # A list of columns extracted from the identity matrix
+
+        # Create a dictionary that maps group elements to the column vectors created above.
+        mapping = dict(zip(A, B))
+
+        # Create a function that takes a group element and returns the corresponding Nx1
+        # orthogonal unit vector.
+        def V(elem):
+            return mapping[elem]
+
+        # Turn a column vector into a tuple, for use as a dict key
+        def vector_to_tuple(vec):
+            return tuple(map(lambda x: x[0], list(vec)))
+
+        # map vectors to group elements
+        inv_mapping = {vector_to_tuple(val): key for key, val in mapping.items()}
+
+        # Given one of the Nx1 orthogonal unit vectors, return the corresponding group element
+        def Vinv(vec):
+            return inv_mapping[vector_to_tuple(vec)]
+
+        # The seven SciPy sparse array class constructors
+        sparse_array_classes = {
+            "BSR": sp.bsr_array,
+            "COO": sp.coo_array,
+            "CSC": sp.csc_array,
+            "CSR": sp.csr_array,
+            "DIA": sp.dia_array,
+            "DOK": sp.dok_array,
+            "LIL": sp.lil_array}
+
+        # Create a dictionary that maps each group element to its corresponding
+        # regular representation (NxN) matrix.
+        reg_rep = dict()
+        for k in range(N):
+            c_k = np.zeros((N, N))
+            for i in range(N):
+                for j in range(N):
+                    c_k[i][j] = np.dot(B[i].transpose(), V(self.op(A[k], Vinv(B[j]))))
+            if sparse in sparse_array_classes:
+                reg_rep[A[k]] = sparse_array_classes[sparse](c_k, dtype=int)
+            else:
+                reg_rep[A[k]] = c_k
+
+        # Create a function that takes a group element and returns the corresponding regular
+        # representation matrix, using the dictionary created above.
+        def element_to_array(elem):
+            return reg_rep[elem]
+
+        # Create a function that turns a 2-dimensional nd.array into a tuple of tuples,
+        # for use as a dictionary key. This works for both dense and sparse arrays.
+        def array_to_tuple(arr):
+            return tuple(zip(*arr.nonzero()))
+
+        # Create a reverse dictionary that maps each regular representation matrix (in tuple form)
+        # to its corresponding group element.
+        inv_reg_rep = {array_to_tuple(arr): key for key, arr in reg_rep.items()}
+
+        # Create a function that takes a regular representation matrix and returns the corresponding
+        # group element, using the reverse dictionary created above.
+        def array_to_element(arr):
+            return inv_reg_rep[array_to_tuple(arr)]
+
+        return reg_rep, inv_reg_rep, element_to_array, array_to_element
+
+    def verify_regular_representation(self, elem_to_arr):
+        """Verifies that rr(a) x rr(b) == rr(a * b), for all elements a & b of the group,
+        where rr is the regular representation (maps group elements to reg reps), x is matrix
+        multiplication, and * is the group operation.
+        """
+        return all([np.array_equal(np.dot(elem_to_arr(a), elem_to_arr(b)), elem_to_arr(self.op(a, b)))
+                    for a in self
+                    for b in self])
 
     # ---------------------
     # Monoid Isomorphisms

@@ -666,14 +666,16 @@ class Monoid(Semigroup):
 
         return reg_rep, inv_reg_rep, element_to_array, array_to_element
 
-    def verify_regular_representation(self, elem_to_arr):
-        """Verifies that rr(a) x rr(b) == rr(a * b), for all elements a & b of the group,
-        where rr is the regular representation (maps group elements to reg reps), x is matrix
-        multiplication, and * is the group operation.
+    def verify_regular_representation(self, elem_to_arr, arr_to_elem):
+        """Verifies that the regular representation satisfies the two requirements of it. This requires
+        that the regular representation use dense matrices, NOT sparse matrices.
         """
-        return all([np.array_equal(np.dot(elem_to_arr(a), elem_to_arr(b)), elem_to_arr(self.op(a, b)))
-                    for a in self
-                    for b in self])
+        return ((self.identity == arr_to_elem(np.eye(self.order, dtype=int)))  # e == Vinv( identity_matrix )
+                and
+                # V(a) x V(b) == V(a * b)
+                all([np.array_equal(np.dot(elem_to_arr(a), elem_to_arr(b)), elem_to_arr(self.op(a, b)))
+                     for a in self
+                     for b in self]))
 
     # ---------------------
     # Monoid Isomorphisms

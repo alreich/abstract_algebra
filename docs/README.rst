@@ -43,6 +43,9 @@ elements**.
 -  Groups, Rings, and Fields can be used to construct Modules and Vector
    Spaces, including n-dimensional Modules and Vector Spaces using the
    direct products of Rings and Fields, resp.
+-  The Regular Representation of a Monoid, Group, or the additive
+   abelian Group of a Ring or Field, can be computed in either dense or
+   sparse matrix form.
 
 Installation
 ------------

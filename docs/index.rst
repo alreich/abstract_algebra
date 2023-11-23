@@ -12,6 +12,7 @@ User Guide
     groups_etc
     rings_and_fields
     vectors
+    reg_rep
 
 API Reference
 =============

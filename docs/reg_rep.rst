@@ -32,7 +32,7 @@ operators with the following properties:
    which the linear operators act
 -  :math:`V(a_i) \cdot V(a_j) = V(a_i \circ a_j)` for all
    :math:`a_i, a_j \in A`. That is, the group multiplication law,
-   “:math:`\circ`”, is mapped onto the matrix multiplication law,
+   “:math:`\circ`”, is mapped onto the operator multiplication law,
    “:math:`\cdot`”.
 
 The regular representation of a group is a mapping of each group element
@@ -52,8 +52,8 @@ The following algorithm for computing a regular representation was
 adapted from [Huang, 2012].
 
 Let :math:`G = \langle A, \circ \rangle`, be a group, where
-:math:`A = \{a_0, a_1, \dots , a_{n - 1}\}` is the set of the group’s
-elements, :math:`a_0 = e`, and :math:`\circ` is its binary operator.
+:math:`A = \{a_0, a_1, \dots , a_{n - 1}\}` is the group’s set of
+elements, :math:`a_0 = e`, and “:math:`\circ`” is its binary operator.
 
 Also, let :math:`B = \{\hat{b}_0, \hat{b}_1, \dots , \hat{b}_{n-1} \}`
 be the following set of :math:`nx1` vectors:
@@ -63,7 +63,7 @@ be the following set of :math:`nx1` vectors:
 Define the a bijection between :math:`A` and :math:`B` as follows:
 :math:`V(a_i) = \hat{b}_i` for :math:`i = 0, \dots , n - 1`.
 
-Let :math:`\cdot` denote matrix-vector multiplication, and define the
+Let “:math:`\cdot`” denote matrix-vector multiplication, and define the
 :math:`nxn` matrix,
 
 :math:`C_k = (c^k_{ij})_{i,j=0,\dots,n-1}`
@@ -220,8 +220,8 @@ Here is an example function call using the element-to-array function:
 
 
 
-And, here’s an example of the array-to-element function that goes in the
-reverse direction:
+And, here’s an example of the array-to-element function, that goes in
+the reverse direction:
 
 .. code:: ipython3
 
@@ -382,6 +382,9 @@ The :math:`V_4` group is #7 in the list above:
 Example: A Monoid
 -----------------
 
+This example illustrates the regular representation method applied to a
+monoid.
+
 .. code:: ipython3
 
     >>> M6 = alg.generate_commutative_monoid(6)
@@ -476,24 +479,19 @@ Example: A Monoid
 
 
 
-Sparse Matrix Output (Optional)
--------------------------------
-
-The following updated implementation includes a sparse matrix option.
-
-By default, the matrices output by the reguarl representation method are
-dense arrays. SciPy sparse arrays can be output instead, by setting the
-input variable, sparse, to one of the following seven strings: “BSR”,
-“COO”, “CSC”, “CSR”, “DIA”, “DOK”, or “LIL”. Each one of the seven
-strings corresponds to one of the seven classes of sparse array
-supported by SciPy.
-
 Example: Sparse Matrix Output
 -----------------------------
 
+Sparse matrix output is supported, but optional. By default, the
+matrices output by the regular representation method are dense arrays.
+SciPy sparse arrays can be output instead, by setting the input
+variable, sparse, to one of the following seven strings: “BSR”, “COO”,
+“CSC”, “CSR”, “DIA”, “DOK”, or “LIL”. Each one of the seven strings
+corresponds to one of the seven classes of sparse array supported by
+SciPy.
+
 This example reuses the cyclic group, :math:`Z_4`, to demonstrate the
-Compressed Sparse Column (CSC) sparse matrix output, which is one of the
-seven sparse matrix formats supported by SciPy.
+Compressed Sparse Column (CSC) sparse matrix output.
 
 .. code:: ipython3
 

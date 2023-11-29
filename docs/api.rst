@@ -171,6 +171,16 @@ Permutations
     :members:
     :undoc-members:
 
+Abstract Matrix
+---------------
+
+.. autoclass:: abstract_matrix.AbstractMatrix
+    :members:
+    :undoc-members:
+
+.. autofunction:: abstract_matrix.array_determinant
+.. autofunction:: abstract_matrix.array_cofactor
+
 Examples
 --------
 

@@ -22,6 +22,7 @@ import math
 
 from cayley_table import CayleyTable
 from permutations import Perm
+# from abstract_matrix import AbstractMatrix
 
 
 class FiniteOperator:

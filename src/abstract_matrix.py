@@ -73,14 +73,16 @@ class AbstractMatrix:
     def __mul__(self, other):  # Matrix multiplication using Ring operations
         """Return the product of two abstract matrices."""
         # X * Y
-        xarr = self.__array
-        yarr = other.__array
+        xarr  = self.__array
         xrows = self.nrows()
         xcols = self.ncols()
+        yarr  = other.array()
         yrows = other.nrows()
         ycols = other.ncols()
         if xcols == yrows:
-            if self.__ring == other.__ring:
+            print(self.__ring)
+            print(other.ring())
+            if self.__ring == other.ring():
                 ring = self.__ring
                 product = np.full((xrows, ycols), ring.zero, dtype='U32')
                 for i in range(xrows):
@@ -88,7 +90,7 @@ class AbstractMatrix:
                         for k in range(xcols):
                             product[i, j] = ring.add(product[i, j], ring.mult(xarr[i, k], yarr[k, j]))
             else:
-                raise ValueError("The array algebras must be equal")
+                raise ValueError(f"The array algebras must be equal: {self.ring().name} != {other.ring().name}")
         else:
             raise ValueError(f"The array shapes are incompatible: {xcols} columns vs {yrows} rows")
         return AbstractMatrix(product, ring)

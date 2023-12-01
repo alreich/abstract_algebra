@@ -38,26 +38,32 @@ class AbstractMatrix:
                 rand_array[i, j] = ring.elements[rand_indices[i, j]]
         return cls(rand_array, ring)
 
+    @property
     def array(self):
         """Returns the abstract matrix's numpy array."""
         return self.__array
 
+    @property
     def shape(self):
         """Returns the shape of the abstract matrix's numpy array"""
         return self.__array.shape
 
+    @property
     def nrows(self):
         """Returns the number of rows in the abstract matrix's numpy array"""
         return self.__array.shape[0]
 
+    @property
     def ncols(self):
         """Returns the number of columns in the abstract matrix's numpy array"""
         return self.__array.shape[1]
 
+    @property
     def algebra(self):
         """Returns the ring, over which the abstract matrix is defined."""
         return self.__ring
 
+    @property
     def ring(self):
         """Returns the ring, over which the abstract matrix is defined."""
         return self.__ring
@@ -74,15 +80,13 @@ class AbstractMatrix:
         """Return the product of two abstract matrices."""
         # X * Y
         xarr  = self.__array
-        xrows = self.nrows()
-        xcols = self.ncols()
-        yarr  = other.array()
-        yrows = other.nrows()
-        ycols = other.ncols()
+        xrows = self.nrows
+        xcols = self.ncols
+        yarr  = other.array
+        yrows = other.nrows
+        ycols = other.ncols
         if xcols == yrows:
-            print(self.__ring)
-            print(other.ring())
-            if self.__ring == other.ring():
+            if self.__ring == other.ring:
                 ring = self.__ring
                 product = np.full((xrows, ycols), ring.zero, dtype='U32')
                 for i in range(xrows):
@@ -90,7 +94,7 @@ class AbstractMatrix:
                         for k in range(xcols):
                             product[i, j] = ring.add(product[i, j], ring.mult(xarr[i, k], yarr[k, j]))
             else:
-                raise ValueError(f"The array algebras must be equal: {self.ring().name} != {other.ring().name}")
+                raise ValueError(f"The array algebras must be equal: {self.ring.name} != {other.ring.name}")
         else:
             raise ValueError(f"The array shapes are incompatible: {xcols} columns vs {yrows} rows")
         return AbstractMatrix(product, ring)
@@ -158,14 +162,20 @@ class AbstractMatrix:
         """
         if scalar not in self.__ring.elements:
             raise ValueError(f"{scalar} is not one of the matrix algebra elements")
-        array = self.copy().array()
-        for i in range(self.nrows()):
-            for j in range(self.ncols()):
+        array = self.copy().array
+        for i in range(self.nrows):
+            for j in range(self.ncols):
                 if left:
                     array[i, j] = self.__ring.mult(scalar, array[i, j])  # scalar * self
                 else:
                     array[i, j] = self.__ring.mult(array[i, j], scalar)  # self * scalar
         return AbstractMatrix(array, self.__ring)
+
+    def matrix_inverse(self):
+        det = self.determinant()
+        cof = self.cofactor_matrix()
+        adj = cof.transpose()
+        return adj.scalar_mult(self.ring.inv(det))
 
 
 def array_determinant(array, ring):
@@ -196,7 +206,7 @@ def array_cofactor(array, ring):
     """Returns the cofactor array of an array of ring elements."""
     nrows = array.shape[0]
     ncols = array.shape[1]
-    cof = AbstractMatrix.zeros(array.shape, ring).array()
+    cof = AbstractMatrix.zeros(array.shape, ring).array
     for i in range(nrows):
         for j in range(ncols):
             arr1 = np.delete(array, i, 0)

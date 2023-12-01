@@ -795,7 +795,8 @@ class Group(Monoid):
         return [partition[0] for partition in partitions]
 
     # This 'about' method differs from the one in SingleElementSetAlgebra in that it prints out
-    # more detailed information about elements.  It would be nice to combine the two someday.
+    # more detailed information about elements.
+    # TODO: It would be nice to combine the two someday.
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Group."""
         print(f"\n** {self.__class__.__name__} **")
@@ -836,8 +837,8 @@ class Group(Monoid):
 def partition_into_isomorphic_lists(list_of_groups):
     """Partition the list of groups into sub-lists of groups that are isomorphic to each other.
     The purpose of this function is to operate on the proper subgroups of a group to determine
-    the unique subgroups, up to isomorphism."""
-
+    the unique subgroups, up to isomorphism.
+    """
     def iso_and_not_iso(gp, gps):
         """Partition the list of groups, gps, into two lists, those that are isomorphic to gp
         and those that are not."""
@@ -853,7 +854,8 @@ def partition_into_isomorphic_lists(list_of_groups):
     def aux(result, remainder):
         """Recursively partition 'remainder' into lists that are isomorphic to its first member of the
         remainder list and those that are not.  Then, put those that are isomorphic to the first member
-        into the 'result' list, and recurse on the remainder."""
+        into the 'result' list, and recurse on the remainder.
+        """
         if len(remainder) == 0:
             return result
         else:
@@ -867,7 +869,8 @@ def partition_into_isomorphic_lists(list_of_groups):
 
 
 def about_isomorphic_partition(alg, part):
-    """Print a summary of a particular partition of isomorphic subalgebras of an algebra."""
+    """Print a summary of a particular partition of isomorphic subalgebras of an algebra.
+    """
     size = len(part)
 
     # All the algebras in a partition are isomorphic to each other,
@@ -927,7 +930,8 @@ def about_isomorphic_partition(alg, part):
 
 def are_n(n):
     """A bit of grammar.  This function returns a string with the appropriate
-    singular or plural present indicative form of 'to be', along with 'n'."""
+    singular or plural present indicative form of 'to be', along with 'n'.
+    """
     choices = ['are no', 'is 1', f'are {n}']
     if n < 2:
         return choices[n]
@@ -962,7 +966,8 @@ def about_isomorphic_partitions(alg, partitions):
 def about_subalgebras(alg):
     """A convenience function that finds and summarizes all proper subalgebras
     of the input SingleElementSetAlgebra.  The list of isomorphic partitions is
-    returned and a summary of it is printed out."""
+    returned and a summary of it is printed out.
+    """
     alg_subs = alg.proper_subalgebras()
     partitions = partition_into_isomorphic_lists(alg_subs)
     about_isomorphic_partitions(alg, partitions)
@@ -999,8 +1004,8 @@ def generate_cyclic_group(order, identity_name="e", elem_name="a", name=None, de
 def generate_symmetric_group(n, name=None, description=None, base=1):
     """Generates a symmetric group on n elements. The 'base' is a non-negative integer
     (typically, 0 or 1), so permutations will be tuples, like (1, 2, 3, ..., n), where
-    n is the order, or (0, 1, 2, ..., n-1)."""
-
+    n is the order, or (0, 1, 2, ..., n-1).
+    """
     if name:
         nm = name
     else:
@@ -1022,7 +1027,8 @@ def generate_symmetric_group(n, name=None, description=None, base=1):
 
 def generate_powerset_group(n, name=None, description=None):
     """Generates a group on the powerset of {0, 1, 2, ..., n-1},
-    where symmetric difference is the operator."""
+    where symmetric difference is the operator.
+    """
     if name:
         nm = name
     else:
@@ -1135,6 +1141,18 @@ class Ring(Group):
                                          for elem in dp_element_names]),
                                    dp_add_table,
                                    dp_mul_table)
+
+    def __eq__(self, other):
+        if self.elements == other.elements:
+            if self.add_table == other.add_table:  # Add tables
+                if self.mult_table == other.mult_table:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
 
     @property
     def add_identity(self):
@@ -1424,11 +1442,11 @@ class Field(Ring):
         self.__mult_sub_grp.name = f"{self.name}_G"
         self.__mult_sub_grp.description = f"Multiplicative abelian Group of {self.name}"
 
-    def __eq__(self, other):
-        if super() == other and self.mult_table == other.mult_table:
-            return True
-        else:
-            return False
+    # def __eq__(self, other):
+    #     if super() == other and self.mult_table == other.mult_table:
+    #         return True
+    #     else:
+    #         return False
 
     def mult_abelian_subgroup(self):
         """Return the abelian Group defined by the Ring elements, minus the additive identity,

@@ -88,7 +88,7 @@ class AbstractMatrix:
             raise ValueError(f"{value} is not an element of {self.__ring.name}")
         return value
 
-    def __mul__(self, other):  # Matrix multiplication using Ring operations
+    def __mul__(self, other):
         """Return the product of two abstract matrices."""
         # X * Y
         xarr = self.__array
@@ -111,7 +111,7 @@ class AbstractMatrix:
             raise ValueError(f"The array shapes are incompatible: {xcols} columns vs {yrows} rows")
         return AbstractMatrix(product, ring)
 
-    def __add__(self, other):  # Matrix addition using Ring operations
+    def __add__(self, other):
         """Return the sum of two abstract matrices."""
         # X + Y
         xarr = self.__array
@@ -131,7 +131,7 @@ class AbstractMatrix:
             raise ValueError(f"The array shapes are not equal: {xshape} != {yshape}")
         return AbstractMatrix(result, ring)
 
-    def __sub__(self, other):  # Matrix subtraction using Ring operations
+    def __sub__(self, other):
         """Return the difference of two abstract matrices."""
         # X - Y
         xarr = self.__array
@@ -159,14 +159,6 @@ class AbstractMatrix:
         """Similar to 'str', but also includes the name of the ring over which the abstract matrix is defined."""
         return self.__ring.name + " Matrix:\n" + str(self.__array)
 
-    # def determinant_old(self):
-    #     """Returns the ring element that represents the determinant of the square abstract matrix"""
-    #     return array_determinant(self.__array, self.__ring)
-
-    # def cofactor_matrix_old(self):
-    #     """Returns the abstract cofactor matrix of the square abstract matrix."""
-    #     return AbstractMatrix(array_cofactor(self.__array, self.__ring), self.__ring)
-
     def scalar_mult(self, scalar, left=True):
         """Multiplies every element of an abstract array by a single element from the ring, over which
         the abstract matrix is defined. Default is left multiplication, i.e., scalar * self, otherwise
@@ -183,15 +175,8 @@ class AbstractMatrix:
                     array[i, j] = self.__ring.mult(array[i, j], scalar)  # self * scalar
         return AbstractMatrix(array, self.__ring)
 
-    def inverse(self):
-        det = self.determinant()
-        cof = self.cofactor_matrix()
-        adj = cof.transpose()
-        return adj.scalar_mult(self.ring.inv(det))
-
     def minor(self, i, j):
         """Returns the i,j_th minor of the matrix"""
-        min = None
         if 0 <= i < self.nrows:
             if 0 <= j < self.ncols:
                 arr1 = np.delete(self.array, i, 0)
@@ -236,42 +221,8 @@ class AbstractMatrix:
                     cof[i, j] = self.ring.inv(det)
         return cof
 
-
-# def array_determinant(array, ring):
-#     """Returns the determinant of a square NumPy array of ring elements."""
-#     nrows = array.shape[0]
-#     ncols = array.shape[1]
-#     if nrows != ncols:
-#         raise ValueError(f"Array must be square: ({nrows}, {ncols})")
-#     elif nrows == 1:
-#         return array[0, 0]
-#     elif nrows == 2:  # Recursion will stop here
-#         return ring.sub(ring.mult(array[0, 0], array[1, 1]), ring.mult(array[0, 1], array[1, 0]))
-#     else:
-#         # Use the Laplace expansion to recursively compute the determinant
-#         det = ring.zero  # The ring's "zero" element
-#         arr = np.delete(array, 0, 0)  # Copy array & delete first row
-#         for i in range(ncols):
-#             minor = np.delete(arr, i, 1)  # Copy arr & delete the ith column
-#             # Alternate "adding" and "subtracting", per the Laplace expansion
-#             if (-1) ** i == 1:
-#                 det = ring.add(det, ring.mult(array[0, i], array_determinant(minor, ring)))
-#             else:
-#                 det = ring.sub(det, ring.mult(array[0, i], array_determinant(minor, ring)))
-#         return det
-
-
-# def array_cofactor(array, ring):
-#     """Returns the cofactor array of an array of ring elements."""
-#     nrows = array.shape[0]
-#     ncols = array.shape[1]
-#     cof = AbstractMatrix.zeros(array.shape, ring).array
-#     for i in range(nrows):
-#         for j in range(ncols):
-#             arr1 = np.delete(array, i, 0)
-#             arr2 = np.delete(arr1, j, 1)
-#             if (-1) ** (i + j) == 1:
-#                 cof[i, j] = array_determinant(arr2, ring)
-#             else:
-#                 cof[i, j] = ring.inv(array_determinant(arr2, ring))
-#     return cof
+    def inverse(self):
+        det = self.determinant()
+        cof = self.cofactor_matrix()
+        adj = cof.transpose()
+        return adj.scalar_mult(self.ring.inv(det))

@@ -28,6 +28,19 @@ class AbstractMatrix:
         return cls(arr, ring)
 
     @classmethod
+    def identity(cls, size, ring):
+        """Create and return an abstract identity matrix using the ring's multiplicative
+        identity element, if one exists; otherwise return None."""
+        if ring.has_mult_identity():
+            id = cls.zeros((size, size), ring)
+            for i in range(size):
+                id[i, i] = ring.one
+            return id
+        else:
+            print(f"{ring.name} has no unit element for multiplication")
+            return None
+
+    @classmethod
     def random(cls, shape, ring):
         """Creates and returns an abstract matrix containing randomly chosen ring elements.
         """

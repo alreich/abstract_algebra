@@ -14,7 +14,7 @@ class CayleyTable:
     'A Cayley table describes the structure of a finite algebra by arranging
     all the possible products of all [the algebra's] elements in a square table
     reminiscent of an addition or multiplication table. Many properties of
-    [an algebra] – such as whether or not it is abelian, which elements are
+    [an algebra] - such as whether or not it is abelian, which elements are
     inverses of which elements, [etc.] – can be discovered from its Cayley table.'
     (https://en.wikipedia.org/wiki/Cayley_table)
 
@@ -33,7 +33,7 @@ class CayleyTable:
         nrows, ncols = tmp.shape
         if nrows == ncols:
             if (np.min(tmp) >= 0) and (np.max(tmp) < nrows):
-                self.__order = nrows
+                # self.__order = nrows
                 self.__table = tmp
             else:
                 raise Exception(f"All integers must be between 0 and {nrows - 1}, inclusive.")
@@ -44,21 +44,34 @@ class CayleyTable:
         return f"{self.__class__.__name__}({self.__table.tolist()})"
 
     def __str__(self):
-        n = self.__order
+        # n = self.__order
+        n = self.__table.shape[0]
         return f"<{self.__class__.__name__}, order {n}, ID:{id(self)}>"
 
-    def __eq__(self, other):
-        compare = (self.__table == other.table)
-        return compare.all()
+    # def __eq__(self, other):
+    #     compare = (self.__table == other.table)
+    #     return compare.all()
 
     def __getitem__(self, tup):
         row, col = tup
         return self.__table[row][col]
 
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other):
+        if isinstance(other, CayleyTable):
+            return self.__key() == other.__key()
+        return NotImplemented
+
+    def __key(self):
+        return tuple(self.__table.tolist())
+
     @property
     def order(self):
         """Returns the order of the table, e.g., a 3x3 table has order 3."""
-        return self.__order
+        # return self.__order
+        return self.__table.shape[0]
 
     @property
     def table(self):
@@ -107,8 +120,10 @@ class CayleyTable:
         'other', equal-sized CayleyTable.  Think of 'self' as multiplication and
         'other' as addition.
         """
-        n = self.__order
-        m = other.order
+        # n = self.__order
+        # m = other.order
+        n = self.order
+        m = self.order
         if n != m:
             raise ValueError(f"{n} != {m}, but table sizes must be the same.")
         else:
@@ -163,7 +178,7 @@ class CayleyTable:
         if self.identity() is not None:
             row_indices, col_indices = np.where(self.__table == self.identity())
             if set(row_indices) == set(col_indices):
-                if len(row_indices) == self.__order:
+                if len(row_indices) == self.order:
                     return True
                 else:
                     return False

@@ -1144,7 +1144,7 @@ class Ring(Group):
 
     def __eq__(self, other):
         if self.elements == other.elements:
-            if self.add_table == other.add_table:  # Add tables
+            if self.add_table == other.add_table:
                 if self.mult_table == other.mult_table:
                     return True
                 else:

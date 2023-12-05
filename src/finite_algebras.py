@@ -114,14 +114,14 @@ class SingleElementSetAlgebra(FiniteAlgebra):
         else:
             self.__identity = None
 
-    def __eq__(self, other):
-        if self.__elements == other.elements:  # Same elements in the same order
-            if self.__table == other.table:  # Same tables
-                return True
-            else:
-                return False
-        else:
-            return False
+    # def __eq__(self, other):
+    #     if self.__elements == other.elements:  # Same elements in the same order
+    #         if self.__table == other.table:  # Same tables
+    #             return True
+    #         else:
+    #             return False
+    #     else:
+    #         return False
 
     def __contains__(self, element):
         return element in self.__elements
@@ -237,6 +237,18 @@ class Magma(SingleElementSetAlgebra):
         super().__init__(name, description, elements, table)
         self.op = FiniteOperator(self.elements, self.identity, self.table)
         self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
+
+    def __key(self):
+        return tuple([self.elements, self.table.tolist()])
+
+    def __hash__(self):
+        return hash(self.__key)
+
+    def __eq__(self, other):
+        if isinstance(self, Magma):
+            return self.__key() == other.__key()
+        else:
+            return NotImplemented
 
     def direct_product_delimiter(self, delimiter=None):
         """If no input, then the current direct product element name delimiter will be returned (default is ':').
@@ -1142,17 +1154,29 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
+    # def __eq__(self, other):
+    #     if self.elements == other.elements:
+    #         if self.add_table == other.add_table:
+    #             if self.mult_table == other.mult_table:
+    #                 return True
+    #             else:
+    #                 return False
+    #         else:
+    #             return False
+    #     else:
+    #         return False
+
+    def __key(self):
+        return tuple([self.elements, self.table.tolist(), self.__ring_mult_table.tolist()])
+
+    def __hash__(self):
+        return hash(self.__key)
+
     def __eq__(self, other):
-        if self.elements == other.elements:
-            if self.add_table == other.add_table:
-                if self.mult_table == other.mult_table:
-                    return True
-                else:
-                    return False
-            else:
-                return False
+        if isinstance(self, Magma):
+            return self.__key() == other.__key()
         else:
-            return False
+            return NotImplemented
 
     @property
     def add_identity(self):

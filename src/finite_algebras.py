@@ -245,7 +245,7 @@ class Magma(SingleElementSetAlgebra):
         return hash(self.__key)
 
     def __eq__(self, other):
-        if isinstance(self, Magma):
+        if isinstance(other, Magma):
             return self.__key() == other.__key()
         else:
             return NotImplemented
@@ -1173,7 +1173,7 @@ class Ring(Group):
         return hash(self.__key)
 
     def __eq__(self, other):
-        if isinstance(self, Magma):
+        if isinstance(other, Ring):
             return self.__key() == other.__key()
         else:
             return NotImplemented

@@ -172,6 +172,18 @@ class AbstractMatrix:
         """Similar to 'str', but also includes the name of the ring over which the abstract matrix is defined."""
         return self.__ring.name + " Matrix:\n" + str(self.__array)
 
+    def __key(self):
+        return tuple(self.__array.tolist())
+
+    def __hash__(self):
+        return hash(self.__key)
+
+    def __eq__(self, other):
+        if isinstance(other, AbstractMatrix):
+            return self.__key() == other.__key() and self.__ring == other.__ring
+        else:
+            return NotImplemented
+
     def scalar_mult(self, scalar, left=True):
         """Multiplies every element of an abstract array by a single element from the ring, over which
         the abstract matrix is defined. Default is left multiplication, i.e., scalar * self, otherwise

@@ -104,6 +104,11 @@ class TestGroup(TestCase):
         self.ps3 = generate_powerset_group(3, "PS3", "Powerset group")
         self.v4 = make_finite_algebra('V4', 'Klein-4 group', ['e', 'h', 'v', 'r'],
                                       [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
+        self.v4x = make_finite_algebra('V4', 'Klein-4 group', ['e', 'h', 'v', 'r'],
+                                       [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
+
+    def test_group_equality(self):
+        self.assertTrue(self.v4 == self.v4x)
 
     def test_elements_accessor_ps3(self):
         self.assertEqual(self.ps3.elements, ['{}', '{0}', '{1}', '{2}', '{0, 1}',
@@ -131,8 +136,13 @@ class TestGroup(TestCase):
     def test_elements_accessor_z4(self):
         self.assertEqual(self.z4.elements, ['e', 'a', 'a^2', 'a^3'])
 
-    def test_table_accessor_z4(self):
-        self.assertEqual(self.z4.table, CayleyTable([[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]))
+    def test_table_accessor_z4_1(self):
+        self.assertEqual(self.z4.table,
+                         CayleyTable([[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]))
+
+    def test_table_accessor_z4_2(self):
+        self.assertEqual(self.z4.table.tolist(),
+                         [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]])
 
     def test_is_associative_z4(self):
         self.assertEqual(self.z4.is_associative(), True)
@@ -177,7 +187,6 @@ class TestGroup(TestCase):
 class TestRing(TestCase):
 
     def setUp(self) -> None:
-
         self.rng = make_finite_algebra('Powerset Ring 2',
                                        'Ring on powerset of {0, 1}',
                                        ['{}', '{0}', '{1}', '{0, 1}'],
@@ -190,6 +199,10 @@ class TestRing(TestCase):
                                         [0, 0, 2, 2],
                                         [0, 1, 2, 3]]
                                        )
+        self.rng2 = generate_powerset_group(2)
+
+    def test_ring_equality(self):
+        self.assertTrue(self.rng == self.rng2)
 
     def test_ring_elements(self):
         self.assertEqual(self.rng.elements, ['{}', '{0}', '{1}', '{0, 1}'])
@@ -214,3 +227,49 @@ class TestRing(TestCase):
 
     def test_ring_zero_divisors(self):
         self.assertEqual(self.rng.zero_divisors(), ['{0}', '{1}'])
+
+
+class TestField(TestCase):
+
+    def setUp(self) -> None:
+
+        self.f4_elems = ['0', '1', 'a', '1+a']
+
+        self.f4_add_table = [['0', '1', 'a', '1+a'],
+                             ['1', '0', '1+a', 'a'],
+                             ['a', '1+a', '0', '1'],
+                             ['1+a', 'a', '1', '0']]
+
+        self.f4_mult_table = [['0', '0', '0', '0'],
+                              ['0', '1', 'a', '1+a'],
+                              ['0', 'a', '1+a', '1'],
+                              ['0', '1+a', '1', 'a']]
+
+        self.f4 = make_finite_algebra('F4',
+                                      'Field with 4 elements',
+                                      self.f4_elems,
+                                      self.f4_add_table,
+                                      self.f4_mult_table
+                                      )
+
+        self.f4x = make_finite_algebra('F4X',
+                                       'Field with 4 elements EXTRA COPY',
+                                       self.f4_elems,
+                                       self.f4_add_table,
+                                       self.f4_mult_table
+                                       )
+
+    def test_field_equality(self):
+        self.assertTrue(self.f4 == self.f4x)
+
+    def test_mult_inv(self):
+        self.assertEqual(self.f4.mult_inv('a'), '1+a')
+
+    def test_div(self):
+        self.assertEqual(self.f4.div('1', '1+a'), 'a')
+
+    def test_mult_abelian_subgroup(self):
+        self.subgrp = self.f4.mult_abelian_subgroup()
+        self.assertEqual(self.subgrp.elements, ['1', 'a', '1+a'])
+        self.assertEqual(self.subgrp.table.tolist(), [[0, 1, 2], [1, 2, 0], [2, 0, 1]])
+

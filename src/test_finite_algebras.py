@@ -11,12 +11,17 @@ from finite_algebras import *
 class TestMagma(TestCase):
 
     def setUp(self) -> None:
-        self.rps = Magma('RPS', "Rock, Paper, Scissors", ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+        self.rps = Magma('RPS', "Rock, Paper, Scissors",
+                         ['r', 'p', 's'],
+                         [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
 
     def test_elements(self):
         self.assertEqual(self.rps.elements, ['r', 'p', 's'])
 
-    def test_table(self):
+    def test_table1(self):
+        self.assertEqual(self.rps.table.tolist(), [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+
+    def test_table2(self):
         self.assertEqual(self.rps.table, CayleyTable([[0, 1, 0], [1, 1, 2], [0, 2, 2]]))
 
     def test_rps_is_not_associative(self):
@@ -54,7 +59,8 @@ class TestSemigroup(TestCase):
                           [3, 0, 3, 0, 3, 0],
                           [4, 1, 4, 1, 4, 1],
                           [5, 2, 5, 2, 5, 2]]
-        self.ex141_sg = Semigroup('ex141', 'foobar', ['a', 'b', 'c', 'd', 'e', 'f'], self.ex141_tbl)
+        self.ex141_sg = Semigroup('ex141', 'foobar',
+                                  ['a', 'b', 'c', 'd', 'e', 'f'], self.ex141_tbl)
 
     def test_rps_is_associative(self):
         self.assertEqual(self.ex141_sg.is_associative(), True)
@@ -75,7 +81,18 @@ class TestSemigroup(TestCase):
     def test_fail_to_create_semigroup_from_rps(self):
         """The RPS magma can't also be made into a semigroup."""
         with self.assertRaises(ValueError):
-            Semigroup('rps', 'foobar', ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+            Semigroup('rps', 'foobar', ['r', 'p', 's'],
+                      [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+
+    def test_equality_of_semigroups(self):
+        sg2 = Semigroup(
+            'ex141',
+            'foobar',
+            ['a', 'b', 'c', 'd', 'e', 'f'],
+            [[0, 3, 0, 3, 0, 3], [1, 4, 1, 4, 1, 4], [2, 5, 2, 5, 2, 5], [3, 0, 3, 0, 3, 0], [4, 1, 4, 1, 4, 1],
+             [5, 2, 5, 2, 5, 2]]
+        )
+        self.assertEqual(self.ex141_sg, sg2)
 
 
 class TestGroup(TestCase):

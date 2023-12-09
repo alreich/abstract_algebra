@@ -164,13 +164,13 @@ class AbstractMatrix:
             raise ValueError(f"The array shapes are not equal: {xshape} != {yshape}")
         return AbstractMatrix(result, ring)
 
-    def __str__(self):
-        """Returns the string representation of the numpy array contained in the abstract matrix."""
-        return str(self.__array)
+    # def __str__(self):
+    #     """Return the string representation of the numpy array."""
+    #     return str(self.__array)
 
     def __repr__(self):
-        """Similar to 'str', but also includes the name of the ring over which the abstract matrix is defined."""
-        return self.__ring.name + " Matrix:\n" + str(self.__array)
+        """Return the numpy array."""
+        return str(self.__array)
 
     def __key(self):
         return tuple(self.__array.tolist())

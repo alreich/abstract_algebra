@@ -13,6 +13,7 @@ User Guide
     rings_and_fields
     vectors
     reg_rep
+    abstract_matrices_part1
 
 API Reference
 =============

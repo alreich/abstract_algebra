@@ -286,6 +286,24 @@ class Magma(SingleElementSetAlgebra):
             raise ValueError(f"n = {n}, but the power must be a positive integer.")
         return result
 
+    def element_to_power(self, elem, n, left_associative=True):
+        """Return the n_th power of the given element. For non-associative algebras (Magmas),
+        the default is for products to be associated from the left, e.g.,  b^4 = ((b * b) * b) * b.
+        Set left_associative to False, to associate from the right instead."""
+        result = elem
+        if elem in self.elements:
+            if isinstance(n, int) and n > 0:
+                for _ in range(n - 1):
+                    if left_associative:
+                        result = self.op(result, elem)
+                    else:
+                        result = self.op(elem, result)
+            else:
+                raise ValueError(f"n = {n}, but the power must be a positive integer.")
+        else:
+            raise ValueError(f"{elem} is not an element of {self.name}.")
+        return result
+
     def reorder_elements(self, reordered_elements):
         """Return a new group made from this one with the elements reordered."""
         n = self.order

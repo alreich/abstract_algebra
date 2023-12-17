@@ -276,8 +276,9 @@ class Magma(SingleElementSetAlgebra):
                                    list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                                    dp_mult_table)
 
-    def power(self, n):
-        """Return the direct product of this algebra with itself, n times."""
+    def __pow__(self, n, modulo=None):
+        """Return the direct product of this algebra with itself, n times.
+        Ignore the modulo argument for algebras."""
         result = self
         if isinstance(n, int) and n > 0:
             for _ in range(n - 1):
@@ -285,6 +286,9 @@ class Magma(SingleElementSetAlgebra):
         else:
             raise ValueError(f"n = {n}, but the power must be a positive integer.")
         return result
+
+    # def __pow__(self, n, modulo=None):
+    #     return self.power(n)
 
     def element_to_power(self, elem, n, left_associative=True):
         """Return the n_th power of the given element. n must be an integer. If n == 0, and an
@@ -1176,8 +1180,10 @@ class Ring(Group):
             dp_add_table_row = list()  # Start new rows in the add and mult tables
             dp_mul_table_row = list()
             for b in dp_element_names:
-                dp_add_table_row.append(dp_element_names.index((self.add(a[0], b[0]), other.add(a[1], b[1]))))
-                dp_mul_table_row.append(dp_element_names.index((self.mult(a[0], b[0]), other.mult(a[1], b[1]))))
+                dp_add_table_row.append(dp_element_names.index((self.add(a[0], b[0]),
+                                                                other.add(a[1], b[1]))))
+                dp_mul_table_row.append(dp_element_names.index((self.mult(a[0], b[0]),
+                                                                other.mult(a[1], b[1]))))
             dp_add_table.append(dp_add_table_row)  # Append the new rows to each table
             dp_mul_table.append(dp_mul_table_row)
         return make_finite_algebra(dp_name,
@@ -1646,7 +1652,8 @@ class NDimensionalModule(Module):
         self.__dimensions = n
 
         # Group from the n-fold direct product of the Field with itself
-        group = ring.power(n)
+        # group = ring.power(n)
+        group = ring ** n
 
         super().__init__(name, desc, ring, group, module_sv_mult(ring))
 
@@ -1675,7 +1682,8 @@ class NDimensionalVectorSpace(VectorSpace):
         self.__dimensions = n
 
         # Group from the n-fold direct product of the Field with itself
-        group = field.power(n)
+        # group = field.power(n)
+        group = field ** n
 
         super().__init__(name, desc, field, group, module_sv_mult(field))
 

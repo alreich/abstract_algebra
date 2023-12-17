@@ -287,19 +287,34 @@ class Magma(SingleElementSetAlgebra):
         return result
 
     def element_to_power(self, elem, n, left_associative=True):
-        """Return the n_th power of the given element. For non-associative algebras (Magmas),
+        """Return the n_th power of the given element. n must be an integer. If n == 0, and an
+        identity element exists, then it will be returned; otherwise, a ValueError is raised.
+        If n < 0, and the algebra has inverses, then the inverse of the element raised to the
+        absolute value of the power is returned, e.g., b^-4 = inv(b^4). If n < 0 and the algebra
+        does not have inverses, then a ValueError is raised. For non-associative algebras (Magmas),
         the default is for products to be associated from the left, e.g.,  b^4 = ((b * b) * b) * b.
-        Set left_associative to False, to associate from the right instead."""
+        Set left_associative to False, to associate from the right, instead."""
         result = elem
         if elem in self.elements:
-            if isinstance(n, int) and n > 0:
-                for _ in range(n - 1):
-                    if left_associative:
-                        result = self.op(result, elem)
+            if isinstance(n, int):  # Or, raise an exception if not an integer
+                if n == 0:
+                    if self.has_identity():  # Or, raise an exception if no identity exists
+                        result = self.identity
                     else:
-                        result = self.op(elem, result)
+                        raise ValueError(f"n = {n}. But, {self.name} does not have an identity element.")
+                elif n > 0:
+                    for _ in range(n - 1):
+                        if left_associative:
+                            result = self.op(result, elem)
+                        else:
+                            result = self.op(elem, result)
+                elif n < 0:  # Or, raise an exception if inverses do not exists
+                    if self.has_inverses():
+                        result = self.inv(self.element_to_power(elem, abs(n), left_associative))
+                    else:
+                        raise ValueError(f"n = {n}. But, {self.name} does not have inverses.")
             else:
-                raise ValueError(f"n = {n}, but the power must be a positive integer.")
+                raise ValueError(f"n = {n}. The power must be an integer.")
         else:
             raise ValueError(f"{elem} is not an element of {self.name}.")
         return result

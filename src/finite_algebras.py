@@ -869,7 +869,8 @@ class Group(Monoid):
             idx_elem = self.elements.index(elem)
             inv_elem = self.inv(elem)
             ord_elem = self.element_order(elem)
-            print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
+            # print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
+            print(f"{idx_elem :>{spc}} {repr(elem) :>{spc}} {repr(inv_elem) :>{spc}} {ord_elem :>{spc}}")
         size = len(self.elements)
         if size <= max_size:
             if use_table_names:

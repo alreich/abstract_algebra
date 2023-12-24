@@ -63,12 +63,12 @@ class AbstractMatrix:
 
     @property
     def nrows(self):
-        """Returns the number of rows in the abstract matrix's numpy array"""
+        """Returns the number of rows of the abstract matrix"""
         return self.__array.shape[0]
 
     @property
     def ncols(self):
-        """Returns the number of columns in the abstract matrix's numpy array"""
+        """Returns the number of columns of the abstract matrix"""
         return self.__array.shape[1]
 
     @property
@@ -165,9 +165,12 @@ class AbstractMatrix:
         return AbstractMatrix(result, ring)
 
     def __str__(self):
+        """Returns a pretty printed representation of the abstract matrix's internal array."""
         return str(self.__array)
 
     def __repr__(self):
+        """Returns a copy-and-paste-able representation of the matrix's internal array,
+        NOT a copy-and-paste-able representation of the abstract matrix."""
         return np.array2string(self.__array, separator=', ')
 
     def __key(self):
@@ -183,7 +186,7 @@ class AbstractMatrix:
             return NotImplemented
 
     def scalar_mult(self, scalar, left=True):
-        """Multiplies every element of an abstract array by a single element from the ring, over which
+        """Multiplies every element of an abstract matrix by a single element from the ring, over which
         the abstract matrix is defined. Default is left multiplication, i.e., scalar * self, otherwise
         right multiplication is used, i.e., self * scalar.
         """
@@ -211,7 +214,7 @@ class AbstractMatrix:
         return AbstractMatrix(arr2, self.__ring)
 
     def determinant(self):
-        """Returns the determinant of a square NumPy array of ring elements."""
+        """Returns the determinant of a square abstract matrix."""
         if self.nrows != self.ncols:
             raise ValueError(f"Array must be square: ({self.nrows}, {self.ncols})")
         elif self.nrows == 1:
@@ -233,7 +236,7 @@ class AbstractMatrix:
         return det
 
     def cofactor_matrix(self):
-        """Returns the cofactor array of an array of ring elements."""
+        """Returns the cofactor matrix of an abstract matrix"""
         cof = AbstractMatrix.zeros(self.shape, self.__ring)
         for i in range(self.nrows):
             for j in range(self.ncols):
@@ -245,6 +248,10 @@ class AbstractMatrix:
         return cof
 
     def inverse(self):
+        """If the abstract matrix is defined over a field and the matrix's determinant is equal
+        to the field's multiplicative identity, '1', then this method returns the matrix's inverse,
+        otherwise it returns an inverse-like matrix that, when multiplied by the original matrix,
+        yields a diagonal matrix (not necessarily an abstract identity matrix)."""
         det = self.determinant()
         cof = self.cofactor_matrix()
         adj = cof.transpose()

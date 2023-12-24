@@ -853,7 +853,7 @@ class Group(Monoid):
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
         print(f"Order: {self.order}")
-        print(f"Identity: {self.identity}")
+        print(f"Identity: {repr(self.identity)}")
         # print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
         generators = self.is_cyclic()
@@ -870,6 +870,7 @@ class Group(Monoid):
             inv_elem = self.inv(elem)
             ord_elem = self.element_order(elem)
             # print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
+            # repr is used here to make strings explicit by printing out their quotation marks.
             print(f"{idx_elem :>{spc}} {repr(elem) :>{spc}} {repr(inv_elem) :>{spc}} {ord_elem :>{spc}}")
         size = len(self.elements)
         if size <= max_size:
@@ -1194,18 +1195,6 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
-    # def __eq__(self, other):
-    #     if self.elements == other.elements:
-    #         if self.add_table == other.add_table:
-    #             if self.mult_table == other.mult_table:
-    #                 return True
-    #             else:
-    #                 return False
-    #         else:
-    #             return False
-    #     else:
-    #         return False
-
     def __key(self):
         return tuple([self.elements, self.table.tolist(), self.__ring_mult_table.tolist()])
 
@@ -1320,7 +1309,7 @@ class Ring(Group):
         super().about(max_size, use_table_names)
 
         if self.mult_identity is not None:
-            print(f"Mult. Identity: {self.mult_identity}")
+            print(f"Mult. Identity: {repr(self.mult_identity)}")
         else:
             print(f"Mult. Identity: None")
 

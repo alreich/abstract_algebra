@@ -136,12 +136,48 @@ class SingleElementSetAlgebra(FiniteAlgebra):
     def __str__(self):
         return f"<{self.__class__.__name__}:{self.name}, ID:{id(self)}>"
 
+    # deepcopy is deprecated
     def deepcopy(self):
         """Returns a deep copy of this algebra."""
         return self.__class__(copy.deepcopy(self.name),
                               copy.deepcopy(self.description),
                               copy.deepcopy(self.elements),
                               copy.deepcopy(self.table.tolist()))
+
+    def copy_algebra(self, new_elements=False, new_name=False, new_description=False):
+        """Creates a copy of the input algebra where, optionally, the existing element
+        list can be replaced by a new element list. Same for the name & description.
+        If there is a new element list, then it must be a list of strings and have
+        the same length as the existing one.
+        """
+        if new_name:
+            name = new_name
+        else:
+            name = copy.deepcopy(self.name)
+
+        if new_description:
+            desc = new_description
+        else:
+            desc = copy.deepcopy(self.description)
+
+        if new_elements:
+            if all(map(lambda x: isinstance(x, str), new_elements)):
+                if len(set(new_elements)) == self.order:
+                    elems = new_elements
+                else:
+                    raise ValueError(f"New element set must be same size as existing one.")
+            else:
+                raise ValueError(f"All elements must be strings.")
+        else:
+            elems = copy.deepcopy(self.elements)
+
+        if isinstance(self, Ring):
+            return make_finite_algebra(name, desc, elems,
+                                       copy.deepcopy(self.table.tolist()),
+                                       copy.deepcopy(self.mult_table.tolist()))
+        else:
+            return make_finite_algebra(name, desc, elems,
+                                       copy.deepcopy(self.table.tolist()))
 
     @property
     def elements(self):

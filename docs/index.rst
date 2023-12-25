@@ -14,6 +14,7 @@ User Guide
     vectors
     reg_rep
     matrices
+    resources
 
 API Reference
 =============

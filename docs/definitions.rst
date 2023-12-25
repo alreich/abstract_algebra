@@ -74,7 +74,6 @@ Regarding a **Ring’s** Semigroup, :math:`\langle S, \cdot \rangle`:
 For examples, see the sections **“Groups, Monoids, Semigroups, &
 Magmas”** and **“Rings and Fields”**.
 
-
 Before proceeding, we’ll briefly discuss a motivation for the definition
 of a Group.
 
@@ -259,6 +258,16 @@ Let :math:`G = \langle S, \circ \rangle` be a Group, then for any pair
 of elements, :math:`a, b \in S`, the product,
 :math:`a \circ b \circ a^{-1} \circ b^{-1}`, denoted :math:`[a,b]`, is
 called a **commutator** of the Group.
+
+Note that :math:`a \circ b \circ a^{-1} \circ b^{-1} = e` if and only if
+:math:`ab = ba`. The following quote helps explain the motivation behind
+the definition of commutators:
+
+   “Thus, in an abelian group all the commutators are equal to e. In a
+   group which is not abelian, the number of distinct commutators may be
+   regarded as a measure of the extent to which G departs from being
+   commutative. (The fewer the commutators, the closer the group is to
+   being an abelian group.)” – [Pinter 1982]
 
 If :math:`G` is abelian, then the identity element, :math:`e`, is the
 only commutator in :math:`G`, because :math:`[a,b] = e` for all possible

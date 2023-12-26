@@ -1716,11 +1716,12 @@ def element_map(algebra):
 
 class Algebra:
     """Creates a context manager for doing finite algebra calculations.
-    Example:
+
     >>> s3 = generate_symmetric_group(3)
     >>> with Algebra(s3) as f:
     >>>     print(f['(2, 1, 3)'] + f['(3, 2, 1)'])
-    >>> (3, 1, 2)
+    (3, 1, 2)
+
     """
 
     def __init__(self, algebra):

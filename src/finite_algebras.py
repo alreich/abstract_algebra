@@ -1588,6 +1588,151 @@ def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
     return make_finite_algebra(nm, desc, elements, add_table, mult_table)
 
 
+# ==============
+# Element Class
+# ==============
+class Element:
+    """Elements of the algebras here must be strings. This class turns a string element,
+    along with its algebra, into an object with infix arithmetic operators, +, -, *, /, **,
+    etc.
+    """
+
+    def __init__(self, name, algebra):
+
+        self.__can_add = False
+        self.__can_subtract = False
+        self.__can_multiply = False
+        self.__can_divide = False
+
+        if isinstance(algebra, Magma):
+            self.__algebra = algebra
+            self.__can_add = True
+            self.__can_subtract = self.__algebra.has_inverses()
+            if isinstance(algebra, Ring):
+                self.__can_multiply = True
+                if isinstance(algebra, Field):
+                    self.__can_divide = True
+        else:
+            raise ValueError(f"algebra must be a FiniteAlgebra")
+
+        if isinstance(name, str):
+            if name in self.__algebra:
+                self.__name = name
+            else:
+                raise ValueError(f"name must be an element of algebra")
+        else:
+            raise ValueError(f"name must be a string")
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def algebra(self):
+        return self.__algebra
+
+    @property
+    def can_add(self):
+        return True
+
+    @property
+    def can_subtract(self):
+        return self.__can_subtract
+
+    @property
+    def can_multiply(self):
+        return self.__can_multiply
+
+    @property
+    def can_divide(self):
+        return self.__can_divide
+
+    def __str__(self):
+        return self.__name
+
+    def __repr__(self):
+        return repr(self.__name)
+
+    def __add__(self, other):
+        elem = self.__algebra.op(self.__name, other.name)
+        return Element(elem, self.__algebra)
+
+    def __sub__(self, other):
+        if self.__can_subtract:
+            elem = self.__algebra.sub(self.__name, other.name)
+            return Element(elem, self.__algebra)
+        else:
+            raise ValueError(f"{self.__algebra.name} does not support subtraction")
+
+    def __neg__(self):
+        if self.__can_subtract:
+            elem = self.__algebra.inv(self.__name)
+            return Element(elem, self.__algebra)
+
+    def __mul__(self, other):
+        if self.__can_multiply:
+            elem = self.__algebra.mult(self.__name, other.name)
+            return Element(elem, self.__algebra)
+        else:
+            raise ValueError(f"{self.__algebra.name} does not support multiplication")
+
+    def __truediv__(self, other):
+        if self.__can_divide:
+            elem = self.__algebra.div(self.__name, other.name)
+            return Element(elem, self.__algebra)
+        else:
+            raise ValueError(f"{self.__algebra.name} does not support division")
+
+    def __pow__(self, n):
+        result = self
+        if self.__can_multiply:
+            if isinstance(n, int) and n > 0:
+                for _ in range(n - 1):
+                    result = result * self
+            else:
+                raise ValueError(f"n = {n}, but the power must be a positive integer.")
+        else:
+            raise ValueError(f"{self.__algebra.name} does not support multiplication")
+        return result
+
+    def __key(self):
+        return tuple([self.__name, self.__algebra.__hash__()])
+
+    def __hash__(self):
+        return hash(self.__key)
+
+    def __eq__(self, other):
+        if isinstance(other, Element):
+            return self.__key() == other.__key() and self.__algebra == other.algebra
+        else:
+            return NotImplemented
+
+
+def element_map(algebra):
+    """Returns a dictionary where element names (str) are keys and the corresponding Elements
+    are the values."""
+    return {elem : Element(elem, algebra) for elem in algebra.elements}
+
+
+class Algebra:
+    """Creates a context manager for doing finite algebra calculations.
+    Example:
+    >>> s3 = generate_symmetric_group(3)
+    >>> with Algebra(s3) as f:
+    >>>     print(f['(2, 1, 3)'] + f['(3, 2, 1)'])
+    >>> (3, 1, 2)
+    """
+
+    def __init__(self, algebra):
+        self.element_map = element_map(algebra)
+
+    def __enter__(self):
+        return self.element_map
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+
 # ==========================
 # Modules and Vector Spaces
 # ==========================

@@ -95,6 +95,25 @@ Field
     :undoc-members:
     :show-inheritance:
 
+Elements as Objects
+-------------------
+
+The Element class and the Algebra context manager provide a way to use math operators (+, -, *, /, **) at the element-level.
+
+.. autoclass:: finite_algebras.Element
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autofunction:: finite_algebras.element_map
+
+.. autoclass:: finite_algebras.Algebra
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
+
 MultipleElementSetAlgebra
 -------------------------
 

@@ -1683,17 +1683,23 @@ class Element:
         else:
             raise ValueError(f"{self.__algebra.name} does not support division")
 
+    # def __pow__(self, n):
+    #     result = self
+    #     if self.__can_multiply:
+    #         if isinstance(n, int) and n > 0:
+    #             for _ in range(n - 1):
+    #                 result = result * self
+    #         else:
+    #             raise ValueError(f"n = {n}, but the power must be a positive integer.")
+    #     else:
+    #         raise ValueError(f"{self.__algebra.name} does not support multiplication")
+    #     return result
+
     def __pow__(self, n):
-        result = self
-        if self.__can_multiply:
-            if isinstance(n, int) and n > 0:
-                for _ in range(n - 1):
-                    result = result * self
-            else:
-                raise ValueError(f"n = {n}, but the power must be a positive integer.")
-        else:
-            raise ValueError(f"{self.__algebra.name} does not support multiplication")
-        return result
+        """See the documentation for the Magma.element_to_power method.
+        This method calls that method."""
+        elem_to_pow_name = self.__algebra.element_to_power(self.__name, n)
+        return Element(elem_to_pow_name, self.__algebra)
 
     def __key(self):
         return tuple([self.__name, self.__algebra.__hash__()])

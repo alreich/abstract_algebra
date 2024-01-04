@@ -12,9 +12,9 @@ build:
     python: "3.11"
 
 # Build PDF & ePub
-formats:
-  - epub
-  - pdf
+# formats:
+#   - epub
+#   - pdf
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:

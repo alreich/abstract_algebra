@@ -89,6 +89,9 @@ class AbstractComplexNumber:
         return not self == other
 
     def scalar_mult(self, scalar, left=True):
+        """Multiply each element of this object by a scalar, e.g., s*(u,v) = (su, sv).
+        To multiply on the right instead, set 'left' to False, e.g., (u,v)*s = (us, vs).
+        """
         alg = self.algebra
         a, b = self.unpack()
         if left:

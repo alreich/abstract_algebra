@@ -5,7 +5,6 @@
 
 import numpy as np
 
-
 class AbstractMatrix:
     """The abstract matrix class supports the creation of matrices composed of abstract
     Ring elements, along with operations such as addition, subtraction, multiplication,

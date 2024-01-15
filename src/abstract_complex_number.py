@@ -3,7 +3,7 @@
 
 """
 
-from finite_algebras import Field
+# from finite_algebras import Field
 
 
 class AbstractComplexNumber:
@@ -117,17 +117,27 @@ class AbstractComplexNumber:
         else:
             raise ValueError(f"{w.imag} != {self.algebra.add_identity}")
 
+    # def inv(self):
+    #     """Return the inverse of this element."""
+    #     if isinstance(self.algebra, Field):
+    #         absqr = self.sqr_abs_val()
+    #         conj = self.conj()
+    #         return conj.scalar_mult(self.algebra.mult_inv(absqr))
+    #     else:
+    #         return ValueError(f"{self} must be a Field.")
+
     def inv(self):
-        """Return the inverse of this element."""
-        if isinstance(self.algebra, Field):
-            absqr = self.sqr_abs_val()
-            conj = self.conj()
-            return conj.scalar_mult(self.algebra.mult_inv(absqr))
-        else:
-            return ValueError(f"{self} must be a Field.")
+        """Return the inverse of this element. Only works for Fields."""
+        absqr = self.sqr_abs_val()
+        conj = self.conj()
+        return conj.scalar_mult(self.algebra.mult_inv(absqr))
+
+    # def __truediv__(self, other):
+    #     if isinstance(self.algebra, Field):
+    #         return self * other.inv()
+    #     else:
+    #         return ValueError(f"{self} must be a Field.")
 
     def __truediv__(self, other):
-        if isinstance(self.algebra, Field):
-            return self * other.inv()
-        else:
-            return ValueError(f"{self} must be a Field.")
+        """Return the quotient of this and other. Only works for Fields."""
+        return self * other.inv()

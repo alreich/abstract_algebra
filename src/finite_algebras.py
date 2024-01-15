@@ -22,8 +22,8 @@ import math
 
 from cayley_table import CayleyTable
 from permutations import Perm
+from abstract_complex_number import AbstractComplexNumber
 # from abstract_matrix import AbstractMatrix
-
 
 class FiniteOperator:
     """A callable class that implements a binary operation based on a multiplication
@@ -1339,6 +1339,21 @@ class Ring(Group):
     def commutator(self, a, b):
         """Return [a, b] = (a * b) - (b * a), the ring commutator of a & b"""
         return self.sub(self.mult(a, b), self.mult(b, a))
+
+    def make_abstract_complex_number_algebra(self, name_gen=None, alg_name=None, alg_desc=None):
+        if name_gen is None:
+            name_gen = lambda x: x.real + ":" + x.imag
+        if alg_name is None:
+            alg_name = self.name + "_ACN"
+        if alg_desc is None:
+            alg_desc = "Abstract Complex Number Algebra based on " + self.description
+        elems = [AbstractComplexNumber(a, b, self) for a in self.elements for b in self.elements]
+        add_table = [[name_gen(u + v) for v in elems] for u in elems]
+        mul_table = [[name_gen(u * v) for v in elems] for u in elems]
+        enames = list(map(name_gen, elems))
+        name_element_map = {name_gen(elem): elem for elem in elems}
+        new_alg = make_finite_algebra(alg_name, alg_desc, enames, add_table, mul_table)
+        return new_alg, name_element_map
 
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Ring."""

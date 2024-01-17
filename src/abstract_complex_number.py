@@ -117,27 +117,101 @@ class AbstractComplexNumber:
         else:
             raise ValueError(f"{w.imag} != {self.algebra.add_identity}")
 
-    # def inv(self):
-    #     """Return the inverse of this element."""
-    #     if isinstance(self.algebra, Field):
-    #         absqr = self.sqr_abs_val()
-    #         conj = self.conj()
-    #         return conj.scalar_mult(self.algebra.mult_inv(absqr))
-    #     else:
-    #         return ValueError(f"{self} must be a Field.")
-
     def inv(self):
         """Return the inverse of this element. Only works for Fields."""
         absqr = self.sqr_abs_val()
         conj = self.conj()
         return conj.scalar_mult(self.algebra.mult_inv(absqr))
 
-    # def __truediv__(self, other):
-    #     if isinstance(self.algebra, Field):
-    #         return self * other.inv()
-    #     else:
-    #         return ValueError(f"{self} must be a Field.")
-
     def __truediv__(self, other):
         """Return the quotient of this and other. Only works for Fields."""
         return self * other.inv()
+
+
+class Complex:
+
+    def __init__(self, a, b, algebra):
+        self.__real = a
+        self.__imag = b
+        self.__alg = algebra
+        self.__dp_delimiter = '_'  # name delimiter used when creating a Complex
+
+    def __repr__(self):
+        return f"({repr(self.__real)}, {repr(self.__imag)})"
+
+    @property
+    def real(self):
+        return self.__real
+
+    @property
+    def imag(self):
+        return self.__imag
+
+    @property
+    def algebra(self):
+        return self.__alg
+
+    def unpack(self):
+        return self.real, self.imag
+
+    def __arithmetic_inputs_ok(self, other):
+        if isinstance(other, Complex):
+            if self.algebra == other.algebra:
+                return True
+            else:
+                raise ValueError(f"{self.algebra.name} != {other.algebra.name}")
+        else:
+            raise ValueError(f"{other} is not a Complex")
+
+    def __add__(self, other):
+        if self.__arithmetic_inputs_ok(other):
+            alg = self.algebra
+            a, b = self.unpack()
+            c, d = other.unpack()
+            u = alg.add(a, c)
+            v = alg.add(b, d)
+            return Complex(u, v, alg)
+
+    def __mul__(self, other):
+        if self.__arithmetic_inputs_ok(other):
+            alg = self.algebra
+            a, b = self.unpack()
+            c, d = other.unpack()
+            u = alg.sub(alg.mult(a, c), alg.mult(b, d))
+            v = alg.add(alg.mult(a, d), alg.mult(b, c))
+            return Complex(u, v, alg)
+
+    @property
+    def __key(self):
+        return tuple([self.real, self.imag])
+
+    def __hash__(self):
+        return hash(self.__key)
+
+    def __eq__(self, other):
+        if isinstance(other, Complex):
+            return self.__key == other.__key and self.__alg == other.__alg
+        else:
+            return NotImplemented
+
+    def __ne__(self, other):
+        return not self == other
+
+    # def complex_delimiter(self, delimiter=None):
+    #     """If no input, then the current complex element name delimiter will be returned (default is '_').
+    #     Otherwise, if a string is input (e.g., ":") it will become the new delimiter for complex element
+    #     names, and then it will be returned."""
+    #     if delimiter:
+    #         self.__dp_delimiter = delimiter
+    #         return self.__dp_delimiter
+    #     else:
+    #         return self.__dp_delimiter
+
+    def complex_delimiter(self, delimiter=None):
+        """If no input, then the current complex element name delimiter will be returned (default is '_').
+        Otherwise, if a string is input (e.g., ":") it will become the new delimiter for complex element
+        names, and then it will be returned."""
+        if delimiter:
+            self.__dp_delimiter = delimiter
+        return self.__dp_delimiter
+

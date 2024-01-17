@@ -6,7 +6,7 @@
 # from finite_algebras import Field
 
 
-class AbstractComplexNumber:
+class AbstractComplexElement:
 
     def __init__(self, a, b, algebra):
         self.__real = a
@@ -32,7 +32,7 @@ class AbstractComplexNumber:
         return self.real, self.imag
 
     def arithmetic_inputs_ok(self, other):
-        if isinstance(other, AbstractComplexNumber):
+        if isinstance(other, AbstractComplexElement):
             if self.algebra == other.algebra:
                 return True
             else:
@@ -47,7 +47,7 @@ class AbstractComplexNumber:
             c, d = other.unpack()
             u = alg.add(a, c)
             v = alg.add(b, d)
-            return AbstractComplexNumber(u, v, alg)
+            return AbstractComplexElement(u, v, alg)
 
     def __sub__(self, other):
         if self.arithmetic_inputs_ok(other):
@@ -56,12 +56,12 @@ class AbstractComplexNumber:
             c, d = other.unpack()
             u = alg.sub(a, c)
             v = alg.sub(b, d)
-            return AbstractComplexNumber(u, v, alg)
+            return AbstractComplexElement(u, v, alg)
 
     def __neg__(self):
         alg = self.algebra
         a, b = self.unpack()
-        return AbstractComplexNumber(alg.inv(a), alg.inv(b), alg)
+        return AbstractComplexElement(alg.inv(a), alg.inv(b), alg)
 
     def __mul__(self, other):
         if self.arithmetic_inputs_ok(other):
@@ -70,7 +70,7 @@ class AbstractComplexNumber:
             c, d = other.unpack()
             u = alg.sub(alg.mult(a, c), alg.mult(b, d))
             v = alg.add(alg.mult(a, d), alg.mult(b, c))
-            return AbstractComplexNumber(u, v, alg)
+            return AbstractComplexElement(u, v, alg)
 
     @property
     def __key(self):
@@ -80,7 +80,7 @@ class AbstractComplexNumber:
         return hash(self.__key)
 
     def __eq__(self, other):
-        if isinstance(other, AbstractComplexNumber):
+        if isinstance(other, AbstractComplexElement):
             return self.__key == other.__key and self.__alg == other.__alg
         else:
             return NotImplemented
@@ -100,13 +100,13 @@ class AbstractComplexNumber:
         else:
             u = alg.mult(a, scalar)
             v = alg.mult(b, scalar)
-        return AbstractComplexNumber(u, v, alg)
+        return AbstractComplexElement(u, v, alg)
 
     def conj(self):
         """Return the conjugate of this element."""
         alg = self.algebra
         a, b = self.unpack()
-        return AbstractComplexNumber(a, alg.inv(b), alg)
+        return AbstractComplexElement(a, alg.inv(b), alg)
 
     def sqr_abs_val(self):
         """Return the squared absolute value of this element."""

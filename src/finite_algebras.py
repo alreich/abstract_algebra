@@ -23,7 +23,7 @@ import pprint as pp
 from my_math import divisors, is_prime, relative_primes
 from cayley_table import CayleyTable
 from permutations import Perm
-from abstract_complex_number import AbstractComplexNumber
+from abstract_complex import AbstractComplexElement
 # from abstract_matrix import AbstractMatrix
 
 class FiniteOperator:
@@ -1341,14 +1341,14 @@ class Ring(Group):
         """Return [a, b] = (a * b) - (b * a), the ring commutator of a & b"""
         return self.sub(self.mult(a, b), self.mult(b, a))
 
-    def make_abstract_complex_number_algebra(self, name_gen=None, alg_name=None, alg_desc=None):
+    def make_abstract_complex_algebra(self, name_gen=None, alg_name=None, alg_desc=None):
         if name_gen is None:
             name_gen = lambda x: x.real + ":" + x.imag
         if alg_name is None:
             alg_name = self.name + "_ACN"
         if alg_desc is None:
             alg_desc = "Abstract Complex Number Algebra based on " + self.description
-        elems = [AbstractComplexNumber(a, b, self) for a in self.elements for b in self.elements]
+        elems = [AbstractComplexElement(a, b, self) for a in self.elements for b in self.elements]
         add_table = [[name_gen(u + v) for v in elems] for u in elems]
         mul_table = [[name_gen(u * v) for v in elems] for u in elems]
         enames = list(map(name_gen, elems))

@@ -1232,6 +1232,35 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
+    def sqr(self):  # Direct Product of a Ring with itself using complex multiplication
+        """Return direct product of this Ring with itself where multiplication is
+        defined as: (a, b) * (c, d) = (ac - bd, ad + bc)"""
+        dp_name = f"{self.name}_SQR"
+        dp_description = "Direct product of " + self.name + " with itself using complex multiplication"
+        dp_element_names = list(it.product(self.elements, self.elements))  # Cross product
+        dp_add_table = list()
+        dp_mul_table = list()
+        for a in dp_element_names:
+            dp_add_table_row = list()  # Start new rows in the add and mult tables
+            dp_mul_table_row = list()
+            for b in dp_element_names:
+                dp_add_table_row.append(dp_element_names.index((self.add(a[0], b[0]),
+                                                                self.add(a[1], b[1]))))
+                # (a[0], a[1]) * (b[0], b[1])
+                #     = (a[0]b[0] - a[1]b[1], a[0]b[1] + a[1]b[0])
+                dp_mul_table_row.append(dp_element_names.index(((self.sub(self.mult(a[0], b[0]),
+                                                                          self.mult(a[1], b[1]))),
+                                                                (self.add(self.mult(a[0], b[1]),
+                                                                          self.mult(a[1], b[0]))))))
+            dp_add_table.append(dp_add_table_row)  # Append the new rows to each table
+            dp_mul_table.append(dp_mul_table_row)
+        return make_finite_algebra(dp_name,
+                                   dp_description,
+                                   list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"
+                                         for elem in dp_element_names]),
+                                   dp_add_table,
+                                   dp_mul_table)
+
     def __key(self):
         return tuple([self.elements, self.table.tolist(), self.__ring_mult_table.tolist()])
 

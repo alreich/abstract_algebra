@@ -251,7 +251,7 @@ similar to that used for complex numbers, as shown below:
 -  :math:`V = \{(s, t): s, t \in S\}`
 -  :math:`(s, t) \circ (s', t') = (s + s', t + t')`, for all
    :math:`(s, t), (s', t') \in V`
--  :math:`(s, t) \otimes (s', t') = (s \cdot s' - t \cdot t', s \cdot t' + s' \cdot t)`,
+-  :math:`(s, t) \otimes (s', t') = (s \cdot s' - t \cdot t', s \cdot t' + t \cdot s')`,
    where, of course, “:math:`-`” denotes addition by the additive
    inverse
 

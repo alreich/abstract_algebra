@@ -189,32 +189,85 @@ element, if it exists.
 Direct Products
 ---------------
 
-If :math:`G = \langle S, \oplus \rangle` and
-:math:`H = \langle T, \odot \rangle` are two Groups, then their **direct
-product**, denoted by :math:`G \times H`, is also a Group, where
+This section provides the usual definition of a direct product for
+Magmas through Fields, plus an alternative definition for Rings &
+Fields, referred to here as “squaring” the Ring or Field. By squaring a
+field, of the right order, one can obtain another field, unlike taking a
+direct product of a field with itself, which always yields a ring. More
+on this below in the subsection, “Squaring a Field to Obtain a Field”.
+
+Like Vector Spaces, Direct Products involve the combination of possibly
+different algebras, with different sets of elements and different binary
+operations. As previously noted, in many algebra texts, the notation
+used to describe multiplication (or addition) in one component algebra
+is the same as the notation used for the other component algebra.
+Readers are expected to know that the two implicitely refer to different
+operations. For a computer program, however, the difference in operators
+must be made explicit. For that reason, care is taken in the definitions
+below to not conflate the operations.
+
+If :math:`G = \langle S, + \rangle` and
+:math:`H = \langle T, \oplus \rangle` are two Groups, then their
+**direct product**, denoted by :math:`G \times H`, is also a Group,
+where
 
 -  :math:`G \times H \equiv \langle U, \bullet \rangle`
 -  :math:`U = \{(g,h): g \in S, h \in T\}`
--  :math:`(g, h) \bullet (g', h') = (g \oplus g', h \odot h')` for all
+-  :math:`(g, h) \bullet (g', h') = (g + g', h \oplus h')` for all
    :math:`(g, h), (g', h') \in U`
 
-We can also define the direct product, :math:`R_1 \times R_2`, of two
-Rings, :math:`R_1 = \langle S_1, +, \cdot \rangle` and
-:math:`R_2 = \langle S_2, \oplus, \odot \rangle`, as follows:
+If :math:`R_1 = \langle S, +, \cdot \rangle` and
+:math:`R_2 = \langle T, \oplus, \odot \rangle` are two Rings, then their
+**direct product**, denoted by :math:`R_1 \times R_2`, is also a Ring,
+where
 
 -  :math:`R_1 \times R_2 \equiv \langle U, \circ, \bullet \rangle`
--  :math:`U = \{(s_1, s_2): s_1 \in S_1, s_2 \in S_2\}`
--  :math:`(s_1, s_2) \circ (s_1', s_2') = (s_1 + s_1', s_2 \oplus s_2')`,
-   for all :math:`(s_1, s_2), (s_1', s_2') \in U`
--  :math:`(s_1, s_2) \bullet (s_1', s_2') = (s_1 \cdot s_1', s_2 \odot s_2')`
+-  :math:`U = \{(s, t): s \in S, t \in T\}`
+-  :math:`(s, t) \circ (s', t') = (s + s', t \oplus t')`, for all
+   :math:`(s, t), (s', t') \in U`
+-  :math:`(s, t) \bullet (s', t') = (s \cdot s', t \odot t')`
 
 Since the only requirement needed to form a direct product is that there
 be two *algebras*, each with its own set of elements and binary
 operation(s), the direct product definition works for any
 ``SingleElementSetAlgebra`` (Magma through Field). So, if ``G`` and
 ``H`` are two *SingleElementSetAlgebras*, then their direct product can
-be obtained by multiplying the two objects using Python’s multplication
+be obtained by multiplying the two objects using Python’s multiplication
 operator, ``G * H``.
+
+Squaring the Ring
+~~~~~~~~~~~~~~~~~
+
+(pun intended)
+
+An opportunity to define an alternative type of direct product presents
+itself when we consider the direct product of a ring,
+:math:`R = \langle S, +, \cdot \rangle`, with itself, which will be
+denoted here as :math:`R^2`. In this case, addition is defined the same
+as for the usual direct product, but multiplication is defined to be
+similar to that used for complex numbers, as shown below:
+
+-  :math:`R^2 \equiv \langle V, \circ, \otimes \rangle`
+-  :math:`V = \{(s, t): s, t \in S\}`
+-  :math:`(s, t) \circ (s', t') = (s + s', t + t')`, for all
+   :math:`(s, t), (s', t') \in V`
+-  :math:`(s, t) \otimes (s', t') = (s \cdot s' - t \cdot t', s \cdot t' + s' \cdot t)`,
+   where, of course, “:math:`-`” denotes addition by the additive
+   inverse
+
+``Ring`` and ``Field`` objects in ``finite_algebras`` can be squared
+using the Ring method, ``sqr()``.
+
+Squaring a Field to Obtain a Field
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Where the definition of squaring a Ring, above, gets interesting though,
+is when we square a finite Field, :math:`F_n`. :math:`{F_n}^2` won’t
+always be a Ring; sometimes it will be a Field. Specifically,
+:math:`{F_n}^2` will be a field if :math:`n` is a **Gaussian prime**,
+that is, a prime number of the form, :math:`n=4k+3`, (e.g.,
+:math:`3, 7, 11, 19, 23, 31, 43, ...`). Otherwise, :math:`{F_n}^2` will
+be a Ring.
 
 Properties of Algebras
 ----------------------

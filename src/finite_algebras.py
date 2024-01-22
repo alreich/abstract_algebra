@@ -1232,9 +1232,10 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
-    def sqr(self):  # Direct Product of a Ring with itself using complex multiplication
-        """Return direct product of this Ring with itself where multiplication is
-        defined as: (a, b) * (c, d) = (ac - bd, ad + bc)"""
+    def sqr(self):  # The Cayley-Dickson construction/algebra
+        """The Cayley-Dickson construction/algebra. Returns the direct product of this Ring
+        with itself, where multiplication is defined as: (a, b) * (c, d) = (ac - bd, ad + bc)
+        """
         dp_name = f"{self.name}_SQR"
         dp_description = "Direct product of " + self.name + " with itself using complex multiplication"
         dp_element_names = list(it.product(self.elements, self.elements))  # Cross product
@@ -1633,9 +1634,9 @@ def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
     return make_finite_algebra(nm, desc, elements, add_table, mult_table)
 
 
-# =====================================
-# Utilities for Squared Rings & Fields
-# =====================================
+# =====================================================================
+# Utilities for Squared Rings & Fields (i.e., Cayley-Dickson Algebras)
+# =====================================================================
 
 def r2_scalar_mult(scalar_name, elem_name, algebra, delimiter=":"):
     """ Scalar multiplication. 'a' * 'c:d' = 'a*c:a*d'

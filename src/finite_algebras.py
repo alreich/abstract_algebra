@@ -1321,6 +1321,14 @@ class Ring(Group):
         """Ring multiplication, based on the second table."""
         return self.__ring_mult(*args)
 
+    def element_to_power(self, elem, n, left_associative=True):
+        """Overrides the Magma method by the same name, so that we use
+        the multiplication operation of the Ring to raise an element to
+        a power.
+        """
+        mult_alg = self.extract_multiplicative_algebra()
+        return mult_alg.element_to_power(elem, n, left_associative)
+
     def mult_is_commutative(self):
         """By definition, Ring addition is commutative, but Ring multiplication only needs to be
         associative.  This method tells us whether multiplication is commutative for this Ring."""
@@ -1603,6 +1611,14 @@ class Field(Ring):
         else:
             return self.mult(x, self.mult_inv(y))
 
+    def element_to_power(self, elem, n, left_associative=True):
+        """Overrides the Ring method by the same name, so that we use
+        don't recreate the multiplicative Abelian subgroup already contained
+        in the field.
+        """
+        mult_alg = self.mult_abelian_subgroup()
+        return mult_alg.element_to_power(elem, n, left_associative)
+
 
 def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
     """Generate a Ring (or Field) based on integer addition and multiplication modulo n.
@@ -1795,8 +1811,8 @@ class Element:
     #     return result
 
     def __pow__(self, n):
-        """See the documentation for the Magma.element_to_power method.
-        This method calls that method."""
+        """See the documentation for the element_to_power method for either
+        the Magma, Ring, or Field. This method calls one of those methods."""
         elem_to_pow_name = self.__algebra.element_to_power(self.__name, n)
         return Element(elem_to_pow_name, self.__algebra)
 

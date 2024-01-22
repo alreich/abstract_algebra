@@ -235,8 +235,8 @@ operation(s), the direct product definition works for any
 be obtained by multiplying the two objects using Python’s multiplication
 operator, ``G * H``.
 
-Squaring the Ring
-~~~~~~~~~~~~~~~~~
+“Squaring the Ring” (Cayley-Dickson Algebras)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (pun intended)
 
@@ -258,15 +258,27 @@ similar to that used for complex numbers, as shown below:
 ``Ring`` and ``Field`` objects in ``finite_algebras`` can be squared
 using the Ring method, ``sqr()``.
 
+This operation produces what is known as a `Cayley-Dickson
+algebra <https://encyclopediaofmath.org/wiki/Cayley-Dickson_algebra>`__.
+In general, the `Cayley-Dickson
+construction <https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction>`__,
+produces algebras, :math:`A_n = R^{2^n}`, for :math:`n=1,2,...`. For
+example, if the ring, :math:`R`, is the set of real numbers,
+:math:`\mathbb{R}`, then :math:`A_1 = \mathbb{R}^2 = \mathbb{C}`, the
+**complex** numbers. Similarly, :math:`A_2 = \mathbb{R}^4 = \mathbb{H}`
+and :math:`A_3 = \mathbb{R}^8 = \mathbb{O}`, the **quaternions** and
+**octonions**, resp.
+
 Squaring a Field to Obtain a Field
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Where the definition of squaring a Ring, above, gets interesting though,
 is when we square a finite Field, :math:`F_n`. :math:`{F_n}^2` won’t
 always be a Ring; sometimes it will be a Field. Specifically,
-:math:`{F_n}^2` will be a field if :math:`n` is a **Gaussian prime**,
-that is, a prime number of the form, :math:`n=4k+3`, (e.g.,
-:math:`3, 7, 11, 19, 23, 31, 43, ...`). Otherwise, :math:`{F_n}^2` will
+:math:`{F_n}^2` will be a field if :math:`n` is a `Gaussian
+prime <https://encyclopediaofmath.org/wiki/Gauss_number>`__, that is, a
+prime number of the form, :math:`n=4k+3`, (e.g.,
+:math:`3, 7, 11, 19, 23, 31, 43, ...`); otherwise, :math:`{F_n}^2` will
 be a Ring.
 
 Properties of Algebras

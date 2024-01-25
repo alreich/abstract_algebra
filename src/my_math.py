@@ -5,13 +5,20 @@
 
 # My math functions
 
-# They are fairly standard, why aren't they in the standard math library?
+# These are fairly standard functions that are not in Python's standard math library.
+#
+# Some of the functionality here may be available in other large math-related packages
+# like, NumPy, SymPy, and SciPy, but are here to reduce the dependency on such large
+# packages for just one or two functions.
+#
+# NOTE: isprime, totient, & divisors are available in sympy.ntheory
 
 import math
 
 
-def is_prime(n):
-    """Returns True if n is a positive, prime integer; otherwise, False is returned."""
+def isprime(n):
+    """Returns True if n is a positive, prime integer; otherwise, False is returned.
+    The same function exists in SymPy."""
     if isinstance(n, int):
         if n == 2:
             return True
@@ -40,13 +47,14 @@ def relative_primes(n):
 
 
 def totient(n):
-    """Return the number of relative primes less than n."""
+    """Return the number of relative primes less than n.
+    The same function exists in SymPy."""
     return len(relative_primes(n))
 
 
 def divisors(n, non_trivial=False):
     """Return the set of divisors of n.  Setting non_trivial=True, returns all
-    divisors except for 1 & n."""
+    divisors except for 1 & n. The same function exists in SymPy."""
     result = set()
     for i in range(1, int(math.sqrt(n)) + 1):
         quot, rem = divmod(n, i)

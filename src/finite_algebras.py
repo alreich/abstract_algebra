@@ -348,7 +348,7 @@ class Magma(SingleElementSetAlgebra):
                             result = self.op(result, elem)
                         else:
                             result = self.op(elem, result)
-                elif n < 0:  # Or, raise an exception if inverses do not exists
+                elif n < 0:  # Or, raise an exception if inverses do not exist
                     if self.has_inverses():
                         result = self.inv(self.element_to_power(elem, abs(n), left_associative))
                     else:
@@ -635,6 +635,7 @@ class Monoid(Semigroup):
                 return order
             else:
                 return order_aux(elem, self.op(prod, elem), order + 1)
+
         if self.__element_orders[element] is None:  # If not cached yet...
             self.__element_orders[element] = order_aux(element, element, 1)
         return self.__element_orders[element]
@@ -676,7 +677,7 @@ class Monoid(Semigroup):
         element to its corresponding regular representation, (2) A (reverse) dictionary that maps each
         regular representation (in the form of a tuple of tuples) back to its corresponding group element,
         (3) A function that maps a group element to its corresponding regular representation matrix, and
-        (4) Another function that maps in the opposite direction, from regular represenation matrix to
+        (4) Another function that maps in the opposite direction, from regular representation matrix to
         group element. By default, the matrices are dense arrays. SciPy sparse arrays can be output instead,
         by setting the input variable, "sparse", to one of the following seven strings: "BSR", "COO", "CSC",
         "CSR", "DIA", "DOK", or "LIL". Each of the seven strings corresponds to one of the seven classes of
@@ -686,8 +687,8 @@ class Monoid(Semigroup):
         N = self.order
 
         # Create a list of N Nx1 orthogonal unit vectors
-        id = np.eye(N, dtype=int)  # The NxN identity matrix
-        B = [id[:, [i]] for i in range(N)]  # A list of columns extracted from the identity matrix
+        ident = np.eye(N, dtype=int)  # The NxN identity matrix
+        B = [ident[:, [i]] for i in range(N)]  # A list of columns extracted from the identity matrix
 
         # Create a dictionary that maps group elements to the column vectors created above.
         mapping = dict(zip(A, B))
@@ -918,7 +919,7 @@ class Group(Monoid):
                 pp.pprint(self.table.tolist())
         else:
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
-        return None
+        return str(self)
 
 
 def partition_into_isomorphic_lists(list_of_groups):
@@ -1379,8 +1380,10 @@ class Ring(Group):
         return self.sub(self.mult(a, b), self.mult(b, a))
 
     def make_abstract_complex_algebra(self, name_gen=None, alg_name=None, alg_desc=None):
+        def generate_name(x):
+            return x.real + ":" + x.imag
         if name_gen is None:
-            name_gen = lambda x: x.real + ":" + x.imag
+            name_gen = generate_name
         if alg_name is None:
             alg_name = self.name + "_ACN"
         if alg_desc is None:
@@ -1831,7 +1834,7 @@ class Element:
 def element_map(algebra):
     """Returns a dictionary where element names (str) are keys and the corresponding Elements
     are the values."""
-    return {elem : Element(elem, algebra) for elem in algebra.elements}
+    return {elem: Element(elem, algebra) for elem in algebra.elements}
 
 
 class Algebra:
@@ -1850,7 +1853,7 @@ class Algebra:
     def __enter__(self):
         return self.element_map
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, _type, value, traceback):
         pass
 
 
@@ -1880,8 +1883,8 @@ def module_dot_product(ring, vec1, vec2):
     two input vectors."""
     delim = ring.scalar.direct_product_delimiter()
     return reduce(lambda a, b: ring.scalar.add(a, b),
-                            map(lambda pair: ring.scalar.mult(*pair),
-                                zip(vec1.split(delim), vec2.split(delim))))
+                  map(lambda pair: ring.scalar.mult(*pair),
+                      zip(vec1.split(delim), vec2.split(delim))))
 
 
 class MultipleElementSetAlgebra(FiniteAlgebra):

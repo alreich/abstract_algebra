@@ -18,6 +18,7 @@ import numpy as np
 import scipy.sparse as sp
 import os
 import pprint as pp
+import re
 
 from my_math import divisors, isprime, relative_primes
 from cayley_table import CayleyTable
@@ -1432,16 +1433,56 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
-    def conj(self, elem_name):
-        """ Return the conjugate of the element. If elem_name is a lone string (i.e., no  delimiters)
-        then the conjugate is simply the element_name, otherwise conj('a:b') = 'a:-b'.
+    # def conj(self, elem_name):
+    #     """ Return the conjugate of the element. If elem_name is a lone string (i.e., no  delimiters)
+    #     then the conjugate is simply the element_name, otherwise conj('a:b') = 'a:-b'.
+    #     """
+    #     delimiter = self.direct_product_delimiter()
+    #     components = elem_name.split(delimiter)
+    #     head = components[0]; tail = components[1:]
+    #     tail_negated = list(map(lambda x: self.inv(x), tail))
+    #     new_components = list(head) + tail_negated
+    #     return delimiter.join(new_components)
+
+    def split_element(self, element):
+        """If the element is a compound element created by a direct product or the Cayley-Dickson
+        construction, then it contains at least one delimiter (e.g., '1:2' or '1:2:3:4').
+        This method splits the element at the middle delimiter and returns the two pieces
+        (e.g., '1', '2' or '1:2', '3:4').  If the element is not a compound element, then
+        it is returned unchanged.
         """
         delimiter = self.direct_product_delimiter()
-        components = elem_name.split(delimiter)
-        head = components[0]; tail = components[1:]
-        tail_negated = list(map(lambda x: self.inv(x), tail))
-        new_components = list(head) + tail_negated
-        return delimiter.join(new_components)
+        if delimiter in element:
+            matches = list(re.finditer(delimiter, element))
+            mid = matches[len(matches) // 2]
+            return element[:mid.start()], element[mid.end():]
+        else:
+            return element
+
+    def scalar_mult(self, scalar_name, elem_name):
+        """ Scalar multiplication. 'a' * 'c:d' = 'a*c:a*d'
+        Example: scalar_mult('2', '1:2', F3) ==> '2:1'
+        """
+        delimiter = self.direct_product_delimiter()
+        scalarx = delimiter.join([scalar_name, self.zero[0]])  # eg: '2' --> '2:0'
+        return self.mult(scalarx, elem_name)
+
+    def conj(self, elem):
+        """Return the conjugate of the element according to the following recursive definition:
+        conj(a) = a, conj(a:b) = (conj(a), -b).
+        """
+        delimiter = self.direct_product_delimiter()
+        if delimiter in elem:  # eg: '1:2' or '1:2:3:4'
+            head, tail = self.split_element(elem)  # eg: '1', '2' or '1:2', '3:4'
+            tailx = delimiter.join([tail, self.zero[0]])  # eg: '2:0' or '3:4:0:0'
+            tail_neg = self.inv(tailx)  # eg: '...' or '...'
+            return delimiter.join([head, tail_neg[0]])  # eg: ...
+        else:
+            return elem
+
+    def norm_sqr(self, elem):
+        """Return the product of the input element and its conjugate."""
+        self.mult(elem, self.conj(elem))
 
     def make_cayley_dickson_algebra(self, mu=None):  # See [Schafer, 1966]
         """Constructs the Cayley-Dickson algebra using this Ring/Field.  Multiplication is defined
@@ -1449,8 +1490,8 @@ class Ring(Group):
         then define (a, b) x (c, d) = (a x c + mu x d x b*, a* x d + c x b), where conjugation is defined as
         a* = a and (u, v)* = (u*, -v), recursively.
         """
-        name = f"{self.name}_SQR"
-        description = "Direct product of " + self.name + " with itself using complex multiplication"
+        name = f"{self.name}_CDA"
+        description = "Cayley-Dickson algebra based on " + self.name
         element_names = list(it.product(self.elements, self.elements))  # Cross product
         add_table = list()
         mul_table = list()
@@ -1458,22 +1499,22 @@ class Ring(Group):
             mu = self.inv(self.one)  # The additive inverse of the Ring's multiplicative identity
         for x in element_names:
             a = x[0]; b = x[1]
-            dp_add_table_row = list()  # Start new rows in the add and mult tables
-            dp_mul_table_row = list()
+            add_table_row = list()  # Start new rows in the add and mult tables
+            mul_table_row = list()
             for y in element_names:
                 c = y[0]; d = y[1]
                 # Addition: (a, b) + (c, d) = (a + b, c + d)
-                dp_add_table_row.append(element_names.index((self.add(a, c),
+                add_table_row.append(element_names.index((self.add(a, c),
                                                              self.add(b, d))))
                 # See [Schafer, 1966]
                 # Conjugation: a* = a and (u, v)* = (u*, -v) recursively
                 # Multiplication: (a, b) x (c, d) = (a x c + mu x d x b*, a* x d + c x b)
-                dp_mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
-                                                                       self.mult(mu, d, self.conj(b)))),
-                                                             (self.add(self.mult(self.conj(a), d),
-                                                                       self.mult(c, d))))))
-            add_table.append(dp_add_table_row)   # Append the new rows to each table
-            mul_table.append(dp_mul_table_row)
+                mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
+                                                                    self.mult(mu, d, self.conj(b)))),
+                                                          (self.add(self.mult(self.conj(a), d),
+                                                                    self.mult(c, b))))))
+            add_table.append(add_table_row)   # Append the new rows to each table
+            mul_table.append(mul_table_row)
         return make_finite_algebra(name,
                                    description,
                                    list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"

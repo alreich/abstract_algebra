@@ -19,6 +19,16 @@ def negate(elem_name, algebra):
     return delimiter.join(map(lambda x: algebra.inv(x), components))
 
 
+def split_element(algebra, element):
+    delimiter = algebra.direct_product_delimiter()
+    if delimiter in element:
+        matches = list(re.finditer(delimiter, element))
+        mid = matches[len(matches) // 2]
+        return element[:mid.start()], element[mid.end():]
+    else:
+        return element
+
+
 def conjugate(elem_name, algebra):
     """ Conjugation: conj('a:b') = 'a:-b'
     Example: conjugate('0:1', F3) ==> '0:2'
@@ -30,15 +40,6 @@ def conjugate(elem_name, algebra):
     tail_negated = list(map(lambda x: algebra.inv(x), tail))
     new_components = list(head) + tail_negated
     return delimiter.join(new_components)
-
-
-def split_element(element, delimiter=':'):
-    if delimiter in element:
-        matches = list(re.finditer(delimiter, element))
-        mid = matches[len(matches) // 2]
-        return element[:mid.start()], element[mid.end():]
-    else:
-        return element
 
 
 def multiply(x, y, rng, mu=None):

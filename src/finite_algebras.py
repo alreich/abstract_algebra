@@ -1232,35 +1232,6 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
-    def sqr(self):  # The Cayley-Dickson construction/algebra
-        """The Cayley-Dickson construction/algebra. Returns the direct product of this Ring
-        with itself, where multiplication is defined as: (a, b) * (c, d) = (ac - bd, ad + bc)
-        """
-        dp_name = f"{self.name}_SQR"
-        dp_description = "Direct product of " + self.name + " with itself using complex multiplication"
-        dp_element_names = list(it.product(self.elements, self.elements))  # Cross product
-        dp_add_table = list()
-        dp_mul_table = list()
-        for a in dp_element_names:
-            dp_add_table_row = list()  # Start new rows in the add and mult tables
-            dp_mul_table_row = list()
-            for b in dp_element_names:
-                dp_add_table_row.append(dp_element_names.index((self.add(a[0], b[0]),
-                                                                self.add(a[1], b[1]))))
-                # (a[0], a[1]) * (b[0], b[1])
-                #     = (a[0]b[0] - a[1]b[1], a[0]b[1] + a[1]b[0])
-                dp_mul_table_row.append(dp_element_names.index(((self.sub(self.mult(a[0], b[0]),
-                                                                          self.mult(a[1], b[1]))),
-                                                                (self.add(self.mult(a[0], b[1]),
-                                                                          self.mult(a[1], b[0]))))))
-            dp_add_table.append(dp_add_table_row)  # Append the new rows to each table
-            dp_mul_table.append(dp_mul_table_row)
-        return make_finite_algebra(dp_name,
-                                   dp_description,
-                                   list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"
-                                         for elem in dp_element_names]),
-                                   dp_add_table,
-                                   dp_mul_table)
 
     def __key(self):
         return tuple([self.elements, self.table.tolist(), self.__ring_mult_table.tolist()])
@@ -1379,22 +1350,22 @@ class Ring(Group):
         """Return [a, b] = (a * b) - (b * a), the ring commutator of a & b"""
         return self.sub(self.mult(a, b), self.mult(b, a))
 
-    def make_abstract_complex_algebra(self, name_gen=None, alg_name=None, alg_desc=None):
-        def generate_name(x):
-            return x.real + ":" + x.imag
-        if name_gen is None:
-            name_gen = generate_name
-        if alg_name is None:
-            alg_name = self.name + "_ACN"
-        if alg_desc is None:
-            alg_desc = "Abstract Complex Number Algebra based on " + self.description
-        elems = [AbstractComplexElement(a, b, self) for a in self.elements for b in self.elements]
-        add_table = [[name_gen(u + v) for v in elems] for u in elems]
-        mul_table = [[name_gen(u * v) for v in elems] for u in elems]
-        enames = list(map(name_gen, elems))
-        name_element_map = {name_gen(elem): elem for elem in elems}
-        new_alg = make_finite_algebra(alg_name, alg_desc, enames, add_table, mul_table)
-        return new_alg, name_element_map
+    # def make_abstract_complex_algebra(self, name_gen=None, alg_name=None, alg_desc=None):
+    #     def generate_name(x):
+    #         return x.real + ":" + x.imag
+    #     if name_gen is None:
+    #         name_gen = generate_name
+    #     if alg_name is None:
+    #         alg_name = self.name + "_ACN"
+    #     if alg_desc is None:
+    #         alg_desc = "Abstract Complex Number Algebra based on " + self.description
+    #     elems = [AbstractComplexElement(a, b, self) for a in self.elements for b in self.elements]
+    #     add_table = [[name_gen(u + v) for v in elems] for u in elems]
+    #     mul_table = [[name_gen(u * v) for v in elems] for u in elems]
+    #     enames = list(map(name_gen, elems))
+    #     name_element_map = {name_gen(elem): elem for elem in elems}
+    #     new_alg = make_finite_algebra(alg_name, alg_desc, enames, add_table, mul_table)
+    #     return new_alg, name_element_map
 
     def about(self, max_size=12, use_table_names=False):
         """Print information about the Ring."""
@@ -1426,6 +1397,89 @@ class Ring(Group):
             print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
         return None
+
+    # ========================================================================
+    # The following methods implement the Cayley-Dickson construction/algebra
+    # ========================================================================
+
+    def sqr(self):  # My original version of the Cayley-Dickson construction/algebra
+        """The Cayley-Dickson construction/algebra. Returns the direct product of this Ring
+        with itself, where multiplication is defined as: (a, b) * (c, d) = (ac - bd, ad + bc)
+        """
+        dp_name = f"{self.name}_SQR"
+        dp_description = "Direct product of " + self.name + " with itself using complex multiplication"
+        dp_element_names = list(it.product(self.elements, self.elements))  # Cross product
+        dp_add_table = list()
+        dp_mul_table = list()
+        for a in dp_element_names:
+            dp_add_table_row = list()  # Start new rows in the add and mult tables
+            dp_mul_table_row = list()
+            for b in dp_element_names:
+                dp_add_table_row.append(dp_element_names.index((self.add(a[0], b[0]),
+                                                                self.add(a[1], b[1]))))
+                # (a[0], a[1]) * (b[0], b[1])
+                #     = (a[0]b[0] - a[1]b[1], a[0]b[1] + a[1]b[0])
+                dp_mul_table_row.append(dp_element_names.index(((self.sub(self.mult(a[0], b[0]),
+                                                                          self.mult(a[1], b[1]))),
+                                                                (self.add(self.mult(a[0], b[1]),
+                                                                          self.mult(a[1], b[0]))))))
+            dp_add_table.append(dp_add_table_row)  # Append the new rows to each table
+            dp_mul_table.append(dp_mul_table_row)
+        return make_finite_algebra(dp_name,
+                                   dp_description,
+                                   list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"
+                                         for elem in dp_element_names]),
+                                   dp_add_table,
+                                   dp_mul_table)
+
+    def conj(self, elem_name):
+        """ Return the conjugate of the element. If elem_name is a lone string (i.e., no  delimiters)
+        then the conjugate is simply the element_name, otherwise conj('a:b') = 'a:-b'.
+        """
+        delimiter = self.direct_product_delimiter()
+        components = elem_name.split(delimiter)
+        head = components[0]; tail = components[1:]
+        tail_negated = list(map(lambda x: self.inv(x), tail))
+        new_components = list(head) + tail_negated
+        return delimiter.join(new_components)
+
+    def make_cayley_dickson_algebra(self, mu=None):  # See [Schafer, 1966]
+        """Constructs the Cayley-Dickson algebra using this Ring/Field.  Multiplication is defined
+        according to [Schafer, 1966]: Let * denote conjugation and let mu be any element in the algebra,
+        then define (a, b) x (c, d) = (a x c + mu x d x b*, a* x d + c x b), where conjugation is defined as
+        a* = a and (u, v)* = (u*, -v), recursively.
+        """
+        name = f"{self.name}_SQR"
+        description = "Direct product of " + self.name + " with itself using complex multiplication"
+        element_names = list(it.product(self.elements, self.elements))  # Cross product
+        add_table = list()
+        mul_table = list()
+        if mu is None:
+            mu = self.inv(self.one)  # The additive inverse of the Ring's multiplicative identity
+        for x in element_names:
+            a = x[0]; b = x[1]
+            dp_add_table_row = list()  # Start new rows in the add and mult tables
+            dp_mul_table_row = list()
+            for y in element_names:
+                c = y[0]; d = y[1]
+                # Addition: (a, b) + (c, d) = (a + b, c + d)
+                dp_add_table_row.append(element_names.index((self.add(a, c),
+                                                             self.add(b, d))))
+                # See [Schafer, 1966]
+                # Conjugation: a* = a and (u, v)* = (u*, -v) recursively
+                # Multiplication: (a, b) x (c, d) = (a x c + mu x d x b*, a* x d + c x b)
+                dp_mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
+                                                                       self.mult(mu, d, self.conj(b)))),
+                                                             (self.add(self.mult(self.conj(a), d),
+                                                                       self.mult(c, d))))))
+            add_table.append(dp_add_table_row)   # Append the new rows to each table
+            mul_table.append(dp_mul_table_row)
+        return make_finite_algebra(name,
+                                   description,
+                                   list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"
+                                         for elem in element_names]),
+                                   add_table,
+                                   mul_table)
 
 
 # TODO: The tables here should be CayleyTables

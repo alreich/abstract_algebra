@@ -23,7 +23,6 @@ import re
 from my_math import divisors, isprime, relative_primes
 from cayley_table import CayleyTable
 from permutations import Perm
-from abstract_complex import AbstractComplexElement
 
 
 class FiniteOperator:
@@ -1467,28 +1466,61 @@ class Ring(Group):
         scalarx = delimiter.join([scalar_name, self.zero[0]])  # eg: '2' --> '2:0'
         return self.mult(scalarx, elem_name)
 
+    # def conj(self, elem):
+    #     """Return the conjugate of the element according to the following recursive definition:
+    #     conj(a) = a, conj(a:b) = (conj(a), -b).
+    #     """
+    #     delimiter = self.direct_product_delimiter()
+    #     if delimiter in elem:  # eg: '1:2' or '1:2:2:1'
+    #         head, tail = self.split_element(elem)  # eg: '1', '2' or '1:2', '2:1'
+    #         zero = self.zero  # '0:0' or '0:0:0:0'
+    #         if delimiter in zero:
+    #             z = self.split_element(zero)[1]  # '0' or '0:0'
+    #         else:
+    #             z = self.zero
+    #         tailx = delimiter.join([tail, z])  # eg: '2:0' or '2:1:0:0'
+    #         tail_neg = self.inv(tailx)  # eg: '1:0' or '1:2:0:0'
+    #         tailx0 = self.split_element(tail_neg)[0]  # eg: '1' or '1:2'
+    #         return delimiter.join([head, tailx0])  # eg: '1:1' or '1:2:1:2'
+    #     else:  # eg: '1'
+    #         return elem
+
+    # Regarding, conj, below, this was a difficult method to code up because computing it requires
+    # that you not only have the ring/field it is defined for, but you also need the ring that was
+    # used to create that ring. That is, if we create the field, F3, of numbers modulo 3, and then
+    # use that field to generate the Cayley-Dickson algebra, F3sqr, with elements like, '1:2', then
+    # F3sqr.conj('1:2') needs to know how to negate the F3 element, '2', but F3sqr doesn't "remember"
+    # the algebra from which it was derived (F3). But, there is a subalgebra in F3sqr that is
+    # isomorphic to F3. Using that subalgebra, in the context of, say, F3sqr, requires quite a
+    # bit of string manipulation.
+
     def conj(self, elem):
         """Return the conjugate of the element according to the following recursive definition:
         conj(a) = a, conj(a:b) = (conj(a), -b).
         """
         delimiter = self.direct_product_delimiter()
-        if delimiter in elem:  # eg: '1:2' or '1:2:3:4'
-            head, tail = self.split_element(elem)  # eg: '1', '2' or '1:2', '3:4'
-            tailx = delimiter.join([tail, self.zero[0]])  # eg: '2:0' or '3:4:0:0'
-            tail_neg = self.inv(tailx)  # eg: '...' or '...'
-            return delimiter.join([head, tail_neg[0]])  # eg: ...
-        else:
+        if delimiter in elem:  # eg: '1:2' or '1:2:2:1'
+            head, tail = self.split_element(elem)  # eg: '1', '2' or '1:2', '2:1'
+            zero = self.zero  # '0:0' or '0:0:0:0'
+            if delimiter in zero:
+                z = self.split_element(zero)[1]  # '0' or '0:0'
+            else:
+                z = zero
+            tailx = delimiter.join([tail, z])  # eg: '2:0' or '2:1:0:0'
+            tail_neg = self.inv(tailx)  # eg: '1:0' or '1:2:0:0'
+            tailx0 = self.split_element(tail_neg)[0]  # eg: '1' or '1:2'
+            return delimiter.join([head, tailx0])  # eg: '1:1' or '1:2:1:2'
+        else:  # eg: '1'
             return elem
 
     def norm_sqr(self, elem):
         """Return the product of the input element and its conjugate."""
         self.mult(elem, self.conj(elem))
 
-    def make_cayley_dickson_algebra(self, mu=None):  # See [Schafer, 1966]
+    def make_cayley_dickson_algebra(self, mu=None, version=3):  # See [Schafer, 1966]
         """Constructs the Cayley-Dickson algebra using this Ring/Field.  Multiplication is defined
-        according to [Schafer, 1966]: Let * denote conjugation and let mu be any element in the algebra,
-        then define (a, b) x (c, d) = (a x c + mu x d x b*, a* x d + c x b), where conjugation is defined as
-        a* = a and (u, v)* = (u*, -v), recursively.
+        according to three different sources ("versions"): version 1: [Schafer, 1966], version 2:
+        [Schafer, 1953], and version 3: same as the 'sqr' method with no mu & no conjugations.
         """
         name = f"{self.name}_CDA"
         description = "Cayley-Dickson algebra based on " + self.name
@@ -1505,14 +1537,30 @@ class Ring(Group):
                 c = y[0]; d = y[1]
                 # Addition: (a, b) + (c, d) = (a + b, c + d)
                 add_table_row.append(element_names.index((self.add(a, c),
-                                                             self.add(b, d))))
-                # See [Schafer, 1966]
-                # Conjugation: a* = a and (u, v)* = (u*, -v) recursively
-                # Multiplication: (a, b) x (c, d) = (a x c + mu x d x b*, a* x d + c x b)
-                mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
-                                                                    self.mult(mu, d, self.conj(b)))),
-                                                          (self.add(self.mult(self.conj(a), d),
-                                                                    self.mult(c, b))))))
+                                                          self.add(b, d))))
+                # Multiplication:
+                if version == 1:
+                    # See [Schafer, 1966]
+                    # Conjugation: a* = a and (u, v)* = (u*, -v) recursively
+                    # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d x b*,  a* x d  +  c x b)
+                    mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
+                                                                        self.mult(mu, d, self.conj(b)))),
+                                                              (self.add(self.mult(self.conj(a), d),
+                                                                        self.mult(c, b))))))
+                elif version == 2:
+                    # See [Schafer, 1953]
+                    # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d* x b,  d x a  +  b x c*)
+                    mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
+                                                                        self.mult(mu, self.conj(d), b))),
+                                                              (self.add(self.mult(d, a),
+                                                                        self.mult(b, self.conj(c)))))))
+                else:
+                    # Same as the 'sqr' method (i.e., no mu, no conjugation)
+                    # Multiplication: (a, b) x (c, d) = (a x c  -  b x d,  a x d  +  b x c)
+                    mul_table_row.append(element_names.index(((self.sub(self.mult(a, c),
+                                                                        self.mult(b, d))),
+                                                              (self.add(self.mult(a, d),
+                                                                        self.mult(b, c))))))
             add_table.append(add_table_row)   # Append the new rows to each table
             mul_table.append(mul_table_row)
         return make_finite_algebra(name,

@@ -1523,12 +1523,18 @@ class Ring(Group):
         [Schafer, 1953], and version 3: same as the 'sqr' method with no mu & no conjugations.
         """
         name = f"{self.name}_CDA"
-        description = "Cayley-Dickson algebra based on " + self.name
+        if mu is None:
+            mu = self.inv(self.one)  # The additive inverse of the Ring's multiplicative identity
+        if version == 1:
+            vers = f"mu = {mu}, Schafer 1966 version."
+        elif version == 2:
+            vers = f"mu = {mu}, Schafer 1953 version."
+        else:
+            vers = "mu = None, Reich 2024 version."
+        description = f"Cayley-Dickson algebra based on {self.name}, where {vers}."
         element_names = list(it.product(self.elements, self.elements))  # Cross product
         add_table = list()
         mul_table = list()
-        if mu is None:
-            mu = self.inv(self.one)  # The additive inverse of the Ring's multiplicative identity
         for x in element_names:
             a = x[0]; b = x[1]
             add_table_row = list()  # Start new rows in the add and mult tables
@@ -1554,7 +1560,7 @@ class Ring(Group):
                                                                         self.mult(mu, self.conj(d), b))),
                                                               (self.add(self.mult(d, a),
                                                                         self.mult(b, self.conj(c)))))))
-                else:
+                else:  # version 3
                     # Same as the 'sqr' method (i.e., no mu, no conjugation)
                     # Multiplication: (a, b) x (c, d) = (a x c  -  b x d,  a x d  +  b x c)
                     mul_table_row.append(element_names.index(((self.sub(self.mult(a, c),

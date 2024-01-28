@@ -1515,7 +1515,7 @@ class Ring(Group):
 
     def norm_sqr(self, elem):
         """Return the product of the input element and its conjugate."""
-        self.mult(elem, self.conj(elem))
+        return self.mult(elem, self.conj(elem))
 
     def make_cayley_dickson_algebra(self, mu=None, version=3):  # See [Schafer, 1966]
         """Constructs the Cayley-Dickson algebra using this Ring/Field.  Multiplication is defined
@@ -1531,7 +1531,7 @@ class Ring(Group):
             vers = f"mu = {mu}, Schafer 1953 version."
         else:
             vers = "mu = None, Reich 2024 version."
-        description = f"Cayley-Dickson algebra based on {self.name}, where {vers}."
+        description = f"Cayley-Dickson algebra based on {self.name}, where {vers}"
         element_names = list(it.product(self.elements, self.elements))  # Cross product
         add_table = list()
         mul_table = list()

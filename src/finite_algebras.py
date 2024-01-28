@@ -1232,7 +1232,6 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
-
     def __key(self):
         return tuple([self.elements, self.table.tolist(), self.__ring_mult_table.tolist()])
 
@@ -1517,20 +1516,23 @@ class Ring(Group):
         """Return the product of the input element and its conjugate."""
         return self.mult(elem, self.conj(elem))
 
-    def make_cayley_dickson_algebra(self, mu=None, version=3):  # See [Schafer, 1966]
+    def make_cayley_dickson_algebra(self, mu=None, version=3):
         """Constructs the Cayley-Dickson algebra using this Ring/Field.  Multiplication is defined
         according to three different sources ("versions"): version 1: [Schafer, 1966], version 2:
         [Schafer, 1953], and version 3: same as the 'sqr' method with no mu & no conjugations.
         """
-        name = f"{self.name}_CDA"
         if mu is None:
             mu = self.inv(self.one)  # The additive inverse of the Ring's multiplicative identity
         if version == 1:
             vers = f"mu = {mu}, Schafer 1966 version."
+            name_suffix = "_CDA66"
         elif version == 2:
             vers = f"mu = {mu}, Schafer 1953 version."
+            name_suffix = "_CDA53"
         else:
-            vers = "mu = None, Reich 2024 version."
+            vers = "mu = None, basic version."
+            name_suffix = "_Sqr"
+        name = f"{self.name}{name_suffix}"
         description = f"Cayley-Dickson algebra based on {self.name}, where {vers}"
         element_names = list(it.product(self.elements, self.elements))  # Cross product
         add_table = list()

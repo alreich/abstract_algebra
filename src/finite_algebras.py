@@ -552,7 +552,7 @@ class Magma(SingleElementSetAlgebra):
     # This 'about' method differs from the one in Groups in that it does not print out
     # as much detailed information about elements.
     # TODO: Combine the 'about' method, below, with the one in Groups.
-    def about(self, max_size=12, use_table_names=False):
+    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True):
         """Prints out information about the algebra. Tables larger than
         max_size are not printed out."""
         print(f"\n** {self.__class__.__name__} **")
@@ -572,18 +572,20 @@ class Magma(SingleElementSetAlgebra):
             print(f"  Generators: {sorted(generators)}")
         else:
             print("Cyclic?: No")
-        print(f"Elements: {self.elements}")
+        if show_elements:
+            print(f"Elements: {self.elements}")
         print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
         size = len(self.elements)
-        if size <= max_size:  # Don't print table if too large
-            if use_table_names:
-                print(f"Cayley Table (showing names):")
-                pp.pprint(self.table.to_list_with_names(self.elements))
+        if show_tables:
+            if size <= max_size:  # Don't print table if too large
+                if use_table_names:
+                    print(f"Cayley Table (showing names):")
+                    pp.pprint(self.table.to_list_with_names(self.elements))
+                else:
+                    print(f"Cayley Table (showing indices):")
+                    pp.pprint(self.table.tolist())
             else:
-                print(f"Cayley Table (showing indices):")
-                pp.pprint(self.table.tolist())
-        else:
-            print(f"{self.__class__.__name__} order is {size} > {max_size}, so the table is not output.")
+                print(f"{self.__class__.__name__} order is {size} > {max_size}, so the table is not output.")
         return None
 
 
@@ -883,7 +885,7 @@ class Group(Monoid):
     # This 'about' method differs from the one in SingleElementSetAlgebra in that it prints out
     # more detailed information about elements.
     # TODO: It would be nice to combine the two someday.
-    def about(self, max_size=12, use_table_names=False):
+    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True):
         """Print information about the Group."""
         print(f"\n** {self.__class__.__name__} **")
         print(f"Name: {self.name}")
@@ -900,25 +902,26 @@ class Group(Monoid):
         else:
             print("Cyclic?: No")
         spc = 7
-        print("Elements:")
-        print("   Index   Name   Inverse  Order")
-        for elem in self:
-            idx_elem = self.elements.index(elem)
-            inv_elem = self.inv(elem)
-            ord_elem = self.element_order(elem)
-            # print(f"{idx_elem :>{spc}} {elem :>{spc}} {inv_elem :>{spc}} {ord_elem :>{spc}}")
-            # repr is used here to make strings explicit by printing out their quotation marks.
-            print(f"{idx_elem :>{spc}} {repr(elem) :>{spc}} {repr(inv_elem) :>{spc}} {ord_elem :>{spc}}")
+        if show_elements:
+            print("Elements:")
+            print("   Index   Name   Inverse  Order")
+            for elem in self:
+                idx_elem = self.elements.index(elem)
+                inv_elem = self.inv(elem)
+                ord_elem = self.element_order(elem)
+                # repr is used below to make strings explicit by printing out their quotation marks.
+                print(f"{idx_elem :>{spc}} {repr(elem) :>{spc}} {repr(inv_elem) :>{spc}} {ord_elem :>{spc}}")
         size = len(self.elements)
-        if size <= max_size:
-            if use_table_names:
-                print(f"Cayley Table (showing names):")
-                pp.pprint(self.table.to_list_with_names(self.elements))
+        if show_tables:
+            if size <= max_size:
+                if use_table_names:
+                    print(f"Cayley Table (showing names):")
+                    pp.pprint(self.table.to_list_with_names(self.elements))
+                else:
+                    print(f"Cayley Table (showing indices):")
+                    pp.pprint(self.table.tolist())
             else:
-                print(f"Cayley Table (showing indices):")
-                pp.pprint(self.table.tolist())
-        else:
-            print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+                print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
         return str(self)
 
 
@@ -1366,9 +1369,9 @@ class Ring(Group):
     #     new_alg = make_finite_algebra(alg_name, alg_desc, enames, add_table, mul_table)
     #     return new_alg, name_element_map
 
-    def about(self, max_size=12, use_table_names=False):
+    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True):
         """Print information about the Ring."""
-        super().about(max_size, use_table_names)
+        super().about(max_size, use_table_names, show_tables, show_elements)
 
         if self.mult_identity is not None:
             print(f"Mult. Identity: {repr(self.mult_identity)}")
@@ -1385,15 +1388,16 @@ class Ring(Group):
 
         size = len(self.elements)
 
-        if size <= max_size:
-            if use_table_names:
-                print(f"Multiplicative Cayley Table (showing names):")
-                pp.pprint(self.__ring_mult_table.to_list_with_names(self.elements))
+        if show_tables:
+            if size <= max_size:
+                if use_table_names:
+                    print(f"Multiplicative Cayley Table (showing names):")
+                    pp.pprint(self.__ring_mult_table.to_list_with_names(self.elements))
+                else:
+                    print(f"Multiplicative Cayley Table (showing indices):")
+                    pp.pprint(self.mult_table.tolist())
             else:
-                print(f"Multiplicative Cayley Table (showing indices):")
-                pp.pprint(self.mult_table.tolist())
-        else:
-            print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+                print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
 
         return None
 
@@ -2069,15 +2073,15 @@ class Module(MultipleElementSetAlgebra):
         """Return the sum of two vectors using the Group operation, op."""
         return self.vector.op(v1, v2)
 
-    def about(self, max_size=12, use_table_names=False):
+    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True):
         """Print information about the Module or Vector Space."""
         print(f"\n{self.__class__.__name__}: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
         print(f"\nSCALARS:")
-        self.scalar.about(max_size, use_table_names)
+        self.scalar.about(max_size, use_table_names, show_tables, show_elements)
         print(f"\nVECTORS:")
-        self.vector.about(max_size, use_table_names)
+        self.vector.about(max_size, use_table_names, show_tables, show_elements)
         return None
 
 

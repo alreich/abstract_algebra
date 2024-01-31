@@ -1504,8 +1504,14 @@ class Ring(Group):
         description = f"Cayley-Dickson algebra based on {self.name}, where {vers}"
         element_names = list(it.product(self.elements, self.elements))  # Cross product
         elems = [f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}" for elem in element_names]
+
+        # The conjugate mapping created here will be passed, at the end, to the CD algebra
+        # output by this method.  On the other hand, the self.conj method calls in the
+        # multiplication section, below, refer to the conjugates of this ring itself, not
+        # the ring to be output.
         conj_elems = [self.elem_conj(elem) for elem in elems]
         conj_map = dict(zip(elems, conj_elems))
+
         add_table = list()
         mul_table = list()
         for x in element_names:
@@ -1514,25 +1520,26 @@ class Ring(Group):
             mul_table_row = list()
             for y in element_names:
                 c = y[0]; d = y[1]
-                # Addition: (a, b) + (c, d) = (a + b, c + d)
+
+                # ADDITION: (a, b) + (c, d) = (a + b, c + d)
                 add_table_row.append(element_names.index((self.add(a, c),
                                                           self.add(b, d))))
-                # Multiplication:
+                # MULTIPLICATION:
                 if version == 1:
                     # See [Schafer, 1966]
                     # Conjugation: a* = a and (u, v)* = (u*, -v) recursively
                     # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d x b*,  a* x d  +  c x b)
                     mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
-                                                                        self.mult(mu, d, conj_map[b]))),
-                                                              (self.add(self.mult(conj_map[a], d),
+                                                                        self.mult(mu, d, self.conj(b)))),
+                                                              (self.add(self.mult(self.conj(a), d),
                                                                         self.mult(c, b))))))
                 elif version == 2:
                     # See [Schafer, 1953]
                     # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d* x b,  d x a  +  b x c*)
                     mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
-                                                                        self.mult(mu, conj_map[d], b))),
+                                                                        self.mult(mu, self.conj(d), b))),
                                                               (self.add(self.mult(d, a),
-                                                                        self.mult(b, conj_map[c]))))))
+                                                                        self.mult(b, self.conj(c)))))))
                 else:  # version 3
                     # Same as the 'sqr' method (i.e., no mu, no conjugation)
                     # Multiplication: (a, b) x (c, d) = (a x c  -  b x d,  a x d  +  b x c)

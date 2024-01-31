@@ -1179,9 +1179,12 @@ class Ring(Group):
     addition.  The operator inherited from Group becomes 'addition', while
     'multiplication' is defined by table2."""
 
-    def __init__(self, name, description, elements, table, table2, check_inputs=True):
+    def __init__(self, name, description, elements, table, table2, check_inputs=True,
+                 conjugate_mapping=None):
 
         super().__init__(name, description, elements, table, check_inputs)
+
+        self.__conjugates = conjugate_mapping
 
         if isinstance(table2, CayleyTable):
             self.__ring_mult_table = table2
@@ -1435,17 +1438,6 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
-    # def conj(self, elem_name):
-    #     """ Return the conjugate of the element. If elem_name is a lone string (i.e., no  delimiters)
-    #     then the conjugate is simply the element_name, otherwise conj('a:b') = 'a:-b'.
-    #     """
-    #     delimiter = self.direct_product_delimiter()
-    #     components = elem_name.split(delimiter)
-    #     head = components[0]; tail = components[1:]
-    #     tail_negated = list(map(lambda x: self.inv(x), tail))
-    #     new_components = list(head) + tail_negated
-    #     return delimiter.join(new_components)
-
     def split_element(self, element):
         """If the element is a compound element created by a direct product or the Cayley-Dickson
         construction, then it contains at least one delimiter (e.g., '1:2' or '1:2:3:4').
@@ -1469,54 +1461,26 @@ class Ring(Group):
         scalarx = delimiter.join([scalar_name, self.zero[0]])  # eg: '2' --> '2:0'
         return self.mult(scalarx, elem_name)
 
-    # def conj(self, elem):
-    #     """Return the conjugate of the element according to the following recursive definition:
-    #     conj(a) = a, conj(a:b) = (conj(a), -b).
-    #     """
-    #     delimiter = self.direct_product_delimiter()
-    #     if delimiter in elem:  # eg: '1:2' or '1:2:2:1'
-    #         head, tail = self.split_element(elem)  # eg: '1', '2' or '1:2', '2:1'
-    #         zero = self.zero  # '0:0' or '0:0:0:0'
-    #         if delimiter in zero:
-    #             z = self.split_element(zero)[1]  # '0' or '0:0'
-    #         else:
-    #             z = self.zero
-    #         tailx = delimiter.join([tail, z])  # eg: '2:0' or '2:1:0:0'
-    #         tail_neg = self.inv(tailx)  # eg: '1:0' or '1:2:0:0'
-    #         tailx0 = self.split_element(tail_neg)[0]  # eg: '1' or '1:2'
-    #         return delimiter.join([head, tailx0])  # eg: '1:1' or '1:2:1:2'
-    #     else:  # eg: '1'
-    #         return elem
-
-    # Regarding, conj, below, this was a difficult method to code up because computing it requires
-    # that you not only have the ring/field it is defined for, but you also need the ring that was
-    # used to create that ring. That is, if we create the field, F3, of numbers modulo 3, and then
-    # use that field to generate the Cayley-Dickson algebra, F3sqr, with elements like, '1:2', then
-    # F3sqr.conj('1:2') needs to know how to negate the F3 element, '2', but F3sqr doesn't "remember"
-    # the algebra from which it was derived (F3). But, there is a subalgebra in F3sqr that is
-    # isomorphic to F3. Using that subalgebra, in the context of, say, F3sqr, requires quite a
-    # bit of string manipulation.
-
-    def conj(self, elem):
-        """Return the conjugate of the element according to the following recursive definition:
-        conj(a) = a, conj(a:b) = (conj(a), -b).
+    def elem_conj(self, elem):
+        """For use only when making a Cayley-Dickson algebra.
         """
-        delimiter = self.direct_product_delimiter()
-        if delimiter in elem:  # eg: '1:2' or '1:2:2:1'
-            head, tail = self.split_element(elem)  # eg: '1', '2' or '1:2', '2:1'
-            zero = self.zero  # '0:0' or '0:0:0:0'
-            if delimiter in zero:
-                z = self.split_element(zero)[1]  # '0' or '0:0'
-            else:
-                z = zero
-            tailx = delimiter.join([tail, z])  # eg: '2:0' or '2:1:0:0'
-            tail_neg = self.inv(tailx)  # eg: '1:0' or '1:2:0:0'
-            tailx0 = self.split_element(tail_neg)[0]  # eg: '1' or '1:2'
-            return delimiter.join([head, tailx0])  # eg: '1:1' or '1:2:1:2'
-        else:  # eg: '1'
+        delim = self.direct_product_delimiter()
+        if delim in elem:
+            a, b = self.split_element(elem)
+            return delim.join([self.conj(a), self.inv(b)])
+        else:
             return elem
 
-    def norm_sqr(self, elem):
+    def conjugates(self):
+        return self.__conjugates
+
+    def conj(self, elem):
+        if self.__conjugates is None:
+            return elem
+        else:
+            return self.__conjugates[elem]
+
+    def norm(self, elem):
         """Return the product of the input element and its conjugate."""
         return self.mult(elem, self.conj(elem))
 
@@ -1539,6 +1503,9 @@ class Ring(Group):
         name = f"{self.name}{name_suffix}"
         description = f"Cayley-Dickson algebra based on {self.name}, where {vers}"
         element_names = list(it.product(self.elements, self.elements))  # Cross product
+        elems = [f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}" for elem in element_names]
+        conj_elems = [self.elem_conj(elem) for elem in elems]
+        conj_map = dict(zip(elems, conj_elems))
         add_table = list()
         mul_table = list()
         for x in element_names:
@@ -1556,16 +1523,16 @@ class Ring(Group):
                     # Conjugation: a* = a and (u, v)* = (u*, -v) recursively
                     # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d x b*,  a* x d  +  c x b)
                     mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
-                                                                        self.mult(mu, d, self.conj(b)))),
-                                                              (self.add(self.mult(self.conj(a), d),
+                                                                        self.mult(mu, d, conj_map[b]))),
+                                                              (self.add(self.mult(conj_map[a], d),
                                                                         self.mult(c, b))))))
                 elif version == 2:
                     # See [Schafer, 1953]
                     # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d* x b,  d x a  +  b x c*)
                     mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
-                                                                        self.mult(mu, self.conj(d), b))),
+                                                                        self.mult(mu, conj_map[d], b))),
                                                               (self.add(self.mult(d, a),
-                                                                        self.mult(b, self.conj(c)))))))
+                                                                        self.mult(b, conj_map[c]))))))
                 else:  # version 3
                     # Same as the 'sqr' method (i.e., no mu, no conjugation)
                     # Multiplication: (a, b) x (c, d) = (a x c  -  b x d,  a x d  +  b x c)
@@ -1577,10 +1544,12 @@ class Ring(Group):
             mul_table.append(mul_table_row)
         return make_finite_algebra(name,
                                    description,
-                                   list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"
-                                         for elem in element_names]),
+                                   # list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"
+                                   #       for elem in element_names]),
+                                   elems,
                                    add_table,
-                                   mul_table)
+                                   mul_table,
+                                   conj_map)
 
 
 # TODO: The tables here should be CayleyTables
@@ -1725,8 +1694,10 @@ class Field(Ring):
     """A Field is a Ring, where the elements, minus the additive identity, form a commutative Group
     under multiplication."""
 
-    def __init__(self, name, description, elements, table, table2, check_inputs=True, mult_sub_grp=None):
-        super().__init__(name, description, elements, table, table2, check_inputs)
+    def __init__(self, name, description, elements, table, table2, check_inputs=True, mult_sub_grp=None,
+                 conjugate_mapping=None):
+
+        super().__init__(name, description, elements, table, table2, check_inputs, conjugate_mapping)
 
         # This is the abelian Group defined by the Ring elements, minus the additive identity,
         # under Ring multiplication
@@ -1777,7 +1748,7 @@ class Field(Ring):
         return mult_alg.element_to_power(elem, n, left_associative)
 
 
-def generate_algebra_mod_n(n, elem_name='a', name=None, description=None):
+def generate_algebra_mod_n(n, elem_name='', name=None, description=None):
     """Generate a Ring (or Field) based on integer addition and multiplication modulo n.
     If n is prime, then result will be a Field, otherwise it will be a Ring."""
 
@@ -2338,6 +2309,17 @@ def make_finite_algebra(*args):
                            'table': args[3],
                            'table2': args[4]
                            }
+
+    elif len(args) == 6:  # Only happens when we're constructing a Cayley-Dickson ring or field
+
+        finalg_dict = {'name': args[0],
+                       'description': args[1],
+                       'elements': args[2],
+                       'table': args[3],
+                       'table2': args[4],
+                       'conj_map': args[5]  # Lookup table for conjugates
+                       }
+
     else:
         raise ValueError("Incorrect number of input arguments.")
 
@@ -2363,6 +2345,12 @@ def make_finite_algebra(*args):
         table2 = make_cayley_table(finalg_dict['table2'], elems)
         is_assoc2 = table2.is_associative()
 
+    # Conjugate Mapping: A lookup table for conjugates in rings or fields that are Cayley-Dickson algebras
+    if 'conj_map' in finalg_dict:
+        conj_map = finalg_dict['conj_map']
+    else:
+        conj_map = None
+
     is_assoc = table.is_associative()
     identity = table.identity()  # this is the integer index of the identity, not the name str
     if identity is not None:
@@ -2382,9 +2370,9 @@ def make_finite_algebra(*args):
                     abelian_group = is_field(elems[identity], elems, table2.table)
                     if abelian_group:
                         return Field(name, desc, elems, table, table2, check_inputs=False,
-                                     mult_sub_grp=abelian_group)
+                                     mult_sub_grp=abelian_group, conjugate_mapping=conj_map)
                     else:
-                        return Ring(name, desc, elems, table, table2, check_inputs=False)
+                        return Ring(name, desc, elems, table, table2, check_inputs=False, conjugate_mapping=conj_map)
                 else:
                     return Group(name, desc, elems, table, check_inputs=False)
             else:

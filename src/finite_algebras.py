@@ -130,7 +130,7 @@ class SingleElementSetAlgebra(FiniteAlgebra):
         return self.__elements[index]
 
     def __repr__(self):
-        nm, desc, elems, tbl = get_name_desc_elements_table(self)
+        nm, desc, elems, tbl = unpack_components(self)
         return f"{self.__class__.__name__}(\n'{nm}',\n'{desc}',\n{elems},\n{tbl}\n)"
 
     def __str__(self):
@@ -245,6 +245,8 @@ class SingleElementSetAlgebra(FiniteAlgebra):
                   }
         if isinstance(self, Ring):
             result['table2'] = self.mult_table.tolist()
+            if self.conjugates() is not None:
+                result['conj_map'] = self.conjugates()
         if include_classname:
             result['type'] = self.__class__.__name__
         return result
@@ -1209,8 +1211,11 @@ class Ring(Group):
                 raise ValueError(f"CHECK INPUTS: Multiplication does not distribute over addition. {self}")
 
     def __repr__(self):
-        nm, desc, elems, tbl, tbl2 = get_name_desc_elements_table(self)
-        return f"{self.__class__.__name__}(\n'{nm}',\n'{desc}',\n{elems},\n{tbl},\n{tbl2}\n)"
+        nm, desc, elems, tbl, tbl2, conjmap = unpack_components(self)
+        if conjmap is not None:
+            return f"{self.__class__.__name__}(\n'{nm}',\n'{desc}',\n{elems},\n{tbl},\n{tbl2},\n{conjmap}\n)"
+        else:
+            return f"{self.__class__.__name__}(\n'{nm}',\n'{desc}',\n{elems},\n{tbl},\n{tbl2}\n)"
 
     def __mul__(self, other):  # Direct Product of two Rings
         """Return direct product of this Ring with the `other` Ring."""
@@ -1472,9 +1477,12 @@ class Ring(Group):
             return elem
 
     def conjugates(self):
+        """Return the dictionary that maps elements to their conjugate values. If it is None, then the element its
+        own conjugate."""
         return self.__conjugates
 
     def conj(self, elem):
+        """Given an element name, return the element name of its conjugate value."""
         if self.__conjugates is None:
             return elem
         else:
@@ -2401,7 +2409,7 @@ def delete_row_col(np_arr, row, col):
     return np.delete(np.delete(np_arr, row, 0), col, 1)
 
 
-def get_name_desc_elements_table(finalg):
+def unpack_components(finalg):
     """A convenience function. It unpacks a SingleElementSetAlgebra
     and returns its components: name, description, elements, and
     table(s) (in list form).
@@ -2413,7 +2421,8 @@ def get_name_desc_elements_table(finalg):
         table_as_list = finalg.table.tolist()
         if isinstance(finalg, Ring):
             table2_as_list = finalg.mult_table.tolist()
-            return name, description, elements, table_as_list, table2_as_list
+            conj_dict = finalg.conjugates()  # NOTE: This could be None
+            return name, description, elements, table_as_list, table2_as_list, conj_dict
         else:
             return name, description, elements, table_as_list
     else:

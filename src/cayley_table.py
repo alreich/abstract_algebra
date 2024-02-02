@@ -33,7 +33,6 @@ class CayleyTable:
         nrows, ncols = tmp.shape
         if nrows == ncols:
             if (np.min(tmp) >= 0) and (np.max(tmp) < nrows):
-                # self.__order = nrows
                 self.__table = tmp
             else:
                 raise Exception(f"All integers must be between 0 and {nrows - 1}, inclusive.")
@@ -44,13 +43,8 @@ class CayleyTable:
         return f"{self.__class__.__name__}({self.__table.tolist()})"
 
     def __str__(self):
-        # n = self.__order
         n = self.__table.shape[0]
         return f"<{self.__class__.__name__}, order {n}, ID:{id(self)}>"
-
-    # def __eq__(self, other):
-    #     compare = (self.__table == other.table)
-    #     return compare.all()
 
     def __getitem__(self, tup):
         row, col = tup
@@ -70,7 +64,6 @@ class CayleyTable:
     @property
     def order(self):
         """Returns the order of the table, e.g., a 3x3 table has order 3."""
-        # return self.__order
         return self.__table.shape[0]
 
     @property
@@ -120,8 +113,6 @@ class CayleyTable:
         'other', equal-sized CayleyTable.  Think of 'self' as multiplication and
         'other' as addition.
         """
-        # n = self.__order
-        # m = other.order
         n = self.order
         m = self.order
         if n != m:
@@ -193,6 +184,12 @@ class CayleyTable:
         return {elements[elem_index]: elements[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}
+
+    def table_entries_where_equal_to(self, val):
+        """Return all (row, col) pairs where table entries equal val."""
+        row_indices, col_indices = np.where(self.table == val)
+        index_pairs = list(zip(row_indices, col_indices))
+        return index_pairs
 
     def about(self, printout=False):
         """Printout information about the CayleyTable: order, associativity,

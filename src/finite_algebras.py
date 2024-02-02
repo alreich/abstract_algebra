@@ -551,6 +551,21 @@ class Magma(SingleElementSetAlgebra):
                     print(f"{ab} fail")
         return result
 
+    def _element_pairs_where_table_equals(self, cayley_table, elem_name):
+        """Utility function that returns all pairs of elements where the cayley_table entries
+         are equal to elem."""
+        elems = self.elements
+        index = elems.index(elem_name)
+        pairs = cayley_table.table_entries_where_equal_to(index)
+        return [(elems[pair[0]], elems[pair[1]]) for pair in pairs]
+
+    def element_pairs_where_sum_equals(self, elem_name):
+        """Return all pairs of elements where the sums are equal to elem_name. The 'sum' here
+        refers to the binary operation of a Magma, Semigroup, Group, or to the additive binary
+        operation of a Ring or Field.
+        """
+        return self._element_pairs_where_table_equals(self.table, elem_name)
+
     # This 'about' method differs from the one in Groups in that it does not print out
     # as much detailed information about elements.
     # TODO: Combine the 'about' method, below, with the one in Groups.
@@ -1329,6 +1344,7 @@ class Ring(Group):
         desc = f"Multiplicative-only portion of {self.name}"
         return make_finite_algebra(nm, desc, self.elements, self.mult_table.table)
 
+    # TODO: Write a method that returns non-zero pairs whose product is zero
     def zero_divisors(self):
         """Return the Ring's zero divisors. i.e., if neither a nor b are 0, but a*b == 0, then
         a and b are zero divisors."""
@@ -1341,8 +1357,9 @@ class Ring(Group):
         mult_table_without_add_id = delete_row_col(self.mult_table.table, zero_index, zero_index)
 
         # Get the row & column indices where the product equals "zero" in the remaining table
-        a, b = list(map(set, np.where(mult_table_without_add_id == zero_index)))
-
+        # a, b = list(map(set, np.where(mult_table_without_add_id == zero_index)))
+        a, b = list(map(lambda x: set(x), np.where(mult_table_without_add_id == zero_index)))
+        #
         # Return all elements corresponding to the union of the row & column indices
         return [self.elements[index + 1] for index in list(a | b)]
 
@@ -1359,6 +1376,11 @@ class Ring(Group):
     def commutator(self, a, b):
         """Return [a, b] = (a * b) - (b * a), the ring commutator of a & b"""
         return self.sub(self.mult(a, b), self.mult(b, a))
+
+    def element_pairs_where_product_equals(self, elem_name):
+        """Return all pairs of elements where the product is equal to elem_name.
+        """
+        return self._element_pairs_where_table_equals(self.mult_table, elem_name)
 
     # def make_abstract_complex_algebra(self, name_gen=None, alg_name=None, alg_desc=None):
     #     def generate_name(x):
@@ -1377,7 +1399,8 @@ class Ring(Group):
     #     new_alg = make_finite_algebra(alg_name, alg_desc, enames, add_table, mul_table)
     #     return new_alg, name_element_map
 
-    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True):
+    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True,
+              show_conjugates=True):
         """Print information about the Ring."""
         super().about(max_size, use_table_names, show_tables, show_elements)
 
@@ -1406,6 +1429,10 @@ class Ring(Group):
                     pp.pprint(self.mult_table.tolist())
             else:
                 print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+
+        # The conjugate mapping is only printed out if it exists and we want to see it.
+        if show_conjugates and self.conjugates() is not None:
+            print(f"Conjugate Mapping: {self.conjugates()}")
 
         return None
 

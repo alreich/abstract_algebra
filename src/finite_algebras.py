@@ -1519,22 +1519,47 @@ class Ring(Group):
         """Return the product of the input element and its conjugate."""
         return self.mult(elem, self.conj(elem))
 
-    def make_cayley_dickson_algebra(self, mu=None, version=3):
-        """Constructs the Cayley-Dickson algebra using this Ring/Field.  Multiplication is defined
-        according to three different sources ("versions"): version 1: [Schafer, 1966], version 2:
-        [Schafer, 1953], and version 3: same as the 'sqr' method with no mu & no conjugations.
+    def make_cayley_dickson_algebra(self, mu=None, version=1):
+        """Constructs the Cayley-Dickson algebra using this Ring.
+
+        Several different versions of multiplication are supported:
+        version=1: (DEFAULT) No mu & no conjugation are used;
+        version=2: Definition in Schafer, 1966;
+        version=3: Definition in Schafer, 1953.
+
+        See the documentation on readthedocs for more information regarding versions.
+
+        Also, if mu is None (the default), then mu will be automatically set to be the
+        additive inverse of the Ring's multiplicative identity element (i.e., "-1"),
+        if it exists. If it does not exist, then version 1 will be used, regardless of
+        the requested version.
         """
         if mu is None:
-            mu = self.inv(self.one)  # The additive inverse of the Ring's multiplicative identity
+            if self.has_mult_identity():
+                mu = self.inv(self.one)  # The additive inverse of the multiplicative identity
+            else:
+                if version == 2 or version == 3:
+                    print(f"** No mult. identity exists, so version 3 used, instead of {version}.")
+                    version = 1
+        else:  # mu is not None
+            if mu in self.elements:
+                if version == 1:
+                    print(f"** Version {version} ignores the value of mu. (mu = {mu})")
+            else:
+                raise ValueError(f"mu = {mu} is not an element of {self.name}.")
+
         if version == 1:
+            vers = "no mu and no conjugation were used."
+            name_suffix = "_CDA"
+        elif version == 2:
             vers = f"mu = {mu}, Schafer 1966 version."
             name_suffix = "_CDA66"
-        elif version == 2:
+        elif version == 3:
             vers = f"mu = {mu}, Schafer 1953 version."
             name_suffix = "_CDA53"
         else:
-            vers = "mu = None, basic version."
-            name_suffix = "_Sqr"
+            raise ValueError(f"{version} is not a valid version #. Use 1, 2, or 3.")
+
         name = f"{self.name}{name_suffix}"
         description = f"Cayley-Dickson algebra based on {self.name}, where {vers}"
         element_names = list(it.product(self.elements, self.elements))  # Cross product
@@ -1551,7 +1576,9 @@ class Ring(Group):
         mul_table = list()
         for x in element_names:
             a = x[0]; b = x[1]
-            add_table_row = list()  # Start new rows in the add and mult tables
+
+            # Start new rows in the addition and multiplication tables
+            add_table_row = list()
             mul_table_row = list()
             for y in element_names:
                 c = y[0]; d = y[1]
@@ -1561,6 +1588,13 @@ class Ring(Group):
                                                           self.add(b, d))))
                 # MULTIPLICATION:
                 if version == 1:
+                    # No mu and no conjugation used:
+                    # Multiplication: (a, b) x (c, d) = (a x c  -  b x d,  a x d  +  b x c)
+                    mul_table_row.append(element_names.index(((self.sub(self.mult(a, c),
+                                                                        self.mult(b, d))),
+                                                              (self.add(self.mult(a, d),
+                                                                        self.mult(b, c))))))
+                elif version == 2:
                     # See [Schafer, 1966]
                     # Conjugation: a* = a and (u, v)* = (u*, -v) recursively
                     # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d x b*,  a* x d  +  c x b)
@@ -1568,26 +1602,22 @@ class Ring(Group):
                                                                         self.mult(mu, d, self.conj(b)))),
                                                               (self.add(self.mult(self.conj(a), d),
                                                                         self.mult(c, b))))))
-                elif version == 2:
+                elif version == 3:
                     # See [Schafer, 1953]
                     # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d* x b,  d x a  +  b x c*)
                     mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
                                                                         self.mult(mu, self.conj(d), b))),
                                                               (self.add(self.mult(d, a),
                                                                         self.mult(b, self.conj(c)))))))
-                else:  # version 3
-                    # Same as the 'sqr' method (i.e., no mu, no conjugation)
-                    # Multiplication: (a, b) x (c, d) = (a x c  -  b x d,  a x d  +  b x c)
-                    mul_table_row.append(element_names.index(((self.sub(self.mult(a, c),
-                                                                        self.mult(b, d))),
-                                                              (self.add(self.mult(a, d),
-                                                                        self.mult(b, c))))))
-            add_table.append(add_table_row)   # Append the new rows to each table
+                else:
+                    raise ValueError(f"What happened?!?! We should never see this message. Version == {version}")
+
+            # Append the new rows to each table
+            add_table.append(add_table_row)
             mul_table.append(mul_table_row)
+
         return make_finite_algebra(name,
                                    description,
-                                   # list([f"{elem[0]}{self.direct_product_delimiter()}{elem[1]}"
-                                   #       for elem in element_names]),
                                    elems,
                                    add_table,
                                    mul_table,

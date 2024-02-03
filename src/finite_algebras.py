@@ -1382,25 +1382,15 @@ class Ring(Group):
         """
         return self._element_pairs_where_table_equals(self.mult_table, elem_name)
 
-    # def make_abstract_complex_algebra(self, name_gen=None, alg_name=None, alg_desc=None):
-    #     def generate_name(x):
-    #         return x.real + ":" + x.imag
-    #     if name_gen is None:
-    #         name_gen = generate_name
-    #     if alg_name is None:
-    #         alg_name = self.name + "_ACN"
-    #     if alg_desc is None:
-    #         alg_desc = "Abstract Complex Number Algebra based on " + self.description
-    #     elems = [AbstractComplexElement(a, b, self) for a in self.elements for b in self.elements]
-    #     add_table = [[name_gen(u + v) for v in elems] for u in elems]
-    #     mul_table = [[name_gen(u * v) for v in elems] for u in elems]
-    #     enames = list(map(name_gen, elems))
-    #     name_element_map = {name_gen(elem): elem for elem in elems}
-    #     new_alg = make_finite_algebra(alg_name, alg_desc, enames, add_table, mul_table)
-    #     return new_alg, name_element_map
+    def zero_divisor_pairs(self):
+        """Return a list of pairs of elements, neither one of which is zero, but whose
+        product is zero.
+        """
+        zero_product_pairs = self.element_pairs_where_product_equals(self.identity)
+        return [pair for pair in zero_product_pairs if not self.identity in pair]
 
     def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True,
-              show_conjugates=True):
+              show_conjugates=False):
         """Print information about the Ring."""
         super().about(max_size, use_table_names, show_tables, show_elements)
 

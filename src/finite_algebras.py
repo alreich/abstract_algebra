@@ -1475,6 +1475,29 @@ class Ring(Group):
         else:
             return element
 
+    def is_gaussian_prime(self, elem):
+        """This method only works for elements of Rings or Fields created by the function,
+        'generate_algebra_mod_n', or by a single application of the Ring method,
+        'make_cayley_dickson_algebra', to the output of 'generate_algebra_mod_n'.
+        That is, elements that look like '7' or '07:12'.
+        """
+        delim = self.direct_product_delimiter()
+        dimension = elem.count(delim)
+        if dimension == 0:
+            real = elem
+            imag = 0
+        elif dimension == 1:
+            a, b = elem.split(delim)
+            real = int(a)
+            imag = int(b)
+        else:
+            raise ValueError(f"The dimension of {elem} is too high.")
+        if real == 0:
+            return isprime(imag) and imag % 4 == 3
+        elif imag == 0:
+            return isprime(real) and real % 4 == 3
+        return isprime(real ** 2 + imag ** 2)
+
     def scalar_mult(self, scalar_name, elem_name):
         """ Scalar multiplication. 'a' * 'c:d' = 'a*c:a*d'
         Example: scalar_mult('2', '1:2', F3) ==> '2:1'

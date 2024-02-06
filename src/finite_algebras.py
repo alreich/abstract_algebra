@@ -485,19 +485,51 @@ class Magma(SingleElementSetAlgebra):
             list_of_subalgebras.append(self.subalgebra_from_elements(closed_element_set, name, desc))
         return list_of_subalgebras
 
-    def generators(self):
-        """Return a list of individual elements that generate the entire algebra."""
-        elemset = set(self.elements)
-        return [x for x in elemset if set(self.closure([x], False)) == elemset]
+    # def generators(self):
+    #     """Return a list of individual elements that generate the entire algebra."""
+    #     elemset = set(self.elements)
+    #     return [x for x in elemset if set(self.closure([x], False)) == elemset]
 
-    def is_cyclic(self):
-        """Returns False if this algebra is not cyclic; otherwise a list of elements
-        that generates the algebra is returned."""
-        gens = self.generators()
-        if len(gens) == 0:
-            return False
+    def generates(self, set_of_elems):
+        """Returns True if a set of one or more elements generates the algebra,
+        otherwise False is returned.
+        """
+        clo = self.closure(set_of_elems, include_inverses=False)
+        return set(clo) == set(self.elements)
+
+    def generators(self):
+        """If the algebra is cyclic, then True is returned along with a list of individual
+        elements that each generate the algebra.  Otherwise, False is returned along with a
+        list of lists of elements where each sublist generates the algebra."""
+        gens = list()
+        for k in range(1, self.order):
+            combos = list(it.combinations(self.elements, k))
+            stop = False
+            for combo in combos:
+                if self.generates(combo):
+                    gens.append(combo)
+                    stop = True
+            if stop:
+                break
+        if k == 1:
+            return True, [gen[0] for gen in gens]  # The grp is cyclic
         else:
-            return gens
+            return False, gens  # The grp is not cyclic
+
+    # def is_cyclic_OLD(self):
+    #     """Returns False if this algebra is not cyclic; otherwise a list of elements
+    #     that generates the algebra is returned."""
+    #     gens = self.generators()
+    #     if len(gens) == 0:
+    #         return False
+    #     else:
+    #         return gens
+
+    # TODO: replace examples of 'is_cyclic' in docs with 'generators' instead
+    def is_cyclic(self):
+        """Deprecated. Use generators() instead."""
+        result, _ = self.generators()
+        return result
 
     def center(self):
         """Return the list of elements that commute with every element of the algebra.
@@ -583,12 +615,13 @@ class Magma(SingleElementSetAlgebra):
             print(f"Identity: {self.identity}")
         print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
-        generators = self.is_cyclic()
-        if generators:
-            print("Cyclic?: Yes")
-            print(f"  Generators: {sorted(generators)}")
-        else:
-            print("Cyclic?: No")
+        # generators = self.is_cyclic()
+        is_cyclic, gens = self.generators()
+        # if generators:
+        print(f"Cyclic?: {yes_or_no(is_cyclic)}")
+        print(f"  Generators: {sorted(gens)}")
+        # else:
+        #     print("Cyclic?: No")
         if show_elements:
             print(f"Elements: {self.elements}")
         print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
@@ -912,12 +945,21 @@ class Group(Monoid):
         print(f"Identity: {repr(self.identity)}")
         # print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
-        generators = self.is_cyclic()
-        if generators:
-            print("Cyclic?: Yes")
-            print(f"  Generators: {sorted(generators)}")
-        else:
-            print("Cyclic?: No")
+        # generators = self.is_cyclic()
+        # if generators:
+        #     print("Cyclic?: Yes")
+        #     print(f"  Generators: {sorted(generators)}")
+        # else:
+        #     print("Cyclic?: No")
+
+        # generators = self.is_cyclic()
+        is_cyclic, gens = self.generators()
+        # if generators:
+        print(f"Cyclic?: {yes_or_no(is_cyclic)}")
+        print(f"  Generators: {sorted(gens)}")
+        # else:
+        #     print("Cyclic?: No")
+
         spc = 7
         if show_elements:
             print("Elements:")

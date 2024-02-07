@@ -619,7 +619,7 @@ class Magma(SingleElementSetAlgebra):
         is_cyclic, gens = self.generators()
         # if generators:
         print(f"Cyclic?: {yes_or_no(is_cyclic)}")
-        print(f"  Generators: {sorted(gens)}")
+        print(f"Generators: {sorted(gens)}")
         # else:
         #     print("Cyclic?: No")
         if show_elements:
@@ -956,7 +956,7 @@ class Group(Monoid):
         is_cyclic, gens = self.generators()
         # if generators:
         print(f"Cyclic?: {yes_or_no(is_cyclic)}")
-        print(f"  Generators: {sorted(gens)}")
+        print(f"Generators: {sorted(gens)}")
         # else:
         #     print("Cyclic?: No")
 

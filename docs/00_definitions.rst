@@ -235,51 +235,16 @@ operation(s), the direct product definition works for any
 be obtained by multiplying the two objects using Python’s multiplication
 operator, ``G * H``.
 
-“Squaring the Ring” (Cayley-Dickson Algebras)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-(pun intended)
+Cayley-Dickson Algebras
+~~~~~~~~~~~~~~~~~~~~~~~
 
 An opportunity to define an alternative type of direct product presents
 itself when we consider the direct product of a ring,
-:math:`R = \langle S, +, \cdot \rangle`, with itself, which will be
-denoted here as :math:`R^2`. In this case, addition is defined the same
-as for the usual direct product, but multiplication is defined to be
-similar to that used for complex numbers, as shown below:
-
--  :math:`R^2 \equiv \langle V, \circ, \otimes \rangle`
--  :math:`V = \{(s, t): s, t \in S\}`
--  :math:`(s, t) \circ (s', t') = (s + s', t + t')`, for all
-   :math:`(s, t), (s', t') \in V`
--  :math:`(s, t) \otimes (s', t') = (s \cdot s' - t \cdot t', s \cdot t' + t \cdot s')`,
-   where, of course, “:math:`-`” denotes addition by the additive
-   inverse
-
-``Ring`` and ``Field`` objects in ``finite_algebras`` can be squared
-using the Ring method, ``sqr()``.
-
-This operation produces what is known as a `Cayley-Dickson
-algebra <https://encyclopediaofmath.org/wiki/Cayley-Dickson_algebra>`__.
-In general, the `Cayley-Dickson
-construction <https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction>`__,
-produces algebras, :math:`A_n = R^{2^n}`, for :math:`n=1,2,...`. For
-example, if the ring, :math:`R`, is the set of real numbers,
-:math:`\mathbb{R}`, then :math:`A_1 = \mathbb{R}^2 = \mathbb{C}`, the
-**complex** numbers. Similarly, :math:`A_2 = \mathbb{R}^4 = \mathbb{H}`
-and :math:`A_3 = \mathbb{R}^8 = \mathbb{O}`, the **quaternions** and
-**octonions**, resp.
-
-Squaring a Field to Obtain a Field
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Where the definition of squaring a Ring, above, gets interesting though,
-is when we square a finite Field, :math:`F_n`. :math:`{F_n}^2` won’t
-always be a Ring; sometimes it will be a Field. Specifically,
-:math:`{F_n}^2` will be a field if :math:`n` is a `Gaussian
-prime <https://encyclopediaofmath.org/wiki/Gauss_number>`__, that is, a
-prime number of the form, :math:`n=4k+3`, (e.g.,
-:math:`3, 7, 11, 19, 23, 31, 43, ...`); otherwise, :math:`{F_n}^2` will
-be a Ring.
+:math:`A = \langle S, +, \cdot \rangle`, with itself, which produces a
+Cayley-Dickson Algebra (CDA), denoted here as :math:`\mathscr{C}(A)`. In
+this case, addition is defined the same as for the usual direct product,
+but multiplication is defined to be similar to that used for complex
+numbers. The details on CDAs are presented later on in this document.
 
 Properties of Algebras
 ----------------------

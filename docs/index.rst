@@ -8,13 +8,13 @@ User Guide
 .. toctree::
     :maxdepth: 3
 
-    definitions
-    groups_etc
-    rings_and_fields
-    vectors
-    reg_rep
-    matrices
-    resources
+    00_definitions
+    10_groups_etc
+    20_rings_and_fields
+    30_vectors
+    40_reg_rep
+    50_matrices
+    60_resources
 
 API Reference
 =============

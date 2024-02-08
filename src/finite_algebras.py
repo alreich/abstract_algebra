@@ -601,7 +601,7 @@ class Magma(SingleElementSetAlgebra):
     # This 'about' method differs from the one in Groups in that it does not print out
     # as much detailed information about elements.
     # TODO: Combine the 'about' method, below, with the one in Groups.
-    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True):
         """Prints out information about the algebra. Tables larger than
         max_size are not printed out."""
         print(f"\n** {self.__class__.__name__} **")
@@ -615,13 +615,16 @@ class Magma(SingleElementSetAlgebra):
             print(f"Identity: {self.identity}")
         print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
-        # generators = self.is_cyclic()
         is_cyclic, gens = self.generators()
-        # if generators:
         print(f"Cyclic?: {yes_or_no(is_cyclic)}")
-        print(f"Generators: {sorted(gens)}")
-        # else:
-        #     print("Cyclic?: No")
+        num_gens = len(gens)
+        gens_sorted = sorted(gens)
+        if num_gens > max_gens:
+            print(f"Generators: {gens_sorted[:max_gens]}, plus {num_gens - max_gens} more.")
+        elif num_gens == 0:
+            print("Generators: None")
+        else:
+            print(f"Generators: {gens_sorted}")
         if show_elements:
             print(f"Elements: {self.elements}")
         print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
@@ -935,7 +938,7 @@ class Group(Monoid):
     # This 'about' method differs from the one in SingleElementSetAlgebra in that it prints out
     # more detailed information about elements.
     # TODO: It would be nice to combine the two someday.
-    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True):
         """Print information about the Group."""
         print(f"\n** {self.__class__.__name__} **")
         print(f"Name: {self.name}")
@@ -943,23 +946,17 @@ class Group(Monoid):
         print(f"Description: {self.description}")
         print(f"Order: {self.order}")
         print(f"Identity: {repr(self.identity)}")
-        # print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
-        # generators = self.is_cyclic()
-        # if generators:
-        #     print("Cyclic?: Yes")
-        #     print(f"  Generators: {sorted(generators)}")
-        # else:
-        #     print("Cyclic?: No")
-
-        # generators = self.is_cyclic()
         is_cyclic, gens = self.generators()
-        # if generators:
         print(f"Cyclic?: {yes_or_no(is_cyclic)}")
-        print(f"Generators: {sorted(gens)}")
-        # else:
-        #     print("Cyclic?: No")
-
+        num_gens = len(gens)
+        gens_sorted = sorted(gens)
+        if num_gens > max_gens:
+            print(f"Generators: {gens_sorted[:max_gens]}, plus {num_gens - max_gens} more.")
+        elif num_gens == 0:
+            print("Generators: None")
+        else:
+            print(f"Generators: {gens_sorted}")
         spc = 7
         if show_elements:
             print("Elements:")
@@ -1436,10 +1433,10 @@ class Ring(Group):
         zero_product_pairs = self.element_pairs_where_product_equals(self.identity)
         return [pair for pair in zero_product_pairs if not self.identity in pair]
 
-    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True,
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
               show_conjugates=False):
         """Print information about the Ring."""
-        super().about(max_size, use_table_names, show_tables, show_elements)
+        super().about(max_size, max_gens, use_table_names, show_tables, show_elements)
 
         if self.mult_identity is not None:
             print(f"Mult. Identity: {repr(self.mult_identity)}")
@@ -2176,15 +2173,15 @@ class Module(MultipleElementSetAlgebra):
         """Return the sum of two vectors using the Group operation, op."""
         return self.vector.op(v1, v2)
 
-    def about(self, max_size=12, use_table_names=False, show_tables=True, show_elements=True):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True):
         """Print information about the Module or Vector Space."""
         print(f"\n{self.__class__.__name__}: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
         print(f"\nSCALARS:")
-        self.scalar.about(max_size, use_table_names, show_tables, show_elements)
+        self.scalar.about(max_size, max_gens, use_table_names, show_tables, show_elements)
         print(f"\nVECTORS:")
-        self.vector.about(max_size, use_table_names, show_tables, show_elements)
+        self.vector.about(max_size, max_gens, use_table_names, show_tables, show_elements)
         return None
 
 

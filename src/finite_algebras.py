@@ -1580,9 +1580,10 @@ class Ring(Group):
         """Constructs the Cayley-Dickson algebra using this Ring.
 
         Several different versions of multiplication are supported:
-        version=1: (DEFAULT) No mu & no conjugation are used;
-        version=2: Definition in Schafer, 1966;
-        version=3: Definition in Schafer, 1953.
+        version=1: (DEFAULT) No mu & no conjugation are used
+        version=2: Definition in Schafer, 1966
+        version=3: Definition in Schafer, 1954
+        version=4: Definition in Baez, 2001.
 
         See the documentation on readthedocs for more information regarding versions.
 
@@ -1596,24 +1597,27 @@ class Ring(Group):
                 mu = self.inv(self.one)  # The additive inverse of the multiplicative identity
             else:
                 if version == 2 or version == 3:
-                    print(f"** No mult. identity exists, so version 3 used, instead of {version}.")
-                    version = 1
+                    raise ValueError(f"Without a mult. identity, version {version} requires a specific value for mu")
         else:  # mu is not None
             if mu in self.elements:
-                if version == 1:
+                if version == 1 or version == 4:
                     print(f"** Version {version} ignores the value of mu. (mu = {mu})")
+                    mu = None
             else:
                 raise ValueError(f"mu = {mu} is not an element of {self.name}.")
 
         if version == 1:
             vers = "no mu and no conjugation were used."
-            name_suffix = "_CDA"
+            name_suffix = "_CDA_2024"
         elif version == 2:
             vers = f"mu = {mu}, Schafer 1966 version."
-            name_suffix = "_CDA66"
+            name_suffix = "_CDA_1966"
         elif version == 3:
-            vers = f"mu = {mu}, Schafer 1953 version."
-            name_suffix = "_CDA53"
+            vers = f"mu = {mu}, Schafer 1954 version."
+            name_suffix = "_CDA_1954"
+        elif version == 4:
+            vers = f"mu = {mu}, Baez 2001 version."
+            name_suffix = "_CDA_2001"
         else:
             raise ValueError(f"{version} is not a valid version #. Use 1, 2, or 3.")
 
@@ -1660,12 +1664,19 @@ class Ring(Group):
                                                               (self.add(self.mult(self.conj(a), d),
                                                                         self.mult(c, b))))))
                 elif version == 3:
-                    # See [Schafer, 1953]
+                    # See [Schafer, 1954]
                     # Multiplication: (a, b) x (c, d) = (a x c  +  mu x d* x b,  d x a  +  b x c*)
                     mul_table_row.append(element_names.index(((self.add(self.mult(a, c),
                                                                         self.mult(mu, self.conj(d), b))),
                                                               (self.add(self.mult(d, a),
                                                                         self.mult(b, self.conj(c)))))))
+                elif version == 4:
+                        # See [Baez 2001]
+                        # Multiplication: (a, b) x (c, d) = (a x c  -  d x b*,  a* x d  +  c x b)
+                        mul_table_row.append(element_names.index(((self.sub(self.mult(a, c),
+                                                                            self.mult(d, self.conj(b)))),
+                                                                  (self.add(self.mult(self.conj(a), d),
+                                                                            self.mult(c, b))))))
                 else:
                     raise ValueError(f"What happened?!?! We should never see this message. Version == {version}")
 

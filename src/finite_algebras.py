@@ -485,11 +485,6 @@ class Magma(SingleElementSetAlgebra):
             list_of_subalgebras.append(self.subalgebra_from_elements(closed_element_set, name, desc))
         return list_of_subalgebras
 
-    # def generators(self):
-    #     """Return a list of individual elements that generate the entire algebra."""
-    #     elemset = set(self.elements)
-    #     return [x for x in elemset if set(self.closure([x], False)) == elemset]
-
     def generates(self, set_of_elems):
         """Returns True if a set of one or more elements generates the algebra,
         otherwise False is returned.
@@ -497,12 +492,14 @@ class Magma(SingleElementSetAlgebra):
         clo = self.closure(set_of_elems, include_inverses=False)
         return set(clo) == set(self.elements)
 
-    def generators(self):
-        """If the algebra is cyclic, then True is returned along with a list of individual
-        elements that each generate the algebra.  Otherwise, False is returned along with a
-        list of lists of elements where each sublist generates the algebra."""
+    def generators(self, start_of_range=1):
+        """If the algebra is cyclic, then a list of individual elements that each
+        generate the algebra is returned; otherwise, a list of lists of elements,
+        is returned, where each sublist generates the algebra."""
         gens = list()
-        for k in range(1, self.order):
+        n = None  # define n outside the scope of the loop below
+        for k in range(start_of_range, self.order):
+            n = k  # Save for test later
             combos = list(it.combinations(self.elements, k))
             stop = False
             for combo in combos:
@@ -511,25 +508,31 @@ class Magma(SingleElementSetAlgebra):
                     stop = True
             if stop:
                 break
-        if k == 1:
-            return True, [gen[0] for gen in gens]  # The grp is cyclic
+        if n == 1:
+            return [gen[0] for gen in gens]  # The grp is cyclic
         else:
-            return False, gens  # The grp is not cyclic
+            return gens  # The grp is not cyclic
 
-    # def is_cyclic_OLD(self):
-    #     """Returns False if this algebra is not cyclic; otherwise a list of elements
-    #     that generates the algebra is returned."""
-    #     gens = self.generators()
-    #     if len(gens) == 0:
-    #         return False
-    #     else:
-    #         return gens
+    # def single_element_generators(self):
+    #     """Return a list of individual elements that generate the entire algebra."""
+    #     elemset = set(self.elements)
+    #     return [x for x in elemset if set(self.closure([x], False)) == elemset]
 
-    # TODO: replace examples of 'is_cyclic' in docs with 'generators' instead
     def is_cyclic(self):
-        """Deprecated. Use generators() instead."""
-        result, _ = self.generators()
-        return result
+        """Returns False if this algebra is not cyclic; otherwise a list of elements
+        is returned, where each one can generate the entire algebra."""
+        elemset = set(self.elements)
+        gens = [x for x in elemset if set(self.closure([x], False)) == elemset]
+        # gens = self.single_element_generators()
+        if len(gens) == 0:
+            return False
+        else:
+            return gens
+
+    # def is_cyclic(self):
+    #     """Deprecated. Use generators() instead."""
+    #     result, _ = self.generators()
+    #     return result
 
     def center(self):
         """Return the list of elements that commute with every element of the algebra.
@@ -601,7 +604,8 @@ class Magma(SingleElementSetAlgebra):
     # This 'about' method differs from the one in Groups in that it does not print out
     # as much detailed information about elements.
     # TODO: Combine the 'about' method, below, with the one in Groups.
-    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
+              show_generators=False):
         """Prints out information about the algebra. Tables larger than
         max_size are not printed out."""
         print(f"\n** {self.__class__.__name__} **")
@@ -615,16 +619,23 @@ class Magma(SingleElementSetAlgebra):
             print(f"Identity: {self.identity}")
         print(f"Associative? {yes_or_no(self.is_associative())}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
-        is_cyclic, gens = self.generators()
-        print(f"Cyclic?: {yes_or_no(is_cyclic)}")
-        num_gens = len(gens)
-        gens_sorted = sorted(gens)
-        if num_gens > max_gens:
-            print(f"Generators: {gens_sorted[:max_gens]}, plus {num_gens - max_gens} more.")
-        elif num_gens == 0:
-            print("Generators: None")
+        # is_cyclic, gens = self.generators()
+        single_gens = self.is_cyclic()
+        if single_gens:
+            print("Cyclic?: Yes")
+            print(f"Generators: {single_gens}")
         else:
-            print(f"Generators: {gens_sorted}")
+            print("Cyclic?: No")
+            if show_generators:
+                gens = self.generators(2)
+                num_gens = len(gens)
+                gens_sorted = sorted(gens)
+                if num_gens > max_gens:
+                    print(f"Generators: {gens_sorted[:max_gens]}, plus {num_gens - max_gens} more.")
+                elif num_gens == 0:
+                    print("Generators: None")
+                else:
+                    print(f"Generators: {gens_sorted}")
         if show_elements:
             print(f"Elements: {self.elements}")
         print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
@@ -938,7 +949,8 @@ class Group(Monoid):
     # This 'about' method differs from the one in SingleElementSetAlgebra in that it prints out
     # more detailed information about elements.
     # TODO: It would be nice to combine the two someday.
-    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
+              show_generators=False):
         """Print information about the Group."""
         print(f"\n** {self.__class__.__name__} **")
         print(f"Name: {self.name}")
@@ -947,16 +959,32 @@ class Group(Monoid):
         print(f"Order: {self.order}")
         print(f"Identity: {repr(self.identity)}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
-        is_cyclic, gens = self.generators()
-        print(f"Cyclic?: {yes_or_no(is_cyclic)}")
-        num_gens = len(gens)
-        gens_sorted = sorted(gens)
-        if num_gens > max_gens:
-            print(f"Generators: {gens_sorted[:max_gens]}, plus {num_gens - max_gens} more.")
-        elif num_gens == 0:
-            print("Generators: None")
+        # is_cyclic, gens = self.generators()
+        single_gens = self.is_cyclic()
+        if single_gens:
+            print("Cyclic?: Yes")
+            print(f"Generators: {single_gens}")
         else:
-            print(f"Generators: {gens_sorted}")
+            print("Cyclic?: No")
+            if show_generators:
+                gens = self.generators(2)
+                num_gens = len(gens)
+                gens_sorted = sorted(gens)
+                if num_gens > max_gens:
+                    print(f"Generators: {gens_sorted[:max_gens]}, plus {num_gens - max_gens} more.")
+                elif num_gens == 0:
+                    print("Generators: None")
+                else:
+                    print(f"Generators: {gens_sorted}")
+        # print(f"Cyclic?: {yes_or_no(is_cyclic)}")
+        # num_gens = len(gens)
+        # gens_sorted = sorted(gens)
+        # if num_gens > max_gens:
+        #     print(f"Generators: {gens_sorted[:max_gens]}, plus {num_gens - max_gens} more.")
+        # elif num_gens == 0:
+        #     print("Generators: None")
+        # else:
+        #     print(f"Generators: {gens_sorted}")
         spc = 7
         if show_elements:
             print("Elements:")
@@ -1434,9 +1462,9 @@ class Ring(Group):
         return [pair for pair in zero_product_pairs if not self.identity in pair]
 
     def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
-              show_conjugates=False):
+              show_conjugates=False, show_generators=False):
         """Print information about the Ring."""
-        super().about(max_size, max_gens, use_table_names, show_tables, show_elements)
+        super().about(max_size, max_gens, use_table_names, show_tables, show_elements, show_generators)
 
         if self.mult_identity is not None:
             print(f"Mult. Identity: {repr(self.mult_identity)}")
@@ -2184,15 +2212,16 @@ class Module(MultipleElementSetAlgebra):
         """Return the sum of two vectors using the Group operation, op."""
         return self.vector.op(v1, v2)
 
-    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
+              show_generators=False):
         """Print information about the Module or Vector Space."""
         print(f"\n{self.__class__.__name__}: {self.name}")
         print(f"Instance ID: {id(self)}")
         print(f"Description: {self.description}")
         print(f"\nSCALARS:")
-        self.scalar.about(max_size, max_gens, use_table_names, show_tables, show_elements)
+        self.scalar.about(max_size, max_gens, use_table_names, show_tables, show_elements, show_generators)
         print(f"\nVECTORS:")
-        self.vector.about(max_size, max_gens, use_table_names, show_tables, show_elements)
+        self.vector.about(max_size, max_gens, use_table_names, show_tables, show_elements, show_generators)
         return None
 
 

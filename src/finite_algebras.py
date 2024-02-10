@@ -1577,7 +1577,7 @@ class Ring(Group):
         return self.mult(elem, self.conj(elem))
 
     def make_cayley_dickson_algebra(self, mu=None, version=1):
-        """Constructs the Cayley-Dickson algebra using this Ring.
+        """Constructs the Cayley-Dickson algebra using this Ring or Field.
 
         Several different versions of multiplication are supported:
         version=1: (DEFAULT) No mu & no conjugation are used
@@ -1587,10 +1587,10 @@ class Ring(Group):
 
         See the documentation on readthedocs for more information regarding versions.
 
-        Also, if mu is None (the default), then mu will be automatically set to be the
-        additive inverse of the Ring's multiplicative identity element (i.e., "-1"),
-        if it exists. If it does not exist, then version 1 will be used, regardless of
-        the requested version.
+        Version 2 & 3 require a value for mu. If mu is None (the default), then mu
+        will be automatically set to be the additive inverse of the Ring's
+        multiplicative identity element (i.e., "-1"), if it exists. If it does not
+        exist, then an exception will be raised.
         """
         if mu is None:
             if self.has_mult_identity():

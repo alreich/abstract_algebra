@@ -67,23 +67,6 @@ def divisors(n, non_trivial=False):
         return res
 
 
-# def xgcd(a, b):
-#     """An implementation of the Extended Euclidean Algorithm.
-#     Returns gcd, x, & y, such that gcd == a * x + b * y, where
-#     gcd is the Greatest Common Divisor,
-#     x & y are called Bézout's coefficients.
-#     Reference: https://anh.cs.luc.edu/331/notes/xgcd.pdf
-#     """
-#     prev_x, x = 1, 0
-#     prev_y, y = 0, 1
-#     while b:
-#         q = a // b
-#         x, prev_x = prev_x - q * x, x
-#         y, prev_y = prev_y - q * y, y
-#         a, b = b, a % b
-#     return a, prev_x, prev_y
-
-
 def xgcd(a, b):
     """An implementation of the Extended Euclidean Algorithm.
     Returns gcd, x, & y, such that gcd == a * x + b * y, where
@@ -99,3 +82,4 @@ def xgcd(a, b):
         next_y, y = y - q * next_y, next_y
         a, b = b, a % b
     return a, x, y
+

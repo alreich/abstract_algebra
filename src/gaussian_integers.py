@@ -75,6 +75,18 @@ class Gint():
         else:
             return False
 
+    def __pow__(self, n, modulo=None):
+        result = self
+        if isinstance(n, int) and n >= 0:
+            if n == 0:
+                result = Gint()  # Return "1"
+            else:
+                for _ in range(n - 1):
+                    result = result * self
+        else:
+            raise ValueError(f"The power, {n}, is not a positive integer.")
+        return result
+
     def __complex__(self):
         return complex(self.real, self.imag)
 
@@ -134,3 +146,20 @@ class Gint():
         else:
             raise ValueError(f"{other} is not a valid input")
 
+    def associates(self):
+        """Return the list of this Gint's associates"""
+        us = Gint.units()
+        return list(map(lambda u: u * self, us[1:]))  # skip multiplying by 1
+
+    def is_associate(self, other):
+        """Return True if the other Gint is an associate of this Gint,
+        otherwise return False.
+        """
+        q = self / other
+        if q:
+            if q in Gint.units():
+                return True
+            else:
+                return False
+        else:
+            return False

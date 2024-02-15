@@ -69,7 +69,11 @@ def divisors(n, non_trivial=False):
 
 def divides(m, n):
     """Returns True if m divides n."""
-    if (abs(m) <= abs(n)) and (n % m == 0):
+    if m == 0:
+        return False
+    elif n == 0:
+        return True
+    elif (abs(m) <= abs(n)) and (n % m == 0):
         return True
     else:
         return False

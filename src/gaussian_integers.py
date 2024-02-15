@@ -1,11 +1,15 @@
+"""
+@summary:  Gaussian Integer class
+@author:   Alfred J. Reich, Ph.D.
+@contact:  al.reich@gmail.com
+@copyright: Copyright (C) 2024 Alfred J. Reich, Ph.D.
+@license:  MIT
+@requires: Python 3.7.7 or higher
+@since:    2024.02
+@version:  0.0.1
+"""
 
-
-def divides(m, n):
-    """Returns True if m divides n."""
-    if (abs(m) <= abs(n)) and (n % m == 0):
-        return True
-    else:
-        return False
+from my_math import divides
 
 
 class Gint():
@@ -60,8 +64,12 @@ class Gint():
         """If other divides self, then self / other is returned,
         otherwise False is returned.
         """
-        numer = self * other.conj
-        denom = other.norm
+        if isinstance(other, int):
+            oth = Gint(other, 0)
+        else:
+            oth = other
+        numer = self * oth.conj
+        denom = oth.norm
         if divides(denom, numer.real) and divides(denom, numer.imag):
             return Gint(numer.real // denom, numer.imag // denom)
         else:
@@ -79,12 +87,25 @@ class Gint():
     def __ne__(self, other):
         return (self.real != other.real) or (self.imag != other.imag)
 
+    @classmethod
+    def eye(cls):
+        """Returns i = Gint(0, 1)"""
+        return Gint(0, 1)
+
+    @classmethod
+    def units(cls):
+        """Returns the list of units, [1, -1, i, -i]"""
+        return [Gint(), -Gint(), cls.eye(), -cls.eye()]
+
     @property
     def conj(self):
+        """Returns the conjugate of this Gaussian integer"""
         return Gint(self.real, - self.imag)
 
     @property
     def norm(self):
+        """Returns the norm of this Gaussian integer.
+        NOTE: The norm here is the square of the usual absolute value."""
         n = self * self.conj
         return n.real
 

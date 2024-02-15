@@ -67,6 +67,14 @@ def divisors(n, non_trivial=False):
         return res
 
 
+def divides(m, n):
+    """Returns True if m divides n."""
+    if (abs(m) <= abs(n)) and (n % m == 0):
+        return True
+    else:
+        return False
+
+
 def xgcd(a, b):
     """An implementation of the Extended Euclidean Algorithm.
     Returns gcd, x, & y, such that gcd == a * x + b * y, where

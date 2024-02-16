@@ -4,7 +4,7 @@
 @contact:  al.reich@gmail.com
 @copyright: Copyright (C) 2024 Alfred J. Reich, Ph.D.
 @license:  MIT
-@requires: Python 3.7.7 or higher
+@requires: Python 3
 @since:    2024.02
 @version:  0.0.1
 """
@@ -45,23 +45,23 @@ class Gint():
             c = other
             d = 0
         else:
-            raise ValueError(f"Multiplication by {other} not supported")
+            raise ValueError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
-        return Gint(a * c - b * d, a * d + b * c)
+        if d == 0:
+            return Gint(a * c, b * c)
+        else:
+            return Gint(a * c - b * d, a * d + b * c)
 
     def __rmul__(self, other):
         """Handle multiplication by an integer, where this Gint is on the right side,
-        and the integer is on the left. e.g., 2 * Gint(1, 2) ==> Gint(2, 4)
+        and an integer, other, is on the left. e.g., 2 * Gint(1, 2) ==> Gint(2, 4)
         """
         a = self.real
         b = self.imag
         if isinstance(other, int):
-            c = other
-            d = 0
+            return Gint(other * a, other * b)
         else:
-            raise ValueError(f"Multiplication by {other} not supported")
-        # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
-        return Gint(a * c - b * d, a * d + b * c)
+            raise ValueError(f"Multiplication by '{other}' not supported")
 
     def __truediv__(self, other):
         """If other divides self, then self / other is returned,

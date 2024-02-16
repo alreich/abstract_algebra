@@ -9,7 +9,8 @@
 @version:  0.0.1
 """
 
-from my_math import divides
+# from my_math import divides
+import my_math as my
 
 
 class Gint():
@@ -43,11 +44,11 @@ class Gint():
             d = other.imag
         elif isinstance(other, int):
             c = other
-            d = 0
+            d = 0  # Easy way to handle the int case
         else:
             raise ValueError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
-        if d == 0:
+        if d == 0:  # might as well take advantage of this here
             return Gint(a * c, b * c)
         else:
             return Gint(a * c - b * d, a * d + b * c)
@@ -73,7 +74,7 @@ class Gint():
             oth = other
         numer = self * oth.conj
         denom = oth.norm
-        if divides(denom, numer.real) and divides(denom, numer.imag):
+        if my.divides(denom, numer.real) and my.divides(denom, numer.imag):
             return Gint(numer.real // denom, numer.imag // denom)
         else:
             return False
@@ -135,15 +136,16 @@ class Gint():
         else:
             return False
 
-    def is_divided_by(self, other):
-        """Return True if the other Gint divides this Gint,
+    def divided_by(self, other):
+        """Return True if the other Gint or int divides this Gint,
         otherwise return False.
         """
         if isinstance(other, Gint):
             return other.divides(self)
         elif isinstance(other, int):
             if (self.real % other == 0) and (self.imag % other == 0):
-                return Gint(self.real // other, self.imag // other)
+                # return Gint(self.real // other, self.imag // other)
+                return True
             else:
                 return False
         else:

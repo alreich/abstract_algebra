@@ -50,6 +50,9 @@ class Gint():
         return Gint(a * c - b * d, a * d + b * c)
 
     def __rmul__(self, other):
+        """Handle multiplication by an integer, where this Gint is on the right side,
+        and the integer is on the left. e.g., 2 * Gint(1, 2) ==> Gint(2, 4)
+        """
         a = self.real
         b = self.imag
         if isinstance(other, int):

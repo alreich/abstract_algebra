@@ -18,11 +18,23 @@ class Gint():
 
     def __init__(self, re=1, im=0):
 
-        if not (isinstance(re, int) and isinstance(im, int)):
-            raise ValueError(f"Both {re} and {im} must be Integers.")
-        else:
+        if isinstance(re, int):
             self.real = re
+        elif isinstance(re, float):
+            self.real = round(re)
+        elif isinstance(re, complex):
+            self.real = round(re.real)
+        else:
+            raise ValueError(f"{re} cannot be used for the real part of a Gint instance")
+
+        if isinstance(re, complex):
+            self.imag = round(re.imag)
+        elif isinstance(im, int):
             self.imag = im
+        elif isinstance(im, float):
+            self.imag = round(im)
+        else:
+            raise ValueError(f"{im} cannot be used for the imaginary part of a Gint instance")
 
     def __repr__(self):
         return f"Gint({self.real}, {self.imag})"

@@ -163,6 +163,13 @@ class Gint():
         else:
             raise ValueError(f"{other} is not a valid input")
 
+    def division(self, b):
+        """Compute q & r, such that self = bq + r
+        """
+        q = Gint(complex(self * b.conj) / b.norm)  # Gint rounds the complex parts here
+        r = self - b * q
+        return q, r
+
     def associates(self):
         """Return the list of this Gint's associates"""
         us = Gint.units()

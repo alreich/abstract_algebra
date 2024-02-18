@@ -14,7 +14,7 @@ User Guide
     30_vectors
     40_reg_rep
     50_matrices
-    60_resources
+    90_resources
 
 API Reference
 =============

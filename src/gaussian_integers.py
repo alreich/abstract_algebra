@@ -14,14 +14,14 @@
 
 from typing import TypeVar
 
-C = TypeVar('C', int, float, complex)
-N = TypeVar('N', int, float)
+IFC = TypeVar('IFC', int, float, complex)
+IF  = TypeVar('IF',  int, float)
 
 
 class Gint():
     """Gaussian Integer Class"""
 
-    def __init__(self, re: C = 1, im: N = 0):
+    def __init__(self, re: IFC = 1, im: IF = 0):  # See TypeVars above
 
         if isinstance(re, int):
             self.real = re

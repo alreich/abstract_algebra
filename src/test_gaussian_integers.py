@@ -43,10 +43,10 @@ class TestGint(TestCase):
         self.assertEqual(Gint(4, 5) * 2, Gint(8, 10))  # Gint on left (__mul__)
         self.assertEqual(2 * Gint(4, 5), Gint(8, 10))  # Gint on right (__rmul__)
 
-    # def test_div(self):  # __truediv__
-    #     self.assertEqual(self.c1_x_c2 / self.c1, self.c2)
-    #     self.assertEqual(self.c1_x_c2 / self.c2, self.c1)
-    #     self.assertEqual(Gint(4, 12) / 4, Gint(1, 3))
+    def test_div(self):  # __truediv__
+        self.assertEqual(self.c1_x_c2 // self.c1, self.c2)
+        self.assertEqual(self.c1_x_c2 // self.c2, self.c1)
+        self.assertEqual(Gint(4, 12) // 4, Gint(1, 3))
 
     def test_neg(self):  # __neg__
         self.assertEqual(-Gint(1, -2), Gint(-1, 2))
@@ -81,13 +81,6 @@ class TestGint(TestCase):
 
     def test_norm(self):
         self.assertEqual(self.c1.norm, 41)
-
-    # def test_divides(self):
-    #     self.assertTrue(self.c1.divides(self.c1_x_c2))
-
-    # def test_divided_by(self):
-    #     self.assertTrue(self.c1_x_c2.divided_by(self.c1))
-    #     self.assertTrue(self.c4.divided_by(4))
 
     def test_associates(self):
         self.assertEqual(self.c1.associates(), [Gint(-4, -5), Gint(-5, 4), Gint(5, -4)])

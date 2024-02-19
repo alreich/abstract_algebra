@@ -9,19 +9,20 @@
 @version:  0.0.1
 """
 
-# from my_math import divides
-# import my_math as my
-
 from typing import TypeVar
 
 IFC = TypeVar('IFC', int, float, complex)
-IF  = TypeVar('IF',  int, float)
+IF = TypeVar('IF',  int, float)
 
 
-class Gint():
+class Gint:
     """Gaussian Integer Class"""
 
     def __init__(self, re: IFC = 1, im: IF = 0):  # See TypeVars above
+
+        """The real and imaginary parts of a Gaussian integer must be integers.
+        If anything other than two integers is entered, it/they will be rounded
+        to the nearest integer(s)."""
 
         if isinstance(re, int):
             self.real = re
@@ -81,7 +82,7 @@ class Gint():
         else:
             raise ValueError(f"Multiplication by '{other}' not supported")
 
-    def __pow__(self, n, modulo=None):
+    def __pow__(self, n: int, modulo=None):
         result = self
         if isinstance(n, int) and n >= 0:
             if n == 0:
@@ -93,7 +94,7 @@ class Gint():
             raise ValueError(f"The power, {n}, is not a positive integer.")
         return result
 
-    def __complex__(self):
+    def __complex__(self) -> complex:
         return complex(self.real, self.imag)
 
     def __neg__(self):

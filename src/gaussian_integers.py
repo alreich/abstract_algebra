@@ -107,11 +107,15 @@ class Gint:
         return (self.real != other.real) or (self.imag != other.imag)
 
     def __truediv__(self, other):  # self / other
-        """Return the exact, complex result of dividing this Gint by other"""
+        """Implements the / operator, and returns the exact, complex result
+        of dividing this Gint by (an)other Gint or int or float or complex.
+        """
         return complex(self) / complex(other)
 
     def __floordiv__(self, other):  # self // other
-        """Return the quotient, self / other, using the division theorem
+        """Implements the // operator, and returns the closest integer approximation
+        to the quotient, self/other, as a Gint, by rounding the real and imag parts
+        after division, instead of flooring.
         """
         if isinstance(other, int) or isinstance(other, float):
             q = Gint(complex(self) / other)
@@ -119,13 +123,24 @@ class Gint:
             q = Gint(complex(self * other.conj) / other.norm)
         return q
 
-    def division_theorem(self, other):
-        """Let a = self & b = other, then compute q & r, such that a = b * q + r,
-        and return q & r (i.e., the quotient and remainder of a/b)
+    def divmod(self, other):  # A modified division theorem
+        """Let a = self & b = other, then this method computes q & r,
+        such that a = b * q + r, where (1/2) * r.norm < b.norm.
+        It returns q & r (i.e., the quotient and remainder).
+        This is the Modified Division Theorem described in
+        'The Gaussian Integers' by Keith Conrad
+        https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
         """
         q = Gint(complex(self * other.conj) / other.norm)  # Gint rounds the complex result here
         r = self - other * q
         return q, r
+
+    def __mod__(self, other):
+        """Implements the % operator, and returns only the remainder
+        portion of the result from self.divmod(other)
+        """
+        _, r = self.divmod(other)
+        return r
 
     @classmethod
     def eye(cls):

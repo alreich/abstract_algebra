@@ -49,12 +49,18 @@ class Gint:
         return str(complex(self))
 
     def __add__(self, other):
+        """Add this Gint to (an)other Gint.
+        """
         return Gint(self.real + other.real, self.imag + other.imag)
 
     def __sub__(self, other):
+        """Subtract (an)other Gint from this Gint.
+        """
         return Gint(self.real - other.real, self.imag - other.imag)
 
     def __mul__(self, other):
+        """Multiple this Gint by (an)other Gint or integer.
+        """
         a = self.real
         b = self.imag
         if isinstance(other, Gint):
@@ -114,22 +120,28 @@ class Gint:
 
     def __floordiv__(self, other):  # self // other
         """Implements the // operator, and returns the closest integer approximation
-        to the quotient, self/other, as a Gint, by rounding the real and imag parts
-        after division, instead of flooring.
+        to the quotient, self/other, as a Gint, by ROUNDING the real and imag parts
+        after division, NOT flooring. 'other' can be an int, float, complex, or Gint.
         """
         if isinstance(other, int) or isinstance(other, float):
             q = Gint(complex(self) / other)
-        else:
+        elif isinstance(other, complex):
+            other_conj = other.conjugate()
+            other_norm = other * other_conj
+            q = Gint((complex(self) * other_conj) / other_norm)
+        elif isinstance(other, Gint):
             q = Gint(complex(self * other.conj) / other.norm)
+        else:
+            raise TypeError(f"{other} is not a supported type.")
         return q
 
+    # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
     def divmod(self, other):  # A modified division theorem
         """Let a = self & b = other, then this method computes q & r,
         such that a = b * q + r, where (1/2) * r.norm < b.norm.
         It returns q & r (i.e., the quotient and remainder).
         This is the Modified Division Theorem described in
         'The Gaussian Integers' by Keith Conrad
-        https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
         """
         q = Gint(complex(self * other.conj) / other.norm)  # Gint rounds the complex result here
         r = self - other * q

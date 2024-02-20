@@ -134,7 +134,7 @@ class TestGroup(TestCase):
         self.assertEqual(self.ps3.identity, '{}')
 
     def test_elements_accessor_z4(self):
-        self.assertEqual(self.z4.elements, ['e', 'a', 'a^2', 'a^3'])
+        self.assertEqual(self.z4.elements, ['0', '1', '2', '3'])
 
     def test_table_accessor_z4_1(self):
         self.assertEqual(self.z4.table,
@@ -151,7 +151,7 @@ class TestGroup(TestCase):
         self.assertEqual(self.z4.is_commutative(), True)
 
     def test_identity_accessor_z4(self):
-        self.assertEqual(self.z4.identity, 'e')
+        self.assertEqual(self.z4.identity, '0')
 
     def test_elements_accessor_s3(self):
         self.assertEqual(self.s3.elements, ['(1, 2, 3)', '(1, 3, 2)', '(2, 1, 3)',
@@ -178,7 +178,7 @@ class TestGroup(TestCase):
     def test_direct_product_and_isomorphic(self):
         z2_sqr = self.z2 * self.z2
         self.assertEqual(self.v4.isomorphic(z2_sqr),
-                         {'e': 'e:e', 'h': 'e:a', 'v': 'a:e', 'r': 'a:a'})
+                         {'e': '0:0', 'h': '0:1', 'r': '1:1', 'v': '1:0'})
 
     def test_not_isomorphic(self):
         self.assertFalse(self.z4.isomorphic(self.v4))

@@ -18,11 +18,13 @@ IF = TypeVar('IF',  int, float)
 class Gint:
     """Gaussian Integer Class"""
 
-    def __init__(self, re: IFC = 1, im: IF = 0):  # See TypeVars above
+    def __init__(self, re: IFC = 0, im: IF = 0):  # See TypeVars above
+        """A Gaussian integer is a complex number with integer components.
 
-        """The real and imaginary parts of a Gaussian integer must be integers.
-        If anything other than two integers is entered, it/they will be rounded
-        to the nearest integer(s)."""
+        The real and imaginary parts of a Gaussian integer will always be integers.
+        Floats and complex numbers can be entered, but they will be rounded to the
+        nearest integer.
+        """
 
         if isinstance(re, int):
             self.real = re
@@ -49,7 +51,9 @@ class Gint:
         return str(complex(self))
 
     def __add__(self, other):  # self + other
-        """Add this Gint to (an)other Gint.
+        """Implements the + operator.
+
+        Add this Gint to another Gint or integer.
         """
         if isinstance(other, int):
             return Gint(self.real + other, self.imag)
@@ -59,7 +63,9 @@ class Gint:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __radd__(self, other):  # other + self
-        """Handle addition by an integer, where this Gint is on the right side,
+        """Handles addition where the expression is swapped: other + self
+
+        Handle addition by an integer, where this Gint is on the right side,
         and an integer, other, is on the left. e.g., 2 + Gint(1, 2) ==> Gint(3, 2)
         """
         if isinstance(other, int):
@@ -68,8 +74,9 @@ class Gint:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __sub__(self, other):  # self - other
-        """Subtract (an)other Gint from this Gint.
-        """
+        """Implements the subtraction operator: self - other
+
+        Subtract another Gint or integer from this Gint."""
         # return Gint(self.real - other.real, self.imag - other.imag)
         if isinstance(other, int):
             return Gint(self.real - other, self.imag)
@@ -79,7 +86,9 @@ class Gint:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __rsub__(self, other):  # other - self
-        """Handle subtraction by an integer, where this Gint is on the right side,
+        """Handle subtraction where the expression is swapped: other - self
+
+        Handle subtraction by an integer, where this Gint is on the right side,
         and an integer, other, is on the left. e.g., 2 - Gint(1, 2) ==> Gint(1, -2)
         """
         if isinstance(other, int):
@@ -88,8 +97,7 @@ class Gint:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __mul__(self, other):  # self * other
-        """Multiple this Gint by (an)other Gint or integer.
-        """
+        """Multiply this Gint by another Gint or integer: self * other"""
         a = self.real
         b = self.imag
         if isinstance(other, Gint):
@@ -107,7 +115,9 @@ class Gint:
             return Gint(a * c - b * d, a * d + b * c)
 
     def __rmul__(self, other):  # other * self
-        """Handle multiplication by an integer, where this Gint is on the right side,
+        """Handle multiplication where the expression is swapped: other * self
+
+        Handle multiplication by an integer, where this Gint is on the right side,
         and an integer, other, is on the left. e.g., 2 * Gint(1, 2) ==> Gint(2, 4)
         """
         if isinstance(other, int):
@@ -128,53 +138,64 @@ class Gint:
         return result
 
     def __complex__(self) -> complex:
+        """Return the complex number that corresponds to this Gint."""
         return complex(self.real, self.imag)
 
     def __neg__(self):
+        """Negate this Gint."""
         return Gint(-self.real, -self.imag)
 
     def __eq__(self, other) -> bool:
-        return (self.real == other.real) and (self.imag == other.imag)
+        """Return True if this Gint equals other."""
+        if isinstance(other, Gint):
+            return (self.real == other.real) and (self.imag == other.imag)
+        else:
+            return False
 
     def __ne__(self, other) -> bool:
-        return (self.real != other.real) or (self.imag != other.imag)
+        """Return True if this Gint does not equal other."""
+        if isinstance(other, Gint):
+            return (self.real != other.real) or (self.imag != other.imag)
+        else:
+            return True
 
     def __truediv__(self, other):  # self / other
-        """Implements the / operator, and returns the exact, complex result
-        of dividing this Gint by (an)other Gint or int or float or complex.
+        """Divide self by other, exactly, and return the resulting complex number.
+
+        Implements the / operator, and returns the exact, complex result
+        of dividing this Gint by another Gint, int, float, or complex number.
         """
-        return complex(self) / complex(other)
+        if isinstance(other, int | float | complex | Gint):
+            return complex(self) / complex(other)
+        else:
+            raise TypeError(f"{other} cannot divide a Gint")
 
     def __rtruediv__(self, other):  # other / self
-        """Implements the / operator, and returns the exact, complex result
-        of dividing other by this Gint.
+        """Divide other by self, exactly, and return the resulting complex number.
+
+        Implements the 'swapped' version of the / operator, and returns the exact,
+        complex result of dividing other by this Gint.
         """
-        if isinstance(other, complex):
-            return other / complex(self)
-        elif isinstance(other, float) or isinstance(other, int):
+        if isinstance(other, int | float | complex):  # the Gint case is handled by __truediv__
             return complex(other) / complex(self)
         else:
             raise TypeError(f"{other} cannot be divided by a Gint")
 
     def __floordiv__(self, other):  # self // other
-        """Implements the // operator, and returns the closest integer approximation
-        to the quotient, self/other, as a Gint, by ROUNDING the real and imag parts
-        after division, NOT flooring. 'other' can be an int, float, complex, or Gint.
+        """Implements the // operator using 'round', instead of 'floor'.
+
+        Returns the closest integer approximation to the quotient, self / other,
+        as a Gint, by rounding the real and imag parts after division, not flooring.
+        'other' can be an int, float, complex, or Gint.
         """
-        if isinstance(other, int) or isinstance(other, float) or isinstance(other, complex):
-            return Gint(complex(self) / other)
-        # elif isinstance(other, complex):
-        #     other_conj = other.conjugate()
-        #     other_norm = other * other_conj
-        #     q = Gint((complex(self) * other_conj) / other_norm)
-        elif isinstance(other, Gint):
-            return Gint(complex(self * other.conj) / other.norm)
+        if isinstance(other, int | float | complex | Gint):
+            return Gint(complex(self) / complex(other))
         else:
             raise TypeError(f"{other} is not a supported type.")
 
     def __rfloordiv__(self, other):  # other // self
-        if isinstance(other, int) or isinstance(other, float) or isinstance(other, complex):
-            return Gint(other / complex(self))
+        if isinstance(other, int | float | complex):
+            return Gint(complex(other) / complex(self))
         else:
             raise TypeError(f"{other} is not a supported type.")
 

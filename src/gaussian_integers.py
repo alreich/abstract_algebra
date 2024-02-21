@@ -16,7 +16,7 @@ IF = TypeVar('IF',  int, float)
 
 
 class Gint:
-    """Gaussian Integer Class"""
+    """Gaussian Integer Class with full arithmetic and related functionality."""
 
     def __init__(self, re: IFC = 0, im: IF = 0):  # See TypeVars above
         """A Gaussian integer is a complex number with integer components.
@@ -50,8 +50,8 @@ class Gint:
     def __str__(self) -> str:
         return str(complex(self))
 
-    def __add__(self, other):  # self + other
-        """Implements the + operator.
+    def __add__(self, other):
+        """Implements the + operator: self + other
 
         Add this Gint to another Gint or integer.
         """
@@ -62,8 +62,8 @@ class Gint:
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
-    def __radd__(self, other):  # other + self
-        """Handles addition where the expression is swapped: other + self
+    def __radd__(self, other):
+        """The reflected (swapped) operand for addition: other + self
 
         Handle addition by an integer, where this Gint is on the right side,
         and an integer, other, is on the left. e.g., 2 + Gint(1, 2) ==> Gint(3, 2)
@@ -73,11 +73,20 @@ class Gint:
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
-    def __sub__(self, other):  # self - other
+    def __iadd__(self, other):
+        """Implements the += operation: self += other"""
+        if isinstance(other, int):
+            return Gint(self.real + other, self.imag)
+        elif isinstance(other, Gint):
+            return Gint(self.real + other.real, self.imag + other.imag)
+        else:
+            raise TypeError(f"Addition by '{other}' not supported")
+
+    def __sub__(self, other):
         """Implements the subtraction operator: self - other
 
-        Subtract another Gint or integer from this Gint."""
-        # return Gint(self.real - other.real, self.imag - other.imag)
+        Subtract another Gint or integer from this Gint.
+        """
         if isinstance(other, int):
             return Gint(self.real - other, self.imag)
         elif isinstance(other, Gint):
@@ -85,8 +94,8 @@ class Gint:
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
-    def __rsub__(self, other):  # other - self
-        """Handle subtraction where the expression is swapped: other - self
+    def __rsub__(self, other):
+        """The reflected (swapped) operand for subtraction: other - self
 
         Handle subtraction by an integer, where this Gint is on the right side,
         and an integer, other, is on the left. e.g., 2 - Gint(1, 2) ==> Gint(1, -2)
@@ -96,8 +105,17 @@ class Gint:
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
+    def __isub__(self, other):
+        """Implements the -= operation: self -= other"""
+        if isinstance(other, int):
+            return Gint(self.real - other, self.imag)
+        elif isinstance(other, Gint):
+            return Gint(self.real - other.real, self.imag - other.imag)
+        else:
+            raise TypeError(f"Addition by '{other}' not supported")
+
     def __mul__(self, other):  # self * other
-        """Multiply this Gint by another Gint or integer: self * other"""
+        """Implements the multiplication operator: self * other"""
         a = self.real
         b = self.imag
         if isinstance(other, Gint):
@@ -107,7 +125,7 @@ class Gint:
             c = other
             d = 0  # Easy way to handle the int case
         else:
-            raise ValueError(f"Multiplication by '{other}' not supported")
+            raise TypeError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
         if d == 0:  # might as well take advantage of this here
             return Gint(a * c, b * c)
@@ -115,7 +133,7 @@ class Gint:
             return Gint(a * c - b * d, a * d + b * c)
 
     def __rmul__(self, other):  # other * self
-        """Handle multiplication where the expression is swapped: other * self
+        """The reflected (swapped) operand for multiplication: other * self
 
         Handle multiplication by an integer, where this Gint is on the right side,
         and an integer, other, is on the left. e.g., 2 * Gint(1, 2) ==> Gint(2, 4)
@@ -123,7 +141,25 @@ class Gint:
         if isinstance(other, int):
             return Gint(other * self.real, other * self.imag)
         else:
-            raise ValueError(f"Multiplication by '{other}' not supported")
+            raise TypeError(f"Multiplication by '{other}' not supported")
+
+    def __imul__(self, other):
+        """Implements the *= operation: self *= other"""
+        a = self.real
+        b = self.imag
+        if isinstance(other, Gint):
+            c = other.real
+            d = other.imag
+        elif isinstance(other, int):
+            c = other
+            d = 0  # Easy way to handle the int case
+        else:
+            raise TypeError(f"Multiplication by '{other}' not supported")
+        # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
+        if d == 0:
+            return Gint(a * c, b * c)
+        else:
+            return Gint(a * c - b * d, a * d + b * c)
 
     def __pow__(self, n: int, modulo=None):  # self ** n
         result = self
@@ -134,7 +170,7 @@ class Gint:
                 for _ in range(n - 1):
                     result = result * self
         else:
-            raise ValueError(f"The power, {n}, is not a positive integer.")
+            raise TypeError(f"The power, {n}, is not a positive integer.")
         return result
 
     def __complex__(self) -> complex:
@@ -153,7 +189,7 @@ class Gint:
             return False
 
     def __ne__(self, other) -> bool:
-        """Return True if this Gint does not equal other."""
+        """Return True if this Gint does NOT equal other."""
         if isinstance(other, Gint):
             return (self.real != other.real) or (self.imag != other.imag)
         else:
@@ -165,7 +201,7 @@ class Gint:
         Implements the / operator, and returns the exact, complex result
         of dividing this Gint by another Gint, int, float, or complex number.
         """
-        if isinstance(other, int | float | complex | Gint):
+        if isinstance(other, (int, float, complex, Gint)):
             return complex(self) / complex(other)
         else:
             raise TypeError(f"{other} cannot divide a Gint")
@@ -176,7 +212,7 @@ class Gint:
         Implements the 'swapped' version of the / operator, and returns the exact,
         complex result of dividing other by this Gint.
         """
-        if isinstance(other, int | float | complex):  # the Gint case is handled by __truediv__
+        if isinstance(other, (int, float, complex)):  # the Gint case is handled by __truediv__
             return complex(other) / complex(self)
         else:
             raise TypeError(f"{other} cannot be divided by a Gint")
@@ -188,20 +224,30 @@ class Gint:
         as a Gint, by rounding the real and imag parts after division, not flooring.
         'other' can be an int, float, complex, or Gint.
         """
-        if isinstance(other, int | float | complex | Gint):
+        if isinstance(other, (int, float, complex, Gint)):
             return Gint(complex(self) / complex(other))
         else:
             raise TypeError(f"{other} is not a supported type.")
 
     def __rfloordiv__(self, other):  # other // self
-        if isinstance(other, int | float | complex):
+        if isinstance(other, (int, float, complex)):
             return Gint(complex(other) / complex(self))
         else:
             raise TypeError(f"{other} is not a supported type.")
 
+    def __mod__(self, other):
+        """Implements the % operator.
+
+        Returns the remainder of the result from self.divmod(other)
+        """
+        _, r = self.divmod(other)
+        return r
+
     # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
     def divmod(self, other):  # A modified division theorem
-        """Let a = self & b = other, then this method computes q & r,
+        """A modified division theorem.
+
+        Let a = self & b = other, then this method computes q & r,
         such that a = b * q + r, where (1/2) * r.norm < b.norm.
         It returns q & r (i.e., the quotient and remainder).
         This is the Modified Division Theorem described in
@@ -211,43 +257,56 @@ class Gint:
         r = self - other * q
         return q, r
 
-    def __mod__(self, other):
-        """Implements the % operator, and returns only the remainder
-        portion of the result from self.divmod(other)
+    def gcd(self, other, verbose=False):
+        """Return the greatest common divisor of self and other.
+
+        This function implements the Euclidean algorithm for Gaussian integers.
         """
-        _, r = self.divmod(other)
-        return r
+        zero = Gint()
+        if self * other == zero:
+            raise ValueError(f"Both inputs must be non-zero: {self} and {other}")
+        else:
+            r1, r2 = self, other
+            while r2 != zero:
+                r0, r1 = r1, r2
+                q, r2 = r0.divmod(r1)  # q is not used in the computation
+                if verbose:
+                    print(f"   {r0} = {r1} * {q} + {r2}")
+        return r1
 
     @classmethod
     def eye(cls):
-        """Returns i = Gint(0, 1)"""
+        """Return i = Gint(0, 1)"""
         return Gint(0, 1)
 
     @classmethod
     def units(cls):
-        """Returns the list of units, [1, -1, i, -i]"""
+        """Returns the list of four units, [1, -1, i, -i]"""
         return [Gint(), -Gint(), cls.eye(), -cls.eye()]
 
     @property
     def conj(self):
-        """Returns the conjugate of this Gaussian integer"""
+        """Return the conjugate of this Gaussian integer"""
         return Gint(self.real, - self.imag)
 
     @property
     def norm(self) -> int:
-        """Returns the norm of this Gaussian integer.
-        NOTE: The norm here is the square of the usual absolute value."""
+        """Return the norm of this Gaussian integer.
+
+        NOTE: The norm here is the square of the usual absolute value.
+        """
         n = self * self.conj
         return n.real
 
     def associates(self):
-        """Return the list of this Gint's associates"""
+        """Return a list of this Gint's three associates"""
         us = Gint.units()
         return list(map(lambda u: u * self, us[1:]))  # skip multiplying by 1
 
     def is_associate(self, other):
-        """Return True if the other Gint is an associate of this Gint,
-        otherwise return False.
+        """Return True if the other Gint is an associate of this Gint
+
+        Otherwise return False.
         """
         q = self // other
         if q:

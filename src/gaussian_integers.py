@@ -9,22 +9,19 @@
 @version:  0.0.1
 """
 
-from typing import TypeVar
-
-IFC = TypeVar('IFC', int, float, complex)
-IF = TypeVar('IF',  int, float)
-
 
 class Gint:
-    """Gaussian Integer Class with full arithmetic and related functionality."""
+    """Gaussian Integer Class with arithmetic and related functionality.
 
-    def __init__(self, re: IFC = 0, im: IF = 0):  # See TypeVars above
-        """A Gaussian integer is a complex number with integer components.
+    A Gaussian integer, Gint, has two integer input values, re & im.
+    Floats and complex numbers can be entered, but they will be rounded to the
+    nearest integers. If a complex number is provided for re, then the value of
+    im will be ignored, and the complex number's components, real & imag, will be
+    rounded to nearest integers and used as inputs for re & im, respectively.
+    """
 
-        The real and imaginary parts of a Gaussian integer will always be integers.
-        Floats and complex numbers can be entered, but they will be rounded to the
-        nearest integer.
-        """
+    def __init__(self, re: (int, float, complex) = 0, im: (int, float) = 0):
+        """Instantiate a Gaussian integer, Gint(re=0, im=0)."""
 
         if isinstance(re, int):
             self.real = re
@@ -243,6 +240,10 @@ class Gint:
         _, r = self.divmod(other)
         return r
 
+    def __hash__(self):
+        """Allow this Gint to be hashed."""
+        return hash((self.real, self.imag))
+
     # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
     def divmod(self, other):  # A modified division theorem
         """A modified division theorem.
@@ -281,8 +282,8 @@ class Gint:
 
     @classmethod
     def units(cls):
-        """Returns the list of four units, [1, -1, i, -i]"""
-        return [Gint(), -Gint(), cls.eye(), -cls.eye()]
+        """Returns the list of four units, [1, -1, i, -i], as Gints."""
+        return [Gint(1), -Gint(1), cls.eye(), -cls.eye()]
 
     @property
     def conj(self):

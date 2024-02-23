@@ -79,13 +79,32 @@ def divides(m, n):
         return False
 
 
-def xgcd(a, b):
-    """An implementation of the Extended Euclidean Algorithm.
-    Returns gcd, x, & y, such that gcd == a * x + b * y, where
-    gcd is the Greatest Common Divisor of a & b.
+# def xgcd(a, b):
+#     """The extended Euclidean algorithm.
+#
+#     Returns gcd, x, & y, such that gcd = a * x + b * y,
+#     where gcd is the Greatest Common Divisor of a & b.
+#     x & y are called Bézout's coefficients.
+#     """
+#     x, next_x = 1, 0
+#     y, next_y = 0, 1
+#     while b:
+#         q = a // b
+#         # NOTE: Each of the next three lines performs two assignments
+#         next_x, x = x - q * next_x, next_x
+#         next_y, y = y - q * next_y, next_y
+#         a, b = b, a % b
+#     return a, x, y
+
+def xgcd(alpha, beta):
+    """The extended Euclidean algorithm.
+
+    Returns gcd, x, & y, such that gcd = a * x + b * y,
+    where gcd is the Greatest Common Divisor of a & b.
     x & y are called Bézout's coefficients.
-    Reference: https://anh.cs.luc.edu/331/notes/xgcd.pdf
     """
+    # NOTE: Many of the lines below perform two assigment operations
+    a, b = alpha, beta
     x, next_x = 1, 0
     y, next_y = 0, 1
     while b:
@@ -94,4 +113,3 @@ def xgcd(a, b):
         next_y, y = y - q * next_y, next_y
         a, b = b, a % b
     return a, x, y
-

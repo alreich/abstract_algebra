@@ -307,7 +307,7 @@ class Gint:
     def is_associate(self, other):
         """Return True if the other Gint is an associate of this Gint
 
-        Otherwise return False.
+        Otherwise, return False.
         """
         q = self // other
         if q:
@@ -318,3 +318,27 @@ class Gint:
         else:
             return False
 
+
+def xgcd(alpha, beta):
+    """The Extended Euclidean Algorithm for Gaussian Integers.
+
+    Three values are returned: a, x, & y, such that
+    the Greatest Common Divisor (gcd) of a & b can be
+    written as gcd = a * x + b * y. x & y are called
+    Bézout's coefficients.
+    """
+    if isinstance(alpha, Gint) and isinstance(beta, Gint):
+        zero = Gint()
+    else:
+        raise ValueError(f"Inputs must be two Gints.")
+
+    # NOTE: Many of the lines below perform two assigment operations
+    a, b = alpha, beta
+    x, next_x = 1, 0
+    y, next_y = 0, 1
+    while b != zero:
+        q = a // b
+        next_x, x = x - q * next_x, next_x
+        next_y, y = y - q * next_y, next_y
+        a, b = b, a % b
+    return a, x, y

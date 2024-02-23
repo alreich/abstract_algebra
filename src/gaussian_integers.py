@@ -263,37 +263,6 @@ class Gint:
         """Allow this Gint to be hashed."""
         return hash((self.real, self.imag))
 
-    # # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
-    # def divmod(self, other):  # A modified division theorem
-    #     """A modified division theorem.
-    #
-    #     Let a = self & b = other, then this method computes q & r,
-    #     such that a = b * q + r, where (1/2) * r.norm < b.norm.
-    #     It returns q & r (i.e., the quotient and remainder).
-    #     This is the Modified Division Theorem described in
-    #     'The Gaussian Integers' by Keith Conrad
-    #     """
-    #     q = Gint(complex(self * other.conj) / other.norm)  # Gint rounds the complex result here
-    #     r = self - other * q
-    #     return q, r
-    #
-    # def gcd(self, other, verbose=False):
-    #     """Return the greatest common divisor of self and other.
-    #
-    #     This function implements the Euclidean algorithm for Gaussian integers.
-    #     """
-    #     zero = Gint()
-    #     if self * other == zero:
-    #         raise ValueError(f"Both inputs must be non-zero: {self} and {other}")
-    #     else:
-    #         r1, r2 = self, other
-    #         while r2 != zero:
-    #             r0, r1 = r1, r2
-    #             q, r2 = r0.divmod(r1)  # q is not used in the computation
-    #             if verbose:
-    #                 print(f"   {r0} = {r1} * {q} + {r2}")
-    #     return r1
-
     @classmethod
     def eye(cls):
         """Return i = Gint(0, 1)"""
@@ -337,9 +306,9 @@ class Gint:
         else:
             return False
 
-    # def unpack(self):
-    #     """Return the two components of the Gint."""
-    #     return self.real, self.imag
+    def unpack(self):
+        """Return the two components of the Gint."""
+        return self.real, self.imag
 
 
 def isprime(n: int) -> bool:
@@ -360,7 +329,7 @@ def isprime(n: int) -> bool:
 
 
 # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
-def mod_divmod(a, b):
+def mod_divmod(a: Gint, b: Gint):
     """A modified divmod algorithm for Gaussian integers.
 
     Returns q & r, such that a = b * q + r, where
@@ -372,7 +341,7 @@ def mod_divmod(a, b):
     return q, r
 
 
-def gcd(a, b, verbose=False):
+def gcd(a: Gint, b: Gint, verbose=False) -> Gint:
     """Return the greatest common divisor of self and other.
 
     This function implements the Euclidean algorithm for Gaussian integers.
@@ -390,7 +359,7 @@ def gcd(a, b, verbose=False):
     return r1
 
 
-def xgcd(alpha, beta):
+def xgcd(alpha: Gint, beta: Gint):
     """The Extended Euclidean Algorithm for Gaussian Integers.
 
     Three values are returned: a, x, & y, such that
@@ -413,3 +382,36 @@ def xgcd(alpha, beta):
         next_y, y = y - q * next_y, next_y
         a, b = b, a % b
     return a, x, y
+
+
+def is_gaussian_prime(x: (int, Gint)) -> bool:
+    """Return True if x is a Gaussian prime.  Otherwise, return False.
+
+    See https://mathworld.wolfram.com/GaussianPrime.html
+    """
+    if isinstance(x, Gint):
+        re = abs(x.real)
+        im = abs(x.imag)
+        norm = x.norm
+    elif isinstance(x, int):
+        re = abs(x)
+        im = 0
+        norm = re * re
+
+    if (re * im != 0) and isprime(norm):
+        return True
+
+    elif re == 0:
+        if isprime(im) and (im % 4 == 3):
+            return True
+        else:
+            return False
+
+    elif im == 0:
+        if isprime(re) and (re % 4 == 3):
+            return True
+        else:
+            return False
+
+    else:
+        return False

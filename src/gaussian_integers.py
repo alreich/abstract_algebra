@@ -1,13 +1,32 @@
+"""A Gaussian Integer class, together with associated functions.
+
+A Gaussian integer is a complex number whose real and imaginary parts are both integers.
+In this module, a Gaussian integer is represented in the form, Gint(re, im), where re is
+the real integer and im is the imaginary integer. The Gint class supports the arithmetic
+of Gaussian integers using numeric-style operators: +, -, *, /, //, %, **, +=, -=, *=,
+and /=, along with a modified version of divmod, called mod_divmod, and two functions
+related to the Greatest Common Divisor: gcd and xgcd.
+
+Example:
+  > from gaussian_integers import Gint, mod_divmod, gcd, xgcd
+  >
+  > alpha = Gint(11, 3)
+  > beta = Gint(1, 8)
+  > a, x, y = xgcd(alpha, beta)
+  > print(f"{alpha * x + beta * y} = {alpha} * {x} + {beta} * {y}")
+  >
+  > (1-2j) = (11+3j) * (2-1j) + (1+8j) * 3j
+
 """
-@summary:  Gaussian Integer class
-@author:   Alfred J. Reich, Ph.D.
-@contact:  al.reich@gmail.com
-@copyright: Copyright (C) 2024 Alfred J. Reich, Ph.D.
-@license:  MIT
-@requires: Python 3
-@since:    2024.02
-@version:  0.0.1
-"""
+
+__author__ = "Alfred J. Reich, Ph.D."
+__contact__ = "al.reich@gmail.com"
+__copyright__ = "Copyright (C) 2024 Alfred J. Reich, Ph.D."
+__license__ = "MIT"
+__version__ = "0.1.0"
+
+
+from math import sqrt
 
 
 class Gint:
@@ -235,45 +254,45 @@ class Gint:
     def __mod__(self, other):
         """Implements the % operator.
 
-        Returns the remainder of the result from self.divmod(other)
+        Returns the remainder of the result from mod_divmod
         """
-        _, r = self.divmod(other)
+        _, r = mod_divmod(self, other)
         return r
 
     def __hash__(self):
         """Allow this Gint to be hashed."""
         return hash((self.real, self.imag))
 
-    # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
-    def divmod(self, other):  # A modified division theorem
-        """A modified division theorem.
-
-        Let a = self & b = other, then this method computes q & r,
-        such that a = b * q + r, where (1/2) * r.norm < b.norm.
-        It returns q & r (i.e., the quotient and remainder).
-        This is the Modified Division Theorem described in
-        'The Gaussian Integers' by Keith Conrad
-        """
-        q = Gint(complex(self * other.conj) / other.norm)  # Gint rounds the complex result here
-        r = self - other * q
-        return q, r
-
-    def gcd(self, other, verbose=False):
-        """Return the greatest common divisor of self and other.
-
-        This function implements the Euclidean algorithm for Gaussian integers.
-        """
-        zero = Gint()
-        if self * other == zero:
-            raise ValueError(f"Both inputs must be non-zero: {self} and {other}")
-        else:
-            r1, r2 = self, other
-            while r2 != zero:
-                r0, r1 = r1, r2
-                q, r2 = r0.divmod(r1)  # q is not used in the computation
-                if verbose:
-                    print(f"   {r0} = {r1} * {q} + {r2}")
-        return r1
+    # # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
+    # def divmod(self, other):  # A modified division theorem
+    #     """A modified division theorem.
+    #
+    #     Let a = self & b = other, then this method computes q & r,
+    #     such that a = b * q + r, where (1/2) * r.norm < b.norm.
+    #     It returns q & r (i.e., the quotient and remainder).
+    #     This is the Modified Division Theorem described in
+    #     'The Gaussian Integers' by Keith Conrad
+    #     """
+    #     q = Gint(complex(self * other.conj) / other.norm)  # Gint rounds the complex result here
+    #     r = self - other * q
+    #     return q, r
+    #
+    # def gcd(self, other, verbose=False):
+    #     """Return the greatest common divisor of self and other.
+    #
+    #     This function implements the Euclidean algorithm for Gaussian integers.
+    #     """
+    #     zero = Gint()
+    #     if self * other == zero:
+    #         raise ValueError(f"Both inputs must be non-zero: {self} and {other}")
+    #     else:
+    #         r1, r2 = self, other
+    #         while r2 != zero:
+    #             r0, r1 = r1, r2
+    #             q, r2 = r0.divmod(r1)  # q is not used in the computation
+    #             if verbose:
+    #                 print(f"   {r0} = {r1} * {q} + {r2}")
+    #     return r1
 
     @classmethod
     def eye(cls):
@@ -317,6 +336,58 @@ class Gint:
                 return False
         else:
             return False
+
+    # def unpack(self):
+    #     """Return the two components of the Gint."""
+    #     return self.real, self.imag
+
+
+def isprime(n: int) -> bool:
+    """Returns True if n is a positive, prime integer; otherwise, False is returned.
+    The same function exists in SymPy."""
+    if isinstance(n, int):
+        if n == 2:
+            return True
+        if n % 2 == 0 or n <= 1:
+            return False
+        root_n = int(sqrt(n)) + 1
+        for val in range(3, root_n, 2):
+            if n % val == 0:
+                return False
+        return True
+    else:
+        raise False
+
+
+# See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
+def mod_divmod(a, b):
+    """A modified divmod algorithm for Gaussian integers.
+
+    Returns q & r, such that a = b * q + r, where
+    (1/2) * r.norm < b.norm. This is the Modified Division
+    Theorem described in 'The Gaussian Integers' by Keith Conrad
+    """
+    q = Gint(complex(a * b.conj) / b.norm)  # Gint rounds the complex result here
+    r = a - b * q
+    return q, r
+
+
+def gcd(a, b, verbose=False):
+    """Return the greatest common divisor of self and other.
+
+    This function implements the Euclidean algorithm for Gaussian integers.
+    """
+    zero = Gint()
+    if a * b == zero:
+        raise ValueError(f"Both inputs must be non-zero: {a} and {b}")
+    else:
+        r1, r2 = a, b
+        while r2 != zero:
+            r0, r1 = r1, r2
+            q, r2 = mod_divmod(r0, r1)  # q is not used in the computation
+            if verbose:
+                print(f"   {r0} = {r1} * {q} + {r2}")
+    return r1
 
 
 def xgcd(alpha, beta):

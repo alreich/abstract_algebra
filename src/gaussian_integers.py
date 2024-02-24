@@ -1,17 +1,18 @@
-"""A Gaussian Integer class, together with associated functions.
+"""A Gaussian Integer class, Zi, together with associated functionality.
 
+In mathematics, the integers are denoted by Z and Gaussian integers are denoted by Z[i].
 A Gaussian integer is a complex number whose real and imaginary parts are both integers.
-In this module, a Gaussian integer is represented in the form, Gint(re, im), where re is
-the real integer and im is the imaginary integer. The Gint class supports the arithmetic
+In this module, a Gaussian integer is represented in the form, Zi(re, im), where re is
+the real integer and im is the imaginary integer. The Zi class supports the arithmetic
 of Gaussian integers using numeric-style operators: +, -, *, /, //, %, **, +=, -=, *=,
 and /=, along with a modified version of divmod, called mod_divmod, and two functions
 related to the Greatest Common Divisor: gcd and xgcd.
 
 Example:
-  > from gaussian_integers import Gint, mod_divmod, gcd, xgcd
+  > from gaussian_integers import Zi, mod_divmod, gcd, xgcd
   >
-  > alpha = Gint(11, 3)
-  > beta = Gint(1, 8)
+  > alpha = Zi(11, 3)
+  > beta = Zi(1, 8)
   > a, x, y = xgcd(alpha, beta)
   > print(f"{alpha * x + beta * y} = {alpha} * {x} + {beta} * {y}")
   >
@@ -29,10 +30,10 @@ __version__ = "0.1.0"
 from math import sqrt
 
 
-class Gint:
+class Zi:
     """Gaussian Integer Class with arithmetic and related functionality.
 
-    A Gaussian integer, Gint, has two integer input values, re & im.
+    A Gaussian integer, Zi, has two integer input values, re & im.
     Floats and complex numbers can be entered, but they will be rounded to the
     nearest integers. If a complex number is provided for re, then the value of
     im will be ignored, and the complex number's components, real & imag, will be
@@ -40,7 +41,7 @@ class Gint:
     """
 
     def __init__(self, re: (int, float, complex) = 0, im: (int, float) = 0):
-        """Instantiate a Gaussian integer, Gint(re=0, im=0)."""
+        """Instantiate a Gaussian integer, Zi(re=0, im=0)."""
 
         if isinstance(re, int):
             self.real = re
@@ -49,7 +50,7 @@ class Gint:
         elif isinstance(re, complex):
             self.real = round(re.real)
         else:
-            raise TypeError(f"{re} cannot be used for the real part of a Gint instance")
+            raise TypeError(f"{re} cannot be used for the real part of a Zi instance")
 
         if isinstance(re, complex):
             self.imag = round(re.imag)
@@ -58,10 +59,10 @@ class Gint:
         elif isinstance(im, float):
             self.imag = round(im)
         else:
-            raise TypeError(f"{im} cannot be used for the imaginary part of a Gint instance")
+            raise TypeError(f"{im} cannot be used for the imaginary part of a Zi instance")
 
     def __repr__(self) -> str:
-        return f"Gint({self.real}, {self.imag})"
+        return f"Zi({self.real}, {self.imag})"
 
     def __str__(self) -> str:
         return str(complex(self))
@@ -69,64 +70,64 @@ class Gint:
     def __add__(self, other):
         """Implements the + operator: self + other
 
-        Add this Gint to another Gint or integer.
+        Add this Zi to another Zi or integer.
         """
         if isinstance(other, int):
-            return Gint(self.real + other, self.imag)
-        elif isinstance(other, Gint):
-            return Gint(self.real + other.real, self.imag + other.imag)
+            return Zi(self.real + other, self.imag)
+        elif isinstance(other, Zi):
+            return Zi(self.real + other.real, self.imag + other.imag)
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __radd__(self, other):
         """The reflected (swapped) operand for addition: other + self
 
-        Handle addition by an integer, where this Gint is on the right side,
-        and an integer, other, is on the left. e.g., 2 + Gint(1, 2) ==> Gint(3, 2)
+        Handle addition by an integer, where this Zi is on the right side,
+        and an integer, other, is on the left. e.g., 2 + Zi(1, 2) ==> Zi(3, 2)
         """
         if isinstance(other, int):
-            return Gint(other + self.real, self.imag)
+            return Zi(other + self.real, self.imag)
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __iadd__(self, other):
         """Implements the += operation: self += other"""
         if isinstance(other, int):
-            return Gint(self.real + other, self.imag)
-        elif isinstance(other, Gint):
-            return Gint(self.real + other.real, self.imag + other.imag)
+            return Zi(self.real + other, self.imag)
+        elif isinstance(other, Zi):
+            return Zi(self.real + other.real, self.imag + other.imag)
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __sub__(self, other):
         """Implements the subtraction operator: self - other
 
-        Subtract another Gint or integer from this Gint.
+        Subtract another Zi or integer from this Zi.
         """
         if isinstance(other, int):
-            return Gint(self.real - other, self.imag)
-        elif isinstance(other, Gint):
-            return Gint(self.real - other.real, self.imag - other.imag)
+            return Zi(self.real - other, self.imag)
+        elif isinstance(other, Zi):
+            return Zi(self.real - other.real, self.imag - other.imag)
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __rsub__(self, other):
         """The reflected (swapped) operand for subtraction: other - self
 
-        Handle subtraction by an integer, where this Gint is on the right side,
-        and an integer, other, is on the left. e.g., 2 - Gint(1, 2) ==> Gint(1, -2)
+        Handle subtraction by an integer, where this Zi is on the right side,
+        and an integer, other, is on the left. e.g., 2 - Zi(1, 2) ==> Zi(1, -2)
         """
         if isinstance(other, int):
-            return Gint(other - self.real, -self.imag)
+            return Zi(other - self.real, -self.imag)
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __isub__(self, other):
         """Implements the -= operation: self -= other"""
         if isinstance(other, int):
-            return Gint(self.real - other, self.imag)
-        elif isinstance(other, Gint):
-            return Gint(self.real - other.real, self.imag - other.imag)
+            return Zi(self.real - other, self.imag)
+        elif isinstance(other, Zi):
+            return Zi(self.real - other.real, self.imag - other.imag)
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
@@ -134,7 +135,7 @@ class Gint:
         """Implements the multiplication operator: self * other"""
         a = self.real
         b = self.imag
-        if isinstance(other, Gint):
+        if isinstance(other, Zi):
             c = other.real
             d = other.imag
         elif isinstance(other, int):
@@ -144,18 +145,18 @@ class Gint:
             raise TypeError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
         if d == 0:  # might as well take advantage of this here
-            return Gint(a * c, b * c)
+            return Zi(a * c, b * c)
         else:
-            return Gint(a * c - b * d, a * d + b * c)
+            return Zi(a * c - b * d, a * d + b * c)
 
     def __rmul__(self, other):  # other * self
         """The reflected (swapped) operand for multiplication: other * self
 
-        Handle multiplication by an integer, where this Gint is on the right side,
-        and an integer, other, is on the left. e.g., 2 * Gint(1, 2) ==> Gint(2, 4)
+        Handle multiplication by an integer, where this Zi is on the right side,
+        and an integer, other, is on the left. e.g., 2 * Zi(1, 2) ==> Zi(2, 4)
         """
         if isinstance(other, int):
-            return Gint(other * self.real, other * self.imag)
+            return Zi(other * self.real, other * self.imag)
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
 
@@ -163,7 +164,7 @@ class Gint:
         """Implements the *= operation: self *= other"""
         a = self.real
         b = self.imag
-        if isinstance(other, Gint):
+        if isinstance(other, Zi):
             c = other.real
             d = other.imag
         elif isinstance(other, int):
@@ -173,15 +174,15 @@ class Gint:
             raise TypeError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
         if d == 0:
-            return Gint(a * c, b * c)
+            return Zi(a * c, b * c)
         else:
-            return Gint(a * c - b * d, a * d + b * c)
+            return Zi(a * c - b * d, a * d + b * c)
 
     def __pow__(self, n: int, modulo=None):  # self ** n
         result = self
         if isinstance(n, int) and n >= 0:
             if n == 0:
-                result = Gint(1)  # Return "1"
+                result = Zi(1)  # Return "1"
             else:
                 for _ in range(n - 1):
                     result = result * self
@@ -190,23 +191,23 @@ class Gint:
         return result
 
     def __complex__(self) -> complex:
-        """Return the complex number that corresponds to this Gint."""
+        """Return the complex number that corresponds to this Zi."""
         return complex(self.real, self.imag)
 
     def __neg__(self):
-        """Negate this Gint."""
-        return Gint(-self.real, -self.imag)
+        """Negate this Zi."""
+        return Zi(-self.real, -self.imag)
 
     def __eq__(self, other) -> bool:
-        """Return True if this Gint equals other."""
-        if isinstance(other, Gint):
+        """Return True if this Zi equals other."""
+        if isinstance(other, Zi):
             return (self.real == other.real) and (self.imag == other.imag)
         else:
             return False
 
     def __ne__(self, other) -> bool:
-        """Return True if this Gint does NOT equal other."""
-        if isinstance(other, Gint):
+        """Return True if this Zi does NOT equal other."""
+        if isinstance(other, Zi):
             return (self.real != other.real) or (self.imag != other.imag)
         else:
             return True
@@ -216,39 +217,39 @@ class Gint:
         """Divide self by other, exactly, and return the resulting complex number.
 
         Implements the / operator, and returns the exact, complex result
-        of dividing this Gint by another Gint, int, float, or complex number.
+        of dividing this Zi by another Zi, int, float, or complex number.
         """
-        if isinstance(other, (int, float, complex, Gint)):
+        if isinstance(other, (int, float, complex, Zi)):
             return complex(self) / complex(other)
         else:
-            raise TypeError(f"{other} cannot divide a Gint")
+            raise TypeError(f"{other} cannot divide a Zi")
 
     def __rtruediv__(self, other):  # other / self
         """Divide other by self, exactly, and return the resulting complex number.
 
         Implements the 'swapped' version of the / operator, and returns the exact,
-        complex result of dividing other by this Gint.
+        complex result of dividing other by this Zi.
         """
-        if isinstance(other, (int, float, complex)):  # the Gint case is handled by __truediv__
+        if isinstance(other, (int, float, complex)):  # the Zi case is handled by __truediv__
             return complex(other) / complex(self)
         else:
-            raise TypeError(f"{other} cannot be divided by a Gint")
+            raise TypeError(f"{other} cannot be divided by a Zi")
 
     def __floordiv__(self, other):  # self // other
         """Implements the // operator using 'round', instead of 'floor'.
 
         Returns the closest integer approximation to the quotient, self / other,
-        as a Gint, by rounding the real and imag parts after division, not flooring.
-        'other' can be an int, float, complex, or Gint.
+        as a Zi, by rounding the real and imag parts after division, not flooring.
+        'other' can be an int, float, complex, or Zi.
         """
-        if isinstance(other, (int, float, complex, Gint)):
-            return Gint(complex(self) / complex(other))
+        if isinstance(other, (int, float, complex, Zi)):
+            return Zi(complex(self) / complex(other))
         else:
             raise TypeError(f"{other} is not a supported type.")
 
     def __rfloordiv__(self, other):  # other // self
         if isinstance(other, (int, float, complex)):
-            return Gint(complex(other) / complex(self))
+            return Zi(complex(other) / complex(self))
         else:
             raise TypeError(f"{other} is not a supported type.")
 
@@ -261,23 +262,23 @@ class Gint:
         return r
 
     def __hash__(self):
-        """Allow this Gint to be hashed."""
+        """Allow this Zi to be hashed."""
         return hash((self.real, self.imag))
 
     @classmethod
     def eye(cls):
-        """Return i = Gint(0, 1)"""
-        return Gint(0, 1)
+        """Return i = Zi(0, 1)"""
+        return Zi(0, 1)
 
     @classmethod
     def units(cls):
-        """Returns the list of four units, [1, -1, i, -i], as Gints."""
-        return [Gint(1), -Gint(1), cls.eye(), -cls.eye()]
+        """Returns the list of four units, [1, -1, i, -i], as Zis."""
+        return [Zi(1), -Zi(1), cls.eye(), -cls.eye()]
 
     @property
     def conj(self):
         """Return the conjugate of this Gaussian integer"""
-        return Gint(self.real, - self.imag)
+        return Zi(self.real, - self.imag)
 
     @property
     def norm(self) -> int:
@@ -289,18 +290,18 @@ class Gint:
         return n.real
 
     def associates(self):
-        """Return a list of this Gint's three associates"""
-        us = Gint.units()
+        """Return a list of this Zi's three associates"""
+        us = Zi.units()
         return list(map(lambda u: u * self, us[1:]))  # skip multiplying by 1
 
     def is_associate(self, other):
-        """Return True if the other Gint is an associate of this Gint
+        """Return True if the other Zi is an associate of this Zi
 
         Otherwise, return False.
         """
         q = self // other
         if q:
-            if q in Gint.units():
+            if q in Zi.units():
                 return True
             else:
                 return False
@@ -308,7 +309,7 @@ class Gint:
             return False
 
     def unpack(self):
-        """Return the two components of the Gint."""
+        """Return the two components of the Zi."""
         return self.real, self.imag
 
 
@@ -330,24 +331,24 @@ def isprime(n: int) -> bool:
 
 
 # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
-def mod_divmod(a: Gint, b: Gint):
+def mod_divmod(a: Zi, b: Zi):
     """A modified divmod algorithm for Gaussian integers.
 
     Returns q & r, such that a = b * q + r, where
     (1/2) * r.norm < b.norm. This is the Modified Division
     Theorem described in 'The Gaussian Integers' by Keith Conrad
     """
-    q = Gint(complex(a * b.conj) / b.norm)  # Gint rounds the complex result here
+    q = Zi(complex(a * b.conj) / b.norm)  # Zi rounds the complex result here
     r = a - b * q
     return q, r
 
 
-def gcd(a: Gint, b: Gint, verbose=False) -> Gint:
+def gcd(a: Zi, b: Zi, verbose=False) -> Zi:
     """Return the greatest common divisor of self and other.
 
     This function implements the Euclidean algorithm for Gaussian integers.
     """
-    zero = Gint()
+    zero = Zi()
     if a * b == zero:
         raise ValueError(f"Both inputs must be non-zero: {a} and {b}")
     else:
@@ -360,7 +361,7 @@ def gcd(a: Gint, b: Gint, verbose=False) -> Gint:
     return r1
 
 
-def xgcd(alpha: Gint, beta: Gint):
+def xgcd(alpha: Zi, beta: Zi):
     """The Extended Euclidean Algorithm for Gaussian Integers.
 
     Three values are returned: a, x, & y, such that
@@ -368,10 +369,10 @@ def xgcd(alpha: Gint, beta: Gint):
     written as gcd = a * x + b * y. x & y are called
     Bézout's coefficients.
     """
-    if isinstance(alpha, Gint) and isinstance(beta, Gint):
-        zero = Gint()
+    if isinstance(alpha, Zi) and isinstance(beta, Zi):
+        zero = Zi()
     else:
-        raise ValueError(f"Inputs must be two Gints.")
+        raise ValueError(f"Inputs must be two Zis.")
 
     # NOTE: Many of the lines below perform two assigment operations
     a, b = alpha, beta
@@ -385,14 +386,14 @@ def xgcd(alpha: Gint, beta: Gint):
     return a, x, y
 
 
-def is_gaussian_prime(x: (int, Gint)) -> bool:
+def is_gaussian_prime(x: (int, Zi)) -> bool:
     """Return True if x is a Gaussian prime.  Otherwise, return False.
 
     See https://mathworld.wolfram.com/GaussianPrime.html
     """
     re = im = norm = None  # So PyCharm won't complain about using variables before assigning them
 
-    if isinstance(x, Gint):
+    if isinstance(x, Zi):
         re = abs(x.real)
         im = abs(x.imag)
         norm = x.norm

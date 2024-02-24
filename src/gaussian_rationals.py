@@ -10,11 +10,11 @@ __license__ = "MIT"
 __version__ = "0.1.0"
 
 
-from gaussian_integers import Gint
+from gaussian_integers import Zi
 from fractions import Fraction
 
 
-class Grat:
+class Qi:
     """Gaussian Rational Number Class"""
 
     def __init__(self, re=Fraction(0, 1), im=Fraction(0, 1)):
@@ -28,7 +28,7 @@ class Grat:
         elif isinstance(re, int) and isinstance(im, int):
             self.real = Fraction(re, 1)
             self.imag = Fraction(im, 1)
-        elif isinstance(re, Gint) and isinstance(im, Gint):
+        elif isinstance(re, Zi) and isinstance(im, Zi):
             # re & im are interpreted as the numerator & denominator, resp.
             nrm = im.norm
             prd = re * im.conj
@@ -47,23 +47,23 @@ class Grat:
             return f"({self.real}+{self.imag}j)"
 
     def __add__(self, other):
-        return Grat(self.real + other.real, self.imag + other.imag)
+        return Qi(self.real + other.real, self.imag + other.imag)
 
     def __sub__(self, other):
-        return Grat(self.real - other.real, self.imag - other.imag)
+        return Qi(self.real - other.real, self.imag - other.imag)
 
     def __mul__(self, other):
         a = self.real
         b = self.imag
         c = other.real
         d = other.imag
-        return Grat(a * c - b * d, a * d + b * c)
+        return Qi(a * c - b * d, a * d + b * c)
 
     def __pow__(self, n: int, modulo=None):  # self ** n
         result = self
         if isinstance(n, int) and n >= 0:
             if n == 0:
-                result = Gint(1)  # Return "1"
+                result = Zi(1)  # Return "1"
             else:
                 for _ in range(n - 1):
                     result = result * self
@@ -75,7 +75,7 @@ class Grat:
         return self * other.inv
 
     def __neg__(self):
-        return Grat(-self.real, -self.imag)
+        return Qi(-self.real, -self.imag)
 
     def __complex__(self) -> complex:
         re = self.real.numerator / self.real.denominator
@@ -84,14 +84,14 @@ class Grat:
 
     def __eq__(self, other) -> bool:
         """Return True if this Grat equals other."""
-        if isinstance(other, Grat):
+        if isinstance(other, Qi):
             return (self.real == other.real) and (self.imag == other.imag)
         else:
             return False
 
     def __ne__(self, other) -> bool:
         """Return True if this Grat does NOT equal other."""
-        if isinstance(other, Grat):
+        if isinstance(other, Qi):
             return (self.real != other.real) or (self.imag != other.imag)
         else:
             return True
@@ -101,7 +101,7 @@ class Grat:
 
     @property
     def conj(self):
-        return Grat(self.real, -self.imag)
+        return Qi(self.real, -self.imag)
 
     @property
     def norm(self) -> Fraction:
@@ -112,5 +112,5 @@ class Grat:
     def inv(self):
         norm = self.norm
         conj = self.conj
-        return Grat(conj.real / norm, conj.imag / norm)
+        return Qi(conj.real / norm, conj.imag / norm)
 

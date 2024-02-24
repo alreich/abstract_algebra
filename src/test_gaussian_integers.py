@@ -1,5 +1,5 @@
 from unittest import TestCase
-from gaussian_integers import Gint
+from gaussian_integers import Gint, mod_divmod, gcd, xgcd, is_gaussian_prime
 
 
 class TestGint(TestCase):
@@ -95,7 +95,7 @@ class TestGint(TestCase):
     def test_divmod(self):
         a = Gint(4, 5)
         b = Gint(1, -2)
-        q, r = a.divmod(b)
+        q, r = mod_divmod(a, b)
         test = f"{b * q + r} = {b} * {q} + {r}"
         answer = "(4+5j) = (1-2j) * (-1+3j) + (-1+0j)"
         self.assertEqual(test, answer)
@@ -110,9 +110,9 @@ class TestGint(TestCase):
     def test_gcd_1(self):
         alpha = Gint(32, 9)
         beta = Gint(4, 11)
-        self.assertEqual(alpha.gcd(beta), Gint(0, -1))
+        self.assertEqual(gcd(alpha, beta), Gint(0, -1))
 
     def test_gcd_2(self):
         alpha = Gint(11, 3)
         beta = Gint(1, 8)
-        self.assertEqual(alpha.gcd(beta), Gint(1, -2))
+        self.assertEqual(gcd(alpha, beta), Gint(1, -2))

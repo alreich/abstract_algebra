@@ -211,6 +211,7 @@ class Gint:
         else:
             return True
 
+    # TODO: have __truediv__ return an Grat, instead of a complex
     def __truediv__(self, other):  # self / other
         """Divide self by other, exactly, and return the resulting complex number.
 
@@ -389,6 +390,8 @@ def is_gaussian_prime(x: (int, Gint)) -> bool:
 
     See https://mathworld.wolfram.com/GaussianPrime.html
     """
+    re = im = norm = None  # So PyCharm won't complain about using variables before assigning them
+
     if isinstance(x, Gint):
         re = abs(x.real)
         im = abs(x.imag)

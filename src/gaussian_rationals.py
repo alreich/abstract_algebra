@@ -41,7 +41,10 @@ class Grat:
         return f"Grat({repr(self.real)}, {repr(self.imag)})"
 
     def __str__(self):
-        return f"({self.real}, {self.imag}j)"
+        if self.imag < 0:
+            return f"({self.real}{self.imag}j)"
+        else:
+            return f"({self.real}+{self.imag}j)"
 
     def __add__(self, other):
         return Grat(self.real + other.real, self.imag + other.imag)

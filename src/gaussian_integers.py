@@ -181,7 +181,7 @@ class Gint:
         result = self
         if isinstance(n, int) and n >= 0:
             if n == 0:
-                result = Gint()  # Return "1"
+                result = Gint(1)  # Return "1"
             else:
                 for _ in range(n - 1):
                     result = result * self

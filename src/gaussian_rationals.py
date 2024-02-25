@@ -38,7 +38,7 @@ class Qi:
             raise TypeError("{re} & {im} are not a supported type")
 
     def __repr__(self):
-        return f"Grat({repr(self.real)}, {repr(self.imag)})"
+        return f"Qi({repr(self.real)}, {repr(self.imag)})"
 
     def __str__(self):
         if self.imag < 0:
@@ -83,14 +83,14 @@ class Qi:
         return complex(re, im)
 
     def __eq__(self, other) -> bool:
-        """Return True if this Grat equals other."""
+        """Return True if this Qi equals other."""
         if isinstance(other, Qi):
             return (self.real == other.real) and (self.imag == other.imag)
         else:
             return False
 
     def __ne__(self, other) -> bool:
-        """Return True if this Grat does NOT equal other."""
+        """Return True if this Qi does NOT equal other."""
         if isinstance(other, Qi):
             return (self.real != other.real) or (self.imag != other.imag)
         else:

@@ -10,7 +10,6 @@ __license__ = "MIT"
 __version__ = "0.1.0"
 
 
-from gaussian_integers import Zi
 from fractions import Fraction
 
 
@@ -28,17 +27,17 @@ class Qi:
         elif isinstance(re, int) and isinstance(im, int):
             self.real = Fraction(re, 1)
             self.imag = Fraction(im, 1)
-        elif isinstance(re, Zi) and isinstance(im, Zi):
-            # re & im are interpreted as the numerator & denominator, resp.
-            nrm = im.norm
-            prd = re * im.conj
-            self.real = Fraction(prd.real, nrm)
-            self.imag = Fraction(prd.imag, nrm)
+        # elif isinstance(re, Zi) and isinstance(im, Zi):
+        #     # re & im are interpreted as the numerator & denominator, resp.
+        #     nrm = im.norm
+        #     prd = re * im.conj
+        #     self.real = Fraction(prd.real, nrm)
+        #     self.imag = Fraction(prd.imag, nrm)
         else:
             raise TypeError("{re} & {im} are not a supported type")
 
     def __repr__(self):
-        return f"Qi({repr(self.real)}, {repr(self.imag)})"
+        return f"Qi({repr(str(self.real))}, {repr(str(self.imag))})"
 
     def __str__(self):
         if self.imag < 0:
@@ -63,7 +62,7 @@ class Qi:
         result = self
         if isinstance(n, int) and n >= 0:
             if n == 0:
-                result = Zi(1)  # Return "1"
+                result = Qi(Fraction(1, 1), Fraction(0, 1))  # Return "1"
             else:
                 for _ in range(n - 1):
                     result = result * self
@@ -114,3 +113,14 @@ class Qi:
         conj = self.conj
         return Qi(conj.real / norm, conj.imag / norm)
 
+    @classmethod
+    def parse_string(cls, qi_str: str):
+        """Parse the repr of a Qi, as a string, and return the corresponding Qi.
+
+        Example: Qi.parse_string("Qi(-6/5, 13/5)") -> Qi(-6/5, 13/5)
+
+        Note: This method is not sophisticated. It assumes that the input string
+        begins with "Qi(", ends with ")", and has ", " between the two fractions.
+        """
+        fraction_strings = qi_str[3:-1].split(", ")
+        return Qi(*fraction_strings)

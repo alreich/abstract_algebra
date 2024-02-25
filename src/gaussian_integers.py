@@ -28,6 +28,8 @@ __version__ = "0.1.0"
 
 
 from math import sqrt
+from fractions import Fraction
+from gaussian_rationals import Qi
 
 
 class Zi:
@@ -212,23 +214,29 @@ class Zi:
         else:
             return True
 
-    # TODO: have __truediv__ return an Grat, instead of a complex
-    def __truediv__(self, other):  # self / other
-        """Divide self by other, exactly, and return the resulting complex number.
+    def __truediv__(self, other) -> Qi:  # self / other
+        """Divide self by other, exactly, and return the resulting Gaussian rational, Qi.
 
-        Implements the / operator, and returns the exact, complex result
-        of dividing this Zi by another Zi, int, float, or complex number.
+        Implements the / operator, and returns the exact, Gaussian rational result
+        of dividing this Gaussian integer by another Gaussian integer or regular integer.
         """
-        if isinstance(other, (int, float, complex, Zi)):
-            return complex(self) / complex(other)
+        if isinstance(other, Zi):
+            denom = other.norm
+            numer = self * other.conj
+        elif isinstance(other, int):
+            denom = other
+            numer = self
         else:
-            raise TypeError(f"{other} cannot divide a Zi")
+            raise TypeError(f"{other} cannot divide a Gaussian integer")
+        return Qi(Fraction(numer.real, denom), Fraction(numer.imag, denom))
 
+    # TODO: Finish implementing this
     def __rtruediv__(self, other):  # other / self
         """Divide other by self, exactly, and return the resulting complex number.
 
         Implements the 'swapped' version of the / operator, and returns the exact,
-        complex result of dividing other by this Zi.
+        complex result of dividing other by this Gaussian integer. Other must be
+        a Gaussian integer or a regular integer.
         """
         if isinstance(other, (int, float, complex)):  # the Zi case is handled by __truediv__
             return complex(other) / complex(self)

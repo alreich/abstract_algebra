@@ -9,32 +9,34 @@ __copyright__ = "Copyright (C) 2024 Alfred J. Reich, Ph.D."
 __license__ = "MIT"
 __version__ = "0.1.0"
 
-
+from math import sqrt
+from numbers import Complex
 from fractions import Fraction
 
 
-class Qi:
+class Qi(Complex):
     """Gaussian Rational Number Class"""
 
     def __init__(self, re=Fraction(0, 1), im=Fraction(0, 1)):
-        # re & im must be Fractions
         if isinstance(re, Fraction) and isinstance(im, Fraction):
-            self.real = re
-            self.imag = im
+            self.__real = re
+            self.__imag = im
         elif isinstance(re, str) and isinstance(im, str):
-            self.real = Fraction(re)
-            self.imag = Fraction(im)
+            self.__real = Fraction(re)
+            self.__imag = Fraction(im)
         elif isinstance(re, int) and isinstance(im, int):
-            self.real = Fraction(re, 1)
-            self.imag = Fraction(im, 1)
-        # elif isinstance(re, Zi) and isinstance(im, Zi):
-        #     # re & im are interpreted as the numerator & denominator, resp.
-        #     nrm = im.norm
-        #     prd = re * im.conj
-        #     self.real = Fraction(prd.real, nrm)
-        #     self.imag = Fraction(prd.imag, nrm)
+            self.__real = Fraction(re, 1)
+            self.__imag = Fraction(im, 1)
         else:
             raise TypeError("{re} & {im} are not a supported type")
+
+    @property
+    def real(self):
+        return self.__real
+
+    @property
+    def imag(self):
+        return self.__imag
 
     def __repr__(self):
         return f"Qi({repr(str(self.real))}, {repr(str(self.imag))})"
@@ -71,15 +73,16 @@ class Qi:
         return result
 
     def __truediv__(self, other):
-        return self * other.inv
+        """Returns self/other as a Gaussian rational, Qi"""
+        return self * other.inverse
 
     def __neg__(self):
         return Qi(-self.real, -self.imag)
 
     def __complex__(self) -> complex:
-        re = self.real.numerator / self.real.denominator
-        im = self.imag.numerator / self.imag.denominator
-        return complex(re, im)
+        # re = self.real.numerator / self.real.denominator
+        # im = self.imag.numerator / self.imag.denominator
+        return complex(float(self.real), float(self.imag))
 
     def __eq__(self, other) -> bool:
         """Return True if this Qi equals other."""
@@ -98,29 +101,35 @@ class Qi:
     def __hash__(self):
         return hash((self.real, self.imag))
 
+    def __abs__(self) -> float:
+        return sqrt(self.norm)
+
+    def __pos__(self):
+        return +self
+
+    def __radd__(self):
+        return NotImplemented
+
+    def __rmul__(self):
+        return NotImplemented
+
+    def __rpow__(self):
+        return NotImplemented
+
+    def __rtruediv__(self):
+        return NotImplemented
+
     @property
-    def conj(self):
+    def conjugate(self):
         return Qi(self.real, -self.imag)
 
     @property
     def norm(self) -> Fraction:
-        tmp = self * self.conj
+        tmp = self * self.conjugate
         return tmp.real
 
     @property
-    def inv(self):
+    def inverse(self):
         norm = self.norm
-        conj = self.conj
+        conj = self.conjugate
         return Qi(conj.real / norm, conj.imag / norm)
-
-    @classmethod
-    def parse_string(cls, qi_str: str):
-        """Parse the repr of a Qi, as a string, and return the corresponding Qi.
-
-        Example: Qi.parse_string("Qi(-6/5, 13/5)") -> Qi(-6/5, 13/5)
-
-        Note: This method is not sophisticated. It assumes that the input string
-        begins with "Qi(", ends with ")", and has ", " between the two fractions.
-        """
-        fraction_strings = qi_str[3:-1].split(", ")
-        return Qi(*fraction_strings)

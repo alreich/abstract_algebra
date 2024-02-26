@@ -335,6 +335,10 @@ class Zi(Complex):
         else:
             return False
 
+    def to_gaussian_rational(self):
+        """Convert this to a Gaussian rational."""
+        return Qi(self.real, self.imag)
+
     def unpack(self):
         """Return the two components of the Zi."""
         return self.real, self.imag

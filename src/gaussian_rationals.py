@@ -48,7 +48,18 @@ class Qi(Complex):
             return f"({self.real}+{self.imag}j)"
 
     def __add__(self, other):
-        return Qi(self.real + other.real, self.imag + other.imag)
+        if isinstance(other, Qi):
+            return Qi(self.real + other.real, self.imag + other.imag)
+        elif isinstance(other, int):
+            return Qi(self.real + other, self.imag)
+        else:
+            raise TypeError(f"Addition by '{other}' not supported")
+
+    def __radd__(self, other):
+        if isinstance(other, int):
+            return Qi(other + self.real, self.imag)
+        else:
+            raise TypeError(f"Addition by '{other}' not supported")
 
     def __sub__(self, other):
         return Qi(self.real - other.real, self.imag - other.imag)
@@ -107,11 +118,17 @@ class Qi(Complex):
     def __pos__(self):
         return +self
 
-    def __radd__(self):
-        return NotImplemented
+    def __rsub__(self, other):
+        if isinstance(other, int):
+            return Qi(other - self.real, -self.imag)
+        else:
+            raise TypeError(f"Subtraction by '{other}' not supported")
 
-    def __rmul__(self):
-        return NotImplemented
+    def __rmul__(self, other):
+        if isinstance(other, int):
+            return Qi(other * self.real, other * self.imag)
+        else:
+            raise TypeError(f"Multiplication by '{other}' not supported")
 
     def __rpow__(self):
         return NotImplemented
@@ -133,3 +150,41 @@ class Qi(Complex):
         norm = self.norm
         conj = self.conjugate
         return Qi(conj.real / norm, conj.imag / norm)
+
+
+def parse_printed_form(x):
+    """Parse the printed form (string) of a Gaussian rational
+    and return the corresponding Gaussian rational (Qi).
+
+    Example:
+    parse_printed_form('(2/3-1/7j)') -> Qi('2/3', '-1/7')
+    """
+    w = x[1:-2]  # Remove leading '(' and trailing 'j)'
+
+    if w[0] == '-' or w[0] == '+':
+        sign = w[0]  # Leading sign
+        y = w[1:]
+    else:
+        sign = ''  # No leading sign
+        y = w
+
+    if '+' in y:
+        re, im = y.split('+')
+        return Qi(sign + re, im)
+    elif '-' in y:
+        re, im = y.split('-')
+        return Qi(sign + re, '-' + im)
+    else:
+        raise ValueError(f"Can't parse {s}")
+
+# s1 = "(1/2+3/5j)"
+# s2 = "(1/2-3/5j)"
+# s3 = "(-1/2+3/5j)"
+# s4 = "(-1/2-3/5j)"
+# s5 = "(+1/2+3/5j)"
+# s6 = "(+1/2-3/5j)"
+#
+# test_strings = [s1, s2, s3, s4, s5, s6]
+#
+# for ts in test_strings:
+#     print(f"{ts} -> {parse_printed_form(ts)}")

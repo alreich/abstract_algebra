@@ -339,26 +339,9 @@ class Zi(Complex):
         """Convert this to a Gaussian rational."""
         return Qi(self.real, self.imag)
 
-    def unpack(self):
-        """Return the two components of the Zi."""
-        return self.real, self.imag
-
-
-def isprime(n: int) -> bool:
-    """Returns True if n is a positive, prime integer; otherwise, False is returned.
-    The same function exists in SymPy."""
-    if isinstance(n, int):
-        if n == 2:
-            return True
-        if n % 2 == 0 or n <= 1:
-            return False
-        root_n = int(sqrt(n)) + 1
-        for val in range(3, root_n, 2):
-            if n % val == 0:
-                return False
-        return True
-    else:
-        raise False
+    # def unpack(self):
+    #     """Return the two components of the Zi."""
+    #     return self.real, self.imag
 
 
 # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
@@ -450,3 +433,21 @@ def is_gaussian_prime(x: (int, Zi)) -> bool:
 
     else:
         return False
+
+
+def isprime(n: int) -> bool:
+    """Returns True if n is a positive, prime integer; otherwise, False is returned.
+    The same function exists in SymPy."""
+    if isinstance(n, int):
+        if n == 2:
+            return True
+        if n % 2 == 0 or n <= 1:
+            return False
+        root_n = int(sqrt(n)) + 1
+        for val in range(3, root_n, 2):
+            if n % val == 0:
+                return False
+        return True
+    else:
+        raise False
+

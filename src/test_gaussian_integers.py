@@ -80,7 +80,7 @@ class TestZi(TestCase):
         self.assertEqual(Zi.units(), [Zi(1, 0), Zi(-1, 0), Zi(0, 1), Zi(0, -1)])
 
     def test_conj(self):
-        self.assertEqual(self.c1.conj, self.c1_conj)
+        self.assertEqual(self.c1.conjugate, self.c1_conj)
 
     def test_norm(self):
         self.assertEqual(self.c1.norm, 41)

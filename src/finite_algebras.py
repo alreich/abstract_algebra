@@ -689,7 +689,7 @@ class Monoid(Semigroup):
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table, check_inputs)
-        self.__element_orders = {elem: None for elem in self.elements}  # Cached on first access
+        self.__element_orders = {elem: 0 for elem in self.elements}  # Cached on first access
         if check_inputs:
             if self.identity is None:
                 raise ValueError("CHECK INPUTS: A monoid must have an identity element")
@@ -754,6 +754,7 @@ class Monoid(Semigroup):
 
         # Create a list of N Nx1 orthogonal unit vectors
         ident = np.eye(N, dtype=int)  # The NxN identity matrix
+        # noinspection PyPep8Naming
         B = [ident[:, [i]] for i in range(N)]  # A list of columns extracted from the identity matrix
 
         # Create a dictionary that maps group elements to the column vectors created above.
@@ -1005,7 +1006,7 @@ class Group(Monoid):
                     print(f"Cayley Table (showing indices):")
                     pp.pprint(self.table.tolist())
             else:
-                print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+                print(f"{self.__class__.__name__} order is {size} > {max_size}, so no table is printed.")
         return str(self)
 
 
@@ -1459,7 +1460,8 @@ class Ring(Group):
         product is zero.
         """
         zero_product_pairs = self.element_pairs_where_product_equals(self.identity)
-        return [pair for pair in zero_product_pairs if not self.identity in pair]
+        # return [pair for pair in zero_product_pairs if not self.identity in pair]
+        return [pair for pair in zero_product_pairs if self.identity not in pair]
 
     def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
               show_conjugates=False, show_generators=False):
@@ -1490,9 +1492,9 @@ class Ring(Group):
                     print(f"Multiplicative Cayley Table (showing indices):")
                     pp.pprint(self.mult_table.tolist())
             else:
-                print(f"{self.__class__.__name__} order is {size} > {max_size}, so no further info calculated/printed.")
+                print(f"{self.__class__.__name__} order is {size} > {max_size}, so the mult. table is not printed.")
 
-        # The conjugate mapping is only printed out if it exists and we want to see it.
+        # The conjugate mapping is only printed out if it exists, and we want to see it.
         if show_conjugates and self.conjugates() is not None:
             print(f"Conjugate Mapping: {self.conjugates()}")
 
@@ -1551,7 +1553,7 @@ class Ring(Group):
         """This method only works for elements of Rings or Fields created by the function,
         'generate_algebra_mod_n', or by a single application of the Ring method,
         'make_cayley_dickson_algebra', to the output of 'generate_algebra_mod_n'.
-        That is, elements that look like '7' or '07:12'.
+        That is, elements that look like 7 or 07:12.
         """
         delim = self.direct_product_delimiter()
         dimension = elem.count(delim)
@@ -1664,13 +1666,15 @@ class Ring(Group):
         add_table = list()
         mul_table = list()
         for x in element_names:
-            a = x[0]; b = x[1]
+            a = x[0]
+            b = x[1]
 
             # Start new rows in the addition and multiplication tables
             add_table_row = list()
             mul_table_row = list()
             for y in element_names:
-                c = y[0]; d = y[1]
+                c = y[0]
+                d = y[1]
 
                 # ADDITION: (a, b) + (c, d) = (a + b, c + d)
                 add_table_row.append(element_names.index((self.add(a, c),
@@ -1699,12 +1703,12 @@ class Ring(Group):
                                                               (self.add(self.mult(d, a),
                                                                         self.mult(b, self.conj(c)))))))
                 elif version == 4:
-                        # See [Baez 2001]
-                        # Multiplication: (a, b) x (c, d) = (a x c  -  d x b*,  a* x d  +  c x b)
-                        mul_table_row.append(element_names.index(((self.sub(self.mult(a, c),
-                                                                            self.mult(d, self.conj(b)))),
-                                                                  (self.add(self.mult(self.conj(a), d),
-                                                                            self.mult(c, b))))))
+                    # See [Baez 2001]
+                    # Multiplication: (a, b) x (c, d) = (a x c  -  d x b*,  a* x d  +  c x b)
+                    mul_table_row.append(element_names.index(((self.sub(self.mult(a, c),
+                                                                        self.mult(d, self.conj(b)))),
+                                                              (self.add(self.mult(self.conj(a), d),
+                                                                        self.mult(c, b))))))
                 else:
                     raise ValueError(f"What happened?!?! We should never see this message. Version == {version}")
 
@@ -2294,7 +2298,7 @@ class NDimensionalVectorSpace(VectorSpace):
         return module_dot_product(self, u, v)
 
 
-def check_module_conditions(ring, group, sv_mult, verbose=False):
+def check_module_conditions(ring: Ring, group: Group, sv_mult, verbose=False):
     """Returns True if all four conditions required of a Module hold true,
     otherwise this function returns False."""
 

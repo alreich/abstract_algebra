@@ -85,6 +85,8 @@ class Zi(Complex):
         """
         if isinstance(other, int):
             return Zi(self.real + other, self.imag)
+        if isinstance(other, complex):
+            return self + Zi(other)
         elif isinstance(other, Zi):
             return Zi(self.real + other.real, self.imag + other.imag)
         else:
@@ -98,6 +100,8 @@ class Zi(Complex):
         """
         if isinstance(other, int):
             return Zi(other + self.real, self.imag)
+        elif isinstance(other, complex):
+            return Zi(other) + self
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
@@ -117,6 +121,8 @@ class Zi(Complex):
         """
         if isinstance(other, int):
             return Zi(self.real - other, self.imag)
+        elif isinstance(other, complex):
+            return self - Zi(other)
         elif isinstance(other, Zi):
             return Zi(self.real - other.real, self.imag - other.imag)
         else:
@@ -130,6 +136,8 @@ class Zi(Complex):
         """
         if isinstance(other, int):
             return Zi(other - self.real, -self.imag)
+        elif isinstance(other, complex):
+            return Zi(other) - self
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
@@ -149,6 +157,9 @@ class Zi(Complex):
         if isinstance(other, Zi):
             c = other.real
             d = other.imag
+        elif isinstance(other, complex):
+            c = round(other.real)
+            d = round(other.imag)
         elif isinstance(other, int):
             c = other
             d = 0  # Easy way to handle the int case
@@ -168,6 +179,8 @@ class Zi(Complex):
         """
         if isinstance(other, int):
             return Zi(other * self.real, other * self.imag)
+        elif isinstance(other, complex):
+            return Zi(other) * self
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
 
@@ -307,9 +320,9 @@ class Zi(Complex):
     def __mod__(self, other):
         """Implements the % operator.
 
-        Returns the remainder of the result from mod_divmod
+        Returns the remainder of the result from modified_divmod
         """
-        _, r = Zi.mod_divmod(self, other)
+        _, r = Zi.modified_divmod(self, other)
         return r
 
     def __hash__(self):
@@ -370,13 +383,13 @@ class Zi(Complex):
             return False
 
     def to_gaussian_rational(self):
-        """Convert this to a Gaussian rational."""
+        """Convert this Gaussian integer to an equivalent Gaussian rational."""
         return Qi(self.real, self.imag)
 
     # See https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf
     @staticmethod
-    def mod_divmod(a, b):
-        """A modified divmod algorithm for Gaussian integers.
+    def modified_divmod(a, b):
+        """The divmod algorithm, modified for Gaussian integers.
 
         Returns q & r, such that a = b * q + r, where
         (1/2) * r.norm < b.norm. This is the Modified Division
@@ -400,7 +413,7 @@ class Zi(Complex):
             r1, r2 = a, b
             while r2 != zero:
                 r0, r1 = r1, r2
-                q, r2 = Zi.mod_divmod(r0, r1)  # q only used in call to print, below
+                q, r2 = Zi.modified_divmod(r0, r1)  # q only used in call to print, below
                 if verbose:
                     print(f"   {r0} = {r1} * {q} + {r2}")
         return r1

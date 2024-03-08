@@ -1,18 +1,19 @@
-"""A Gaussian Integer class, Zi, together with associated functionality.
+"""Gaussian Integer & Rational Number Classes
 
 A Gaussian integer is a complex number whose real and imaginary parts are both integers.
-In mathematics, the integers are denoted by Z and Gaussian integers are denoted by Z[i].
-In this module, a Gaussian integer is represented in the form, Zi(re, im), where re is
-the real integer and im is the imaginary integer. The Zi class supports the arithmetic
-of Gaussian integers using numeric-style operators: +, -, *, /, //, %, **, +=, -=, *=,
-and /=, along with a modified version of divmod, modified_divmod, and two functions
-related to the Greatest Common Divisor: gcd and xgcd.
+Similarly, a Gaussian rational is a complex number whose real and imaginary parts are
+rational numbers.
 
-A companion module, gaussian_rationals, is also required by this module to provide,
-among other things for example, a way to exactly divide any two Gaussian integers.
+In mathematics, Gaussian integers and rationals are denoted by Z[i] & Q[i], resp.
+So, here, Zi & Qi denote the Gaussian integer and rational classes.
+
+The classes support the arithmetic of Gaussian integers and rationals using the
+operators: +, -, *, /, //, %, **, +=, -=, *=, and /=, along with a modified version
+of divmod, modified_divmod, and two functions related to the Greatest Common Divisor:
+gcd and xgcd.
 
 Example:
-  > from gaussian_integers import Zi, mod_divmod, gcd, xgcd
+  > from gaussians import Zi, Qi
   >
   > alpha = Zi(11, 3)
   > beta = Zi(1, 8)
@@ -29,11 +30,9 @@ __copyright__ = "Copyright (C) 2024 Alfred J. Reich, Ph.D."
 __license__ = "MIT"
 __version__ = "0.1.0"
 
-
 from math import sqrt
 from fractions import Fraction
 from numbers import Complex
-from gaussian_rationals import Qi
 
 
 class Zi(Complex):
@@ -275,7 +274,7 @@ class Zi(Complex):
     #         raise TypeError(f"{other} cannot divide a Gaussian integer")
     #     return Qi(Fraction(numer.real, denom), Fraction(numer.imag, denom))
 
-    def __truediv__(self, other) -> Qi:  # self / other
+    def __truediv__(self, other):  # self / other
         """Divide self by other, exactly, and return the resulting Gaussian rational, Qi.
 
         Implements the / operator, and returns the exact, Gaussian rational result
@@ -507,3 +506,191 @@ def isprime(n: int) -> bool:
     else:
         raise False
 
+
+class Qi(Complex):
+    """Gaussian Rational Number Class"""
+
+    __max_denominator = 1_000_000
+
+    def __init__(self, re=Fraction(0, 1), im=Fraction(0, 1)):
+
+        if isinstance(re, Fraction):
+            self.__real = re
+        elif isinstance(re, (str, int, float)):
+            self.__real = Fraction(re).limit_denominator(self.__max_denominator)
+        else:
+            raise TypeError(f"{re} is not a supported type")
+
+        if isinstance(im, Fraction):
+            self.__imag = im
+        elif isinstance(im, (str, int, float)):
+            self.__imag = Fraction(im).limit_denominator(self.__max_denominator)
+        else:
+            raise TypeError(f"{im} is not a supported type")
+
+    @classmethod
+    def max_denominator(cls):
+        return cls.__max_denominator
+
+    @classmethod
+    def set_max_denominator(cls, value):
+        if value > 1:
+            cls.__max_denominator = value
+            return cls.__max_denominator
+        else:
+            raise ValueError("max_denominator must be > 1")
+
+    @property
+    def real(self):
+        return self.__real
+
+    @property
+    def imag(self):
+        return self.__imag
+
+    def __repr__(self):
+        return f"Qi({repr(str(self.real))}, {repr(str(self.imag))})"
+
+    def __str__(self):
+        if self.imag < 0:
+            return f"({self.real}{self.imag}j)"
+        else:
+            return f"({self.real}+{self.imag}j)"
+
+    def __add__(self, other):
+        if isinstance(other, Qi):
+            return Qi(self.real + other.real, self.imag + other.imag)
+        elif isinstance(other, int):
+            return Qi(self.real + other, self.imag)
+        else:
+            raise TypeError(f"Addition by '{other}' not supported")
+
+    def __radd__(self, other):
+        if isinstance(other, int):
+            return Qi(other + self.real, self.imag)
+        else:
+            raise TypeError(f"Addition by '{other}' not supported")
+
+    def __sub__(self, other):
+        return Qi(self.real - other.real, self.imag - other.imag)
+
+    def __mul__(self, other):
+        a = self.real
+        b = self.imag
+        c = other.real
+        d = other.imag
+        return Qi(a * c - b * d, a * d + b * c)
+
+    def __pow__(self, n: int, modulo=None):  # self ** n
+        result = self
+        if isinstance(n, int) and n >= 0:
+            if n == 0:
+                result = Qi(Fraction(1, 1), Fraction(0, 1))  # Return "1"
+            else:
+                for _ in range(n - 1):
+                    result = result * self
+        else:
+            raise TypeError(f"The power, {n}, is not a positive integer.")
+        return result
+
+    def __truediv__(self, other):
+        """Returns self/other as a Gaussian rational, Qi"""
+        return self * other.inverse
+
+    def __neg__(self):
+        return Qi(-self.real, -self.imag)
+
+    def __complex__(self) -> complex:
+        return complex(float(self.real), float(self.imag))
+
+    def __eq__(self, other) -> bool:
+        """Return True if this Qi equals other."""
+        if isinstance(other, Qi):
+            return (self.real == other.real) and (self.imag == other.imag)
+        else:
+            return False
+
+    def __ne__(self, other) -> bool:
+        """Return True if this Qi does NOT equal other."""
+        if isinstance(other, Qi):
+            return (self.real != other.real) or (self.imag != other.imag)
+        else:
+            return True
+
+    def __hash__(self):
+        return hash((self.real, self.imag))
+
+    def __abs__(self) -> float:
+        return sqrt(self.norm)
+
+    def __pos__(self):
+        return +self
+
+    def __rsub__(self, other):
+        if isinstance(other, int):
+            return Qi(other - self.real, -self.imag)
+        else:
+            raise TypeError(f"Subtraction by '{other}' not supported")
+
+    def __rmul__(self, other):
+        if isinstance(other, int):
+            return Qi(other * self.real, other * self.imag)
+        else:
+            raise TypeError(f"Multiplication by '{other}' not supported")
+
+    def __rpow__(self, **kwargs):
+        return NotImplemented
+
+    def __rtruediv__(self, **kwargs):
+        return NotImplemented
+
+    @property
+    def conjugate(self):
+        return Qi(self.real, -self.imag)
+
+    @property
+    def norm(self) -> Fraction:
+        tmp = self * self.conjugate
+        return tmp.real
+
+    @property
+    def inverse(self):
+        norm = self.norm
+        conj = self.conjugate
+        return Qi(conj.real / norm, conj.imag / norm)
+
+    @staticmethod
+    def string_to_rational(qi_str):
+        """Turn the string form of a Gaussian rational into a Gaussian rational."""
+
+        insides = qi_str[1:-2]  # Remove leading ( and trailing j)
+
+        # Separate leading sign, if exists, from main body of string
+        if insides[0] == '-' or insides[0] == '+':
+            sign = insides[0]  # Leading sign
+            body = insides[1:]
+        else:
+            sign = ''  # No leading sign
+            body = insides
+
+        # Split body of string into real & imag parts, based on imag sign
+        if '+' in body:
+            re, im = body.split('+')
+            return Qi(sign + re, im)
+        elif '-' in body:
+            re, im = body.split('-')
+            return Qi(sign + re, '-' + im)
+        else:
+            raise ValueError(f"Can't parse {qi_str}")
+
+    # s1 = "(1/2+3/5j)"
+    # s2 = "(1/2-3/5j)"
+    # s3 = "(-1/2+3/5j)"
+    # s4 = "(-1/2-3/5j)"
+    # s5 = "(+1/2+3/5j)"
+    # s6 = "(+1/2-3/5j)"
+    #
+    # test_strings = [s1, s2, s3, s4, s5, s6]
+    #
+    # for ts in test_strings:
+    #     print(f"{ts} -> {parse_printed_form(ts)}")

@@ -1,12 +1,15 @@
 """A Gaussian Integer class, Zi, together with associated functionality.
 
-In mathematics, the integers are denoted by Z and Gaussian integers are denoted by Z[i].
 A Gaussian integer is a complex number whose real and imaginary parts are both integers.
+In mathematics, the integers are denoted by Z and Gaussian integers are denoted by Z[i].
 In this module, a Gaussian integer is represented in the form, Zi(re, im), where re is
 the real integer and im is the imaginary integer. The Zi class supports the arithmetic
 of Gaussian integers using numeric-style operators: +, -, *, /, //, %, **, +=, -=, *=,
-and /=, along with a modified version of divmod, called mod_divmod, and two functions
+and /=, along with a modified version of divmod, modified_divmod, and two functions
 related to the Greatest Common Divisor: gcd and xgcd.
+
+A companion module, gaussian_rationals, is also required by this module to provide,
+among other things for example, a way to exactly divide any two Gaussian integers.
 
 Example:
   > from gaussian_integers import Zi, mod_divmod, gcd, xgcd
@@ -81,11 +84,9 @@ class Zi(Complex):
     def __add__(self, other):
         """Implements the + operator: self + other
 
-        Add this Zi to another Zi or integer.
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
         """
-        if isinstance(other, int):
-            return Zi(self.real + other, self.imag)
-        if isinstance(other, complex):
+        if isinstance(other, (int, float, complex)):
             return self + Zi(other)
         elif isinstance(other, Zi):
             return Zi(self.real + other.real, self.imag + other.imag)
@@ -95,20 +96,20 @@ class Zi(Complex):
     def __radd__(self, other):
         """The reflected (swapped) operand for addition: other + self
 
-        Handle addition by an integer, where this Zi is on the right side,
-        and an integer, other, is on the left. e.g., 2 + Zi(1, 2) ==> Zi(3, 2)
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
         """
-        if isinstance(other, int):
-            return Zi(other + self.real, self.imag)
-        elif isinstance(other, complex):
+        if isinstance(other, (int, float, complex)):
             return Zi(other) + self
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __iadd__(self, other):
-        """Implements the += operation: self += other"""
-        if isinstance(other, int):
-            return Zi(self.real + other, self.imag)
+        """Implements the += operation: self += other
+
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
+        """
+        if isinstance(other, (int, float, complex)):
+            return self + Zi(other)
         elif isinstance(other, Zi):
             return Zi(self.real + other.real, self.imag + other.imag)
         else:
@@ -117,41 +118,42 @@ class Zi(Complex):
     def __sub__(self, other):
         """Implements the subtraction operator: self - other
 
-        Subtract another Zi or integer from this Zi.
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
         """
-        if isinstance(other, int):
-            return Zi(self.real - other, self.imag)
-        elif isinstance(other, complex):
+        if isinstance(other, (int, float, complex)):
+            return self - Zi(other)
+        elif isinstance(other, Zi):
+            return Zi(self.real - other.real, self.imag - other.imag)
+        else:
+            raise TypeError(f"Subtraction by '{other}' not supported")
+
+    def __rsub__(self, other):
+        """The reflected (swapped) operand for subtraction: other - self
+
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
+        """
+        if isinstance(other, (int, float, complex)):
+            return Zi(other) - self
+        else:
+            raise TypeError(f"Subtraction by '{other}' not supported")
+
+    def __isub__(self, other):
+        """Implements the -= operation: self -= other
+
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
+        """
+        if isinstance(other, (int, float, complex)):
             return self - Zi(other)
         elif isinstance(other, Zi):
             return Zi(self.real - other.real, self.imag - other.imag)
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
-    def __rsub__(self, other):
-        """The reflected (swapped) operand for subtraction: other - self
-
-        Handle subtraction by an integer, where this Zi is on the right side,
-        and an integer, other, is on the left. e.g., 2 - Zi(1, 2) ==> Zi(1, -2)
-        """
-        if isinstance(other, int):
-            return Zi(other - self.real, -self.imag)
-        elif isinstance(other, complex):
-            return Zi(other) - self
-        else:
-            raise TypeError(f"Addition by '{other}' not supported")
-
-    def __isub__(self, other):
-        """Implements the -= operation: self -= other"""
-        if isinstance(other, int):
-            return Zi(self.real - other, self.imag)
-        elif isinstance(other, Zi):
-            return Zi(self.real - other.real, self.imag - other.imag)
-        else:
-            raise TypeError(f"Addition by '{other}' not supported")
-
     def __mul__(self, other):  # self * other
-        """Implements the multiplication operator: self * other"""
+        """Implements the multiplication operator: self * other
+
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
+        """
         a = self.real
         b = self.imag
         if isinstance(other, Zi):
@@ -160,13 +162,16 @@ class Zi(Complex):
         elif isinstance(other, complex):
             c = round(other.real)
             d = round(other.imag)
+        elif isinstance(other, float):
+            c = round(other)
+            d = 0
         elif isinstance(other, int):
             c = other
-            d = 0  # Easy way to handle the int case
+            d = 0
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
-        # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
-        if d == 0:  # take advantage of this case to do less computing
+        # (a, b) * (c, d) = (a * c - b * d) + (a * d + b * c)
+        if d == 0:
             return Zi(a * c, b * c)
         else:
             return Zi(a * c - b * d, a * d + b * c)
@@ -174,26 +179,37 @@ class Zi(Complex):
     def __rmul__(self, other):  # other * self
         """The reflected (swapped) operand for multiplication: other * self
 
-        Handle multiplication by an integer, where this Zi is on the right side,
-        and an integer, other, is on the left. e.g., 2 * Zi(1, 2) ==> Zi(2, 4)
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
         """
         if isinstance(other, int):
             return Zi(other * self.real, other * self.imag)
+        elif isinstance(other, float):
+            oth = round(other)
+            return Zi(oth * self.real, oth * self.imag)
         elif isinstance(other, complex):
             return Zi(other) * self
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
 
     def __imul__(self, other):
-        """Implements the *= operation: self *= other"""
+        """Implements the *= operation: self *= other
+
+        other can be a Zi, int, float, or complex. Floats & complex will be rounded.
+        """
         a = self.real
         b = self.imag
         if isinstance(other, Zi):
             c = other.real
             d = other.imag
+        elif isinstance(other, complex):
+            c = round(other.real)
+            d = round(other.imag)
+        elif isinstance(other, float):
+            c = round(other)
+            d = 0
         elif isinstance(other, int):
             c = other
-            d = 0  # Easy way to handle the int case
+            d = 0
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
@@ -202,19 +218,12 @@ class Zi(Complex):
         else:
             return Zi(a * c - b * d, a * d + b * c)
 
-    # def __pow__(self, n: int, modulo=None):  # self ** n
-    #     result = self
-    #     if isinstance(n, int) and n >= 0:
-    #         if n == 0:
-    #             result = Zi(1)  # Return "1"
-    #         else:
-    #             for _ in range(n - 1):
-    #                 result = result * self
-    #     else:
-    #         raise TypeError(f"The power, {n}, is not a positive integer.")
-    #     return result
+    def __pow__(self, n: int, modulo=None):
+        """Implements the ** operator: self ** n.
 
-    def __pow__(self, n: int, modulo=None):  # self ** n
+        If n == 0, then Zi(1, 0) is returned. If n < 0, then the Gaussian
+        rational, Qi, for 1 / self**n is returned. Otherwise, self ** n is returned.
+        """
         result = self
         if isinstance(n, int):
             if n == 0:

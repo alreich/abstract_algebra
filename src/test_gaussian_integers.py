@@ -34,7 +34,7 @@ class TestZi(TestCase):
         self.assertEqual(2 + Zi(4, 5), Zi(6, 5))
         self.assertEqual(Zi(4, 5) + 1.9, Zi(6, 5))
         self.assertEqual(1.9 + Zi(4, 5), Zi(6, 5))
-        self.assertEqual(Zi(4, 5) + (1 - 1j), Zi(5, 4))
+        self.assertEqual(Zi(4, 5) + (1-1j), Zi(5, 4))
         self.assertEqual((1 - 1j) + Zi(4, 5), Zi(5, 4))
 
     def test_sub(self):  # __sub__ & __rsub__

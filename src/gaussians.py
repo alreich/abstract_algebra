@@ -57,7 +57,7 @@ class Zi(Complex):
         else:
             raise TypeError(f"{re} cannot be used for the real part of a Zi instance")
 
-        if isinstance(re, complex):
+        if isinstance(re, complex):  # This way, im is ignored if re is complex
             self.__imag = round(re.imag)
         elif isinstance(im, int):
             self.__imag = im
@@ -148,6 +148,33 @@ class Zi(Complex):
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
+    # def __mul__(self, other):  # self * other
+    #     """Implements the multiplication operator: self * other
+    #
+    #     other can be a Zi, int, float, or complex. Floats & complex will be rounded.
+    #     """
+    #     a = self.real
+    #     b = self.imag
+    #     if isinstance(other, Zi):
+    #         c = other.real
+    #         d = other.imag
+    #     elif isinstance(other, complex):
+    #         c = round(other.real)
+    #         d = round(other.imag)
+    #     elif isinstance(other, float):
+    #         c = round(other)
+    #         d = 0
+    #     elif isinstance(other, int):
+    #         c = other
+    #         d = 0
+    #     else:
+    #         raise TypeError(f"Multiplication by '{other}' not supported")
+    #     # (a, b) * (c, d) = (a * c - b * d) + (a * d + b * c)
+    #     if d == 0:
+    #         return Zi(a * c, b * c)
+    #     else:
+    #         return Zi(a * c - b * d, a * d + b * c)
+
     def __mul__(self, other):  # self * other
         """Implements the multiplication operator: self * other
 
@@ -158,15 +185,10 @@ class Zi(Complex):
         if isinstance(other, Zi):
             c = other.real
             d = other.imag
-        elif isinstance(other, complex):
-            c = round(other.real)
-            d = round(other.imag)
-        elif isinstance(other, float):
-            c = round(other)
-            d = 0
-        elif isinstance(other, int):
-            c = other
-            d = 0
+        elif isinstance(other, (int, float, complex)):
+            oth = Zi(other)
+            c = oth.real
+            d = oth.imag
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a * c - b * d) + (a * d + b * c)
@@ -175,20 +197,57 @@ class Zi(Complex):
         else:
             return Zi(a * c - b * d, a * d + b * c)
 
+    # def __rmul__(self, other):  # other * self
+    #     """The reflected (swapped) operand for multiplication: other * self
+    #
+    #     other can be a Zi, int, float, or complex. Floats & complex will be rounded.
+    #     """
+    #     if isinstance(other, int):
+    #         return Zi(other * self.real, other * self.imag)
+    #     elif isinstance(other, float):
+    #         oth = round(other)
+    #         return Zi(oth * self.real, oth * self.imag)
+    #     elif isinstance(other, complex):
+    #         return Zi(other) * self
+    #     else:
+    #         raise TypeError(f"Multiplication by '{other}' not supported")
+
     def __rmul__(self, other):  # other * self
         """The reflected (swapped) operand for multiplication: other * self
 
         other can be a Zi, int, float, or complex. Floats & complex will be rounded.
         """
-        if isinstance(other, int):
-            return Zi(other * self.real, other * self.imag)
-        elif isinstance(other, float):
-            oth = round(other)
-            return Zi(oth * self.real, oth * self.imag)
-        elif isinstance(other, complex):
+        if isinstance(other, (int, float, complex)):
             return Zi(other) * self
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
+
+    # def __imul__(self, other):
+    #     """Implements the *= operation: self *= other
+    #
+    #     other can be a Zi, int, float, or complex. Floats & complex will be rounded.
+    #     """
+    #     a = self.real
+    #     b = self.imag
+    #     if isinstance(other, Zi):
+    #         c = other.real
+    #         d = other.imag
+    #     elif isinstance(other, complex):
+    #         c = round(other.real)
+    #         d = round(other.imag)
+    #     elif isinstance(other, float):
+    #         c = round(other)
+    #         d = 0
+    #     elif isinstance(other, int):
+    #         c = other
+    #         d = 0
+    #     else:
+    #         raise TypeError(f"Multiplication by '{other}' not supported")
+    #     # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)
+    #     if d == 0:
+    #         return Zi(a * c, b * c)
+    #     else:
+    #         return Zi(a * c - b * d, a * d + b * c)
 
     def __imul__(self, other):
         """Implements the *= operation: self *= other
@@ -200,15 +259,10 @@ class Zi(Complex):
         if isinstance(other, Zi):
             c = other.real
             d = other.imag
-        elif isinstance(other, complex):
-            c = round(other.real)
-            d = round(other.imag)
-        elif isinstance(other, float):
-            c = round(other)
-            d = 0
-        elif isinstance(other, int):
-            c = other
-            d = 0
+        elif isinstance(other, (int, float, complex)):
+            oth = Zi(other)
+            c = oth.real
+            d = oth.imag
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a*c - b*d) + (a*d + b*c)

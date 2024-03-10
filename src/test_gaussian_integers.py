@@ -1,5 +1,5 @@
 from unittest import TestCase
-from gaussian_integers import Zi, mod_divmod, gcd, xgcd, is_gaussian_prime
+from gaussians import Zi, Qi
 
 
 class TestZi(TestCase):
@@ -23,10 +23,8 @@ class TestZi(TestCase):
         self.assertEqual(Zi(-2.3, 4), Zi(-2, 4))
         self.assertEqual(Zi(2, 3.8), Zi(2, 4))
         self.assertEqual(Zi(2, -3.8), Zi(2, -4))
-
         self.assertEqual(Zi(2.3), Zi(2, 0))
         self.assertEqual(Zi(2), Zi(2, 0))
-
         self.assertEqual(Zi((2.3 - 3.7j)), Zi(2, -4))
         self.assertEqual(Zi(-3.3j), Zi(0, -3))
 
@@ -34,19 +32,45 @@ class TestZi(TestCase):
         self.assertEqual(Zi(4, 5) + Zi(1, -2), Zi(5, 3))
         self.assertEqual(Zi(4, 5) + 2, Zi(6, 5))
         self.assertEqual(2 + Zi(4, 5), Zi(6, 5))
+        self.assertEqual(Zi(4, 5) + 1.9, Zi(6, 5))
+        self.assertEqual(1.9 + Zi(4, 5), Zi(6, 5))
+        self.assertEqual(Zi(4, 5) + (1 - 1j), Zi(5, 4))
+        self.assertEqual((1 - 1j) + Zi(4, 5), Zi(5, 4))
 
     def test_sub(self):  # __sub__ & __rsub__
         self.assertEqual(Zi(4, 5) - Zi(1, -2), Zi(3, 7))
         self.assertEqual(Zi(4, 5) - 2, Zi(2, 5))
         self.assertEqual(2 - Zi(4, 5), Zi(-2, -5))
+        self.assertEqual(Zi(4, 5) - 1.9, Zi(2, 5))
+        self.assertEqual(1.9 - Zi(4, 5), Zi(-2, -5))
+        self.assertEqual(Zi(4, 5) - (1 - 1j), Zi(3, 6))
+        self.assertEqual((1 - 1j) - Zi(4, 5), Zi(-3, -6))
 
     def test_mul(self):  # __mul__ & __rmul__
         self.assertEqual(Zi(4, 5) * Zi(1, -2), Zi(14, -3))
-        self.assertEqual(Zi(4, 5) * Zi(2, 0), Zi(8, 10))  # 2nd Zi is "2"
-        self.assertEqual(Zi(4, 5) * 2, Zi(8, 10))  # Zi on left (__mul__)
-        self.assertEqual(2 * Zi(4, 5), Zi(8, 10))  # Zi on right (__rmul__)
+        self.assertEqual(Zi(4, 5) * 2, Zi(8, 10))
+        self.assertEqual(2 * Zi(4, 5), Zi(8, 10))
+        self.assertEqual(Zi(4, 5) * 1.9, Zi(8, 10))
+        self.assertEqual(1.9 * Zi(4, 5), Zi(8, 10))
+        self.assertEqual(Zi(4, 5) * (2-1j), Zi(13, 6))
+        self.assertEqual((2-1j) * Zi(4, 5), Zi(13, 6))
+        self.assertEqual(Zi(4, 5) * (1.9-1.1j), Zi(13, 6))
+        self.assertEqual((1.9-1.1j) * Zi(4, 5), Zi(13, 6))
 
-    def test_div(self):  # __truediv__
+    def test_truediv(self):  # __truediv__ & __rtruediv__
+        self.assertEqual(Zi(4, 5) / Zi(1, -2), Qi('-6/5', '13/5'))
+        self.assertEqual(Zi(4, 5) / Zi(1, -2), Qi('-6/5', '13/5'))
+        self.assertEqual(Zi(4, 5) / (1.1 - 1.9j), Qi('-6/5', '13/5'))
+        self.assertEqual(Zi(4, 5) / (0.9 - 2.3j), Qi('-6/5', '13/5'))
+        self.assertEqual(complex(Zi(4, 5) / (0.9 - 2.3j)), (-1.2+2.6j))
+        self.assertEqual(complex(Zi(4, 5)) / (0.9 - 2.3j), (-1.2950819672131149 + 2.2459016393442623j))
+        self.assertEqual(Zi(4, 5) / 5, Qi('4/5', '1'))
+        self.assertEqual(Zi(4, 5) / 5.3, Qi('4/5', '1'))
+        self.assertEqual((1 - 2j) / Zi(4, 5), Qi('-6/41', '-13/41'))
+        self.assertEqual(5.0 / Zi(4, 5), Qi('20/41', '-25/41'))
+        self.assertEqual(5 / Zi(4, 5), Qi('20/41', '-25/41'))
+
+    def test_floordiv(self):  # __floordiv__ & __rfloordiv__
         self.assertEqual(self.c1_x_c2 // self.c1, self.c2)
         self.assertEqual(self.c1_x_c2 // self.c2, self.c1)
         self.assertEqual(Zi(4, 12) // 4, Zi(1, 3))
@@ -95,7 +119,7 @@ class TestZi(TestCase):
     def test_divmod(self):
         a = Zi(4, 5)
         b = Zi(1, -2)
-        q, r = mod_divmod(a, b)
+        q, r = Zi.modified_divmod(a, b)
         test = f"{b * q + r} = {b} * {q} + {r}"
         answer = "(4+5j) = (1-2j) * (-1+3j) + (-1+0j)"
         self.assertEqual(test, answer)
@@ -110,9 +134,9 @@ class TestZi(TestCase):
     def test_gcd_1(self):
         alpha = Zi(32, 9)
         beta = Zi(4, 11)
-        self.assertEqual(gcd(alpha, beta), Zi(0, -1))
+        self.assertEqual(Zi.gcd(alpha, beta), Zi(0, -1))
 
     def test_gcd_2(self):
         alpha = Zi(11, 3)
         beta = Zi(1, 8)
-        self.assertEqual(gcd(alpha, beta), Zi(1, -2))
+        self.assertEqual(Zi.gcd(alpha, beta), Zi(1, -2))

@@ -192,10 +192,7 @@ class Zi(Complex):
         else:
             raise TypeError(f"Multiplication by '{other}' not supported")
         # (a, b) * (c, d) = (a * c - b * d) + (a * d + b * c)
-        if d == 0:
-            return Zi(a * c, b * c)
-        else:
-            return Zi(a * c - b * d, a * d + b * c)
+        return Zi(a * c - b * d, a * d + b * c)
 
     # def __rmul__(self, other):  # other * self
     #     """The reflected (swapped) operand for multiplication: other * self
@@ -280,12 +277,12 @@ class Zi(Complex):
         result = self
         if isinstance(n, int):
             if n == 0:
-                result = Zi(1)  # Return "1"
+                result = Zi(1)  # "1"
             elif n > 0:
                 for _ in range(n - 1):
                     result = result * self
             else:  # n < 0
-                return 1 / (self ** abs(n))
+                result = 1 / (self ** abs(n))
         else:
             raise TypeError(f"The power, {n}, must be an integer.")
         return result
@@ -566,16 +563,21 @@ class Qi(Complex):
 
     __max_denominator = 1_000_000
 
-    def __init__(self, re=Fraction(0, 1), im=Fraction(0, 1)):
+    def __init__(self, re: (str, int, float, complex, Fraction) = Fraction(0, 1),
+                 im: (str, int, float, Fraction) = Fraction(0, 1)):
 
         if isinstance(re, Fraction):
             self.__real = re
         elif isinstance(re, (str, int, float)):
             self.__real = Fraction(re).limit_denominator(self.__max_denominator)
+        elif isinstance(re, complex):
+            self.__real = Fraction(re.real).limit_denominator(self.__max_denominator)
         else:
             raise TypeError(f"{re} is not a supported type")
 
-        if isinstance(im, Fraction):
+        if isinstance(re, complex):
+            self.__imag = Fraction(re.imag).limit_denominator(self.__max_denominator)
+        elif isinstance(im, Fraction):
             self.__imag = im
         elif isinstance(im, (str, int, float)):
             self.__imag = Fraction(im).limit_denominator(self.__max_denominator)
@@ -612,39 +614,66 @@ class Qi(Complex):
             return f"({self.real}+{self.imag}j)"
 
     def __add__(self, other):
-        if isinstance(other, Qi):
+        if isinstance(other, (int, float, complex)):
+            return self + Qi(other)
+        elif isinstance(other, Qi):
             return Qi(self.real + other.real, self.imag + other.imag)
-        elif isinstance(other, int):
-            return Qi(self.real + other, self.imag)
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __radd__(self, other):
-        if isinstance(other, int):
-            return Qi(other + self.real, self.imag)
+        if isinstance(other, (int, float, complex)):
+            return Qi(other) + self
         else:
             raise TypeError(f"Addition by '{other}' not supported")
 
     def __sub__(self, other):
-        return Qi(self.real - other.real, self.imag - other.imag)
+        if isinstance(other, (int, float, complex)):
+            return self - Qi(other)
+        elif isinstance(other, Qi):
+            return Qi(self.real - other.real, self.imag - other.imag)
+        else:
+            raise TypeError(f"Subtraction by '{other}' not supported")
+
+    def __rsub__(self, other):
+        if isinstance(other, (int, float, complex)):
+            return Qi(other) - self
+        else:
+            raise TypeError(f"Subtraction by '{other}' not supported")
 
     def __mul__(self, other):
         a = self.real
         b = self.imag
-        c = other.real
-        d = other.imag
+        if isinstance(other, Qi):
+            c = other.real
+            d = other.imag
+        elif isinstance(other, (int, float, complex)):
+            oth = Qi(other)
+            c = oth.real
+            d = oth.imag
+        else:
+            raise TypeError(f"Multiplication by '{other}' not supported")
+        # (a, b) * (c, d) = (a * c - b * d) + (a * d + b * c)
         return Qi(a * c - b * d, a * d + b * c)
+
+    def __rmul__(self, other):
+        if isinstance(other, (int, float, complex)):
+            return Qi(other) * self
+        else:
+            raise TypeError(f"Multiplication by '{other}' not supported")
 
     def __pow__(self, n: int, modulo=None):  # self ** n
         result = self
-        if isinstance(n, int) and n >= 0:
+        if isinstance(n, int):
             if n == 0:
-                result = Qi(Fraction(1, 1), Fraction(0, 1))  # Return "1"
-            else:
+                result = Qi(Fraction(1, 1), Fraction(0, 1))  # "1"
+            elif n > 0:
                 for _ in range(n - 1):
                     result = result * self
+            else:  # n < 0
+                result = 1 / self ** abs(n)
         else:
-            raise TypeError(f"The power, {n}, is not a positive integer.")
+            raise TypeError(f"The power, {n}, must be an integer.")
         return result
 
     def __truediv__(self, other):
@@ -680,18 +709,6 @@ class Qi(Complex):
     def __pos__(self):
         return +self
 
-    def __rsub__(self, other):
-        if isinstance(other, int):
-            return Qi(other - self.real, -self.imag)
-        else:
-            raise TypeError(f"Subtraction by '{other}' not supported")
-
-    def __rmul__(self, other):
-        if isinstance(other, int):
-            return Qi(other * self.real, other * self.imag)
-        else:
-            raise TypeError(f"Multiplication by '{other}' not supported")
-
     def __rpow__(self, **kwargs):
         return NotImplemented
 
@@ -709,8 +726,8 @@ class Qi(Complex):
 
     @property
     def inverse(self):
-        norm = self.norm
         conj = self.conjugate
+        norm = self.norm
         return Qi(conj.real / norm, conj.imag / norm)
 
     @staticmethod

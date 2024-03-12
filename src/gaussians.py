@@ -481,9 +481,9 @@ class Zi(Complex):
     def xgcd(alpha, beta):
         """The Extended Euclidean Algorithm for Gaussian Integers.
 
-        Three values are returned: a, x, & y, such that
-        the Greatest Common Divisor (gcd) of a & b can be
-        written as gcd = a * x + b * y. x & y are called
+        Three values are returned: gcd, x, & y, such that
+        the Greatest Common Divisor (gcd) of alpha & beta can be
+        written as gcd = alpha * x + beta * y. x & y are called
         Bézout's coefficients.
         """
         if isinstance(alpha, Zi) and isinstance(beta, Zi):

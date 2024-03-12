@@ -731,6 +731,32 @@ class Qi(Complex):
         return Qi(conj.real / norm, conj.imag / norm)
 
     @staticmethod
+    def eye():
+        """Return i = Qi(0, 1)"""
+        return Qi(0, 1)
+
+    @staticmethod
+    def units():
+        """Returns the list of four units, [1, -1, i, -i], as Qis."""
+        return [Qi(1), -Qi(1), Qi.eye(), -Qi.eye()]
+
+    def associates(self):
+        """Return a list of this Qi's three associates"""
+        us = Qi.units()
+        return list(map(lambda u: u * self, us[1:]))  # skip multiplying by 1
+
+    def is_associate(self, other):
+        """Return True if the other Qi is an associate of this Qi, return False otherwise"""
+        q = self / other
+        if q:
+            if q in Qi.units():
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    @staticmethod
     def string_to_rational(qi_str):
         """Turn the string form of a Gaussian rational into a Gaussian rational."""
 

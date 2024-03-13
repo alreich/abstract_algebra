@@ -33,6 +33,7 @@ __version__ = "0.1.0"
 from math import sqrt
 from fractions import Fraction
 from numbers import Complex
+from random import randint
 
 
 class Zi(Complex):
@@ -422,6 +423,11 @@ class Zi(Complex):
         n = self * self.conjugate
         return n.real
 
+    @staticmethod
+    def random(re1=-100, re2=100, im1=-100, im2=100):
+        """Return a random Gaussian integer with re1 <= re <= re2 and im1 <= im <= im2."""
+        return Zi(randint(re1, re2), randint(im1, im2))
+
     def associates(self):
         """Return a list of this Zi's three associates"""
         us = Zi.units()
@@ -723,6 +729,16 @@ class Qi(Complex):
     def norm(self) -> Fraction:
         tmp = self * self.conjugate
         return tmp.real
+
+    @staticmethod
+    def random(re1=-100, re2=100, im1=-100, im2=100):
+        """Return a random Gaussian rational"""
+        if re1 < re2 and im1 < im2 and re2 >= 1 and im2 >= 1:
+            numerator = Zi.random(re1, re2, im1, im2)
+            denominator = Zi.random(1, re2, 1, im2)
+        else:
+            raise ValueError(f"Bad range")
+        return numerator / denominator
 
     @property
     def inverse(self):

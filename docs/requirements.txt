@@ -34,7 +34,8 @@ pygments==2.18.0
     # via sphinx
 readthedocs-sphinx-search==0.3.2
     # via -r requirements.in
-requests==2.31.0
+# requests==2.31.0
+requests>=2.32.0
     # via sphinx
 scipy==1.13.0
     # via -r requirements.in

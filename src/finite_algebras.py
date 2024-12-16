@@ -144,7 +144,8 @@ class SingleElementSetAlgebra(FiniteAlgebra):
                               copy.deepcopy(self.elements),
                               copy.deepcopy(self.table.tolist()))
 
-    def copy_algebra(self, new_elements=False, new_name=False, new_description=False):
+    def copy_algebra(self, new_elements=(), new_name=False, new_description=False):
+    # def copy_algebra(self, new_elements=False, new_name=False, new_description=False):
         """Creates a copy of the input algebra where, optionally, the existing element
         list can be replaced by a new element list. Same for the name & description.
         If there is a new element list, then it must be a list of strings and have
@@ -160,7 +161,8 @@ class SingleElementSetAlgebra(FiniteAlgebra):
         else:
             desc = copy.deepcopy(self.description)
 
-        if new_elements:
+        if len(new_elements) != 0:
+        # if new_elements:
             if all(map(lambda x: isinstance(x, str), new_elements)):
                 if len(set(new_elements)) == self.order:
                     elems = new_elements

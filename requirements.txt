@@ -1,2 +1,5 @@
-numpy
-scipy
+numpy~=1.23.5
+scipy~=1.11.3
+
+docutils~=0.17.1
+setuptools~=60.2.0

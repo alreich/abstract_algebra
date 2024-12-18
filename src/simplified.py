@@ -1,8 +1,9 @@
-import numpy as np
 import itertools as it
 import pprint as pp
+import numpy as np
 
-class CayleyTable:
+
+class CayleyTableNEW:
     """Represents a finite algebra's binary operation as a square array of integers, 0...n-1,
     where n is the order of the algebra, and the integers are indices, NOT algebraic elements.
     The indices denote the positions of the algebra's elements in a list."""
@@ -65,12 +66,12 @@ class CayleyTable:
         return result
 
 
-class BinaryOperator:
+class BinaryOperatorNEW:
     """Implements an algebra's a binary operator. To instantiate this requires the algebra's
     list of elements and Cayley table, where the order of elements in the list matches the
     order of rows and columns in the Cayley table."""
 
-    def __init__(self, elements: list[str], cayley_table: CayleyTable):
+    def __init__(self, elements: list[str], cayley_table: CayleyTableNEW):
         self.__elements = elements
         self.__table = cayley_table
 
@@ -87,25 +88,44 @@ class BinaryOperator:
         return self.__elements
 
     @property
-    def table(self) -> CayleyTable:
+    def table(self) -> CayleyTableNEW:
         """Returns the algebra's Cayley table."""
         return self.__table
 
 
-class FiniteAlgebra:
+class FiniteAlgebraNEW:
     """Represents a finite algebra. To instantiate this requires a list of the algebra's
     elements and its Cayley table."""
 
-    def __init__(self, elements: list[str], array: list[list[int]]):
-        self.__binop = BinaryOperator(elements, CayleyTable(array))
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 elements: list[str],
+                 array: list[list[int]]):
+        self.__name = name
+        self.__desc = description
+        self.__binop = BinaryOperatorNEW(elements, CayleyTableNEW(array))
 
     def __getitem__(self, index: int) -> str:
+        """Returns the algebra's element at position index."""
         return self.__binop.elements[index]
 
     def __repr__(self) -> str:
+        nm = self.__name
+        desc = self.__desc
         elems = self.__binop.elements
         tbl = self.__binop.table.tolist()
-        return f"{self.__class__.__name__}(\n{elems},\n{tbl}\n)"
+        return f"{self.__class__.__name__}(\n{nm},\n{desc},\n{elems},\n{tbl}\n)"
+
+    @property
+    def name(self) -> str:
+        """Returns the algebra's name."""
+        return self.__name
+
+    @property
+    def description(self) -> str:
+        """Returns the algebra's description."""
+        return self.__desc
 
     @property
     def elements(self) -> list[str]:
@@ -118,7 +138,7 @@ class FiniteAlgebra:
         return len(self.elements)
 
     @property
-    def table(self) -> CayleyTable:
+    def table(self) -> CayleyTableNEW:
         """Returns the algebra's Cayley table."""
         return self.__binop.table
 
@@ -138,6 +158,8 @@ class FiniteAlgebra:
 
     def __mul__(self, other):
         """Return the direct product (a FiniteAlgebra) of self with other. Other must be an algebra"""
+        dp_name = f"{self.name}_x_{other.name}"
+        dp_description = "Direct product of " + self.name + " & " + other.name
         dp_elements = list(it.product(self.elements, other.elements))  # cross-product of elements
         dp_table = list()  # start a new table
         for a in dp_elements:
@@ -145,11 +167,16 @@ class FiniteAlgebra:
             for b in dp_elements:
                 dp_table_row.append(dp_elements.index((self.op(a[0], b[0]), other.op(a[1], b[1]))))
             dp_table.append(dp_table_row)  # Append the new row to the table
-        return FiniteAlgebra(list([f"{elem[0]}:{elem[1]}" for elem in dp_elements]), dp_table)
+        return FiniteAlgebraNEW(dp_name,
+                                dp_description,
+                                list([f"{elem[0]}:{elem[1]}" for elem in dp_elements]),
+                                dp_table)
 
     def info(self) -> None:
         """Printout information about this instance of an Algebra, including its elements and Cayley table."""
         print(f"\n** {self.__class__.__name__} **")
+        print(f"Name: {self.name}")
+        print(f"Description: {self.description}")
         print(f"Instance ID: {id(self)}")
         print(f"Order: {self.order}")
         print(f"Associative? {self.is_associative}")
@@ -163,13 +190,13 @@ class FiniteAlgebra:
         """Returns a dictionary where element names (str) are keys and the corresponding
         Element instances are the values. This method's intended use is within the
         definition of a Context."""
-        return {elem: Element(elem, self) for elem in self.elements}
+        return {elem: ElementNEW(elem, self) for elem in self.elements}
 
 
-class Element:
+class ElementNEW:
     """This class is used to turn the usual string elements of an algebra into a class
     that can have arithmetic methods, like + or *."""
-    def __init__(self, elem_name: str, algebra: FiniteAlgebra):
+    def __init__(self, elem_name: str, algebra: FiniteAlgebraNEW):
         self.__algebra = algebra
         if isinstance(elem_name, str):
             if elem_name in self.__algebra:
@@ -189,12 +216,12 @@ class Element:
 
     def __add__(self, other):
         elem = self.__algebra.op(self.__name, other.name)
-        return Element(elem, self.__algebra)
+        return ElementNEW(elem, self.__algebra)
 
 
-class Context:
+class InfixNotation:
 
-    def __init__(self, algebra: FiniteAlgebra):
+    def __init__(self, algebra: FiniteAlgebraNEW):
         self.element_map = algebra.element_map()
 
     def __enter__(self):

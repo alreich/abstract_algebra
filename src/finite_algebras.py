@@ -114,15 +114,6 @@ class SingleElementSetAlgebra(FiniteAlgebra):
         else:
             self.__identity = None
 
-    # def __eq__(self, other):
-    #     if self.__elements == other.elements:  # Same elements in the same order
-    #         if self.__table == other.table:  # Same tables
-    #             return True
-    #         else:
-    #             return False
-    #     else:
-    #         return False
-
     def __contains__(self, element):
         return element in self.__elements
 
@@ -145,7 +136,6 @@ class SingleElementSetAlgebra(FiniteAlgebra):
                               copy.deepcopy(self.table.tolist()))
 
     def copy_algebra(self, new_elements=(), new_name=False, new_description=False):
-    # def copy_algebra(self, new_elements=False, new_name=False, new_description=False):
         """Creates a copy of the input algebra where, optionally, the existing element
         list can be replaced by a new element list. Same for the name & description.
         If there is a new element list, then it must be a list of strings and have
@@ -162,7 +152,6 @@ class SingleElementSetAlgebra(FiniteAlgebra):
             desc = copy.deepcopy(self.description)
 
         if len(new_elements) != 0:
-        # if new_elements:
             if all(map(lambda x: isinstance(x, str), new_elements)):
                 if len(set(new_elements)) == self.order:
                     elems = new_elements
@@ -326,9 +315,6 @@ class Magma(SingleElementSetAlgebra):
         else:
             raise ValueError(f"n = {n}, but the power must be a positive integer.")
         return result
-
-    # def __pow__(self, n, modulo=None):
-    #     return self.power(n)
 
     def element_to_power(self, elem, n, left_associative=True):
         """Return the n_th power of the given element. n must be an integer. If n == 0, and an
@@ -515,26 +501,15 @@ class Magma(SingleElementSetAlgebra):
         else:
             return gens  # The grp is not cyclic
 
-    # def single_element_generators(self):
-    #     """Return a list of individual elements that generate the entire algebra."""
-    #     elemset = set(self.elements)
-    #     return [x for x in elemset if set(self.closure([x], False)) == elemset]
-
     def is_cyclic(self):
         """Returns False if this algebra is not cyclic; otherwise a list of elements
         is returned, where each one can generate the entire algebra."""
         elemset = set(self.elements)
         gens = [x for x in elemset if set(self.closure([x], False)) == elemset]
-        # gens = self.single_element_generators()
         if len(gens) == 0:
             return False
         else:
             return gens
-
-    # def is_cyclic(self):
-    #     """Deprecated. Use generators() instead."""
-    #     result, _ = self.generators()
-    #     return result
 
     def center(self):
         """Return the list of elements that commute with every element of the algebra.
@@ -962,7 +937,6 @@ class Group(Monoid):
         print(f"Order: {self.order}")
         print(f"Identity: {repr(self.identity)}")
         print(f"Commutative? {yes_or_no(self.is_commutative())}")
-        # is_cyclic, gens = self.generators()
         single_gens = self.is_cyclic()
         if single_gens:
             print("Cyclic?: Yes")
@@ -979,15 +953,6 @@ class Group(Monoid):
                     print("Generators: None")
                 else:
                     print(f"Generators: {gens_sorted}")
-        # print(f"Cyclic?: {yes_or_no(is_cyclic)}")
-        # num_gens = len(gens)
-        # gens_sorted = sorted(gens)
-        # if num_gens > max_gens:
-        #     print(f"Generators: {gens_sorted[:max_gens]}, plus {num_gens - max_gens} more.")
-        # elif num_gens == 0:
-        #     print("Generators: None")
-        # else:
-        #     print(f"Generators: {gens_sorted}")
         spc = 7
         if show_elements:
             print("Elements:")
@@ -1164,7 +1129,6 @@ def cosets(group, normal_subgroup):
 
 
 def generate_cyclic_group(order, elem_name='', name=None, description=None, zfill=False):
-    # def generate_cyclic_group(order, identity_name="1", elem_name="", name=None, description=None):
     """Generates a cyclic group with the given order. If zfill is True, then left fill element
     names with zeros."""
     if name:
@@ -1432,7 +1396,6 @@ class Ring(Group):
         mult_table_without_add_id = delete_row_col(self.mult_table.table, zero_index, zero_index)
 
         # Get the row & column indices where the product equals "zero" in the remaining table
-        # a, b = list(map(set, np.where(mult_table_without_add_id == zero_index)))
         a, b = list(map(lambda x: set(x), np.where(mult_table_without_add_id == zero_index)))
         #
         # Return all elements corresponding to the union of the row & column indices
@@ -1887,12 +1850,6 @@ class Field(Ring):
         self.__mult_sub_grp.name = f"{self.name}_G"
         self.__mult_sub_grp.description = f"Multiplicative abelian Group of {self.name}"
 
-    # def __eq__(self, other):
-    #     if super() == other and self.mult_table == other.mult_table:
-    #         return True
-    #     else:
-    #         return False
-
     def mult_abelian_subgroup(self):
         """Return the abelian Group defined by the Ring elements, minus the additive identity,
         under Ring multiplication."""
@@ -2099,18 +2056,6 @@ class Element:
             return Element(elem, self.__algebra)
         else:
             raise ValueError(f"{self.__algebra.name} does not support division")
-
-    # def __pow__(self, n):
-    #     result = self
-    #     if self.__can_multiply:
-    #         if isinstance(n, int) and n > 0:
-    #             for _ in range(n - 1):
-    #                 result = result * self
-    #         else:
-    #             raise ValueError(f"n = {n}, but the power must be a positive integer.")
-    #     else:
-    #         raise ValueError(f"{self.__algebra.name} does not support multiplication")
-    #     return result
 
     def __pow__(self, n):
         """See the documentation for the element_to_power method for either
@@ -2355,9 +2300,9 @@ def check_dist_of_vec_over_scalar_add(ring, group, sv_mult, verbose=False):
     """Returns True if distributivity of vectors over scalar addition holds true in all cases,
     otherwise False is Returned."""
     is_ok = True
-    for s1 in ring:
-        for s2 in ring:
-            for v in group:
+    for s1 in ring.elements:
+        for s2 in ring.elements:
+            for v in group.elements:
                 a = sv_mult(ring.add(s1, s2), v)
                 b = group.op(sv_mult(s1, v), sv_mult(s2, v))
                 if a != b:
@@ -2371,9 +2316,9 @@ def check_associativity(ring, group, sv_mult, verbose=False):
     """Return True if the special associativity condition on scalars and vectors holds true,
     otherwise return False."""
     is_ok = True
-    for s1 in ring:
-        for s2 in ring:
-            for v in group:
+    for s1 in ring.elements:
+        for s2 in ring.elements:
+            for v in group.elements:
                 a = sv_mult(ring.add(s1, s2), v)
                 b = group.op(sv_mult(s1, v), sv_mult(s2, v))
                 if a != b:

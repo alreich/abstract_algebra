@@ -128,12 +128,12 @@ class SingleElementSetAlgebra(FiniteAlgebra):
         return f"<{self.__class__.__name__}:{self.name}, ID:{id(self)}>"
 
     # deepcopy is deprecated
-    def deepcopy(self):
-        """Returns a deep copy of this algebra."""
-        return self.__class__(copy.deepcopy(self.name),
-                              copy.deepcopy(self.description),
-                              copy.deepcopy(self.elements),
-                              copy.deepcopy(self.table.tolist()))
+    # def deepcopy(self):
+    #     """Returns a deep copy of this algebra."""
+    #     return self.__class__(copy.deepcopy(self.name),
+    #                           copy.deepcopy(self.description),
+    #                           copy.deepcopy(self.elements),
+    #                           copy.deepcopy(self.table.tolist()))
 
     def copy_algebra(self, new_elements=(), new_name=False, new_description=False):
         """Creates a copy of the input algebra where, optionally, the existing element
@@ -2082,11 +2082,11 @@ def element_map(algebra):
     return {elem: Element(elem, algebra) for elem in algebra.elements}
 
 
-class Algebra:
-    """Creates a context manager for doing finite algebra calculations.
+class InfixNotation:
+    """Creates a context manager for doing finite algebra calculations using infix notation.
 
     >>> s3 = generate_symmetric_group(3)
-    >>> with Algebra(s3) as f:
+    >>> with InfixNotation(s3) as f:
     >>>     print(f['(2, 1, 3)'] + f['(3, 2, 1)'])
     (3, 1, 2)
 

@@ -106,9 +106,7 @@ The Element class and the Algebra context manager provide a way to use math oper
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: finite_algebras.element_map
-
-.. autoclass:: finite_algebras.Algebra
+.. autoclass:: finite_algebras.InfixNotation
     :members:
     :inherited-members:
     :undoc-members:

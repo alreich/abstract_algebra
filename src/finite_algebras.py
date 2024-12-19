@@ -174,7 +174,14 @@ class SingleElementSetAlgebra(FiniteAlgebra):
     def elements(self):
         """Returns the algebra's element names (list of strings)."""
         return self.__elements
-    
+
+    def element_map(self):
+        """Instantiates an Element for each element name and returns a dictionary, where
+         the element names are keys and corresponding Elements are the values. This method
+         is used within the context manager, InfixNotation, to perform arithmetic using
+         infix notation."""
+        return {elem: Element(elem, self) for elem in self.elements}
+
     @property
     def table(self):
         """Returns the algebra's Cayley Table ('multiplication' table)."""
@@ -480,6 +487,7 @@ class Magma(SingleElementSetAlgebra):
         clo = self.closure(set_of_elems, include_inverses=False)
         return set(clo) == set(self.elements)
 
+    # TODO: Review this method and the is_cyclic method for issues (see notebook)
     def generators(self, start_of_range=1):
         """If the algebra is cyclic, then a list of individual elements that each
         generate the algebra is returned; otherwise, a list of lists of elements,
@@ -2076,10 +2084,10 @@ class Element:
             return NotImplemented
 
 
-def element_map(algebra):
-    """Returns a dictionary where element names (str) are keys and the corresponding Elements
-    are the values."""
-    return {elem: Element(elem, algebra) for elem in algebra.elements}
+# def element_map(algebra):
+#     """Returns a dictionary where element names (str) are keys and the corresponding Elements
+#     are the values."""
+#     return {elem: Element(elem, algebra) for elem in algebra.elements}
 
 
 class InfixNotation:
@@ -2093,7 +2101,8 @@ class InfixNotation:
     """
 
     def __init__(self, algebra):
-        self.element_map = element_map(algebra)
+        # self.element_map = element_map(algebra)
+        self.element_map = algebra.element_map()
 
     def __enter__(self):
         return self.element_map

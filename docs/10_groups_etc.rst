@@ -141,7 +141,7 @@ unique ID of the algebra instance:
 
 .. parsed-literal::
 
-    <Group:Z3, ID:4459403984>
+    <Group:Z3, ID:4473245392>
 
 
 The ``about`` method prints information about an algebra. Set
@@ -158,18 +158,18 @@ element names (``str``) rather than element positions (``int``).
     
     ** Group **
     Name: Z3
-    Instance ID: 4459403984
+    Instance ID: 4473245392
     Description: Cyclic group of order 3
     Order: 3
     Identity: 'e'
     Commutative? Yes
     Cyclic?: Yes
-    Generators: ['a', 'a^2']
+    Generators: ['a^2', 'a']
     Elements:
        Index   Name   Inverse  Order
-          0     'e'     'e'       1
-          1     'a'   'a^2'       3
-          2   'a^2'     'a'       3
+          0     'e'     'e'       0
+          1     'a'   'a^2'       0
+          2   'a^2'     'a'       0
     Cayley Table (showing names):
     [['e', 'a', 'a^2'], ['a', 'a^2', 'e'], ['a^2', 'e', 'a']]
 
@@ -178,7 +178,7 @@ element names (``str``) rather than element positions (``int``).
 
 .. parsed-literal::
 
-    '<Group:Z3, ID:4459403984>'
+    '<Group:Z3, ID:4473245392>'
 
 
 
@@ -336,9 +336,9 @@ that corresponds to the element named ‘a’.
 
 .. code:: ipython3
 
-    >>> from finite_algebras import Algebra
+    >>> from finite_algebras import InfixNotation
     
-    >>> with Algebra(z3) as z:
+    >>> with InfixNotation(z3) as z:
     >>>     print(z['a'] + z['a'])
     >>>     print(z['a'] + z['a^2'])
 
@@ -436,7 +436,7 @@ Or, using infix notation via the Algebra context manager:
 
 .. code:: ipython3
 
-    >>> with Algebra(z3) as z:
+    >>> with InfixNotation(z3) as z:
     >>>     print(z['a'] - z['a^2'])
 
 
@@ -489,14 +489,13 @@ commutative.
     
     ** Magma **
     Name: RPS
-    Instance ID: 4499088784
+    Instance ID: 4480701776
     Description: Rock, Paper, Scissors Magma
     Order: 3
     Identity: None
     Associative? No
     Commutative? Yes
     Cyclic?: No
-    Generators: None
     Elements: ['r', 'p', 's']
     Has Inverses? No
     Cayley Table (showing indices):
@@ -574,7 +573,7 @@ Magma with Identity Element
     
     ** Magma **
     Name: Whatever
-    Instance ID: 4464027216
+    Instance ID: 4486867984
     Description: Magma with Identity
     Order: 3
     Identity: e
@@ -622,14 +621,13 @@ B. Vasantha Kandasamy
     
     ** Semigroup **
     Name: Example 1.4.1
-    Instance ID: 4499330640
+    Instance ID: 4486935760
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Identity: None
     Associative? Yes
     Commutative? No
     Cyclic?: No
-    Generators: [('a', 'b', 'c'), ('a', 'b', 'f')], plus 5 more.
     Elements: ['a', 'b', 'c', 'd', 'e', 'f']
     Has Inverses? No
     Cayley Table (showing indices):
@@ -707,24 +705,24 @@ the collections of 3 generators.
 
     Help on method generators in module finite_algebras:
     
-    generators() method of finite_algebras.Semigroup instance
-        If the algebra is cyclic, then True is returned along with a list of individual
-        elements that each generate the algebra.  Otherwise, False is returned along with a
-        list of lists of elements where each sublist generates the algebra.
+    generators(start_of_range=1) method of finite_algebras.Semigroup instance
+        If the algebra is cyclic, then a list of individual elements that each
+        generate the algebra is returned; otherwise, a list of lists of elements,
+        is returned, where each sublist generates the algebra.
     
 
 
 .. code:: ipython3
 
-    is_cyclic, gens = sg.generators()
-    print(f"Is cyclic? {is_cyclic}")
+    # is_cyclic, gens = sg.generators()
+    gens = sg.generators()
+    # print(f"Is cyclic? {is_cyclic}")
     print("\nGenerators:")
     gens
 
 
 .. parsed-literal::
 
-    Is cyclic? False
     
     Generators:
 
@@ -751,13 +749,13 @@ the collections of 3 generators.
 
 .. parsed-literal::
 
-    sg.closure('a', 'b', 'c') = ['f', 'd', 'b', 'a', 'e', 'c']
-    sg.closure('a', 'b', 'f') = ['f', 'd', 'b', 'a', 'e', 'c']
-    sg.closure('a', 'e', 'f') = ['f', 'd', 'b', 'a', 'e', 'c']
-    sg.closure('b', 'c', 'd') = ['f', 'd', 'b', 'a', 'e', 'c']
-    sg.closure('b', 'd', 'f') = ['f', 'd', 'b', 'a', 'e', 'c']
-    sg.closure('c', 'd', 'e') = ['f', 'd', 'b', 'a', 'e', 'c']
-    sg.closure('d', 'e', 'f') = ['f', 'd', 'b', 'a', 'e', 'c']
+    sg.closure('a', 'b', 'c') = ['d', 'a', 'b', 'e', 'f', 'c']
+    sg.closure('a', 'b', 'f') = ['d', 'a', 'b', 'e', 'f', 'c']
+    sg.closure('a', 'e', 'f') = ['d', 'a', 'b', 'e', 'f', 'c']
+    sg.closure('b', 'c', 'd') = ['d', 'b', 'a', 'e', 'f', 'c']
+    sg.closure('b', 'd', 'f') = ['d', 'b', 'a', 'e', 'f', 'c']
+    sg.closure('c', 'd', 'e') = ['d', 'a', 'b', 'e', 'f', 'c']
+    sg.closure('d', 'e', 'f') = ['d', 'a', 'b', 'e', 'f', 'c']
 
 
 Monoid
@@ -784,14 +782,13 @@ such that, for all :math:`a \in S, a \circ e = e \circ a = a`
     
     ** Monoid **
     Name: M4
-    Instance ID: 4499252816
+    Instance ID: 4486923152
     Description: Example of a commutative monoid
     Order: 4
     Identity: b
     Associative? Yes
     Commutative? Yes
     Cyclic?: No
-    Generators: [('c', 'd')]
     Elements: ['a', 'b', 'c', 'd']
     Has Inverses? No
     Cayley Table (showing names):
@@ -1116,7 +1113,7 @@ Products and Isomorphisms.
     
     ** Group **
     Name: Z2
-    Instance ID: 4486363024
+    Instance ID: 4486988240
     Description: Autogenerated cyclic Group of order 2
     Order: 2
     Identity: '0'
@@ -1125,8 +1122,8 @@ Products and Isomorphisms.
     Generators: ['1']
     Elements:
        Index   Name   Inverse  Order
-          0     '0'     '0'       1
-          1     '1'     '1'       2
+          0     '0'     '0'       0
+          1     '1'     '1'       0
     Cayley Table (showing indices):
     [[0, 1], [1, 0]]
 
@@ -1135,7 +1132,7 @@ Products and Isomorphisms.
 
 .. parsed-literal::
 
-    '<Group:Z2, ID:4486363024>'
+    '<Group:Z2, ID:4486988240>'
 
 
 
@@ -1162,21 +1159,20 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
     
     ** Group **
     Name: S3
-    Instance ID: 4499420880
+    Instance ID: 4486999888
     Description: Autogenerated symmetric Group on 3 elements
     Order: 6
     Identity: '(1, 2, 3)'
     Commutative? No
     Cyclic?: No
-    Generators: [('(1, 3, 2)', '(2, 1, 3)'), ('(1, 3, 2)', '(2, 3, 1)')], plus 7 more.
     Elements:
        Index   Name   Inverse  Order
-          0 '(1, 2, 3)' '(1, 2, 3)'       1
-          1 '(1, 3, 2)' '(1, 3, 2)'       2
-          2 '(2, 1, 3)' '(2, 1, 3)'       2
-          3 '(2, 3, 1)' '(3, 1, 2)'       3
-          4 '(3, 1, 2)' '(2, 3, 1)'       3
-          5 '(3, 2, 1)' '(3, 2, 1)'       2
+          0 '(1, 2, 3)' '(1, 2, 3)'       0
+          1 '(1, 3, 2)' '(1, 3, 2)'       0
+          2 '(2, 1, 3)' '(2, 1, 3)'       0
+          3 '(2, 3, 1)' '(3, 1, 2)'       0
+          4 '(3, 1, 2)' '(2, 3, 1)'       0
+          5 '(3, 2, 1)' '(3, 2, 1)'       0
     Cayley Table (showing indices):
     [[0, 1, 2, 3, 4, 5],
      [1, 0, 4, 5, 2, 3],
@@ -1190,7 +1186,7 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
 
 .. parsed-literal::
 
-    '<Group:S3, ID:4499420880>'
+    '<Group:S3, ID:4486999888>'
 
 
 
@@ -1220,23 +1216,22 @@ values of n.
     
     ** Group **
     Name: PS3
-    Instance ID: 4499420816
+    Instance ID: 4486997456
     Description: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
     Order: 8
     Identity: '{}'
     Commutative? Yes
     Cyclic?: No
-    Generators: [('{0, 1}', '{0, 2}', '{0, 1, 2}'), ('{0, 1}', '{1, 2}', '{0, 1, 2}')], plus 26 more.
     Elements:
        Index   Name   Inverse  Order
-          0    '{}'    '{}'       1
-          1   '{0}'   '{0}'       2
-          2   '{1}'   '{1}'       2
-          3   '{2}'   '{2}'       2
-          4 '{0, 1}' '{0, 1}'       2
-          5 '{0, 2}' '{0, 2}'       2
-          6 '{1, 2}' '{1, 2}'       2
-          7 '{0, 1, 2}' '{0, 1, 2}'       2
+          0    '{}'    '{}'       0
+          1   '{0}'   '{0}'       0
+          2   '{1}'   '{1}'       0
+          3   '{2}'   '{2}'       0
+          4 '{0, 1}' '{0, 1}'       0
+          5 '{0, 2}' '{0, 2}'       0
+          6 '{1, 2}' '{1, 2}'       0
+          7 '{0, 1, 2}' '{0, 1, 2}'       0
     Cayley Table (showing indices):
     [[0, 1, 2, 3, 4, 5, 6, 7],
      [1, 0, 4, 5, 2, 3, 7, 6],
@@ -1252,7 +1247,7 @@ values of n.
 
 .. parsed-literal::
 
-    '<Group:PS3, ID:4499420816>'
+    '<Group:PS3, ID:4486997456>'
 
 
 
@@ -1276,14 +1271,13 @@ multiplication modulo the desired order.
     
     ** Monoid **
     Name: M7
-    Instance ID: 4499416464
+    Instance ID: 4486942480
     Description: Autogenerated commutative Monoid of order 7
     Order: 7
     Identity: a1
     Associative? Yes
     Commutative? Yes
     Cyclic?: No
-    Generators: [('a0', 'a3'), ('a0', 'a5')]
     Elements: ['a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6']
     Has Inverses? No
     Cayley Table (showing indices):
@@ -1317,23 +1311,22 @@ Direct Product of Multiple Groups
     
     ** Group **
     Name: Z2_x_Z2_x_Z2
-    Instance ID: 4499480464
+    Instance ID: 4487038032
     Description: Direct product of Z2_x_Z2 & Z2
     Order: 8
     Identity: '0:0:0'
     Commutative? Yes
     Cyclic?: No
-    Generators: [('0:0:1', '0:1:0', '1:0:0'), ('0:0:1', '0:1:0', '1:0:1')], plus 26 more.
     Elements:
        Index   Name   Inverse  Order
-          0 '0:0:0' '0:0:0'       1
-          1 '0:0:1' '0:0:1'       2
-          2 '0:1:0' '0:1:0'       2
-          3 '0:1:1' '0:1:1'       2
-          4 '1:0:0' '1:0:0'       2
-          5 '1:0:1' '1:0:1'       2
-          6 '1:1:0' '1:1:0'       2
-          7 '1:1:1' '1:1:1'       2
+          0 '0:0:0' '0:0:0'       0
+          1 '0:0:1' '0:0:1'       0
+          2 '0:1:0' '0:1:0'       0
+          3 '0:1:1' '0:1:1'       0
+          4 '1:0:0' '1:0:0'       0
+          5 '1:0:1' '1:0:1'       0
+          6 '1:1:0' '1:1:0'       0
+          7 '1:1:1' '1:1:1'       0
     Cayley Table (showing indices):
     [[0, 1, 2, 3, 4, 5, 6, 7],
      [1, 0, 3, 2, 5, 4, 7, 6],
@@ -1349,7 +1342,7 @@ Direct Product of Multiple Groups
 
 .. parsed-literal::
 
-    '<Group:Z2_x_Z2_x_Z2, ID:4499480464>'
+    '<Group:Z2_x_Z2_x_Z2, ID:4487038032>'
 
 
 
@@ -1387,14 +1380,13 @@ Direct Product of Monoids
     
     ** Monoid **
     Name: M3_x_M3
-    Instance ID: 4499482640
+    Instance ID: 4436231056
     Description: Direct product of M3 & M3
     Order: 9
     Identity: a1:a1
     Associative? Yes
     Commutative? Yes
     Cyclic?: No
-    Generators: [('a0:a1', 'a1:a0', 'a1:a2', 'a2:a1'), ('a0:a1', 'a1:a0', 'a1:a2', 'a2:a2')], plus 10 more.
     Elements: ['a0:a0', 'a0:a1', 'a0:a2', 'a1:a0', 'a1:a1', 'a1:a2', 'a2:a0', 'a2:a1', 'a2:a2']
     Has Inverses? No
     Cayley Table (showing indices):
@@ -1534,23 +1526,23 @@ Example: Proper Subgroups
     
     ** Group **
     Name: Z8
-    Instance ID: 4499507984
+    Instance ID: 4487048400
     Description: Autogenerated cyclic Group of order 8
     Order: 8
     Identity: '0'
     Commutative? Yes
     Cyclic?: Yes
-    Generators: ['1', '3'], plus 2 more.
+    Generators: ['3', '7', '1', '5']
     Elements:
        Index   Name   Inverse  Order
-          0     '0'     '0'       1
-          1     '1'     '7'       8
-          2     '2'     '6'       4
-          3     '3'     '5'       8
-          4     '4'     '4'       2
-          5     '5'     '3'       8
-          6     '6'     '2'       4
-          7     '7'     '1'       8
+          0     '0'     '0'       0
+          1     '1'     '7'       0
+          2     '2'     '6'       0
+          3     '3'     '5'       0
+          4     '4'     '4'       0
+          5     '5'     '3'       0
+          6     '6'     '2'       0
+          7     '7'     '1'       0
     Cayley Table (showing indices):
     [[0, 1, 2, 3, 4, 5, 6, 7],
      [1, 2, 3, 4, 5, 6, 7, 0],
@@ -1566,7 +1558,7 @@ Example: Proper Subgroups
 
 .. parsed-literal::
 
-    '<Group:Z8, ID:4499507984>'
+    '<Group:Z8, ID:4487048400>'
 
 
 
@@ -1583,25 +1575,7 @@ Example: Proper Subgroups
     
     ** Group **
     Name: Z8_subalgebra_0
-    Instance ID: 4499509904
-    Description: Subalgebra of: Autogenerated cyclic Group of order 8
-    Order: 4
-    Identity: '0'
-    Commutative? Yes
-    Cyclic?: Yes
-    Generators: ['2', '6']
-    Elements:
-       Index   Name   Inverse  Order
-          0     '0'     '0'       1
-          1     '2'     '6'       4
-          2     '4'     '4'       2
-          3     '6'     '2'       4
-    Cayley Table (showing indices):
-    [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
-    
-    ** Group **
-    Name: Z8_subalgebra_1
-    Instance ID: 4499510736
+    Instance ID: 4480677584
     Description: Subalgebra of: Autogenerated cyclic Group of order 8
     Order: 2
     Identity: '0'
@@ -1610,10 +1584,28 @@ Example: Proper Subgroups
     Generators: ['4']
     Elements:
        Index   Name   Inverse  Order
-          0     '0'     '0'       1
-          1     '4'     '4'       2
+          0     '0'     '0'       0
+          1     '4'     '4'       0
     Cayley Table (showing indices):
     [[0, 1], [1, 0]]
+    
+    ** Group **
+    Name: Z8_subalgebra_1
+    Instance ID: 4486950736
+    Description: Subalgebra of: Autogenerated cyclic Group of order 8
+    Order: 4
+    Identity: '0'
+    Commutative? Yes
+    Cyclic?: Yes
+    Generators: ['2', '6']
+    Elements:
+       Index   Name   Inverse  Order
+          0     '0'     '0'       0
+          1     '2'     '6'       0
+          2     '4'     '4'       0
+          3     '6'     '2'       0
+    Cayley Table (showing indices):
+    [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
 
 
 Normal Subgroups
@@ -1664,27 +1656,27 @@ was created earlier.
 .. parsed-literal::
 
     
-    Subalgebras of <Group:PS3, ID:4499420816>
+    Subalgebras of <Group:PS3, ID:4486997456>
       There are 2 unique proper subalgebras, up to isomorphism, out of 14 total subalgebras.
       as shown by the partitions below:
     
     7 Isomorphic Commutative Normal Groups of order 2 with identity '{}':
-          Group: PS3_subalgebra_0: ['{}', '{0, 1, 2}']
-          Group: PS3_subalgebra_1: ['{}', '{1, 2}']
-          Group: PS3_subalgebra_5: ['{}', '{0, 1}']
-          Group: PS3_subalgebra_10: ['{}', '{0}']
-          Group: PS3_subalgebra_11: ['{}', '{2}']
-          Group: PS3_subalgebra_12: ['{}', '{0, 2}']
-          Group: PS3_subalgebra_13: ['{}', '{1}']
+          Group: PS3_subalgebra_0: ['{}', '{0, 2}']
+          Group: PS3_subalgebra_1: ['{}', '{2}']
+          Group: PS3_subalgebra_5: ['{}', '{1}']
+          Group: PS3_subalgebra_8: ['{}', '{0, 1, 2}']
+          Group: PS3_subalgebra_11: ['{}', '{1, 2}']
+          Group: PS3_subalgebra_12: ['{}', '{0}']
+          Group: PS3_subalgebra_13: ['{}', '{0, 1}']
     
     7 Isomorphic Commutative Normal Groups of order 4 with identity '{}':
-          Group: PS3_subalgebra_2: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
-          Group: PS3_subalgebra_3: ['{}', '{2}', '{0, 1}', '{0, 1, 2}']
-          Group: PS3_subalgebra_4: ['{}', '{0}', '{1}', '{0, 1}']
-          Group: PS3_subalgebra_6: ['{}', '{1}', '{2}', '{1, 2}']
-          Group: PS3_subalgebra_7: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
-          Group: PS3_subalgebra_8: ['{}', '{0}', '{2}', '{0, 2}']
-          Group: PS3_subalgebra_9: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
+          Group: PS3_subalgebra_2: ['{}', '{0}', '{1}', '{0, 1}']
+          Group: PS3_subalgebra_3: ['{}', '{1}', '{2}', '{1, 2}']
+          Group: PS3_subalgebra_4: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
+          Group: PS3_subalgebra_6: ['{}', '{2}', '{0, 1}', '{0, 1, 2}']
+          Group: PS3_subalgebra_7: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
+          Group: PS3_subalgebra_9: ['{}', '{0}', '{2}', '{0, 2}']
+          Group: PS3_subalgebra_10: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
     
 
 
@@ -1703,14 +1695,13 @@ Recall the Semigroup example from above:
     
     ** Semigroup **
     Name: Example 1.4.1
-    Instance ID: 4499330640
+    Instance ID: 4486935760
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Identity: None
     Associative? Yes
     Commutative? No
     Cyclic?: No
-    Generators: [('a', 'b', 'c'), ('a', 'b', 'f')], plus 5 more.
     Elements: ['a', 'b', 'c', 'd', 'e', 'f']
     Has Inverses? No
     Cayley Table (showing indices):
@@ -1751,27 +1742,27 @@ example:
 .. parsed-literal::
 
     
-    Subalgebras of <Semigroup:Example 1.4.1, ID:4499330640>
+    Subalgebras of <Semigroup:Example 1.4.1, ID:4486935760>
       There are 4 unique proper subalgebras, up to isomorphism, out of 10 total subalgebras.
       as shown by the partitions below:
     
-    1 Semigroup of order 3:
-          Semigroup: Example 1.4.1_subalgebra_0: ['a', 'c', 'e']
-    
     3 Isomorphic Semigroups of order 4:
-          Semigroup: Example 1.4.1_subalgebra_1: ['a', 'b', 'd', 'e']
-          Semigroup: Example 1.4.1_subalgebra_5: ['b', 'c', 'e', 'f']
-          Semigroup: Example 1.4.1_subalgebra_8: ['a', 'c', 'd', 'f']
+          Semigroup: Example 1.4.1_subalgebra_0: ['a', 'c', 'd', 'f']
+          Semigroup: Example 1.4.1_subalgebra_2: ['a', 'b', 'd', 'e']
+          Semigroup: Example 1.4.1_subalgebra_9: ['b', 'c', 'e', 'f']
+    
+    1 Semigroup of order 3:
+          Semigroup: Example 1.4.1_subalgebra_1: ['a', 'c', 'e']
     
     3 Isomorphic Semigroups of order 2:
-          Semigroup: Example 1.4.1_subalgebra_2: ['c', 'e']
-          Semigroup: Example 1.4.1_subalgebra_3: ['a', 'c']
-          Semigroup: Example 1.4.1_subalgebra_4: ['a', 'e']
+          Semigroup: Example 1.4.1_subalgebra_3: ['a', 'e']
+          Semigroup: Example 1.4.1_subalgebra_7: ['c', 'e']
+          Semigroup: Example 1.4.1_subalgebra_8: ['a', 'c']
     
     3 Isomorphic Commutative Groups of order 2:
-          Group: Example 1.4.1_subalgebra_6: ['a', 'd'] with identity 'a'
-          Group: Example 1.4.1_subalgebra_7: ['c', 'f'] with identity 'c'
-          Group: Example 1.4.1_subalgebra_9: ['b', 'e'] with identity 'e'
+          Group: Example 1.4.1_subalgebra_4: ['b', 'e'] with identity 'e'
+          Group: Example 1.4.1_subalgebra_5: ['a', 'd'] with identity 'a'
+          Group: Example 1.4.1_subalgebra_6: ['c', 'f'] with identity 'c'
     
 
 
@@ -1831,21 +1822,20 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     
     ** Group **
     Name: Pinter29
-    Instance ID: 4499545744
+    Instance ID: 4487135312
     Description: Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
     Order: 6
     Identity: 'I'
     Commutative? No
     Cyclic?: No
-    Generators: [('A', 'B'), ('A', 'C')], plus 7 more.
     Elements:
        Index   Name   Inverse  Order
-          0     'I'     'I'       1
-          1     'A'     'A'       2
-          2     'B'     'D'       3
-          3     'C'     'C'       2
-          4     'D'     'B'       3
-          5     'K'     'K'       2
+          0     'I'     'I'       0
+          1     'A'     'A'       0
+          2     'B'     'D'       0
+          3     'C'     'C'       0
+          4     'D'     'B'       0
+          5     'K'     'K'       0
     Cayley Table (showing names):
     [['I', 'A', 'B', 'C', 'D', 'K'],
      ['A', 'I', 'C', 'B', 'K', 'D'],
@@ -1859,6 +1849,6 @@ default list, see the file, ‘examples.json’, in the algebras directory.
 
 .. parsed-literal::
 
-    '<Group:Pinter29, ID:4499545744>'
+    '<Group:Pinter29, ID:4487135312>'
 
 

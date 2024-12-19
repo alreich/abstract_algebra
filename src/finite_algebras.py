@@ -2007,26 +2007,32 @@ class Element:
 
     @property
     def name(self):
+        """Return the name of this Element."""
         return self.__name
 
     @property
     def algebra(self):
+        """Return the algebra associated with this Element."""
         return self.__algebra
 
     @property
     def can_add(self):
+        """Return True if this Element supports addition."""
         return True
 
     @property
     def can_subtract(self):
+        """Return True if this Element supports subtraction."""
         return self.__can_subtract
 
     @property
     def can_multiply(self):
+        """Return True if this Element supports multiplication."""
         return self.__can_multiply
 
     @property
     def can_divide(self):
+        """"Return True if this Element supports division."""
         return self.__can_divide
 
     def __str__(self):

@@ -2032,7 +2032,7 @@ class Element:
 
     @property
     def can_divide(self):
-        """"Return True if this Element supports division."""
+        """Return True if this Element supports division."""
         return self.__can_divide
 
     def __str__(self):

@@ -30,6 +30,10 @@ class TestMagma(TestCase):
         rp_s = self.rps.op(rp, 's')
         r_ps = self.rps.op('r', ps)
         self.assertNotEqual(rp_s, r_ps)
+        # op associates from left to right for multiple arguments
+        _rps = self.rps.op('r', 'p', 's')
+        self.assertTrue(_rps == rp_s)
+        self.assertFalse(_rps == r_ps)
 
     def test_table_with_names(self):
         self.assertEqual(self.rps.table.to_list_with_names(self.rps.elements),

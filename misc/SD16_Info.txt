@@ -1,0 +1,132 @@
+SD16_Info
+
+Information about the semidihedral group of order 16
+
+-----------------------------
+
+In [37]: sd16 = ex[14]
+
+In [38]: sd16.about()
+
+** Group **
+Name: SD16
+Instance ID: 4803399696
+Description: Semidihedral group of order 16
+Order: 16
+Identity: 'e'
+Commutative? No
+Cyclic?: No
+Elements:
+   Index   Name   Inverse  Order
+      0     'e'     'e'       0
+      1     't'     't'       0
+      2     's' 'ts^2ts'       0
+      3    'st' 's^2ts'       0
+      4   's^2' 'ts^2t'       0
+      5  's^2t'  's^2t'       0
+      6   'tst' 'tsts^2'       0
+      7    'ts' 'sts^2'       0
+      8  'tsts'  'tsts'       0
+      9   'sts'   'sts'       0
+     10 'tsts^2'   'tst'       0
+     11 's^2ts'    'st'       0
+     12 'ts^2t'   's^2'       0
+     13  'ts^2'  'ts^2'       0
+     14 'ts^2ts'     's'       0
+     15 'sts^2'    'ts'       0
+Group order is 16 > 12, so no table is printed.
+Out[38]: '<Group:SD16, ID:4803399696>'
+
+
+
+In [39]: sd16_subs = about_subalgebras(sd16)
+
+Subalgebras of <Group:SD16, ID:4464251728>
+  There are 6 unique proper subalgebras, up to isomorphism, out of 13 total subalgebras.
+  as shown by the partitions below:
+
+1 Normal Group of order 8 with identity 'e':
+      Group: SD16_subalgebra_0: ['e', 't', 's^2', 's^2t', 'tsts', 'sts', 'ts^2t', 'ts^2']
+
+3 Isomorphic Commutative Groups of order 4 with identity 'e':
+      Group: SD16_subalgebra_1: ['e', 'st', 'tsts', 's^2ts']
+      Group: SD16_subalgebra_3: ['e', 's^2', 'tsts', 'ts^2t']
+      Group: SD16_subalgebra_10: ['e', 'ts', 'tsts', 'sts^2']
+
+5 Isomorphic Commutative Groups of order 2 with identity 'e':
+      Group: SD16_subalgebra_2: ['e', 't']
+      Group: SD16_subalgebra_4: ['e', 'tsts']
+      Group: SD16_subalgebra_5: ['e', 'ts^2']
+      Group: SD16_subalgebra_7: ['e', 'sts']
+      Group: SD16_subalgebra_12: ['e', 's^2t']
+
+2 Isomorphic Commutative Groups of order 4 with identity 'e':
+      Group: SD16_subalgebra_6: ['e', 's^2t', 'tsts', 'ts^2']
+      Group: SD16_subalgebra_11: ['e', 't', 'tsts', 'sts']
+
+1 Normal Group of order 8 with identity 'e':
+      Group: SD16_subalgebra_8: ['e', 'st', 's^2', 'ts', 'tsts', 's^2ts', 'ts^2t', 'sts^2']
+
+1 Commutative Normal Group of order 8 with identity 'e':
+      Group: SD16_subalgebra_9: ['e', 's', 's^2', 'tst', 'tsts', 'tsts^2', 'ts^2t', 'ts^2ts']
+
+CPU times: user 9.82 s, sys: 25.2 ms, total: 9.85 s
+Wall time: 9.82 s
+
+
+HIERARCHY OF SUBALGEBRAS
+(To Do: Write a program that can generate this from the info above)
+
+(2, 11)
+(2, 0)
+(4, 1)
+(4, 3)
+(4, 6)
+(4, 10)
+(4, 11)
+(4, 0)
+(4, 8)
+(4, 9)
+(5, 6)
+(5, 0)
+(7, 11)
+(7, 0)
+(12, 6)
+(12, 0)
+(1, 8)
+(3, 0)
+(3, 8)
+(3, 9)
+(6, 0)
+(10, 8)
+(11, 0)
+
+-------
+
+(2, 0) ***
+(4, 0) ***
+(5, 0) ***
+(7, 0) ***
+(12, 0) ***
+
+(4, 1) (1, 8) 
+
+(4, 3) (3, 0)
+       (3, 8)
+       (3, 9)
+
+(4, 6) (6, 0)
+(5, 6) (6, 0)
+(12, 6) (6, 0)
+
+(4, 8) ***
+
+(4, 10) (10, 8)
+
+(4, 9) ***
+
+(4, 11) (11, 0)
+(7, 11) (11, 0)
+(2, 11) (11, 0)
+
+

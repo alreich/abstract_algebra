@@ -586,6 +586,18 @@ class Magma(SingleElementSetAlgebra):
         """
         return self._element_pairs_where_table_equals(self.table, elem_name)
 
+    def left_cosets(self, subalgebra):
+        """Returns an iterator that returns lists of left cosets."""
+        return map(lambda s: sorted(list(s)),
+                   {frozenset([self.op(x, y) for y in subalgebra])
+                    for x in self})
+
+    def right_cosets(self, subalgebra):
+        """Returns an iterator that returns lists of right cosets."""
+        return map(lambda s: sorted(list(s)),
+                   {frozenset([self.op(y, x) for y in subalgebra])
+                    for x in self})
+
     # This 'about' method differs from the one in Groups in that it does not print out
     # as much detailed information about elements.
     # TODO: Combine the 'about' method, below, with the one in Groups.
@@ -1125,11 +1137,17 @@ def about_subalgebras(alg):
     return partitions
 
 
-def cosets(group, normal_subgroup):
-    """Returns an iterator that returns lists of cosets."""
-    return map(lambda s: sorted(list(s)),
-               {frozenset([group.op(x, y) for y in normal_subgroup])
-                for x in group})
+# def left_cosets(group, subgroup):
+#     """Returns an iterator that returns lists of left cosets."""
+#     return map(lambda s: sorted(list(s)),
+#                {frozenset([group.op(x, y) for y in subgroup])
+#                 for x in group})
+#
+# def right_cosets(group, subgroup):
+#     """Returns an iterator that returns lists of right cosets."""
+#     return map(lambda s: sorted(list(s)),
+#                {frozenset([group.op(y, x) for y in subgroup])
+#                 for x in group})
 
 # -----------------
 # Group Generators

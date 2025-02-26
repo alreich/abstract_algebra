@@ -2595,6 +2595,20 @@ def yes_or_no(true_or_false):
         return "No"
 
 
+def symm_diff_of_two_lists_of_lists (list1, list2):
+    """Return the symmetric difference between two lists of lists"""
+    # Turn the inner lists into tuples, because tuples
+    # are hashable and lists are not. Then turn the outer
+    # lists into sets, before applying the symm diff operator.
+    return set(map(tuple, list1)) ^ set(map(tuple, list2))
+
+
+def same_lists_of_lists(list_of_lists1, list_of_lists2):
+    """Handy for determining, for example, whether a list of left cosets
+    is the same as a list of right cosets."""
+    return not symm_diff_of_two_lists_of_lists(list_of_lists1, list_of_lists2)
+
+
 # See https://docs.python.org/3/library/itertools.html#itertools-recipes
 def powerset(iterable):
     """Returns the powerset of the input iterable.

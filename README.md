@@ -325,7 +325,7 @@ Representative elements from each coset, below, make up the element list of the 
 
 Note that if we create the direct product of the subgroup, ``V4sub``, and ``quotient_group``, we obtain an algebra that is isomorphic to the original group, ``V4``.
 
-That is, V4sub $\times$ (V4 / V4sub) $\equiv$ V4.
+That is, V4sub $\times$ (V4 / V4sub) $\cong$ V4.
 
 
 ```python

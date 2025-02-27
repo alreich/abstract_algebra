@@ -1,8 +1,10 @@
 # Abstract Algebra
 
-This is an implementation of **Finite Algebras** in Python: Groups, Rings, Fields, Vector Spaces, Modules, Monoids, Semigroups, and Magmas (Groupoids).
+This is an implementation of **Finite Algebras** in Python: Groups, Rings, Fields, Vector Spaces, Modules, Monoids, Semigroups, Magmas (Groupoids), regular (matrix) representations, abstract matrices, and Cayley-Dickson algebras.
 
-The representation of an algebra here depends on being able to explicitely represent its multiplication/addition table (Cayley table). Large finite algebras--more than a few hundred elements--are possible, but may take a significant amount of time to process.
+The representation of an algebra here depends on being able to explicitely represent its multiplication/addition table (Cayley table). Large finite algebras--more than a few hundred elements--are possible, but may take a significant amount of time to process.  Also, all algebraic elements here are represented as strings ("symbols").
+
+**NOTE: This Python module is a work-in-progress. Corrections and comments are welcome and appreciated. -- Al Reich, March 2024**
 
 ## Summary
 
@@ -14,7 +16,7 @@ The ``finite_algebras`` module contains class definitions, methods, and function
   * A name (``str``),
   * A description (``str``),
   * A list of *element names* (``list`` of ``str``),
-    * All elements must be represented by strings,
+    * **All elements must be represented by strings**,
   * One or two square, 2-dimensional tables that define binary operations (``list`` of ``lists`` of ``int``),
     * The <i>ints</i> in a table represent indices in the list of element names,
     * Magmas, Semigroups, Monoids, & Groups have one table; Rings & Fields have two.
@@ -22,16 +24,19 @@ The ``finite_algebras`` module contains class definitions, methods, and function
 * Algebraic elements can be "added" (or "multiplied") via their binary operations (e.g., ``v4.op('h','v')`` $\Rightarrow$ ``'r'``).
 * Inverses & identities can be obtained, if the algebra supports them (e.g., ``z3.inv('a')`` $\Rightarrow$ ``'a^2'``, ``z3.identity`` $\Rightarrow$ ``'e'``).
 * Direct products of two or more algebras can be computed using Python's multiplication operator (e.g., ``z4 * v4``), and using Python's power operator (e.g., ``v4**3 == v4 * v4 * v4``).
+* A Quotient Group is returned when a group, ``g``, is divided by one of it's normal subgroups, ``h``, using Python's true division operator (e.g., ``g / h``).
+* Infix arithmetic of algebraic elements is supported for the operators, +, -, *, /, and \*\*, by using the context manager, ``InfixNotation`` (e.g., ``with InfixNotation(v4) as v; hr = v['h'] * v['r']``)
 * If two algebras are isomorphic, the mapping between their elements can be found and returned as a Python dictionary (e.g., ``v4.isomorphic(z2 * z2)`` $\Rightarrow$ ``{'h': 'e:a', 'v': 'a:e', 'r': 'a:a', 'e': 'e:e'}``)
 * Autogeneration of some types of algebras, of arbitrary order, is supported (e.g., symmetric, cyclic).
 * Subalgebras (e.g., subgroups) can be determined, along with related functionality (e.g, ``is_normal()``).
 * Groups, Rings, and Fields can be used to construct Modules and Vector Spaces, including n-dimensional Modules and Vector Spaces using the direct products of Rings and Fields, resp.
+* Rings and Fields can be used to construct Cayley-Dickson algebras (i.e., abstractions of the complex numbers, as well as quaternions, octonions, etc.)
 * The Regular Representation of a Monoid, Group, or the additive abelian Group of a Ring or Field, can be computed in either dense or sparse matrix form.
 * Abstract Matrices over Rings/Fields can be represented and used in operations similar to numeric matrices (e.g., $+$, $-$, $\times$, determinant, inverse, etc.)
 
 ## Installation
 
-This module runs under Python 3.7+ and requires **numpy**.  The sparse matrix <b>option</b> for Regular Representations requires **scipy.sparse**.
+This module runs under Python 3.11+ and requires **numpy**.  The sparse matrix <b>option</b> for Regular Representations requires **scipy.sparse**.
 
 Clone the github repository to install:
 $ git clone https://github.com/alreich/abstract_algebra.git
@@ -50,21 +55,24 @@ See full documentation at <i>ReadTheDocs</i>: [https://abstract-algebra.readthed
 
 ## Quick Look
 
+
+```python
+>>> from finite_algebras import *
+```
+
 ### Create an Algebra
 
 As mentioned above, the integers in the 4x4 table, below, are indices of the 4 elements in the element list, ``['e', 'h', 'v', 'r']``.
 
 
 ```python
->>> from finite_algebras import make_finite_algebra
-
 >>> V4 = make_finite_algebra('V4',
-                             'Klein-4 group',
-                             ['e', 'h', 'v', 'r'],
-                             [[0, 1, 2, 3],
-                              [1, 0, 3, 2],
-                              [2, 3, 0, 1],
-                              [3, 2, 1, 0]])
+>>>                          'Klein-4 group',
+>>>                          ['e', 'h', 'v', 'r'],
+>>>                          [[0, 1, 2, 3],
+>>>                           [1, 0, 3, 2],
+>>>                           [2, 3, 0, 1],
+>>>                           [3, 2, 1, 0]])
 >>> V4
 ```
 
@@ -80,19 +88,62 @@ As mentioned above, the integers in the 4x4 table, below, are indices of the 4 e
 
 
 
+The output above is the algebra's **repr**, and can be copied-and-pasted to produce another instance of the algebra.
+
+The **str** form, printed below, is more succinct and cannot be copied-and-pasted.
+
+
+```python
+>>> print(V4)
+```
+
+    <Group:V4, ID:4488930960>
+
+
+### Perform Arithmetic
+
+Using postfix or infix notation (e.g., $h + v - r = e$)
+
+
+```python
+>>> x = V4.op('h', 'v', V4.inv('r'))
+>>> x
+```
+
+
+
+
+    'e'
+
+
+
+
+```python
+>>> with InfixNotation(V4) as v:
+>>>     x = v['h'] + v['v'] - v['r']
+>>> x
+```
+
+
+
+
+    'e'
+
+
+
 ### Look at the Algebra's Properties
 
 All of the information, provided by the ``about`` method, below, is derived from the table, input above, including the identity element, if it exists.
 
 
 ```python
->>> V4.about(use_table_names=True)
+>>> V4.about(use_table_names=True)  # 'about' prints info, but also returns the algebra itself
 ```
 
     
     ** Group **
     Name: V4
-    Instance ID: 4597746640
+    Instance ID: 4488930960
     Description: Klein-4 group
     Order: 4
     Identity: 'e'
@@ -100,10 +151,10 @@ All of the information, provided by the ``about`` method, below, is derived from
     Cyclic?: No
     Elements:
        Index   Name   Inverse  Order
-          0     'e'     'e'       1
-          1     'h'     'h'       2
-          2     'v'     'v'       2
-          3     'r'     'r'       2
+          0     'e'     'e'       0
+          1     'h'     'h'       0
+          2     'v'     'v'       0
+          3     'r'     'r'       0
     Cayley Table (showing names):
     [['e', 'h', 'v', 'r'],
      ['h', 'e', 'r', 'v'],
@@ -111,13 +162,70 @@ All of the information, provided by the ``about`` method, below, is derived from
      ['r', 'v', 'h', 'e']]
 
 
-### Autogenerate a Small Cyclic Group
+
+
+
+    '<Group:V4, ID:4488930960>'
+
+
+
+### Summarize an Algebra's Proper Subalgebras
+
+Get all proper subalgebras of an algebra.
 
 
 ```python
->>> from finite_algebras import generate_cyclic_group
+>>> V4.proper_subalgebras()
+```
 
->>> Z2 = generate_cyclic_group(2)
+
+
+
+    [Group(
+     'V4_subalgebra_0',
+     'Subalgebra of: Klein-4 group',
+     ['e', 'v'],
+     [[0, 1], [1, 0]]
+     ),
+     Group(
+     'V4_subalgebra_1',
+     'Subalgebra of: Klein-4 group',
+     ['e', 'r'],
+     [[0, 1], [1, 0]]
+     ),
+     Group(
+     'V4_subalgebra_2',
+     'Subalgebra of: Klein-4 group',
+     ['e', 'h'],
+     [[0, 1], [1, 0]]
+     )]
+
+
+
+Or, summarize the subalgebras by isomorphism.
+
+
+```python
+>>> _ = about_subalgebras(V4)  # Returns a list of lists of proper subalgebras (ignored here)
+```
+
+    
+    Subalgebras of <Group:V4, ID:4488930960>
+      There is 1 unique proper subalgebra, up to isomorphism, out of 3 total subalgebras.
+      as shown by the partitions below:
+    
+    3 Isomorphic Commutative Normal Groups of order 2 with identity 'e':
+          Group: V4_subalgebra_0: ['e', 'v']
+          Group: V4_subalgebra_1: ['e', 'r']
+          Group: V4_subalgebra_2: ['e', 'h']
+    
+
+
+### Autogenerate an Algebra
+
+
+```python
+>>> Z2 = generate_cyclic_group(2)  # Generates a cyclic group of order 2
 
 >>> Z2.about()
 ```
@@ -125,19 +233,26 @@ All of the information, provided by the ``about`` method, below, is derived from
     
     ** Group **
     Name: Z2
-    Instance ID: 4372024528
+    Instance ID: 4495653648
     Description: Autogenerated cyclic Group of order 2
     Order: 2
-    Identity: 'e'
+    Identity: '0'
     Commutative? Yes
     Cyclic?: Yes
-      Generators: ['a']
+    Generators: ['1']
     Elements:
        Index   Name   Inverse  Order
-          0     'e'     'e'       1
-          1     'a'     'a'       2
+          0     '0'     '0'       0
+          1     '1'     '1'       0
     Cayley Table (showing indices):
     [[0, 1], [1, 0]]
+
+
+
+
+
+    '<Group:Z2, ID:4495653648>'
+
 
 
 ### Compute a Direct Product
@@ -154,23 +269,86 @@ If A & B are finite algebras, then A * B and A\*\*3 will also be Direct Products
     
     ** Group **
     Name: Z2_x_Z2
-    Instance ID: 4602714896
+    Instance ID: 4495691536
     Description: Direct product of Z2 & Z2
     Order: 4
-    Identity: 'e:e'
+    Identity: '0:0'
     Commutative? Yes
     Cyclic?: No
     Elements:
        Index   Name   Inverse  Order
-          0   'e:e'   'e:e'       1
-          1   'e:a'   'e:a'       2
-          2   'a:e'   'a:e'       2
-          3   'a:a'   'a:a'       2
+          0   '0:0'   '0:0'       0
+          1   '0:1'   '0:1'       0
+          2   '1:0'   '1:0'       0
+          3   '1:1'   '1:1'       0
     Cayley Table (showing names):
-    [['e:e', 'e:a', 'a:e', 'a:a'],
-     ['e:a', 'e:e', 'a:a', 'a:e'],
-     ['a:e', 'a:a', 'e:e', 'e:a'],
-     ['a:a', 'a:e', 'e:a', 'e:e']]
+    [['0:0', '0:1', '1:0', '1:1'],
+     ['0:1', '0:0', '1:1', '1:0'],
+     ['1:0', '1:1', '0:0', '0:1'],
+     ['1:1', '1:0', '0:1', '0:0']]
+
+
+
+
+
+    '<Group:Z2_x_Z2, ID:4495691536>'
+
+
+
+### Compute a Quotient Group
+
+V4 is "divided" by one of its normal subgroups, V4sub.
+
+
+```python
+>>> V4sub = Group('V4sub',
+>>>                'Subgroup of: Klein-4 group',
+>>>                ['e', 'r'],
+>>>                [[0, 1],
+>>>                 [1, 0]])
+>>> 
+>>> quotent_group = V4 / V4sub
+>>> 
+>>> quotent_group.about()
+```
+
+    
+    ** Group **
+    Name: V4/V4sub
+    Instance ID: 4495695376
+    Description: Group V4 modulo subgroup V4sub
+    Order: 2
+    Identity: 'e'
+    Commutative? Yes
+    Cyclic?: Yes
+    Generators: ['h']
+    Elements:
+       Index   Name   Inverse  Order
+          0     'h'     'h'       0
+          1     'e'     'e'       0
+    Cayley Table (showing indices):
+    [[1, 0], [0, 1]]
+
+
+
+
+
+    '<Group:V4/V4sub, ID:4495695376>'
+
+
+
+Representative elements from each coset, below, make up the element list of the quotient group, above
+
+
+```python
+>>> list(V4.left_cosets(V4sub))
+```
+
+
+
+
+    [['h', 'v'], ['e', 'r']]
+
 
 
 ### Find an Isomorphism
@@ -187,7 +365,7 @@ If an isomorphism between two algebras does not exist, then ``False`` is returne
 
 
 
-    {'e': 'e:e', 'h': 'e:a', 'v': 'a:e', 'r': 'a:a'}
+    {'e': '0:0', 'h': '0:1', 'v': '1:0', 'r': '1:1'}
 
 
 
@@ -232,7 +410,7 @@ The method, ``regular_representation``, constructs an isomorphic mapping between
 
 ### Create a Finite Field
 
-The following small, finite field is used to illustrate Abstract Matrices, farther below.
+The following small, [finite field with four elements](https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements) comes from Wikipedia.
 
 
 ```python
@@ -258,19 +436,19 @@ The following small, finite field is used to illustrate Abstract Matrices, farth
     
     ** Field **
     Name: F4
-    Instance ID: 4602473168
+    Instance ID: 4495645904
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: '0'
     Commutative? Yes
     Cyclic?: Yes
-      Generators: ['1+a', 'a']
+    Generators: ['1+a', 'a']
     Elements:
        Index   Name   Inverse  Order
-          0     '0'     '0'       1
-          1     '1'     '1'       2
-          2     'a'     'a'       2
-          3   '1+a'   '1+a'       2
+          0     '0'     '0'       0
+          1     '1'     '1'       0
+          2     'a'     'a'       0
+          3   '1+a'   '1+a'       0
     Cayley Table (showing names):
     [['0', '1', 'a', '1+a'],
      ['1', '0', '1+a', 'a'],
@@ -350,4 +528,85 @@ Abstract Matrices can be constructed over a Ring or Field.  Abstract Matrices ca
      ['0', '1', '0'],
      ['0', '0', '1']]
 
+
+
+### Cayley-Dickson Algebra (CDA)
+
+The following method constructs an abstraction of the complex numbers based on the field, f4, created above.
+
+The CDA constructed from f4 does **not** keep a copy of f4, so conjugates must be stored in a dictionary within the CDA. Note also that the equivalent of "minus one" in f4 is the element '1'.
+
+
+```python
+>>> f4cda = f4.make_cayley_dickson_algebra(version=2)
+
+>>> f4cda.about(max_size=16, show_conjugates=True)
+```
+
+    
+    ** Ring **
+    Name: F4_CDA_1966
+    Instance ID: 4430638928
+    Description: Cayley-Dickson algebra based on F4, where mu = 1, Schafer 1966 version.
+    Order: 16
+    Identity: '0:0'
+    Commutative? Yes
+    Cyclic?: Yes
+    Generators: ['a:1', '0:a', '0:1+a', '1:a', '1:1+a', '1+a:1']
+    Elements:
+       Index   Name   Inverse  Order
+          0   '0:0'   '0:0'       0
+          1   '0:1'   '0:1'       0
+          2   '0:a'   '0:a'       0
+          3 '0:1+a' '0:1+a'       0
+          4   '1:0'   '1:0'       0
+          5   '1:1'   '1:1'       0
+          6   '1:a'   '1:a'       0
+          7 '1:1+a' '1:1+a'       0
+          8   'a:0'   'a:0'       0
+          9   'a:1'   'a:1'       0
+         10   'a:a'   'a:a'       0
+         11 'a:1+a' 'a:1+a'       0
+         12 '1+a:0' '1+a:0'       0
+         13 '1+a:1' '1+a:1'       0
+         14 '1+a:a' '1+a:a'       0
+         15 '1+a:1+a' '1+a:1+a'       0
+    Cayley Table (showing indices):
+    [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+     [1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14],
+     [2, 3, 0, 1, 6, 7, 4, 5, 10, 11, 8, 9, 14, 15, 12, 13],
+     [3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12],
+     [4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11],
+     [5, 4, 7, 6, 1, 0, 3, 2, 13, 12, 15, 14, 9, 8, 11, 10],
+     [6, 7, 4, 5, 2, 3, 0, 1, 14, 15, 12, 13, 10, 11, 8, 9],
+     [7, 6, 5, 4, 3, 2, 1, 0, 15, 14, 13, 12, 11, 10, 9, 8],
+     [8, 9, 10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7],
+     [9, 8, 11, 10, 13, 12, 15, 14, 1, 0, 3, 2, 5, 4, 7, 6],
+     [10, 11, 8, 9, 14, 15, 12, 13, 2, 3, 0, 1, 6, 7, 4, 5],
+     [11, 10, 9, 8, 15, 14, 13, 12, 3, 2, 1, 0, 7, 6, 5, 4],
+     [12, 13, 14, 15, 8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3],
+     [13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2],
+     [14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1],
+     [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+    Mult. Identity: '1:0'
+    Mult. Commutative? Yes
+    Zero Divisors: ['1:1', 'a:a', '1+a:1+a']
+    Multiplicative Cayley Table (showing indices):
+    [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+     [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15],
+     [0, 8, 12, 4, 2, 10, 14, 6, 3, 11, 15, 7, 1, 9, 13, 5],
+     [0, 12, 4, 8, 3, 15, 7, 11, 1, 13, 5, 9, 2, 14, 6, 10],
+     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+     [0, 5, 10, 15, 5, 0, 15, 10, 10, 15, 0, 5, 15, 10, 5, 0],
+     [0, 9, 14, 7, 6, 15, 8, 1, 11, 2, 5, 12, 13, 4, 3, 10],
+     [0, 13, 6, 11, 7, 10, 1, 12, 9, 4, 15, 2, 14, 3, 8, 5],
+     [0, 2, 3, 1, 8, 10, 11, 9, 12, 14, 15, 13, 4, 6, 7, 5],
+     [0, 6, 11, 13, 9, 15, 2, 4, 14, 8, 5, 3, 7, 1, 12, 10],
+     [0, 10, 15, 5, 10, 0, 5, 15, 15, 5, 0, 10, 5, 15, 10, 0],
+     [0, 14, 7, 9, 11, 5, 12, 2, 13, 3, 10, 4, 6, 8, 1, 15],
+     [0, 3, 1, 2, 12, 15, 13, 14, 4, 7, 5, 6, 8, 11, 9, 10],
+     [0, 7, 9, 14, 13, 10, 4, 3, 6, 1, 15, 8, 11, 12, 2, 5],
+     [0, 11, 13, 6, 14, 5, 3, 8, 7, 12, 10, 1, 9, 2, 4, 15],
+     [0, 15, 5, 10, 15, 0, 10, 5, 5, 10, 0, 15, 10, 5, 15, 0]]
+    Conjugate Mapping: {'0:0': '0:0', '0:1': '0:1', '0:a': '0:a', '0:1+a': '0:1+a', '1:0': '1:0', '1:1': '1:1', '1:a': '1:a', '1:1+a': '1:1+a', 'a:0': 'a:0', 'a:1': 'a:1', 'a:a': 'a:a', 'a:1+a': 'a:1+a', '1+a:0': '1+a:0', '1+a:1': '1+a:1', '1+a:a': '1+a:a', '1+a:1+a': '1+a:1+a'}
 

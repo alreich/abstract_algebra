@@ -870,6 +870,13 @@ class Group(Monoid):
         else:
             self.__inverses = self.__create_inverse_lookup_dict()
 
+    def __truediv__(self, normal_subgroup):
+        """Return the quotient group based on a given normal subgroup.
+
+        Each element of the quotient group will be a representative element from
+        one of the subgroup's cosets."""
+        return self.quotient_group(normal_subgroup)
+
     def __create_inverse_lookup_dict(self):
         """Returns a dictionary that maps each of the algebra's elements to its inverse element."""
         row_indices, col_indices = np.where(self.table.table == self.table.identity())
@@ -943,6 +950,39 @@ class Group(Monoid):
                                                                                  include_inverses=True))
         # Return a list of the first subgroups from each sublist of proper subgroups
         return [partition[0] for partition in partitions]
+
+    def quotient_group(self, subgroup):
+        """Given a normal subgroup, return the quotient group of this group"""
+
+        def index_of_coset(elem, cosets):
+            """Given an element of an algebra and a list of cosets, find the position of the coset
+            that contains the element in the list of cosets."""
+            index = None
+            for coset in cosets:
+                if elem in coset:
+                    index = cosets.index(coset)
+            return index
+
+        if self.is_normal(subgroup):
+            cosets = list(self.left_cosets(subgroup))
+        else:
+            raise ValueError(f"{subgroup.name} is not a normal subgroup of {self.name}")
+
+        # Make a list consisting of one representative element from each coset
+        elems = [x[0] for x in cosets]
+        n = len(elems)
+        table = np.zeros((n, n))
+        for b in elems:
+            b_index = elems.index(b)
+            for a in elems:
+                a_index = elems.index(a)
+                axb = self.op(a, b)
+                axb_index = index_of_coset(axb, cosets)
+                table[a_index][b_index] = axb_index
+
+        name = f"{self.name}/{subgroup.name}"
+        desc = f"Group {self.name} modulo subgroup {subgroup.name}"
+        return make_finite_algebra(name, desc, elems, table)
 
     # This 'about' method differs from the one in SingleElementSetAlgebra in that it prints out
     # more detailed information about elements.

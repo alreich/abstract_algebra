@@ -1,5 +1,5 @@
 numpy~=1.23.5
 scipy~=1.11.3
 
-docutils~=0.17.1
 setuptools>=70.0.0
+sympy~=1.14.0

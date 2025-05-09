@@ -7,30 +7,31 @@
 
 # These are fairly standard functions that are not in Python's standard math library.
 #
-# Some of the functionality here may be available in other large math-related packages
+# Some functionality here may be available in other large math-related packages
 # like, NumPy, SymPy, and SciPy, but are here to reduce the dependency on such large
 # packages for just one or two functions.
 #
-# NOTE: isprime, totient, & divisors are available in sympy.ntheory
+# NOTE: isprime, totient, and divisors are available in sympy.ntheory
 
 import math
+import sympy.ntheory as ntheory
 
 
-def isprime(n):
-    """Returns True if n is a positive, prime integer; otherwise, False is returned.
-    The same function exists in SymPy."""
-    if isinstance(n, int):
-        if n == 2:
-            return True
-        if n % 2 == 0 or n <= 1:
-            return False
-        root_n = int(math.sqrt(n)) + 1
-        for val in range(3, root_n, 2):
-            if n % val == 0:
-                return False
-        return True
-    else:
-        raise False
+# def isprime(n):
+#     """Returns True if n is a positive, prime integer; otherwise, False is returned.
+#     The same function exists in SymPy."""
+#     if isinstance(n, int):
+#         if n == 2:
+#             return True
+#         if n % 2 == 0 or n <= 1:
+#             return False
+#         root_n = int(math.sqrt(n)) + 1
+#         for val in range(3, root_n, 2):
+#             if n % val == 0:
+#                 return False
+#         return True
+#     else:
+#         raise False
 
 
 def is_relatively_prime(n, m):
@@ -52,31 +53,45 @@ def totient(n):
     return len(relative_primes(n))
 
 
-def divisors(n, non_trivial=False):
-    """Return the set of divisors of n.  Setting non_trivial=True, returns all
-    divisors except for 1 & n. The same function exists in SymPy."""
-    result = set()
-    for i in range(1, int(math.sqrt(n)) + 1):
-        quot, rem = divmod(n, i)
-        if rem == 0:
-            result.update({i, quot})
-    res = sorted(list(result))
+# def divisors(n, non_trivial=False):
+#     """Return the set of divisors of n.  Setting non_trivial=True, returns all
+#     divisors except for 1 & n. The same function exists in SymPy."""
+#     result = set()
+#     for i in range(1, int(math.sqrt(n)) + 1):
+#         quot, rem = divmod(n, i)
+#         if rem == 0:
+#             result.update({i, quot})
+#     res = sorted(list(result))
+#     if non_trivial:
+#         return res[1:-1]
+#     else:
+#         return res
+
+
+def divisors(n, non_trivial=True):
+    """Returns a list divisors of n. If non_trivial is True, don't include 1 and n,
+    which is slightly different from sympy's divisors function."""
+    result = ntheory.divisors(n, proper=non_trivial)
     if non_trivial:
-        return res[1:-1]
-    else:
-        return res
+        result.remove(1)
+    return result
 
 
-def divides(m, n):
-    """Returns True if m divides n."""
-    if m == 0:
-        return False
-    elif n == 0:
-        return True
-    elif (abs(m) <= abs(n)) and (n % m == 0):
-        return True
-    else:
-        return False
+# def divides(m, n):
+#     """Returns True if m divides n."""
+#     if m == 0:
+#         return False
+#     elif n == 0:
+#         return True
+#     elif (abs(m) <= abs(n)) and (n % m == 0):
+#         return True
+#     else:
+#         return False
+
+
+# def divides(m, n):
+#     """Returns True if m divides n."""
+#     return n % m == 0
 
 
 # def xgcd(a, b):

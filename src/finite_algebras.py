@@ -20,7 +20,8 @@ import os
 import pprint as pp
 import re
 
-from my_math import divisors, isprime, relative_primes
+from sympy.ntheory import isprime
+from my_math import divisors, relative_primes
 from cayley_table import CayleyTable
 from permutations import Perm
 

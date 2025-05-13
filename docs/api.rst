@@ -195,8 +195,21 @@ Abstract Matrix
     :members:
     :undoc-members:
 
-.. autofunction:: abstract_matrix.array_determinant
-.. autofunction:: abstract_matrix.array_cofactor
+.. autofunction:: abstract_matrix.zeros
+.. autofunction:: abstract_matrix.identity
+.. autofunction:: abstract_matrix.random
+.. autofunction:: abstract_matrix.copy
+.. autofunction:: abstract_matrix.transpose
+.. autofunction:: abstract_matrix.scalar_mult
+.. autofunction:: abstract_matrix.minor
+.. autofunction:: abstract_matrix.determinant
+.. autofunction:: abstract_matrix.cofactor_matrix
+.. autofunction:: abstract_matrix.array
+.. autofunction:: abstract_matrix.shape
+.. autofunction:: abstract_matrix.nrows
+.. autofunction:: abstract_matrix.ncols
+.. autofunction:: abstract_matrix.algebra
+.. autofunction:: abstract_matrix.ring
 
 Examples
 --------

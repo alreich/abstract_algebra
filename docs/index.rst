@@ -14,6 +14,7 @@ User Guide
     30_vectors
     40_reg_rep
     50_matrices
+    55_cayley_dickson
     90_resources
 
 API Reference

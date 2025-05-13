@@ -862,10 +862,14 @@ Regarding the Theorem
     Ring: R21_CDA_1966
     Ring: R22_CDA_1966
     Field: F23_CDA_1966 <-- Gaussian prime: 23
+    Ring: R24_CDA_1966
+    
+    CPU times: user 18min 30s, sys: 1.8 s, total: 18min 32s
+    Wall time: 18min 33s
 
 
 Additional Information
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 - `Python code for octonion and sedenion
   multiplication <https://www.johndcook.com/blog/2018/07/09/octonioin-multiplication/>`__

@@ -195,21 +195,7 @@ Abstract Matrix
     :members:
     :undoc-members:
 
-.. autofunction:: abstract_matrix.zeros
-.. autofunction:: abstract_matrix.identity
-.. autofunction:: abstract_matrix.random
-.. autofunction:: abstract_matrix.copy
-.. autofunction:: abstract_matrix.transpose
-.. autofunction:: abstract_matrix.scalar_mult
-.. autofunction:: abstract_matrix.minor
-.. autofunction:: abstract_matrix.determinant
-.. autofunction:: abstract_matrix.cofactor_matrix
-.. autofunction:: abstract_matrix.array
-.. autofunction:: abstract_matrix.shape
-.. autofunction:: abstract_matrix.nrows
-.. autofunction:: abstract_matrix.ncols
-.. autofunction:: abstract_matrix.algebra
-.. autofunction:: abstract_matrix.ring
+
 
 Examples
 --------
@@ -221,13 +207,9 @@ Examples
 Misc Utilities
 --------------
 
-.. autofunction:: finite_algebras.is_prime
-.. autofunction:: finite_algebras.is_relatively_prime
 .. autofunction:: finite_algebras.relative_primes
-.. autofunction:: finite_algebras.totient
 .. autofunction:: finite_algebras.divisors
 .. autofunction:: finite_algebras.delete_row_col
-.. autofunction:: finite_algebras.get_name_desc_elements_table
 .. autofunction:: finite_algebras.make_cayley_table
 .. autofunction:: finite_algebras.index_table_from_name_table
 .. autofunction:: finite_algebras.generate_all_group_tables

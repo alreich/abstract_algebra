@@ -2407,7 +2407,7 @@ def check_associativity(ring, group, sv_mult, verbose=False):
 # =====================
 
 def make_finite_algebra(*args):
-    """The recommended function to use to create any finite algebra.
+    """This is the recommended function to use to create any finite algebra.
     It analyzes the input and returns the appropriate finite algebra:
     Group, Ring, Field, VectorSpace, Module, Monoid, Semigroup, or Magma.
 

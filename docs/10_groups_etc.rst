@@ -15,16 +15,16 @@ algebras that have only one set of elements and one binary operation,
 such as Groups, Monoids, Semigroups, and Magmas, the internal
 representation is as shown below.
 
--  **name**: (``str``) A short name for the algebra;
--  **description**: (``str``) Any additional, useful information about
-   the algebra;
--  **elements**: (``list`` of ``str``) Names of the algebras’s elements.
--  **table**: (``list`` of ``list`` of ``int``) The algebra’s
-   multiplication table, where each list in the list represents a row of
-   the table, and each integer represents the position of an element in
-   ‘element_names’. For input and ouput, element names (``str``) may be
-   used in the table, rather than integers, but integers are still used
-   internally.
+- **name**: (``str``) A short name for the algebra;
+- **description**: (``str``) Any additional, useful information about
+  the algebra;
+- **elements**: (``list`` of ``str``) Names of the algebras’s elements.
+- **table**: (``list`` of ``list`` of ``int``) The algebra’s
+  multiplication table, where each list in the list represents a row of
+  the table, and each integer represents the position of an element in
+  ‘element_names’. For input and ouput, element names (``str``) may be
+  used in the table, rather than integers, but integers are still used
+  internally.
 
 The following section describes the required table in more detail.
 
@@ -141,7 +141,7 @@ unique ID of the algebra instance:
 
 .. parsed-literal::
 
-    <Group:Z3, ID:4473245392>
+    <Group:Z3, ID:4960686480>
 
 
 The ``about`` method prints information about an algebra. Set
@@ -158,7 +158,7 @@ element names (``str``) rather than element positions (``int``).
     
     ** Group **
     Name: Z3
-    Instance ID: 4473245392
+    Instance ID: 4960686480
     Description: Cyclic group of order 3
     Order: 3
     Identity: 'e'
@@ -178,7 +178,7 @@ element names (``str``) rather than element positions (``int``).
 
 .. parsed-literal::
 
-    '<Group:Z3, ID:4473245392>'
+    '<Group:Z3, ID:4960686480>'
 
 
 
@@ -456,18 +456,18 @@ and :math:`\circ` is a binary operation, :math:`\circ: S \times S \to S`
 
 **Example: Rock-Paper-Scissors**
 
--  paper covers rock
--  rock crushes scissors
--  scissors cuts paper
+- paper covers rock
+- rock crushes scissors
+- scissors cuts paper
 
 Expressing this in algebraic form (see
 https://en.wikipedia.org/wiki/Commutative_magma), where p *beats* r, and
 r *beats* s, and s *beats* p, we have:
 
--  :math:`\langle S, \circ \rangle`, where :math:`S = \{r,p,s\}`
--  For all :math:`x, y \in S`, if :math:`x` *beats* :math:`y`, then
-   :math:`x \circ y = y \circ x = x`
--  Also, for all :math:`x \in S`, :math:`x \circ x = x`
+- :math:`\langle S, \circ \rangle`, where :math:`S = \{r,p,s\}`
+- For all :math:`x, y \in S`, if :math:`x` *beats* :math:`y`, then
+  :math:`x \circ y = y \circ x = x`
+- Also, for all :math:`x \in S`, :math:`x \circ x = x`
 
 From the rule in the second bullet, above, this algebra is obviously
 commutative.
@@ -489,7 +489,7 @@ commutative.
     
     ** Magma **
     Name: RPS
-    Instance ID: 4480701776
+    Instance ID: 4964998800
     Description: Rock, Paper, Scissors Magma
     Order: 3
     Identity: None
@@ -573,7 +573,7 @@ Magma with Identity Element
     
     ** Magma **
     Name: Whatever
-    Instance ID: 4486867984
+    Instance ID: 4965040464
     Description: Magma with Identity
     Order: 3
     Identity: e
@@ -621,7 +621,7 @@ B. Vasantha Kandasamy
     
     ** Semigroup **
     Name: Example 1.4.1
-    Instance ID: 4486935760
+    Instance ID: 4965181392
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Identity: None
@@ -655,8 +655,7 @@ that, :math:`a \circ b = d`:
 
 
 
-This Semigroup is regular and every element is a weak inverse of every
-other element.
+This Semigroup is regular and every element has three weak inverses.
 
 .. code:: ipython3
 
@@ -749,13 +748,13 @@ the collections of 3 generators.
 
 .. parsed-literal::
 
-    sg.closure('a', 'b', 'c') = ['d', 'a', 'b', 'e', 'f', 'c']
-    sg.closure('a', 'b', 'f') = ['d', 'a', 'b', 'e', 'f', 'c']
-    sg.closure('a', 'e', 'f') = ['d', 'a', 'b', 'e', 'f', 'c']
-    sg.closure('b', 'c', 'd') = ['d', 'b', 'a', 'e', 'f', 'c']
-    sg.closure('b', 'd', 'f') = ['d', 'b', 'a', 'e', 'f', 'c']
-    sg.closure('c', 'd', 'e') = ['d', 'a', 'b', 'e', 'f', 'c']
-    sg.closure('d', 'e', 'f') = ['d', 'a', 'b', 'e', 'f', 'c']
+    sg.closure('a', 'b', 'c') = ['e', 'd', 'a', 'f', 'b', 'c']
+    sg.closure('a', 'b', 'f') = ['e', 'd', 'a', 'f', 'b', 'c']
+    sg.closure('a', 'e', 'f') = ['e', 'd', 'a', 'f', 'b', 'c']
+    sg.closure('b', 'c', 'd') = ['e', 'd', 'a', 'f', 'b', 'c']
+    sg.closure('b', 'd', 'f') = ['e', 'd', 'a', 'f', 'b', 'c']
+    sg.closure('c', 'd', 'e') = ['e', 'd', 'a', 'f', 'b', 'c']
+    sg.closure('d', 'e', 'f') = ['e', 'd', 'a', 'f', 'b', 'c']
 
 
 Monoid
@@ -782,7 +781,7 @@ such that, for all :math:`a \in S, a \circ e = e \circ a = a`
     
     ** Monoid **
     Name: M4
-    Instance ID: 4486923152
+    Instance ID: 4959488144
     Description: Example of a commutative monoid
     Order: 4
     Identity: b
@@ -840,9 +839,9 @@ Instantiate Algebra from JSON File
 
 First setup some path variables:
 
--  one that points to the abstract_algebra directory
--  and the other points to a subdirectory containing algebra definitions
-   in JSON format
+- one that points to the abstract_algebra directory
+- and the other points to a subdirectory containing algebra definitions
+  in JSON format
 
 Also, the code here assumes that there is an environment variable,
 ``PYPROJ``, that points to the parent directory of the abstract_algebra
@@ -1077,20 +1076,20 @@ desired size:
 
 **Groups**
 
--  ``generate_cyclic_group(n)``: :math:`Z_n`, where
-   :math:`a \circ b \equiv a+b` mod :math:`n`, where
-   :math:`a,b \in \{0,1,...,n-1\}`; order is :math:`n`
--  ``generate_symmetric_group(n)``: :math:`S_n`, where :math:`\circ` is
-   composition of permutations of :math:`(0, 1, ..., n-1)`; order is
-   :math:`n!`
--  ``generate_powerset_group(n)``:
-   :math:`A \circ B \equiv A \bigtriangleup B`, where
-   :math:`A,B \in P(\{0, 1, ..., n-1\})`; order is :math:`2^n`
+- ``generate_cyclic_group(n)``: :math:`Z_n`, where
+  :math:`a \circ b \equiv a+b` mod :math:`n`, where
+  :math:`a,b \in \{0,1,...,n-1\}`; order is :math:`n`
+- ``generate_symmetric_group(n)``: :math:`S_n`, where :math:`\circ` is
+  composition of permutations of :math:`(0, 1, ..., n-1)`; order is
+  :math:`n!`
+- ``generate_powerset_group(n)``:
+  :math:`A \circ B \equiv A \bigtriangleup B`, where
+  :math:`A,B \in P(\{0, 1, ..., n-1\})`; order is :math:`2^n`
 
 **Monoid**
 
--  ``generate_commutative_monoid(n)``: :math:`a \circ b \equiv ab` mod
-   :math:`n`, where :math:`a,b \in \{0,1,...,n-1\}`; order is :math:`n`
+- ``generate_commutative_monoid(n)``: :math:`a \circ b \equiv ab` mod
+  :math:`n`, where :math:`a,b \in \{0,1,...,n-1\}`; order is :math:`n`
 
 Autogenerated Cyclic Group
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1113,7 +1112,7 @@ Products and Isomorphisms.
     
     ** Group **
     Name: Z2
-    Instance ID: 4486988240
+    Instance ID: 4964998864
     Description: Autogenerated cyclic Group of order 2
     Order: 2
     Identity: '0'
@@ -1132,7 +1131,7 @@ Products and Isomorphisms.
 
 .. parsed-literal::
 
-    '<Group:Z2, ID:4486988240>'
+    '<Group:Z2, ID:4964998864>'
 
 
 
@@ -1159,7 +1158,7 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
     
     ** Group **
     Name: S3
-    Instance ID: 4486999888
+    Instance ID: 4965254480
     Description: Autogenerated symmetric Group on 3 elements
     Order: 6
     Identity: '(1, 2, 3)'
@@ -1186,7 +1185,7 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
 
 .. parsed-literal::
 
-    '<Group:S3, ID:4486999888>'
+    '<Group:S3, ID:4965254480>'
 
 
 
@@ -1216,7 +1215,7 @@ values of n.
     
     ** Group **
     Name: PS3
-    Instance ID: 4486997456
+    Instance ID: 4965256400
     Description: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
     Order: 8
     Identity: '{}'
@@ -1247,7 +1246,7 @@ values of n.
 
 .. parsed-literal::
 
-    '<Group:PS3, ID:4486997456>'
+    '<Group:PS3, ID:4965256400>'
 
 
 
@@ -1271,7 +1270,7 @@ multiplication modulo the desired order.
     
     ** Monoid **
     Name: M7
-    Instance ID: 4486942480
+    Instance ID: 4965259152
     Description: Autogenerated commutative Monoid of order 7
     Order: 7
     Identity: a1
@@ -1311,7 +1310,7 @@ Direct Product of Multiple Groups
     
     ** Group **
     Name: Z2_x_Z2_x_Z2
-    Instance ID: 4487038032
+    Instance ID: 4965262864
     Description: Direct product of Z2_x_Z2 & Z2
     Order: 8
     Identity: '0:0:0'
@@ -1342,7 +1341,7 @@ Direct Product of Multiple Groups
 
 .. parsed-literal::
 
-    '<Group:Z2_x_Z2_x_Z2, ID:4487038032>'
+    '<Group:Z2_x_Z2_x_Z2, ID:4965262864>'
 
 
 
@@ -1380,7 +1379,7 @@ Direct Product of Monoids
     
     ** Monoid **
     Name: M3_x_M3
-    Instance ID: 4436231056
+    Instance ID: 4965263888
     Description: Direct product of M3 & M3
     Order: 9
     Identity: a1:a1
@@ -1453,9 +1452,9 @@ Scissors.
 
 **Water, Fire, Stick:**
 
--  Water quenches Fire
--  Fire burns Stick
--  Stick floats on Water
+- Water quenches Fire
+- Fire burns Stick
+- Stick floats on Water
 
 .. code:: ipython3
 
@@ -1526,13 +1525,13 @@ Example: Proper Subgroups
     
     ** Group **
     Name: Z8
-    Instance ID: 4487048400
+    Instance ID: 4965073040
     Description: Autogenerated cyclic Group of order 8
     Order: 8
     Identity: '0'
     Commutative? Yes
     Cyclic?: Yes
-    Generators: ['3', '7', '1', '5']
+    Generators: ['7', '3', '1', '5']
     Elements:
        Index   Name   Inverse  Order
           0     '0'     '0'       0
@@ -1558,7 +1557,7 @@ Example: Proper Subgroups
 
 .. parsed-literal::
 
-    '<Group:Z8, ID:4487048400>'
+    '<Group:Z8, ID:4965073040>'
 
 
 
@@ -1575,7 +1574,7 @@ Example: Proper Subgroups
     
     ** Group **
     Name: Z8_subalgebra_0
-    Instance ID: 4480677584
+    Instance ID: 4965076304
     Description: Subalgebra of: Autogenerated cyclic Group of order 8
     Order: 2
     Identity: '0'
@@ -1591,13 +1590,13 @@ Example: Proper Subgroups
     
     ** Group **
     Name: Z8_subalgebra_1
-    Instance ID: 4486950736
+    Instance ID: 4965076432
     Description: Subalgebra of: Autogenerated cyclic Group of order 8
     Order: 4
     Identity: '0'
     Commutative? Yes
     Cyclic?: Yes
-    Generators: ['2', '6']
+    Generators: ['6', '2']
     Elements:
        Index   Name   Inverse  Order
           0     '0'     '0'       0
@@ -1656,27 +1655,27 @@ was created earlier.
 .. parsed-literal::
 
     
-    Subalgebras of <Group:PS3, ID:4486997456>
+    Subalgebras of <Group:PS3, ID:4965256400>
       There are 2 unique proper subalgebras, up to isomorphism, out of 14 total subalgebras.
       as shown by the partitions below:
     
     7 Isomorphic Commutative Normal Groups of order 2 with identity '{}':
           Group: PS3_subalgebra_0: ['{}', '{0, 2}']
-          Group: PS3_subalgebra_1: ['{}', '{2}']
-          Group: PS3_subalgebra_5: ['{}', '{1}']
-          Group: PS3_subalgebra_8: ['{}', '{0, 1, 2}']
-          Group: PS3_subalgebra_11: ['{}', '{1, 2}']
-          Group: PS3_subalgebra_12: ['{}', '{0}']
-          Group: PS3_subalgebra_13: ['{}', '{0, 1}']
+          Group: PS3_subalgebra_3: ['{}', '{0}']
+          Group: PS3_subalgebra_5: ['{}', '{1, 2}']
+          Group: PS3_subalgebra_7: ['{}', '{0, 1, 2}']
+          Group: PS3_subalgebra_9: ['{}', '{1}']
+          Group: PS3_subalgebra_10: ['{}', '{2}']
+          Group: PS3_subalgebra_12: ['{}', '{0, 1}']
     
     7 Isomorphic Commutative Normal Groups of order 4 with identity '{}':
-          Group: PS3_subalgebra_2: ['{}', '{0}', '{1}', '{0, 1}']
-          Group: PS3_subalgebra_3: ['{}', '{1}', '{2}', '{1, 2}']
-          Group: PS3_subalgebra_4: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
+          Group: PS3_subalgebra_1: ['{}', '{1}', '{0, 2}', '{0, 1, 2}']
+          Group: PS3_subalgebra_2: ['{}', '{0}', '{2}', '{0, 2}']
+          Group: PS3_subalgebra_4: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
           Group: PS3_subalgebra_6: ['{}', '{2}', '{0, 1}', '{0, 1, 2}']
-          Group: PS3_subalgebra_7: ['{}', '{0, 1}', '{0, 2}', '{1, 2}']
-          Group: PS3_subalgebra_9: ['{}', '{0}', '{2}', '{0, 2}']
-          Group: PS3_subalgebra_10: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
+          Group: PS3_subalgebra_8: ['{}', '{1}', '{2}', '{1, 2}']
+          Group: PS3_subalgebra_11: ['{}', '{0}', '{1}', '{0, 1}']
+          Group: PS3_subalgebra_13: ['{}', '{0}', '{1, 2}', '{0, 1, 2}']
     
 
 
@@ -1695,7 +1694,7 @@ Recall the Semigroup example from above:
     
     ** Semigroup **
     Name: Example 1.4.1
-    Instance ID: 4486935760
+    Instance ID: 4965181392
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Identity: None
@@ -1716,14 +1715,14 @@ Recall the Semigroup example from above:
 As we will see, below, the Semigroup, sg, contains 4 unique subalgebras,
 up to isomorphism:
 
--  3 Semigroups and
--  1 Group
+- 3 Semigroups and
+- 1 Group
 
 However, instead of running the three commands:
 
--  sg_proper_subs = sg.proper_subalgebras()
--  partitions = partition_into_isomorphic_lists(sg_proper_subs)
--  about_isomorphic_partitions(sg, partitions)
+- sg_proper_subs = sg.proper_subalgebras()
+- partitions = partition_into_isomorphic_lists(sg_proper_subs)
+- about_isomorphic_partitions(sg, partitions)
 
 as we did above, we’ll use a single function, ``about_subalgebras``,
 that wraps up those three commands into one, for convenience. It also
@@ -1742,27 +1741,27 @@ example:
 .. parsed-literal::
 
     
-    Subalgebras of <Semigroup:Example 1.4.1, ID:4486935760>
+    Subalgebras of <Semigroup:Example 1.4.1, ID:4965181392>
       There are 4 unique proper subalgebras, up to isomorphism, out of 10 total subalgebras.
       as shown by the partitions below:
     
-    3 Isomorphic Semigroups of order 4:
-          Semigroup: Example 1.4.1_subalgebra_0: ['a', 'c', 'd', 'f']
-          Semigroup: Example 1.4.1_subalgebra_2: ['a', 'b', 'd', 'e']
-          Semigroup: Example 1.4.1_subalgebra_9: ['b', 'c', 'e', 'f']
+    3 Isomorphic Commutative Groups of order 2:
+          Group: Example 1.4.1_subalgebra_0: ['b', 'e'] with identity 'e'
+          Group: Example 1.4.1_subalgebra_3: ['a', 'd'] with identity 'a'
+          Group: Example 1.4.1_subalgebra_5: ['c', 'f'] with identity 'c'
     
-    1 Semigroup of order 3:
-          Semigroup: Example 1.4.1_subalgebra_1: ['a', 'c', 'e']
+    3 Isomorphic Semigroups of order 4:
+          Semigroup: Example 1.4.1_subalgebra_1: ['a', 'c', 'd', 'f']
+          Semigroup: Example 1.4.1_subalgebra_7: ['a', 'b', 'd', 'e']
+          Semigroup: Example 1.4.1_subalgebra_8: ['b', 'c', 'e', 'f']
     
     3 Isomorphic Semigroups of order 2:
-          Semigroup: Example 1.4.1_subalgebra_3: ['a', 'e']
-          Semigroup: Example 1.4.1_subalgebra_7: ['c', 'e']
-          Semigroup: Example 1.4.1_subalgebra_8: ['a', 'c']
+          Semigroup: Example 1.4.1_subalgebra_2: ['a', 'e']
+          Semigroup: Example 1.4.1_subalgebra_4: ['c', 'e']
+          Semigroup: Example 1.4.1_subalgebra_6: ['a', 'c']
     
-    3 Isomorphic Commutative Groups of order 2:
-          Group: Example 1.4.1_subalgebra_4: ['b', 'e'] with identity 'e'
-          Group: Example 1.4.1_subalgebra_5: ['a', 'd'] with identity 'a'
-          Group: Example 1.4.1_subalgebra_6: ['c', 'f'] with identity 'c'
+    1 Semigroup of order 3:
+          Semigroup: Example 1.4.1_subalgebra_9: ['a', 'c', 'e']
     
 
 
@@ -1822,7 +1821,7 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     
     ** Group **
     Name: Pinter29
-    Instance ID: 4487135312
+    Instance ID: 4965325840
     Description: Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
     Order: 6
     Identity: 'I'
@@ -1849,6 +1848,6 @@ default list, see the file, ‘examples.json’, in the algebras directory.
 
 .. parsed-literal::
 
-    '<Group:Pinter29, ID:4487135312>'
+    '<Group:Pinter29, ID:4965325840>'
 
 

@@ -24,6 +24,7 @@ from sympy.ntheory import isprime
 from my_math import divisors, relative_primes
 from cayley_table import CayleyTable
 from permutations import Perm
+from abstract_matrix import AbstractMatrix
 
 
 class FiniteOperator:
@@ -386,7 +387,8 @@ class Magma(SingleElementSetAlgebra):
     def isomorphic(self, other):
         """If there is a mapping from elements of this algebra to the other algebra's elements,
         return it; otherwise return False."""
-        if self.order == other.order:
+        if (self.__class__.__name__ == other.__class__.__name__) and (self.order == other.order):
+        # if self.order == other.order:
             maps = self.__element_mappings(other)
             for mp in maps:
                 if self.__isomorphic_mapping(other, mp):
@@ -1974,6 +1976,58 @@ def generate_algebra_mod_n(n, elem_name='', name=None, description=None):
     add_table = [[(a + b) % n for b in range(n)] for a in range(n)]
     mult_table = [[(a * b) % n for b in range(n)] for a in range(n)]
     return make_finite_algebra(nm, desc, elements, add_table, mult_table)
+
+
+def generate_nxn_matrix_algebra(ring, element_name_prefix='a'):
+    """Generate a ring (or field) based on all possible 2x2 abstract matrices using
+    elements from the input ring. For now, n is hardcoded to 2.
+    Three items are returned:
+    (1) the generated ring,
+    (2) a dictionary of element names (keys) to matrices (values), and
+    (3) a reverse dictionary of matrices (as tuples of tuples) to element names.
+    """
+    n = 2  # Square matrix dimension. Hardcoded to 2 for now.
+
+    # Create all possible matrices, and give them names.
+    # Then create a dictionary that maps each name name (key) to its matrix (value).
+    # Also, create a reverse dictionary of matrices (as tuples) mapped to names.
+    count = 0
+    elem_dict = dict()
+    rev_dict = dict()
+    elements = ring.elements
+    for e00 in elements:  # TODO: Replace these for-loops so that n can be >= 2
+        for e01 in elements:
+            for e10 in elements:
+                for e11 in elements:
+                    mat = AbstractMatrix([[e00, e01], [e10, e11]], ring)
+                    elem_name = element_name_prefix + str(count)
+                    elem_dict[elem_name] = mat
+                    rev_dict[mat.to_tuple()] = elem_name
+                    count += 1
+
+    # Create the Cayley table for addition of the matrix elements
+    m = len(elem_dict)
+    add_table = np.empty((m, m), AbstractMatrix)
+    for row, elemr in enumerate(elem_dict.keys()):
+        for col, elemc in enumerate(elem_dict.keys()):
+            result = elem_dict[elemr] + elem_dict[elemc]
+            name = rev_dict[result.to_tuple()]
+            add_table[row][col] = name
+
+    # Create the Cayley table for multiplication of the matrix elements
+    mul_table = np.empty((m, m), AbstractMatrix)
+    for row, elemr in enumerate(elem_dict.keys()):
+        for col, elemc in enumerate(elem_dict.keys()):
+            result = elem_dict[elemr] * elem_dict[elemc]
+            name = rev_dict[result.to_tuple()]
+            mul_table[row][col] = name
+
+    name = f"{ring.name}_{n}x{n}"
+    description = f"Algebra of {n}x{n} abstract matrices based on {ring.name}"
+    elements = list(elem_dict.keys())
+    algebra = make_finite_algebra(name, description, elements, add_table, mul_table)
+
+    return algebra, elem_dict, rev_dict
 
 
 # ==================================================================================

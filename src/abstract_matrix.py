@@ -255,3 +255,9 @@ class AbstractMatrix:
         cof = self.cofactor_matrix()
         adj = cof.transpose()
         return adj.scalar_mult(self.ring.inv(det))
+
+    def to_tuple(self):
+        """Return the matrix's array as a tuple of tuples.
+        This is useful for making the array immutable, so that it can be used as
+        a dictionary key."""
+        return tuple([tuple(row) for row in self.array.tolist()])

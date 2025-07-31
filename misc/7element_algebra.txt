@@ -1,5 +1,12 @@
 algebra
 
+--------------------------------------
+
+Seven-dimensional cross product
+https://en.wikipedia.org/wiki/Seven-dimensional_cross_product
+
+Here, e1...e7 are orthonormal basis vectors
+
 ×	e1	e2	e3	e4	e5	e6	e7
 e1	0	e3	−e2	e5	−e4	−e7	e6
 e2	−e3	0	e1	e6	e7	−e4	−e5
@@ -17,3 +24,41 @@ e7	−e6	e5	e4	−e3	−e2	e1	0
  [ 'e4', '−e7',  'e6', '−e1',   '0', '−e3',  'e2'],
  [ 'e7',  'e4', '−e5', '−e2',  'e3',   '0', '−e1'],
  ['−e6',  'e5',  'e4', '−e3', '−e2',  'e1',   '0']]
+
+
+--------------------------------------
+
+Table 1. Octonion Multiplication Table
+https://webhomes.maths.ed.ac.uk/~v1ranick/papers/baezocto.pdf
+
+Here, {1, e1, ..., e7} are the basis elements of the octonions
+
+   e1 e2 e3  e4 e5  e6  e7
+e1 −1 e4 e7 −e2 e6 −e5 −e3
+e2 −e4 −1 e5 e1 −e3 e7 −e6
+e3 −e7 −e5 −1 e6 e2 −e4 e1
+e4 e2 −e1 −e6 −1 e7 e3 −e5
+e5 −e6 e3 −e2 −e7 −1 e1 e4
+e6 e5 −e7 e4 −e3 −e1 −1 e2
+e7 e3 e6 −e1 e5 −e4 −e2 −1
+
+[[ '−1',  'e4',  'e7', '−e2',  'e6', '−e5', '−e3'],
+ ['−e4',  '−1',  'e5',  'e1', '−e3',  'e7', '−e6'],
+ ['−e7', '−e5',  '−1',  'e6',  'e2', '−e4',  'e1'],
+ [ 'e2', '−e1', '−e6',  '−1',  'e7',  'e3', '−e5'],
+ ['−e6',  'e3', '−e2', '−e7',  '−1',  'e1',  'e4'],
+ [ 'e5', '−e7',  'e4', '−e3', '−e1',  '−1',  'e2'],
+ [ 'e3',  'e6', '−e1',  'e5', '−e4', '−e2',  '−1']]
+
+Some facts:
+
+e_i * e_i = -1
+
+e_i * e_j = - e_j * e_i
+
+e_i * e_j = e_k  ==>  e_i+1 * e_j+1 = e_k+1
+
+e_i * e_j = e_k  ==>  e_2i * e_2j = e_2k
+
+The facts above together with a single non-trivial product like , e_1 * e_2 = e_4,
+are enough to derive the table above.

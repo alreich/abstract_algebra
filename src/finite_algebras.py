@@ -29,12 +29,12 @@ from abstract_matrix import AbstractMatrix
 
 class FiniteOperator:
     """A callable class that implements a binary operation based on a multiplication
-    table (i.e., Cayley table).  Although it's intended use is as the binary operation
+    table (i.e., Cayley table).  Although intended for use as the binary operation
     of a finite algebra (e.g., Group operation), the implementation here can be called
     with zero, one, two, or more arguments (similar to how arithmetic operators work in
     Lisp).
 
-    If no arguments are provided it will return the identity element, if it exists;
+    If no arguments are provided, it will return the identity element if it exists;
     otherwise it will return None.  e.g., op() ==> e | None
 
     If only one argument is provided, it will check whether the argument is a valid
@@ -45,7 +45,7 @@ class FiniteOperator:
     e.g., op(a, b) ==> ab
 
     If more than two arguments are provided, it will return their product by associating
-    from left-to-right. e.g., op(a, b, c, d) = (((ab)c)d)  The order of association is
+    left-to-right. e.g., op(a, b, c, d) = (((ab)c)d). The order of association is
     only important for a Magma, because it is the only non-associative algebraic structure
     supported here.
     """
@@ -191,7 +191,7 @@ class SingleElementSetAlgebra(FiniteAlgebra):
 
     @property
     def identity(self):
-        """Returns the algebra's identity element, if it exists; otherwise, it returns None."""
+        """Returns the algebra's identity element if it exists; otherwise, it returns None."""
         return self.__identity
 
     def has_identity(self):
@@ -268,7 +268,7 @@ class SingleElementSetAlgebra(FiniteAlgebra):
 class Magma(SingleElementSetAlgebra):
     """A Magma is a finite algebra with a binary operation that returns a unique value, in the algebra,
     for all pairs in the cross-product of the algebra's set of elements with itself.  With a binary
-    operation we can compute the direct product of two or more algebras.  Also, we can check to see
+    operation, we can compute the direct product of two or more algebras.  Also, we can check to see
     if two Magmas are isomorphic."""
 
     def __init__(self, name, description, elements, table):
@@ -326,12 +326,12 @@ class Magma(SingleElementSetAlgebra):
         return result
 
     def element_to_power(self, elem, n, left_associative=True):
-        """Return the n_th power of the given element. n must be an integer. If n == 0, and an
+        """Return the n_th power of the given element. n must be an integer. If n == 0 and an
         identity element exists, then it will be returned; otherwise, a ValueError is raised.
         If n < 0, and the algebra has inverses, then the inverse of the element raised to the
         absolute value of the power is returned, e.g., b^-4 = inv(b^4). If n < 0 and the algebra
         does not have inverses, then a ValueError is raised. For non-associative algebras (Magmas),
-        the default is for products to be associated from the left, e.g.,  b^4 = ((b * b) * b) * b.
+        the default is for products to be associated from the left, e.g., b^4 = ((b * b) * b) * b.
         Set left_associative to False, to associate from the right, instead."""
         result = elem
         if elem in self.elements:
@@ -399,7 +399,7 @@ class Magma(SingleElementSetAlgebra):
 
     def closure(self, subset_of_elements, include_inverses):
         """Given a subset (in list form) of the group's elements (name strings),
-        return the smallest possible set of elements, containing the subset,
+        return the smallest possible set of elements containing the subset
         that is closed under the algebra's operation(s).  If include_inverses
         is True and the algebra has inverses, then they will be added to the
         closure."""
@@ -550,7 +550,7 @@ class Magma(SingleElementSetAlgebra):
 
     def is_division_algebra(self, verbose=False):
         """Return True if, for every a & b in the algebra, there is an x and y in the algebra
-        such that ax=b and ya=b.  Otherwise, return False.  If False is returned, and you need to
+        such that ax=b and ya=b. Otherwise, return False.  If False is returned, and you need to
         see why, set verbose to True and look for 'fail' in the output."""
         if verbose:
             print(f"\n{self}\n")
@@ -674,7 +674,7 @@ class Semigroup(Magma):
     def weak_inverses(self):
         """Returns a dictionary of weak inverses, where each key is one of the algebra's
         elements and its value is a list of its weak inverses.  If the algebra is
-        regular, then there will be at least 1 weak inverse for each element, otherwise
+        regular, then there will be at least 1 weak inverse for each element. Otherwise,
         some elements may not have a weak inverse."""
         return {a: [x for x in self if self.op(self.op(a, x), a) == a] for a in self}
 
@@ -684,7 +684,7 @@ class Semigroup(Magma):
 # ==========
 
 class Monoid(Semigroup):
-    """A Monoid is a Semigroup with an identity element.  With an identity element
+    """A Monoid is a Semigroup with an identity element.  With an identity element,
     we can compute element orders.  So, that happens here."""
 
     def __init__(self, name, description, elements, table, check_inputs=True):
@@ -957,13 +957,13 @@ class Group(Monoid):
     def quotient_group(self, subgroup):
         """Given a normal subgroup, return the quotient group of this group"""
 
-        def index_of_coset(elem, cosets):
+        def index_of_coset(elem, _cosets):
             """Given an element of an algebra and a list of cosets, find the position of the coset
             that contains the element in the list of cosets."""
             index = None
-            for coset in cosets:
+            for coset in _cosets:
                 if elem in coset:
-                    index = cosets.index(coset)
+                    index = _cosets.index(coset)
             return index
 
         if self.is_normal(subgroup):
@@ -1625,8 +1625,8 @@ class Ring(Group):
             return elem
 
     def conjugates(self):
-        """Return the dictionary that maps elements to their conjugate values. If it is None, then the element its
-        own conjugate."""
+        """Return the dictionary that maps elements to their conjugate values.
+        If it's None, then the element is its own conjugate."""
         return self.__conjugates
 
     def conj(self, elem):
@@ -1651,9 +1651,9 @@ class Ring(Group):
 
         See the documentation on readthedocs for more information regarding versions.
 
-        Version 2 & 3 require a value for mu. If mu is None (the default), then mu
+        Versions 2 & 3 require a value for mu. If mu is None (the default), then mu
         will be automatically set to be the additive inverse of the Ring's
-        multiplicative identity element (i.e., "-1"), if it exists. If it does not
+        multiplicative identity element (i.e., "-1") if it exists. If it does not
         exist, then an exception will be raised.
         """
         if mu is None:
@@ -1857,7 +1857,7 @@ def tables_to_groups(tables, identity_name="e", elem_name="a"):
 def get_integer_form(elem_list):
     """For an element list like ['e1', 'a1_2', 'a1_1', 'a1_3'],
     return the integer 213, i.e., the 'subscripts' of the elements that
-    follow the identity element.  Used by get_int_forms."""
+    follow the identity element. Used by get_int_forms."""
     return int(''.join(map(lambda x: x.split("_")[1], elem_list[1:])))
 
 
@@ -2169,6 +2169,7 @@ class Element:
         if self.__can_subtract:
             elem = self.__algebra.inv(self.__name)
             return Element(elem, self.__algebra)
+        return None
 
     def __mul__(self, other):
         if self.__can_multiply:

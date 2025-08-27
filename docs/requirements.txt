@@ -36,7 +36,7 @@ pygments==2.19.1
     # via sphinx
 readthedocs-sphinx-search==0.3.2
     # via -r requirements.in
-requests==2.32.3
+requests==2.32.4
     # via sphinx
 roman-numerals-py==3.1.0
     # via sphinx
@@ -67,5 +67,5 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 sympy==1.14.0
     # via -r requirements.in
-urllib3==2.4.0
+urllib3==2.5.0
     # via requests

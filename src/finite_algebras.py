@@ -25,6 +25,7 @@ from my_math import divisors, relative_primes
 from cayley_table import CayleyTable
 from permutations import Perm
 from abstract_matrix import AbstractMatrix
+# from abc import ABC
 
 
 class FiniteOperator:
@@ -51,32 +52,32 @@ class FiniteOperator:
     """
 
     def __init__(self, elements, identity, table):
-        self.__elements = elements
-        self.__identity = identity
-        self.__table = table
+        self._elements = elements
+        self._identity = identity
+        self._table = table
 
     def __call__(self, *args):
-        return self.__op(*args)
+        return self._op(*args)
 
-    def __binary_operation(self, elem1, elem2):
+    def _binary_operation(self, elem1, elem2):
         """Returns the 'sum' of exactly two elements."""
-        row = self.__elements.index(elem1)
-        col = self.__elements.index(elem2)
-        index = self.__table[row, col]
-        return self.__elements[index]
+        row = self._elements.index(elem1)
+        col = self._elements.index(elem2)
+        index = self._table[row, col]
+        return self._elements[index]
 
-    def __op(self, *args):
+    def _op(self, *args):
         if len(args) == 0:
-            return self.__identity
+            return self._identity
         elif len(args) == 1:
-            if args[0] in self.__elements:
+            if args[0] in self._elements:
                 return args[0]
             else:
                 raise ValueError(f"{args[0]} is not a valid element name")
         elif len(args) == 2:
-            return self.__binary_operation(args[0], args[1])
+            return self._binary_operation(args[0], args[1])
         else:
-            return reduce(lambda a, b: self.__op(a, b), args)
+            return reduce(lambda a, b: self._op(a, b), args)
 
 
 # =================
@@ -100,27 +101,27 @@ class SingleElementSetAlgebra(FiniteAlgebra):
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description)
-        self.__elements = elements
-        self.__inverses = dict()
+        self._elements = elements
+        self._inverses = dict()
 
         # Set up the multiplication table
         if isinstance(table, CayleyTable):
-            self.__table = table
+            self._table = table
         else:
-            self.__table = make_cayley_table(table, elements)
+            self._table = make_cayley_table(table, elements)
 
         # If it exists, setup the algebra's identity element
         id_index = self.table.identity()
         if id_index is not None:
-            self.__identity = self.elements[id_index]
+            self._identity = self.elements[id_index]
         else:
-            self.__identity = None
+            self._identity = None
 
     def __contains__(self, element):
-        return element in self.__elements
+        return element in self._elements
 
     def __getitem__(self, index):
-        return self.__elements[index]
+        return self._elements[index]
 
     def __repr__(self):
         nm, desc, elems, tbl = unpack_components(self)
@@ -175,7 +176,7 @@ class SingleElementSetAlgebra(FiniteAlgebra):
     @property
     def elements(self):
         """Returns the algebra's element names (list of strings)."""
-        return self.__elements
+        return self._elements
 
     def element_map(self):
         """Instantiates an Element for each element name and returns a dictionary, where
@@ -187,12 +188,12 @@ class SingleElementSetAlgebra(FiniteAlgebra):
     @property
     def table(self):
         """Returns the algebra's Cayley Table ('multiplication' table)."""
-        return self.__table
+        return self._table
 
     @property
     def identity(self):
         """Returns the algebra's identity element if it exists; otherwise, it returns None."""
-        return self.__identity
+        return self._identity
 
     def has_identity(self):
         """A convenience function that returns True or False, depending on whether the algebra
@@ -205,15 +206,15 @@ class SingleElementSetAlgebra(FiniteAlgebra):
     @property
     def order(self):
         """Returns the order of the algebra."""
-        return len(self.__elements)
+        return len(self._elements)
 
     def is_associative(self):
         """Returns True if the algebra is associative; returns False otherwise."""
-        return self.__table.is_associative()
+        return self._table.is_associative()
 
     def is_commutative(self):
         """Returns True if the algebra is commutative; returns False otherwise."""
-        return self.__table.is_commutative()
+        return self._table.is_commutative()
 
     def is_abelian(self):
         """Returns True if the algebra is abelian; returns False otherwise."""
@@ -222,13 +223,13 @@ class SingleElementSetAlgebra(FiniteAlgebra):
     def has_inverses(self):
         """Returns True if every element in the algebra has an inverse that is also in the algebra;
         returns False otherwise."""
-        return self.__table.has_inverses()
+        return self._table.has_inverses()
 
     def inv(self, element):
         """Return the inverse of an element"""
         if self.has_inverses():
-            if element in self.__inverses:
-                return self.__inverses[element]
+            if element in self._inverses:
+                return self._inverses[element]
             else:
                 return None
         else:
@@ -274,17 +275,17 @@ class Magma(SingleElementSetAlgebra):
     def __init__(self, name, description, elements, table):
         super().__init__(name, description, elements, table)
         self.op = FiniteOperator(self.elements, self.identity, self.table)
-        self.__dp_delimiter = ':'  # name delimiter used when creating Direct Products
+        self._dp_delimiter = ':'  # name delimiter used when creating Direct Products
 
-    def __key(self):
+    def _key(self):
         return tuple([self.elements, self.table.tolist()])
 
     def __hash__(self):
-        return hash(self.__key)
+        return hash(self._key)
 
     def __eq__(self, other):
         if isinstance(other, Magma):
-            return self.__key() == other.__key()
+            return self._key() == other._key()
         else:
             return NotImplemented
 
@@ -293,10 +294,10 @@ class Magma(SingleElementSetAlgebra):
         Otherwise, if a string is input (e.g., "-") it will become the new delimiter for direct product element
         names, and then it will be returned."""
         if delimiter:
-            self.__dp_delimiter = delimiter
-            return self.__dp_delimiter
+            self._dp_delimiter = delimiter
+            return self._dp_delimiter
         else:
-            return self.__dp_delimiter
+            return self._dp_delimiter
 
     def __mul__(self, other):  # Direct Product of two Magmas
         """Return direct product of this algebra with the `other` algebra."""
@@ -311,7 +312,7 @@ class Magma(SingleElementSetAlgebra):
             dp_mult_table.append(dp_mult_table_row)  # Append the new row to the table
         return make_finite_algebra(dp_name,
                                    dp_description,
-                                   list([f"{elem[0]}{self.__dp_delimiter}{elem[1]}" for elem in dp_element_names]),
+                                   list([f"{elem[0]}{self._dp_delimiter}{elem[1]}" for elem in dp_element_names]),
                                    dp_mult_table)
 
     def __pow__(self, n, modulo=None):
@@ -373,13 +374,13 @@ class Magma(SingleElementSetAlgebra):
         else:
             raise ValueError(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
 
-    def __element_mappings(self, other):
+    def _element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this algebra's elements to all
         possible permutations of other's elements.  The orders of self and other must
         be equal."""
         return [dict(zip(self.elements, perm)) for perm in it.permutations(other.elements)]
 
-    def __isomorphic_mapping(self, other, mapping):
+    def _isomorphic_mapping(self, other, mapping):
         """Returns True if the input mapping from this algebra to the other algebra is isomorphic."""
         return all([mapping[self.op(x, y)] == other.op(mapping[x], mapping[y])
                     for x in self.elements for y in self.elements])
@@ -389,9 +390,9 @@ class Magma(SingleElementSetAlgebra):
         return it; otherwise return False."""
         if (self.__class__.__name__ == other.__class__.__name__) and (self.order == other.order):
         # if self.order == other.order:
-            maps = self.__element_mappings(other)
+            maps = self._element_mappings(other)
             for mp in maps:
-                if self.__isomorphic_mapping(other, mp):
+                if self._isomorphic_mapping(other, mp):
                     return mp
             return False
         else:
@@ -689,7 +690,7 @@ class Monoid(Semigroup):
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table, check_inputs)
-        self.__element_orders = {elem: 0 for elem in self.elements}  # Cached on first access
+        self._element_orders = {elem: 0 for elem in self.elements}  # Cached on first access
         if check_inputs:
             if self.identity is None:
                 raise ValueError("CHECK INPUTS: A monoid must have an identity element")
@@ -702,9 +703,9 @@ class Monoid(Semigroup):
             else:
                 return order_aux(elem, self.op(prod, elem), order + 1)
 
-        if self.__element_orders[element] is None:  # If not cached yet...
-            self.__element_orders[element] = order_aux(element, element, 1)
-        return self.__element_orders[element]
+        if self._element_orders[element] is None:  # If not cached yet...
+            self._element_orders[element] = order_aux(element, element, 1)
+        return self._element_orders[element]
 
     def units(self, return_names=True):
         """Return a sorted list of the Monoid's units.
@@ -835,7 +836,7 @@ class Monoid(Semigroup):
     # Monoid Isomorphisms
     # ---------------------
 
-    def __element_mappings(self, other):
+    def _element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this algebra's elements to all possible permutations
         of other's elements, where the identity of this algebra is always mapped to the identity of other."""
         if self.order == other.order:
@@ -867,11 +868,11 @@ class Group(Monoid):
         super().__init__(name, description, elements, table, check_inputs)
         if check_inputs:
             if self.table.has_inverses():
-                self.__inverses = self.__create_inverse_lookup_dict()
+                self._inverses = self._create_inverse_lookup_dict()
             else:
                 raise ValueError("CHECK INPUTS: Table has insufficient inverses")
         else:
-            self.__inverses = self.__create_inverse_lookup_dict()
+            self._inverses = self._create_inverse_lookup_dict()
 
     def __truediv__(self, normal_subgroup):
         """Return the quotient group based on a given normal subgroup.
@@ -880,7 +881,7 @@ class Group(Monoid):
         one of the subgroup's cosets."""
         return self.quotient_group(normal_subgroup)
 
-    def __create_inverse_lookup_dict(self):
+    def _create_inverse_lookup_dict(self):
         """Returns a dictionary that maps each of the algebra's elements to its inverse element."""
         row_indices, col_indices = np.where(self.table.table == self.table.identity())
         return {self.elements[elem_index]: self.elements[elem_inv_index]
@@ -889,11 +890,11 @@ class Group(Monoid):
 
     def inverse_mapping(self):
         """Returns a dictionary that maps each element to its inverse."""
-        return self.__inverses
+        return self._inverses
 
     def inv(self, element):
         """Return the inverse of an element"""
-        return self.__inverses[element]
+        return self._inverses[element]
 
     def sub(self, x, y):
         """Group subtraction:  Return x - y; i.e., x + inv(y)."""
@@ -1309,28 +1310,28 @@ class Ring(Group):
 
         super().__init__(name, description, elements, table, check_inputs)
 
-        self.__conjugates = conjugate_mapping
+        self._conjugates = conjugate_mapping
 
         if isinstance(table2, CayleyTable):
-            self.__ring_mult_table = table2
+            self._ring_mult_table = table2
         else:
-            self.__ring_mult_table = make_cayley_table(table2, elements)
+            self._ring_mult_table = make_cayley_table(table2, elements)
 
         # If it exists, set up the Ring's multiplicative identity element
-        mult_id_index = self.__ring_mult_table.identity()
+        mult_id_index = self._ring_mult_table.identity()
         if mult_id_index is not None:
-            self.__mult_identity = self.elements[mult_id_index]
+            self._mult_identity = self.elements[mult_id_index]
         else:
-            self.__mult_identity = None
+            self._mult_identity = None
 
-        self.__ring_mult = FiniteOperator(self.elements, self.__mult_identity, self.__ring_mult_table)
+        self._ring_mult = FiniteOperator(self.elements, self._mult_identity, self._ring_mult_table)
 
         if check_inputs:
             if not super().is_commutative():
                 raise ValueError(f"CHECK INPUTS: The ring addition operation is not commutative. {self}")
-            if not self.__ring_mult_table.is_associative():
+            if not self._ring_mult_table.is_associative():
                 raise ValueError(f"CHECK INPUTS: The ring multiplication operation is not associative. {self}")
-            if not self.__ring_mult_table.distributes_over(self.table):
+            if not self._ring_mult_table.distributes_over(self.table):
                 raise ValueError(f"CHECK INPUTS: Multiplication does not distribute over addition. {self}")
 
     def __repr__(self):
@@ -1366,15 +1367,15 @@ class Ring(Group):
                                    dp_add_table,
                                    dp_mul_table)
 
-    def __key(self):
-        return tuple([self.elements, self.table.tolist(), self.__ring_mult_table.tolist()])
+    def _key(self):
+        return tuple([self.elements, self.table.tolist(), self._ring_mult_table.tolist()])
 
     def __hash__(self):
-        return hash(self.__key)
+        return hash(self._key)
 
     def __eq__(self, other):
         if isinstance(other, Ring):
-            return self.__key() == other.__key()
+            return self._key() == other._key()
         else:
             return NotImplemented
 
@@ -1392,12 +1393,12 @@ class Ring(Group):
     def mult_identity(self):
         """Returns the multiplicative identity element, if it exists.
         If it doesn't exist, then None is returned."""
-        return self.__mult_identity
+        return self._mult_identity
 
     @property
     def one(self):
         """Another way to get the multiplicative identity element"""
-        return self.__mult_identity
+        return self._mult_identity
 
     def has_mult_identity(self):
         """A convenience function that returns True or False, depending on whether the algebra
@@ -1415,7 +1416,7 @@ class Ring(Group):
     @property
     def mult_table(self):
         """Returns the CayleyTable for multiplication"""
-        return self.__ring_mult_table
+        return self._ring_mult_table
 
     def add(self, *args):
         """Use the inherited group operator as the ring's addition operator."""
@@ -1423,7 +1424,7 @@ class Ring(Group):
 
     def mult(self, *args):
         """Ring multiplication, based on the second table."""
-        return self.__ring_mult(*args)
+        return self._ring_mult(*args)
 
     def element_to_power(self, elem, n, left_associative=True):
         """Overrides the Magma method by the same name, so that we use
@@ -1521,7 +1522,7 @@ class Ring(Group):
             if size <= max_size:
                 if use_table_names:
                     print(f"Multiplicative Cayley Table (showing names):")
-                    pp.pprint(self.__ring_mult_table.to_list_with_names(self.elements))
+                    pp.pprint(self._ring_mult_table.to_list_with_names(self.elements))
                 else:
                     print(f"Multiplicative Cayley Table (showing indices):")
                     pp.pprint(self.mult_table.tolist())
@@ -1627,14 +1628,14 @@ class Ring(Group):
     def conjugates(self):
         """Return the dictionary that maps elements to their conjugate values.
         If it's None, then the element is its own conjugate."""
-        return self.__conjugates
+        return self._conjugates
 
     def conj(self, elem):
         """Given an element name, return the element name of its conjugate value."""
-        if self.__conjugates is None:
+        if self._conjugates is None:
             return elem
         else:
-            return self.__conjugates[elem]
+            return self._conjugates[elem]
 
     def norm(self, elem):
         """Return the product of the input element and its conjugate."""
@@ -1793,21 +1794,21 @@ def generate_powerset_ring(n, name=None, description=None):
 # Find all groups of a given order
 # ---------------------------------
 
-def __no_conflict(p1, p2):
+def _no_conflict(p1, p2):
     """Returns True only if no element of p1 equals the corresponding element of p2."""
     return all([p1[i] != p2[i] for i in range(len(p1))])
 
 
-def __no_conflicts(items):
+def _no_conflicts(items):
     """Return True if each possible pair, from a list of items, has no conflicts."""
-    return all(__no_conflict(combo[0], combo[1]) for combo in it.combinations(items, 2))
+    return all(_no_conflict(combo[0], combo[1]) for combo in it.combinations(items, 2))
 
 
-def __filter_out_conflicts(perms, perm, n):
+def _filter_out_conflicts(perms, perm, n):
     """Filter out all permutations in perms that conflict with perm,
     and don't have n as the first element."""
     nperms = [q for q in perms if q[0] == n]
-    return [p for p in nperms if __no_conflict(p, perm)]
+    return [p for p in nperms if _no_conflict(p, perm)]
 
 
 def generate_all_group_tables(order):
@@ -1820,9 +1821,9 @@ def generate_all_group_tables(order):
     row0 = list(range(order))
     row_candidates = [[row0]]
     for row_num in range(1, order):
-        row_candidates.append(__filter_out_conflicts(it.permutations(row0), row0, row_num))
+        row_candidates.append(_filter_out_conflicts(it.permutations(row0), row0, row_num))
     table_candidates = [cand for cand in it.product(*row_candidates) if is_table_associative(list(cand))]  # ***
-    return [tbl for tbl in table_candidates if __no_conflicts(tbl)]
+    return [tbl for tbl in table_candidates if _no_conflicts(tbl)]
 
 
 # TODO: Reconcile this version with the similar method in CayleyTable.
@@ -1907,22 +1908,22 @@ class Field(Ring):
 
         # This is the abelian Group defined by the Ring elements, minus the additive identity,
         # under Ring multiplication
-        self.__mult_sub_grp = mult_sub_grp
+        self._mult_sub_grp = mult_sub_grp
 
         if check_inputs or mult_sub_grp is None:
             abelian_group = is_field(self.identity, self.elements, self.mult_table.table)
             if abelian_group:
-                self.__mult_sub_grp = abelian_group
+                self._mult_sub_grp = abelian_group
             else:
                 raise ValueError(f"Inputs do not support the construction of a Field.")
 
-        self.__mult_sub_grp.name = f"{self.name}_G"
-        self.__mult_sub_grp.description = f"Multiplicative abelian Group of {self.name}"
+        self._mult_sub_grp.name = f"{self.name}_G"
+        self._mult_sub_grp.description = f"Multiplicative abelian Group of {self.name}"
 
     def mult_abelian_subgroup(self):
         """Return the abelian Group defined by the Ring elements, minus the additive identity,
         under Ring multiplication."""
-        return self.__mult_sub_grp
+        return self._mult_sub_grp
 
     def mult_inv(self, element):
         """Return the multiplicative inverse of 'element', unless it's the additive identity
@@ -1930,7 +1931,7 @@ class Field(Ring):
         if element == self.add_identity:
             return None
         else:
-            return self.__mult_sub_grp.inv(element)
+            return self._mult_sub_grp.inv(element)
 
     def div(self, x, y):
         """Return x/y, if y is not the additive identity; otherwise return None."""
@@ -1989,7 +1990,7 @@ def generate_nxn_matrix_algebra(ring, element_name_prefix='a'):
     n = 2  # Square matrix dimension. Hardcoded to 2 for now.
 
     # Create all possible matrices, and give them names.
-    # Then create a dictionary that maps each name name (key) to its matrix (value).
+    # Then create a dictionary that maps each name (key) to its matrix (value).
     # Also, create a reverse dictionary of matrices (as tuples) mapped to names.
     count = 0
     elem_dict = dict()
@@ -2094,25 +2095,25 @@ class Element:
 
     def __init__(self, name, algebra):
 
-        self.__can_add = False
-        self.__can_subtract = False
-        self.__can_multiply = False
-        self.__can_divide = False
+        self._can_add = False
+        self._can_subtract = False
+        self._can_multiply = False
+        self._can_divide = False
 
         if isinstance(algebra, Magma):
-            self.__algebra = algebra
-            self.__can_add = True
-            self.__can_subtract = self.__algebra.has_inverses()
+            self._algebra = algebra
+            self._can_add = True
+            self._can_subtract = self._algebra.has_inverses()
             if isinstance(algebra, Ring):
-                self.__can_multiply = True
+                self._can_multiply = True
                 if isinstance(algebra, Field):
-                    self.__can_divide = True
+                    self._can_divide = True
         else:
             raise ValueError(f"algebra must be a FiniteAlgebra")
 
         if isinstance(name, str):
-            if name in self.__algebra:
-                self.__name = name
+            if name in self._algebra:
+                self._name = name
             else:
                 raise ValueError(f"name must be an element of algebra")
         else:
@@ -2121,12 +2122,12 @@ class Element:
     @property
     def name(self):
         """Return the name of this Element."""
-        return self.__name
+        return self._name
 
     @property
     def algebra(self):
         """Return the algebra associated with this Element."""
-        return self.__algebra
+        return self._algebra
 
     @property
     def can_add(self):
@@ -2136,70 +2137,70 @@ class Element:
     @property
     def can_subtract(self):
         """Return True if this Element supports subtraction."""
-        return self.__can_subtract
+        return self._can_subtract
 
     @property
     def can_multiply(self):
         """Return True if this Element supports multiplication."""
-        return self.__can_multiply
+        return self._can_multiply
 
     @property
     def can_divide(self):
         """Return True if this Element supports division."""
-        return self.__can_divide
+        return self._can_divide
 
     def __str__(self):
-        return self.__name
+        return self._name
 
     def __repr__(self):
-        return repr(self.__name)
+        return repr(self._name)
 
     def __add__(self, other):
-        elem = self.__algebra.op(self.__name, other.name)
-        return Element(elem, self.__algebra)
+        elem = self._algebra.op(self._name, other.name)
+        return Element(elem, self._algebra)
 
     def __sub__(self, other):
-        if self.__can_subtract:
-            elem = self.__algebra.sub(self.__name, other.name)
-            return Element(elem, self.__algebra)
+        if self._can_subtract:
+            elem = self._algebra.sub(self._name, other.name)
+            return Element(elem, self._algebra)
         else:
-            raise ValueError(f"{self.__algebra.name} does not support subtraction")
+            raise ValueError(f"{self._algebra.name} does not support subtraction")
 
     def __neg__(self):
-        if self.__can_subtract:
-            elem = self.__algebra.inv(self.__name)
-            return Element(elem, self.__algebra)
+        if self._can_subtract:
+            elem = self._algebra.inv(self._name)
+            return Element(elem, self._algebra)
         return None
 
     def __mul__(self, other):
-        if self.__can_multiply:
-            elem = self.__algebra.mult(self.__name, other.name)
-            return Element(elem, self.__algebra)
+        if self._can_multiply:
+            elem = self._algebra.mult(self._name, other.name)
+            return Element(elem, self._algebra)
         else:
-            raise ValueError(f"{self.__algebra.name} does not support multiplication")
+            raise ValueError(f"{self._algebra.name} does not support multiplication")
 
     def __truediv__(self, other):
-        if self.__can_divide:
-            elem = self.__algebra.div(self.__name, other.name)
-            return Element(elem, self.__algebra)
+        if self._can_divide:
+            elem = self._algebra.div(self._name, other.name)
+            return Element(elem, self._algebra)
         else:
-            raise ValueError(f"{self.__algebra.name} does not support division")
+            raise ValueError(f"{self._algebra.name} does not support division")
 
     def __pow__(self, n):
         """See the documentation for the element_to_power method for either
         the Magma, Ring, or Field. This method calls one of those methods."""
-        elem_to_pow_name = self.__algebra.element_to_power(self.__name, n)
-        return Element(elem_to_pow_name, self.__algebra)
+        elem_to_pow_name = self._algebra.element_to_power(self._name, n)
+        return Element(elem_to_pow_name, self._algebra)
 
     def __key(self):
-        return tuple([self.__name, self.__algebra.__hash__()])
+        return tuple([self._name, self._algebra.__hash__()])
 
     def __hash__(self):
         return hash(self.__key)
 
     def __eq__(self, other):
         if isinstance(other, Element):
-            return self.__key() == other.__key() and self.__algebra == other.algebra
+            return self.__key() == other.__key() and self._algebra == other.algebra
         else:
             return NotImplemented
 
@@ -2319,7 +2320,7 @@ class NDimensionalModule(Module):
     def __init__(self, ring, n, check_input_conditions=True):
         name = f"{n}D-{ring.name}"
         desc = f"{n}-dimensional Module over {ring.name}"
-        self.__dimensions = n
+        self._dimensions = n
 
         # Group from the n-fold direct product of the Field with itself
         # group = ring.power(n)
@@ -2334,7 +2335,7 @@ class NDimensionalModule(Module):
 
     @property
     def dimensions(self):
-        return self.__dimensions
+        return self._dimensions
 
     @property
     def origin(self):
@@ -2349,7 +2350,7 @@ class NDimensionalVectorSpace(VectorSpace):
     def __init__(self, field, n, check_input_conditions=True):
         name = f"{n}D-{field.name}"
         desc = f"{n}-dimensional Vector Space over {field.name}"
-        self.__dimensions = n
+        self._dimensions = n
 
         # Group from the n-fold direct product of the Field with itself
         # group = field.power(n)
@@ -2364,7 +2365,7 @@ class NDimensionalVectorSpace(VectorSpace):
 
     @property
     def dimensions(self):
-        return self.__dimensions
+        return self._dimensions
 
     @property
     def origin(self):

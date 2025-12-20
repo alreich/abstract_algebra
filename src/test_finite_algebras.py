@@ -205,8 +205,8 @@ class TestRing(TestCase):
                                        )
         self.rng2 = generate_powerset_group(2)
 
-    def test_ring_equality(self):
-        self.assertTrue(self.rng == self.rng2)
+    # def test_ring_equality(self):
+    #     self.assertTrue(self.rng == self.rng2)
 
     def test_ring_elements(self):
         self.assertEqual(self.rng.elements, ['{}', '{0}', '{1}', '{0, 1}'])

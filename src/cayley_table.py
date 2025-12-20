@@ -33,22 +33,22 @@ class CayleyTable:
         nrows, ncols = tmp.shape
         if nrows == ncols:
             if (np.min(tmp) >= 0) and (np.max(tmp) < nrows):
-                self.__table = tmp
+                self._table = tmp
             else:
                 raise Exception(f"All integers must be between 0 and {nrows - 1}, inclusive.")
         else:
             raise Exception(f"Input arrays must be square; this one is {nrows}x{ncols}.")
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.__table.tolist()})"
+        return f"{self.__class__.__name__}({self._table.tolist()})"
 
     def __str__(self):
-        n = self.__table.shape[0]
+        n = self._table.shape[0]
         return f"<{self.__class__.__name__}, order {n}, ID:{id(self)}>"
 
     def __getitem__(self, tup):
         row, col = tup
-        return self.__table[row][col]
+        return self._table[row][col]
 
     def __hash__(self):
         return hash(self.__key())
@@ -59,38 +59,38 @@ class CayleyTable:
         return NotImplemented
 
     def __key(self):
-        return tuple(self.__table.tolist())
+        return tuple(self._table.tolist())
 
     @property
     def order(self):
         """Returns the order of the table, e.g., a 3x3 table has order 3."""
-        return self.__table.shape[0]
+        return self._table.shape[0]
 
     @property
     def table(self):
         """Returns the table, i.e., NumPy array."""
-        return self.__table
+        return self._table
 
     def tolist(self):
         """Converts the CayleyTable into a list of lists of ints."""
-        return self.__table.tolist()
+        return self._table.tolist()
 
     def to_list_with_names(self, elements):
         """Returns the Cayley Table as a regular Python array where the element indices have been
         replaces by the element names (str)."""
-        return [[elements[index] for index in row] for row in self.__table]
+        return [[elements[index] for index in row] for row in self._table]
 
     def is_associative(self):
         """Returns True or False, depending on whether the table supports an associative
         binary operation."""
-        indices = range(len(self.__table))
+        indices = range(len(self._table))
         result = True
         for a in indices:
             for b in indices:
                 for c in indices:
-                    ab = self.__table[a][b]
-                    bc = self.__table[b][c]
-                    if not (self.__table[ab][c] == self.__table[a][bc]):
+                    ab = self._table[a][b]
+                    bc = self._table[b][c]
+                    if not (self._table[ab][c] == self._table[a][bc]):
                         result = False
                         break
         return result
@@ -98,12 +98,12 @@ class CayleyTable:
     def is_commutative(self):
         """Returns True or False, depending on whether the table supports a commutative
         binary operation."""
-        n = self.__table.shape[0]
+        n = self._table.shape[0]
         result = True
         # Loop over the table's upper off-diagonal elements
         for a in range(n):
             for b in range(a + 1, n):
-                if self.__table[a][b] != self.__table[b][a]:
+                if self._table[a][b] != self._table[b][a]:
                     result = False
                     break
         return result
@@ -135,20 +135,20 @@ class CayleyTable:
 
     def left_identity(self):
         """Returns the table's left identity element, if it exists, otherwise None is returned."""
-        indices = range(len(self.__table))
+        indices = range(len(self._table))
         lid = None
         for x in indices:
-            if all(self.__table[x][y] == y for y in indices):
+            if all(self._table[x][y] == y for y in indices):
                 lid = x
                 break
         return lid
 
     def right_identity(self):
         """Returns the table's right identity element, if it exists, otherwise None is returned."""
-        indices = range(len(self.__table))
+        indices = range(len(self._table))
         rid = None
         for x in indices:
-            if all(self.__table[y][x] == y for y in indices):
+            if all(self._table[y][x] == y for y in indices):
                 rid = x
                 break
         return rid
@@ -167,7 +167,7 @@ class CayleyTable:
         """Returns True or False, depending on whether the table supports inverses for
         all elements."""
         if self.identity() is not None:
-            row_indices, col_indices = np.where(self.__table == self.identity())
+            row_indices, col_indices = np.where(self._table == self.identity())
             if set(row_indices) == set(col_indices):
                 if len(row_indices) == self.order:
                     return True
@@ -179,8 +179,8 @@ class CayleyTable:
             return False
 
     def inverse_lookup_dict(self, identity):
-        elements = range(len(self.__table))
-        row_indices, col_indices = np.where(self.__table == identity)
+        elements = range(len(self._table))
+        row_indices, col_indices = np.where(self._table == identity)
         return {elements[elem_index]: elements[elem_inv_index]
                 for (elem_index, elem_inv_index)
                 in zip(row_indices, col_indices)}

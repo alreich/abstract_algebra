@@ -13,29 +13,29 @@ class CayleyTableNEW:
         nrows, ncols = tmp.shape
         if nrows == ncols:
             if (np.min(tmp) >= 0) and (np.max(tmp) < nrows):
-                self.__table = tmp
+                self._table = tmp
             else:
                 raise ValueError(f"Array elements must be integers between 0 and {nrows - 1}, inclusive.")
         else:
             raise ValueError(f"The array must be square.")
 
     def __repr__(self):
-        """Returns a text representation of the Cayley table that can be copied and pasted."""
-        return f"{self.__class__.__name__}({self.__table.tolist()})"
+        """Returns a representation of the Cayley table that can be copied and pasted."""
+        return f"{self.__class__.__name__}({self._table.tolist()})"
 
     def __getitem__(self, tup: tuple[int, int]) -> int:
         """Accesses a table element given its row & column indices"""
         row, col = tup
-        return self.__table[row][col]
+        return self._table[row][col]
 
     @property
     def size(self) -> int:
         """Returns the number of rows, or columns, of the table"""
-        return self.__table.shape[0]
+        return self._table.shape[0]
 
     def tolist(self) -> list[list[int]]:
         """Returns the table's nparray as a list of lists of ints."""
-        return self.__table.tolist()
+        return self._table.tolist()
 
     @property
     def is_associative(self) -> bool:
@@ -45,9 +45,9 @@ class CayleyTableNEW:
         for a in indices:
             for b in indices:
                 for c in indices:
-                    ab = self.__table[a][b]
-                    bc = self.__table[b][c]
-                    if not (self.__table[ab][c] == self.__table[a][bc]):
+                    ab = self._table[a][b]
+                    bc = self._table[b][c]
+                    if not (self._table[ab][c] == self._table[a][bc]):
                         result = False
                         break
         return result
@@ -60,7 +60,7 @@ class CayleyTableNEW:
         for a in range(n):
             # Loop over the table's upper off-diagonal elements
             for b in range(a + 1, n):
-                if self.__table[a][b] != self.__table[b][a]:
+                if self._table[a][b] != self._table[b][a]:
                     result = False
                     break
         return result
@@ -72,25 +72,25 @@ class BinaryOperatorNEW:
     order of rows and columns in the Cayley table."""
 
     def __init__(self, elements: list[str], cayley_table: CayleyTableNEW):
-        self.__elements = elements
-        self.__table = cayley_table
+        self._elements = elements
+        self._table = cayley_table
 
     def __call__(self, elem1: str, elem2: str) -> str:
         """Returns the algebra's sum of elem1 and elem2, according to its Cayley table."""
-        row = self.__elements.index(elem1)
-        col = self.__elements.index(elem2)
-        index = self.__table[row, col]
-        return self.__elements[index]
+        row = self._elements.index(elem1)
+        col = self._elements.index(elem2)
+        index = self._table[row, col]
+        return self._elements[index]
 
     @property
     def elements(self) -> list[str]:
         """Returns the algebra's list of elements."""
-        return self.__elements
+        return self._elements
 
     @property
     def table(self) -> CayleyTableNEW:
         """Returns the algebra's Cayley table."""
-        return self.__table
+        return self._table
 
 
 class FiniteAlgebraNEW:
@@ -102,35 +102,35 @@ class FiniteAlgebraNEW:
                  description: str,
                  elements: list[str],
                  array: list[list[int]]):
-        self.__name = name
-        self.__desc = description
-        self.__binop = BinaryOperatorNEW(elements, CayleyTableNEW(array))
+        self._name = name
+        self._desc = description
+        self._binop = BinaryOperatorNEW(elements, CayleyTableNEW(array))
 
     def __getitem__(self, index: int) -> str:
         """Returns the algebra's element at position index."""
-        return self.__binop.elements[index]
+        return self._binop.elements[index]
 
     def __repr__(self) -> str:
-        nm = self.__name
-        desc = self.__desc
-        elems = self.__binop.elements
-        tbl = self.__binop.table.tolist()
+        nm = self._name
+        desc = self._desc
+        elems = self._binop.elements
+        tbl = self._binop.table.tolist()
         return f"{self.__class__.__name__}(\n{nm},\n{desc},\n{elems},\n{tbl}\n)"
 
     @property
     def name(self) -> str:
         """Returns the algebra's name."""
-        return self.__name
+        return self._name
 
     @property
     def description(self) -> str:
         """Returns the algebra's description."""
-        return self.__desc
+        return self._desc
 
     @property
     def elements(self) -> list[str]:
         """Returns the algebra's list of elements."""
-        return self.__binop.elements
+        return self._binop.elements
 
     @property
     def order(self) -> int:
@@ -140,21 +140,21 @@ class FiniteAlgebraNEW:
     @property
     def table(self) -> CayleyTableNEW:
         """Returns the algebra's Cayley table."""
-        return self.__binop.table
+        return self._binop.table
 
     @property
     def is_associative(self) -> bool:
         """Returns True if the algebra is associative, otherwise returns False."""
-        return self.__binop.table.is_associative
+        return self._binop.table.is_associative
 
     @property
     def is_commutative(self) -> bool:
         """Returns True if the algebra is commutative, otherwise returns False."""
-        return self.__binop.table.is_commutative
+        return self._binop.table.is_commutative
 
     def op(self, elem1: str, elem2: str) -> str:
         """Return the sum (or product) of the two algebra elements"""
-        return self.__binop(elem1, elem2)
+        return self._binop(elem1, elem2)
 
     def __mul__(self, other):
         """Return the direct product (a FiniteAlgebra) of self with other. Other must be an algebra"""
@@ -197,9 +197,9 @@ class ElementNEW:
     """This class is used to turn the usual string elements of an algebra into a class
     that can have arithmetic methods, like + or *."""
     def __init__(self, elem_name: str, algebra: FiniteAlgebraNEW):
-        self.__algebra = algebra
+        self._algebra = algebra
         if isinstance(elem_name, str):
-            if elem_name in self.__algebra:
+            if elem_name in self._algebra:
                 self.__name = elem_name
             else:
                 raise ValueError(f"name must be an element of algebra")
@@ -215,8 +215,8 @@ class ElementNEW:
         return self.__name
 
     def __add__(self, other):
-        elem = self.__algebra.op(self.__name, other.name)
-        return ElementNEW(elem, self.__algebra)
+        elem = self._algebra.op(self.__name, other.name)
+        return ElementNEW(elem, self._algebra)
 
 
 class InfixNotation:

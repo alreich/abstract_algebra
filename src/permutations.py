@@ -39,8 +39,8 @@ class Perm:
         return self._mapping[index]
 
     def __mul__(self, other):
-        # self * other (apply 'other' first, then 'self')
-        # Example: p * q = p[q[i]]
+        """self * other (apply 'other' first, then 'self')
+        Example: p * q = p[q[i]]"""
         new_mapping = [0] * self._size
         for i in range(self._size):
             new_mapping[i] = self[other[i]]

@@ -191,6 +191,19 @@ class CayleyTable:
         index_pairs = list(zip(row_indices, col_indices))
         return index_pairs
 
+    def type_of_algebra(self):
+        if self.is_associative():
+            if self.identity() is not None:
+                if self.has_inverses():
+                    result = "Group"
+                else:
+                    result = "Monoid"
+            else:
+                result = "Semigroup"
+        else:
+            result = "Magma"
+        return result
+
     def about(self, printout=False):
         """Printout information about the CayleyTable: order, associativity,
         commutativity, left/right identities, full identity, and whether
@@ -202,24 +215,25 @@ class CayleyTable:
         rid = str(self.right_identity())
         ident = str(self.identity())
         invs = str(self.has_inverses())
+        alg = self.type_of_algebra()
         if printout:
-            print("  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?")
-            print('-' * 85)
-            print(f"{n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}}")
+            print("  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?  Algebra?")
+            print('-' * 100)
+            print(f"{n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}} {alg :>{10}}")
             return None
         else:
-            return n, ass, co, lid, rid, ident, invs
+            return n, ass, co, lid, rid, ident, invs, alg
 
 
 # Utility
 
 def about_tables(list_of_cayley_tables):
-    print("   Table  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?")
-    print('-' * 85)
+    print("   Table  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?  Algebra?")
+    print('-' * 100)
     for tbl in list_of_cayley_tables:
         i = list_of_cayley_tables.index(tbl) + 1
-        n, ass, co, lid, rid, ident, invs = tbl.about()
-        print(f"{i :>{6}} {n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}}")
+        n, ass, co, lid, rid, ident, invs, alg = tbl.about()
+        print(f"{i :>{6}} {n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}} {alg :>{10}}")
 
 
 # END OF FILE

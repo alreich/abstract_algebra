@@ -2704,6 +2704,17 @@ def make_cayley_table(table, elements):
     return ct
 
 
+# def make_cayley_table(table, elements):
+#     table00 = table[0][0]
+#     if isinstance(table00, str):
+#         index_table = index_table_from_name_table(elements, table)
+#         return CayleyTable(index_table)
+#     elif isinstance(table00, int):
+#         return CayleyTable(table)
+#     else:
+#         raise ValueError(f"Table must be all str or all int")
+
+
 def index_table_from_name_table(elements, name_table):
     """Converts a table (list of lists) of strings into a table (list of lists) of ints."""
     return [[elements.index(elem_name) for elem_name in row] for row in name_table]

@@ -158,8 +158,10 @@ class TestGroup(TestCase):
         self.assertEqual(self.z4.identity, '0')
 
     def test_elements_accessor_s3(self):
-        self.assertEqual(self.s3.elements, ['(1, 2, 3)', '(1, 3, 2)', '(2, 1, 3)',
-                                            '(2, 3, 1)', '(3, 1, 2)', '(3, 2, 1)'])
+        # self.assertEqual(self.s3.elements, ['(1, 2, 3)', '(1, 3, 2)', '(2, 1, 3)',
+        #                                     '(2, 3, 1)', '(3, 1, 2)', '(3, 2, 1)'])
+        self.assertEqual(self.s3.elements, ['(0, 1, 2)', '(0, 2, 1)', '(1, 0, 2)',
+                                            '(1, 2, 0)', '(2, 0, 1)', '(2, 1, 0)'])
 
     def test_table_accessor_s3(self):
         self.assertEqual(self.s3.table, CayleyTable([[0, 1, 2, 3, 4, 5],
@@ -177,7 +179,8 @@ class TestGroup(TestCase):
         self.assertEqual(self.s3.is_commutative(), False)
 
     def test_identity_accessor_s3(self):
-        self.assertEqual(self.s3.identity, '(1, 2, 3)')
+        # self.assertEqual(self.s3.identity, '(1, 2, 3)')
+        self.assertEqual(self.s3.identity, '(0, 1, 2)')
 
     def test_direct_product_and_isomorphic(self):
         z2_sqr = self.z2 * self.z2

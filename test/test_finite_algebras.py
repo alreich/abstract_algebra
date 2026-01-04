@@ -16,7 +16,7 @@ class TestMagma(TestCase):
                          [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
 
     def test_elements(self):
-        self.assertEqual(self.rps.elements, ['r', 'p', 's'])
+        self.assertEqual(self.rps.elements, ('r', 'p', 's'))
 
     def test_table1(self):
         self.assertEqual(self.rps.table.tolist(), [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
@@ -115,8 +115,8 @@ class TestGroup(TestCase):
         self.assertTrue(self.v4 == self.v4x)
 
     def test_elements_accessor_ps3(self):
-        self.assertEqual(self.ps3.elements, ['{}', '{0}', '{1}', '{2}', '{0, 1}',
-                                             '{0, 2}', '{1, 2}', '{0, 1, 2}'])
+        self.assertEqual(self.ps3.elements, ('{}', '{0}', '{1}', '{2}', '{0, 1}',
+                                             '{0, 2}', '{1, 2}', '{0, 1, 2}'))
 
     def test_table_accessor_ps3(self):
         self.assertEqual(self.ps3.table, CayleyTable([[0, 1, 2, 3, 4, 5, 6, 7],
@@ -138,7 +138,7 @@ class TestGroup(TestCase):
         self.assertEqual(self.ps3.identity, '{}')
 
     def test_elements_accessor_z4(self):
-        self.assertEqual(self.z4.elements, ['0', '1', '2', '3'])
+        self.assertEqual(self.z4.elements, ('0', '1', '2', '3'))
 
     def test_table_accessor_z4_1(self):
         self.assertEqual(self.z4.table,
@@ -160,8 +160,8 @@ class TestGroup(TestCase):
     def test_elements_accessor_s3(self):
         # self.assertEqual(self.s3.elements, ['(1, 2, 3)', '(1, 3, 2)', '(2, 1, 3)',
         #                                     '(2, 3, 1)', '(3, 1, 2)', '(3, 2, 1)'])
-        self.assertEqual(self.s3.elements, ['(0, 1, 2)', '(0, 2, 1)', '(1, 0, 2)',
-                                            '(1, 2, 0)', '(2, 0, 1)', '(2, 1, 0)'])
+        self.assertEqual(self.s3.elements, ('(0, 1, 2)', '(0, 2, 1)', '(1, 0, 2)',
+                                            '(1, 2, 0)', '(2, 0, 1)', '(2, 1, 0)'))
 
     def test_table_accessor_s3(self):
         self.assertEqual(self.s3.table, CayleyTable([[0, 1, 2, 3, 4, 5],
@@ -212,7 +212,7 @@ class TestRing(TestCase):
     #     self.assertTrue(self.rng == self.rng2)
 
     def test_ring_elements(self):
-        self.assertEqual(self.rng.elements, ['{}', '{0}', '{1}', '{0, 1}'])
+        self.assertEqual(self.rng.elements, ('{}', '{0}', '{1}', '{0, 1}'))
 
     def test_powerset_mult_table(self):
         self.assertEqual(self.rng.mult_table, CayleyTable([[0, 0, 0, 0], [0, 1, 0, 1], [0, 0, 2, 2], [0, 1, 2, 3]]))
@@ -277,6 +277,6 @@ class TestField(TestCase):
 
     def test_mult_abelian_subgroup(self):
         self.subgrp = self.f4.mult_abelian_subgroup()
-        self.assertEqual(self.subgrp.elements, ['1', 'a', '1+a'])
+        self.assertEqual(self.subgrp.elements, ('1', 'a', '1+a'))
         self.assertEqual(self.subgrp.table.tolist(), [[0, 1, 2], [1, 2, 0], [2, 0, 1]])
 

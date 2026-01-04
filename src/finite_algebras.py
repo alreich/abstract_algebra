@@ -89,7 +89,7 @@ class FiniteAlgebra:
     THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
     """
 
-    def __init__(self, name, description):
+    def __init__(self, name: str, description: str):
         self.name = name
         self.description = description
 
@@ -101,7 +101,7 @@ class SingleElementSetAlgebra(FiniteAlgebra):
 
     def __init__(self, name, description, elements, table):
         super().__init__(name, description)
-        self._elements = elements
+        self._elements = tuple(elements)
         self._inverses = dict()
 
         # Set up the multiplication table
@@ -370,7 +370,7 @@ class Magma(SingleElementSetAlgebra):
                     new_table[row, col] = reordered_elements.index(prod)
             new_name = str(self.name) + '_REORDERED'
             new_desc = str(self.description) + ' (elements reordered)'
-            return self.__class__(new_name, new_desc, reordered_elements, new_table)
+            return self.__class__(new_name, new_desc, tuple(reordered_elements), new_table)
         else:
             raise ValueError(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
 
@@ -389,7 +389,6 @@ class Magma(SingleElementSetAlgebra):
         """If there is a mapping from elements of this algebra to the other algebra's elements,
         return it; otherwise return False."""
         if (self.__class__.__name__ == other.__class__.__name__) and (self.order == other.order):
-        # if self.order == other.order:
             maps = self._element_mappings(other)
             for mp in maps:
                 if self._isomorphic_mapping(other, mp):
@@ -653,6 +652,18 @@ class Magma(SingleElementSetAlgebra):
                 print(f"{self.__class__.__name__} order is {size} > {max_size}, so the table is not output.")
         return None
 
+    # The following three methods (sub, mult, & div) are stubbed out here to eliminate
+    # warnings from the Element class regarding them not being defined for Magma.
+
+    def sub(self, x, y):
+        raise NotImplementedError(f"{self.__class__.__name__} sub cannot be implemented.")
+
+    def mult(self, x, y):
+        raise NotImplementedError(f"{self.__class__.__name__} mult cannot be implemented.")
+
+    def div(self, x, y):
+        raise NotImplementedError(f"{self.__class__.__name__} div cannot be implemented.")
+
 
 # =============
 #   Semigroup
@@ -739,7 +750,7 @@ class Monoid(Semigroup):
 
         return monoid.subalgebra_from_elements(monoid.units(), name=nm, desc=description)
 
-    def regular_representation(self, sparse=False):
+    def regular_representation(self, sparse=""):
         """Given a group, this function returns four things: (1) A dictionary that maps each group
         element to its corresponding regular representation, (2) A (reverse) dictionary that maps each
         regular representation (in the form of a tuple of tuples) back to its corresponding group element,
@@ -843,12 +854,16 @@ class Monoid(Semigroup):
             # Identities map to identities, so remove them
             id0 = self.identity
             id1 = other.identity
-            elems0 = self.elements.copy()
-            elems1 = other.elements.copy()
-            elems0.remove(id0)
-            elems1.remove(id1)
+            # elems0 = self.elements.copy()
+            elems0copy = tuple(self.elements)
+            # elems1 = other.elements.copy()
+            elems1copy = tuple(other.elements)
+            # elems0.remove(id0)
+            list(elems0copy).remove(id0)
+            # elems1.remove(id1)
+            list(elems1copy).remove(id1)
             # Compute all possible mappings
-            mappings = [dict(zip(elems0, perm)) for perm in it.permutations(elems1)]
+            mappings = [dict(zip(elems0copy, perm)) for perm in it.permutations(elems1copy)]
             # Add the identities back in
             for mapping in mappings:
                 mapping[id0] = id1

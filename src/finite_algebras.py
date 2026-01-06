@@ -701,7 +701,7 @@ class Monoid(Semigroup):
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table, check_inputs)
-        self._element_orders = {elem: 0 for elem in self.elements}  # Cached on first access
+        self._element_orders = {elem: None for elem in self.elements}  # Cached on first access
         if check_inputs:
             if self.identity is None:
                 raise ValueError("CHECK INPUTS: A monoid must have an identity element")
@@ -716,6 +716,7 @@ class Monoid(Semigroup):
 
         if self._element_orders[element] is None:  # If not cached yet...
             self._element_orders[element] = order_aux(element, element, 1)
+            return self._element_orders[element]
         return self._element_orders[element]
 
     def units(self, return_names=True):
@@ -1929,8 +1930,17 @@ def is_field(add_id, elements, table):
         return False
     else:
         mult = make_finite_algebra("tmp", "temporary", elements, table)
-        elems_copy = elements.copy()
-        elems_copy.remove(add_id)
+        # elems_copy = elements.copy()
+        # elems_copy.remove(add_id)
+
+        # elements is a tuple, which is immutable. But we want to remove the
+        # additive identity element from it, so first turn elements into a list
+        # then remove the additive identity, and finally turn the result back
+        # into a tuple. Whew!
+        elems_list = list(elements)
+        elems_list.remove(add_id)
+        elems_copy = tuple(elems_list)
+
         elems_copy_clo = mult.closure(elems_copy, True)  # Includes inverse elements
         if set(elems_copy) == set(elems_copy_clo):
             mult_sub = mult.subalgebra_from_elements(elems_copy)

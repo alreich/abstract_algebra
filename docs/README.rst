@@ -22,64 +22,65 @@ The ``finite_algebras`` module contains class definitions, methods, and
 functions for working with algebras that have a **finite number of
 elements**.
 
-- The primary constructor of a finite algebra is the function,
-  ``make_finite_algebra``. It examines the properties of the input
-  table(s) and returns the appropriate instance of an algebra.
-- Algebras can be input from, or output to, JSON files/strings or Python
-  dictionaries.
-- Each algebra is defined by:
+-  The primary constructor of a finite algebra is the function,
+   ``make_finite_algebra``. It examines the properties of the input
+   table(s) and returns the appropriate instance of an algebra.
+-  Algebras can be input from, or output to, JSON files/strings or
+   Python dictionaries.
+-  Each algebra is defined by:
 
-  - A name (``str``),
-  - A description (``str``),
-  - A list of *element names* (``list`` of ``str``),
+   -  A name (``str``),
+   -  A description (``str``),
+   -  A list of *element names* (``list`` of ``str``),
 
-    - **All elements must be represented by strings**,
+      -  **All elements must be represented by strings**,
 
-  - One or two square, 2-dimensional tables that define binary
-    operations (``list`` of ``lists`` of ``int``),
+   -  One or two square, 2-dimensional tables that define binary
+      operations (``list`` of ``lists`` of ``int``),
 
-    - The ints in a table represent indices in the list of element
-      names,
-    - Magmas, Semigroups, Monoids, & Groups have one table; Rings &
-      Fields have two.
+      -  The ints in a table represent indices in the list of element
+         names,
+      -  Magmas, Semigroups, Monoids, & Groups have one table; Rings &
+         Fields have two.
 
-- Each algebra has methods for examining its properties (e.g.,
-  ``is_associative``, ``is_commutative``, ``center``, ``commutators``,
-  etc.).
-- Algebraic elements can be “added” (or “multiplied”) via their binary
-  operations (e.g., ``v4.op('h','v')`` :math:`\Rightarrow` ``'r'``).
-- Inverses & identities can be obtained, if the algebra supports them
-  (e.g., ``z3.inv('a')`` :math:`\Rightarrow` ``'a^2'``, ``z3.identity``
-  :math:`\Rightarrow` ``'e'``).
-- Direct products of two or more algebras can be computed using Python’s
-  multiplication operator (e.g., ``z4 * v4``), and using Python’s power
-  operator (e.g., ``v4**3 == v4 * v4 * v4``).
-- A Quotient Group is returned when a group, ``g``, is divided by one of
-  it’s normal subgroups, ``h``, using Python’s true division operator
-  (e.g., ``g / h``).
-- Infix arithmetic of algebraic elements is supported for the operators,
-  +, -, \*, /, and \*\*, by using the context manager, ``InfixNotation``
-  (e.g., ``with InfixNotation(v4) as v; hr = v['h'] * v['r']``)
-- If two algebras are isomorphic, the mapping between their elements can
-  be found and returned as a Python dictionary (e.g.,
-  ``v4.isomorphic(z2 * z2)`` :math:`\Rightarrow`
-  ``{'h': 'e:a', 'v': 'a:e', 'r': 'a:a', 'e': 'e:e'}``)
-- Autogeneration of some types of algebras, of arbitrary order, is
-  supported (e.g., symmetric, cyclic).
-- Subalgebras (e.g., subgroups) can be determined, along with related
-  functionality (e.g, ``is_normal()``).
-- Groups, Rings, and Fields can be used to construct Modules and Vector
-  Spaces, including n-dimensional Modules and Vector Spaces using the
-  direct products of Rings and Fields, resp.
-- Rings and Fields can be used to construct Cayley-Dickson algebras
-  (i.e., abstractions of the complex numbers, as well as quaternions,
-  octonions, etc.)
-- The Regular Representation of a Monoid, Group, or the additive abelian
-  Group of a Ring or Field, can be computed in either dense or sparse
-  matrix form.
-- Abstract Matrices over Rings/Fields can be represented and used in
-  operations similar to numeric matrices (e.g., :math:`+`, :math:`-`,
-  :math:`\times`, determinant, inverse, etc.)
+-  Each algebra has methods for examining its properties (e.g.,
+   ``is_associative``, ``is_commutative``, ``center``, ``commutators``,
+   etc.).
+-  Algebraic elements can be “added” (or “multiplied”) via their binary
+   operations (e.g., ``v4.op('h','v')`` :math:`\Rightarrow` ``'r'``).
+-  Inverses & identities can be obtained, if the algebra supports them
+   (e.g., ``z3.inv('a')`` :math:`\Rightarrow` ``'a^2'``, ``z3.identity``
+   :math:`\Rightarrow` ``'e'``).
+-  Direct products of two or more algebras can be computed using
+   Python’s multiplication operator (e.g., ``z4 * v4``), and using
+   Python’s power operator (e.g., ``v4**3 == v4 * v4 * v4``).
+-  A Quotient Group is returned when a group, ``g``, is divided by one
+   of it’s normal subgroups, ``h``, using Python’s true division
+   operator (e.g., ``g / h``).
+-  Infix arithmetic of algebraic elements is supported for the
+   operators, +, -, \*, /, and \**, by using the context manager,
+   ``InfixNotation`` (e.g.,
+   ``with InfixNotation(v4) as v; hr = v['h'] * v['r']``)
+-  If two algebras are isomorphic, the mapping between their elements
+   can be found and returned as a Python dictionary (e.g.,
+   ``v4.isomorphic(z2 * z2)`` :math:`\Rightarrow`
+   ``{'h': 'e:a', 'v': 'a:e', 'r': 'a:a', 'e': 'e:e'}``)
+-  Autogeneration of some types of algebras, of arbitrary order, is
+   supported (e.g., symmetric, cyclic).
+-  Subalgebras (e.g., subgroups) can be determined, along with related
+   functionality (e.g, ``is_normal()``).
+-  Groups, Rings, and Fields can be used to construct Modules and Vector
+   Spaces, including n-dimensional Modules and Vector Spaces using the
+   direct products of Rings and Fields, resp.
+-  Rings and Fields can be used to construct Cayley-Dickson algebras
+   (i.e., abstractions of the complex numbers, as well as quaternions,
+   octonions, etc.)
+-  The Regular Representation of a Monoid, Group, or the additive
+   abelian Group of a Ring or Field, can be computed in either dense or
+   sparse matrix form.
+-  Abstract Matrices over Rings/Fields can be represented and used in
+   operations similar to numeric matrices (e.g., :math:`+`, :math:`-`,
+   :math:`\times`, determinant, inverse, etc.)
 
 Installation
 ------------
@@ -153,7 +154,7 @@ the 4 elements in the element list, ``['e', 'h', 'v', 'r']``.
     Group(
     'V4',
     'Klein-4 group',
-    ['e', 'h', 'v', 'r'],
+    ('e', 'h', 'v', 'r'),
     [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
     )
 
@@ -172,7 +173,7 @@ copied-and-pasted.
 
 .. parsed-literal::
 
-    <Group:V4, ID:4905744080>
+    <Group:V4, ID:4943564144>
 
 
 Perform Arithmetic
@@ -226,7 +227,7 @@ it exists.
     
     ** Group **
     Name: V4
-    Instance ID: 4905744080
+    Instance ID: 4943564144
     Description: Klein-4 group
     Order: 4
     Identity: 'e'
@@ -234,10 +235,10 @@ it exists.
     Cyclic?: No
     Elements:
        Index   Name   Inverse  Order
-          0     'e'     'e'       0
-          1     'h'     'h'       0
-          2     'v'     'v'       0
-          3     'r'     'r'       0
+          0     'e'     'e'       1
+          1     'h'     'h'       2
+          2     'v'     'v'       2
+          3     'r'     'r'       2
     Cayley Table (showing names):
     [['e', 'h', 'v', 'r'],
      ['h', 'e', 'r', 'v'],
@@ -262,19 +263,19 @@ Get all proper subalgebras of an algebra.
     [Group(
      'V4_subalgebra_0',
      'Subalgebra of: Klein-4 group',
-     ['e', 'r'],
+     ('e', 'r'),
      [[0, 1], [1, 0]]
      ),
      Group(
      'V4_subalgebra_1',
      'Subalgebra of: Klein-4 group',
-     ['e', 'v'],
+     ('e', 'h'),
      [[0, 1], [1, 0]]
      ),
      Group(
      'V4_subalgebra_2',
      'Subalgebra of: Klein-4 group',
-     ['e', 'h'],
+     ('e', 'v'),
      [[0, 1], [1, 0]]
      )]
 
@@ -290,14 +291,14 @@ Or, summarize the subalgebras by isomorphism.
 .. parsed-literal::
 
     
-    Subalgebras of <Group:V4, ID:4905744080>
+    Subalgebras of <Group:V4, ID:4943564144>
       There is 1 unique proper subalgebra, up to isomorphism, out of 3 total subalgebras.
       as shown by the partitions below:
     
     3 Isomorphic Commutative Normal Groups of order 2 with identity 'e':
-          Group: V4_subalgebra_0: ['e', 'r']
-          Group: V4_subalgebra_1: ['e', 'v']
-          Group: V4_subalgebra_2: ['e', 'h']
+          Group: V4_subalgebra_0: ('e', 'r')
+          Group: V4_subalgebra_1: ('e', 'h')
+          Group: V4_subalgebra_2: ('e', 'v')
     
 
 
@@ -316,7 +317,7 @@ Autogenerate an Algebra
     
     ** Group **
     Name: Z2
-    Instance ID: 4918836496
+    Instance ID: 4943664256
     Description: Autogenerated cyclic Group of order 2
     Order: 2
     Identity: '0'
@@ -325,8 +326,8 @@ Autogenerate an Algebra
     Generators: ['1']
     Elements:
        Index   Name   Inverse  Order
-          0     '0'     '0'       0
-          1     '1'     '1'       0
+          0     '0'     '0'       1
+          1     '1'     '1'       2
     Cayley Table (showing indices):
     [[0, 1], [1, 0]]
 
@@ -349,7 +350,7 @@ Products of the algebras. NOTE: A**3 == A \* A \* A.
     
     ** Group **
     Name: Z2_x_Z2
-    Instance ID: 4919919376
+    Instance ID: 4943683152
     Description: Direct product of Z2 & Z2
     Order: 4
     Identity: '0:0'
@@ -357,10 +358,10 @@ Products of the algebras. NOTE: A**3 == A \* A \* A.
     Cyclic?: No
     Elements:
        Index   Name   Inverse  Order
-          0   '0:0'   '0:0'       0
-          1   '0:1'   '0:1'       0
-          2   '1:0'   '1:0'       0
-          3   '1:1'   '1:1'       0
+          0   '0:0'   '0:0'       1
+          1   '0:1'   '0:1'       2
+          2   '1:0'   '1:0'       2
+          3   '1:1'   '1:1'       2
     Cayley Table (showing names):
     [['0:0', '0:1', '1:0', '1:1'],
      ['0:1', '0:0', '1:1', '1:0'],
@@ -414,7 +415,7 @@ V4 is “divided” by one of its normal subgroups, V4sub.
     
     ** Group **
     Name: V4/V4sub
-    Instance ID: 4919923920
+    Instance ID: 4943478560
     Description: Group V4 modulo subgroup V4sub
     Order: 2
     Identity: 'e'
@@ -423,10 +424,10 @@ V4 is “divided” by one of its normal subgroups, V4sub.
     Generators: ['h']
     Elements:
        Index   Name   Inverse  Order
-          0     'e'     'e'       0
-          1     'h'     'h'       0
+          0     'h'     'h'       2
+          1     'e'     'e'       1
     Cayley Table (showing indices):
-    [[0, 1], [1, 0]]
+    [[1, 0], [0, 1]]
 
 
 Representative elements from each coset, below, make up the element list
@@ -441,7 +442,7 @@ of the quotient group, above
 
 .. parsed-literal::
 
-    [['e', 'r'], ['h', 'v']]
+    [['h', 'v'], ['e', 'r']]
 
 
 
@@ -462,7 +463,7 @@ That is, V4sub :math:`\times` (V4 / V4sub) :math:`\cong` V4.
     
     ** Group **
     Name: V4sub_x_V4/V4sub
-    Instance ID: 4919928080
+    Instance ID: 4943476880
     Description: Direct product of V4sub & V4/V4sub
     Order: 4
     Identity: 'e:e'
@@ -470,12 +471,12 @@ That is, V4sub :math:`\times` (V4 / V4sub) :math:`\cong` V4.
     Cyclic?: No
     Elements:
        Index   Name   Inverse  Order
-          0   'e:e'   'e:e'       0
-          1   'e:h'   'e:h'       0
-          2   'r:e'   'r:e'       0
-          3   'r:h'   'r:h'       0
+          0   'e:h'   'e:h'       2
+          1   'e:e'   'e:e'       1
+          2   'r:h'   'r:h'       2
+          3   'r:e'   'r:e'       2
     Cayley Table (showing indices):
-    [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]]
+    [[1, 0, 3, 2], [0, 1, 2, 3], [3, 2, 1, 0], [2, 3, 0, 1]]
 
 
 .. code:: ipython3
@@ -487,7 +488,7 @@ That is, V4sub :math:`\times` (V4 / V4sub) :math:`\cong` V4.
 
 .. parsed-literal::
 
-    {'e': 'e:e', 'h': 'e:h', 'v': 'r:e', 'r': 'r:h'}
+    {'e': 'e:e', 'h': 'e:h', 'v': 'r:h', 'r': 'r:e'}
 
 
 
@@ -567,7 +568,7 @@ comes from Wikipedia.
     
     ** Field **
     Name: F4
-    Instance ID: 4918719952
+    Instance ID: 4943067664
     Description: Field with 4 elements (from Wikipedia)
     Order: 4
     Identity: '0'
@@ -576,10 +577,10 @@ comes from Wikipedia.
     Generators: ['1+a', 'a']
     Elements:
        Index   Name   Inverse  Order
-          0     '0'     '0'       0
-          1     '1'     '1'       0
-          2     'a'     'a'       0
-          3   '1+a'   '1+a'       0
+          0     '0'     '0'       1
+          1     '1'     '1'       2
+          2     'a'     'a'       2
+          3   '1+a'   '1+a'       2
     Cayley Table (showing names):
     [['0', '1', 'a', '1+a'],
      ['1', '0', '1+a', 'a'],
@@ -690,31 +691,31 @@ the equivalent of “minus one” in f4 is the element ‘1’.
     
     ** Ring **
     Name: F4_CDA_1966
-    Instance ID: 4671965648
+    Instance ID: 4943563472
     Description: Cayley-Dickson algebra based on F4, where mu = 1, Schafer 1966 version.
     Order: 16
     Identity: '0:0'
     Commutative? Yes
     Cyclic?: Yes
-    Generators: ['1:1+a', '0:a', 'a:1', '0:1+a', '1:a', '1+a:1']
+    Generators: ['a:1', '1:a', '0:1+a', '1:1+a', '0:a', '1+a:1']
     Elements:
        Index   Name   Inverse  Order
-          0   '0:0'   '0:0'       0
-          1   '0:1'   '0:1'       0
-          2   '0:a'   '0:a'       0
-          3 '0:1+a' '0:1+a'       0
-          4   '1:0'   '1:0'       0
-          5   '1:1'   '1:1'       0
-          6   '1:a'   '1:a'       0
-          7 '1:1+a' '1:1+a'       0
-          8   'a:0'   'a:0'       0
-          9   'a:1'   'a:1'       0
-         10   'a:a'   'a:a'       0
-         11 'a:1+a' 'a:1+a'       0
-         12 '1+a:0' '1+a:0'       0
-         13 '1+a:1' '1+a:1'       0
-         14 '1+a:a' '1+a:a'       0
-         15 '1+a:1+a' '1+a:1+a'       0
+          0   '0:0'   '0:0'       1
+          1   '0:1'   '0:1'       2
+          2   '0:a'   '0:a'       2
+          3 '0:1+a' '0:1+a'       2
+          4   '1:0'   '1:0'       2
+          5   '1:1'   '1:1'       2
+          6   '1:a'   '1:a'       2
+          7 '1:1+a' '1:1+a'       2
+          8   'a:0'   'a:0'       2
+          9   'a:1'   'a:1'       2
+         10   'a:a'   'a:a'       2
+         11 'a:1+a' 'a:1+a'       2
+         12 '1+a:0' '1+a:0'       2
+         13 '1+a:1' '1+a:1'       2
+         14 '1+a:a' '1+a:a'       2
+         15 '1+a:1+a' '1+a:1+a'       2
     Cayley Table (showing indices):
     [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
      [1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14],

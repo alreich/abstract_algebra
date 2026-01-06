@@ -1,5 +1,5 @@
-numpy~=1.23.5
-scipy~=1.11.3
+numpy>=2.3.5
+scipy>=1.14.0
 
-setuptools>=70.0.0
-sympy~=1.14.0
+# setuptools~=80.9.0
+sympy>=1.14.0

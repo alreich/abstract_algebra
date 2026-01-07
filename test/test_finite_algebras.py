@@ -106,10 +106,21 @@ class TestGroup(TestCase):
         self.z4 = generate_cyclic_group(4, name="Z4", description="Cyclic group of order 4")
         self.s3 = generate_symmetric_group(3, name="S3", description="Symmetric group")
         self.ps3 = generate_powerset_group(3, "PS3", "Powerset group")
+        self.r6 = generate_algebra_mod_n(6)
         self.v4 = make_finite_algebra('V4', 'Klein-4 group', ['e', 'h', 'v', 'r'],
                                       [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
         self.v4x = make_finite_algebra('V4', 'Klein-4 group', ['e', 'h', 'v', 'r'],
                                        [[0, 1, 2, 3], [1, 0, 3, 2], [2, 3, 0, 1], [3, 2, 1, 0]])
+
+    def test_element_orders(self):
+        self.assertEqual(self.v4.element_order('e'), 1)
+        self.assertEqual(self.v4.element_order('h'), 2)
+        self.assertEqual(self.ps3.element_order('{}'), 1)
+        self.assertEqual(self.ps3.element_order('{0}'), 2)
+        self.assertEqual(self.r6.element_order('0'), 1)
+        self.assertEqual(self.r6.element_order('1'), 6)
+        self.assertEqual(self.r6.element_order('2'), 3)
+        self.assertEqual(self.r6.element_order('3'), 2)
 
     def test_group_equality(self):
         self.assertTrue(self.v4 == self.v4x)

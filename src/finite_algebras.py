@@ -701,23 +701,25 @@ class Monoid(Semigroup):
 
     def __init__(self, name, description, elements, table, check_inputs=True):
         super().__init__(name, description, elements, table, check_inputs)
-        self._element_orders = {elem: None for elem in self.elements}  # Cached on first access
+        self._element_orders = {elem: 0 for elem in self.elements}  # Cached on first access
         if check_inputs:
             if self.identity is None:
                 raise ValueError("CHECK INPUTS: A monoid must have an identity element")
 
-    def element_order(self, element):
+    def element_order(self, element) -> int:
         """Returns the order of the given element within the algebra."""
+
         def order_aux(elem, prod, order):
             if prod == self.identity:
                 return order
             else:
                 return order_aux(elem, self.op(prod, elem), order + 1)
 
-        if self._element_orders[element] is None:  # If not cached yet...
+        if self._element_orders[element] != 0:  # if already cached, return value
+            return self._element_orders[element]
+        else:  # else if not cached, compute it, cache it, and return value
             self._element_orders[element] = order_aux(element, element, 1)
             return self._element_orders[element]
-        return self._element_orders[element]
 
     def units(self, return_names=True):
         """Return a sorted list of the Monoid's units.
@@ -1327,9 +1329,9 @@ def generate_commutative_monoid(order, elem_name='a', name=None, description=Non
     return make_finite_algebra(nm, desc, elements, table)
 
 
-# TODO: Maybe make element names into strings in generate_relative_primes_group
 def generate_relative_primes_group(n, name=None, description=None):
-    """Generates a group based on mult mod n of relatively-prime numbers < n."""
+    """Generates a group based on mult mod n of relatively-prime numbers < n.
+    In keeping with the convention in this module, the elements are converted to strings."""
     if name:
         nm = name
     else:
@@ -1341,7 +1343,8 @@ def generate_relative_primes_group(n, name=None, description=None):
     elems = relative_primes(n)
     elem_dict = dict(zip(elems, range(len(elems))))  # rel_prime : index_in_elem_list
     table = [[elem_dict[(a * b) % n] for b in elems] for a in elems]
-    return make_finite_algebra(nm, desc, elems, table)
+    elems_as_str = [str(elem) for elem in elems]
+    return make_finite_algebra(nm, desc, elems_as_str, table)
 
 
 # ========
@@ -1808,7 +1811,6 @@ class Ring(Group):
                                    conj_map)
 
 
-# TODO: The tables here should be CayleyTables
 def generate_powerset_ring(n, name=None, description=None):
     """Generates a ring on the powerset of {0, 1, 2, ..., n-1}, where n is a positive integer,
     symmetric difference is the addition operator, and intersection is the multiplication operator."""

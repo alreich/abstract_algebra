@@ -972,7 +972,9 @@ class Group(Monoid):
         return [partition[0] for partition in partitions]
 
     def quotient_group(self, subgroup):
-        """Given a normal subgroup, return the quotient group of this group"""
+        """Given a normal subgroup, return the quotient group of this group.
+        The elements of the quotient group will be representative elements from
+        cosets, prefixed with '~'."""
 
         def index_of_coset(elem, _cosets):
             """Given an element of an algebra and a list of cosets, find the position of the coset
@@ -1002,7 +1004,8 @@ class Group(Monoid):
 
         name = f"{self.name}/{subgroup.name}"
         desc = f"Group {self.name} modulo subgroup {subgroup.name}"
-        return make_finite_algebra(name, desc, elems, table)
+        coset_elems = tuple("~" + elem for elem in elems)
+        return make_finite_algebra(name, desc, coset_elems, table)
 
     # This 'about' method differs from the one in SingleElementSetAlgebra in that it prints out
     # more detailed information about elements.

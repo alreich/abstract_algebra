@@ -808,7 +808,9 @@ class Monoid(Semigroup):
             c_k = np.zeros((N, N))
             for i in range(N):
                 for j in range(N):
-                    c_k[i][j] = np.dot(B[i].transpose(), V(self.op(A[k], Vinv(B[j]))))
+                    val = np.dot(B[i].transpose(), V(self.op(A[k], Vinv(B[j]))))
+                    # c_k[i][j] = np.dot(B[i].transpose(), V(self.op(A[k], Vinv(B[j]))))
+                    c_k[i][j] = val.item()
             if sparse in sparse_array_classes:
                 reg_rep[A[k]] = sparse_array_classes[sparse](c_k, dtype=int)
             else:
@@ -822,7 +824,9 @@ class Monoid(Semigroup):
         # Create a function that turns a 2-dimensional nd.array into a tuple of tuples,
         # for use as a dictionary key. This works for both dense and sparse arrays.
         def array_to_tuple(arr):
-            return tuple(zip(*arr.nonzero()))
+            rows, cols = arr.nonzero()
+            # return tuple(zip(*arr.nonzero()))
+            return tuple(zip(rows, cols))
 
         # Create a reverse dictionary that maps each regular representation matrix (in tuple form)
         # to its corresponding group element.

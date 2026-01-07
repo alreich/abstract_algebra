@@ -25,7 +25,7 @@ from my_math import divisors, relative_primes
 from cayley_table import CayleyTable
 from permutations import Perm
 from abstract_matrix import AbstractMatrix
-# from abc import ABC
+from abc import ABC
 
 
 class FiniteOperator:
@@ -84,23 +84,25 @@ class FiniteOperator:
 #   FiniteAlgebra
 # =================
 
-class FiniteAlgebra:
-    """The top-level class for all algebras in this module.
-    THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
-    """
+# class FiniteAlgebra:
+#     """The top-level class for all algebras in this module.
+#     THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
+#     """
+#
+#     def __init__(self, name: str, description: str):
+#         self.name = name
+#         self.description = description
 
-    def __init__(self, name: str, description: str):
-        self.name = name
-        self.description = description
 
-
-class SingleElementSetAlgebra(FiniteAlgebra):
+class FiniteAlgebra(ABC):
     """A top-level container class for functionality that is common to all finite algebras
     that only have one set of elements. THIS CLASS IS NOT INTENDED TO BE INSTANTIATED.
     """
 
     def __init__(self, name, description, elements, table):
-        super().__init__(name, description)
+        # super().__init__(name, description)
+        self.name = name
+        self.description = description
         self._elements = tuple(elements)
         self._inverses = dict()
 
@@ -129,14 +131,6 @@ class SingleElementSetAlgebra(FiniteAlgebra):
 
     def __str__(self):
         return f"<{self.__class__.__name__}:{self.name}, ID:{id(self)}>"
-
-    # deepcopy is deprecated
-    # def deepcopy(self):
-    #     """Returns a deep copy of this algebra."""
-    #     return self.__class__(copy.deepcopy(self.name),
-    #                           copy.deepcopy(self.description),
-    #                           copy.deepcopy(self.elements),
-    #                           copy.deepcopy(self.table.tolist()))
 
     def copy_algebra(self, new_elements=(), new_name=False, new_description=False):
         """Creates a copy of the input algebra where, optionally, the existing element
@@ -266,7 +260,7 @@ class SingleElementSetAlgebra(FiniteAlgebra):
 #   Magma
 # =========
 
-class Magma(SingleElementSetAlgebra):
+class Magma(FiniteAlgebra):
     """A Magma is a finite algebra with a binary operation that returns a unique value, in the algebra,
     for all pairs in the cross-product of the algebra's set of elements with itself.  With a binary
     operation, we can compute the direct product of two or more algebras.  Also, we can check to see
@@ -2326,13 +2320,17 @@ def module_dot_product(ring, vec1, vec2):
                       zip(vec1.split(delim), vec2.split(delim))))
 
 
-class MultipleElementSetAlgebra(FiniteAlgebra):
-    """This class represents Finite Algebras that do not have single element lists,
+class FiniteCompositeAlgebra(ABC):
+    """This class represents Finite Algebras that have more than one element list,
     such as VectorSpaces and Modules."""
-    pass
+
+    def __init__(self, name: str, description: str):
+        self.name = name
+        self.description = description
 
 
-class Module(MultipleElementSetAlgebra):
+
+class Module(FiniteCompositeAlgebra):
     """See https://abstract-algebra.readthedocs.io for the definition of a Module"""
 
     def __init__(self, name, description, ring, group, operator):
@@ -2713,7 +2711,7 @@ def unpack_components(finalg):
     and returns its components: name, description, elements, and
     table(s) (in list form).
     """
-    if isinstance(finalg, SingleElementSetAlgebra):
+    if isinstance(finalg, FiniteAlgebra):
         name = finalg.name
         description = finalg.description
         elements = finalg.elements

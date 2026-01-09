@@ -16,8 +16,8 @@ class AbstractMatrix:
             arr = array
         else:
             arr = np.array(array)
-        self.__ring = ring
-        self.__array = np.array(arr, dtype='<U32')
+        self._ring = ring
+        self._array = np.array(arr, dtype='<U32')
 
     @classmethod
     def zeros(cls, shape, ring):
@@ -53,65 +53,64 @@ class AbstractMatrix:
     @property
     def array(self):
         """Returns the abstract matrix's numpy array."""
-        return self.__array
+        return self._array
 
     @property
     def shape(self):
         """Returns the shape of the abstract matrix's numpy array"""
-        return self.__array.shape
+        return self._array.shape
 
     @property
     def nrows(self):
         """Returns the number of rows of the abstract matrix"""
-        return self.__array.shape[0]
+        return self._array.shape[0]
 
     @property
     def ncols(self):
         """Returns the number of columns of the abstract matrix"""
-        return self.__array.shape[1]
+        return self._array.shape[1]
 
     @property
     def algebra(self):
         """Returns the ring, over which the abstract matrix is defined."""
-        return self.__ring
+        return self._ring
 
     @property
     def ring(self):
         """Returns the ring, over which the abstract matrix is defined."""
-        return self.__ring
+        return self._ring
 
     def copy(self):
         """Returns a copy of the abstract matrix."""
-        return AbstractMatrix(np.copy(self.__array), self.__ring)
+        return AbstractMatrix(np.copy(self._array), self._ring)
 
     def transpose(self):
         """Transposes the rows and columns of the abstract matrix"""
-        return AbstractMatrix(np.transpose(self.__array), self.__ring)
+        return AbstractMatrix(np.transpose(self._array), self._ring)
 
     def __getitem__(self, rowcol):
         i, j = rowcol
-        return self.__array[i][j]
+        return self._array[i][j]
 
     def __setitem__(self, rowcol, value):
-        if value in self.__ring.elements:
+        if value in self._ring.elements:
             i, j = rowcol
-            self.__array[i][j] = value
+            self._array[i][j] = value
         else:
-            raise ValueError(f"{value} is not an element of {self.__ring.name}")
+            raise ValueError(f"{value} is not an element of {self._ring.name}")
         return value
 
     def __mul__(self, other):
-        """Return the product of two abstract matrices."""
-        # X * Y
-        xarr = self.__array
+        """Return the product of two abstract matrices, e.g., X * Y."""
+        xarr = self._array
         xrows = self.nrows
         xcols = self.ncols
         yarr = other.array
         yrows = other.nrows
         ycols = other.ncols
         if xcols == yrows:
-            if self.__ring == other.ring:
-                ring = self.__ring
+            if self._ring == other.ring:
+                ring = self._ring
                 product = np.full((xrows, ycols), ring.zero, dtype='U32')
                 for i in range(xrows):
                     for j in range(ycols):
@@ -126,13 +125,13 @@ class AbstractMatrix:
     def __add__(self, other):
         """Return the sum of two abstract matrices."""
         # X + Y
-        xarr = self.__array
-        yarr = other.__array
+        xarr = self._array
+        yarr = other._array
         xshape = xarr.shape
         yshape = yarr.shape
         if xshape == yshape:
-            if self.__ring == other.__ring:
-                ring = self.__ring
+            if self._ring == other._ring:
+                ring = self._ring
                 result = np.full(xshape, ring.zero, dtype='U32')
                 for i in range(xshape[0]):
                     for j in range(xshape[1]):
@@ -146,13 +145,13 @@ class AbstractMatrix:
     def __sub__(self, other):
         """Return the difference of two abstract matrices."""
         # X - Y
-        xarr = self.__array
-        yarr = other.__array
+        xarr = self._array
+        yarr = other._array
         xshape = xarr.shape
         yshape = yarr.shape
         if xshape == yshape:
-            if self.__ring == other.__ring:
-                ring = self.__ring
+            if self._ring == other._ring:
+                ring = self._ring
                 result = np.full(xshape, ring.zero, dtype='U32')
                 for i in range(xshape[0]):
                     for j in range(xshape[1]):
@@ -165,22 +164,22 @@ class AbstractMatrix:
 
     def __str__(self):
         """Returns a pretty printed representation of the abstract matrix's internal array."""
-        return str(self.__array)
+        return str(self._array)
 
     def __repr__(self):
         """Returns a copy-and-paste-able representation of the matrix's internal array,
         NOT a copy-and-paste-able representation of the abstract matrix."""
-        return np.array2string(self.__array, separator=', ')
+        return np.array2string(self._array, separator=', ')
 
     def __key(self):
-        return tuple(self.__array.tolist())
+        return tuple(self._array.tolist())
 
     def __hash__(self):
         return hash(self.__key)
 
     def __eq__(self, other):
         if isinstance(other, AbstractMatrix):
-            return self.__key() == other.__key() and self.__ring == other.__ring
+            return self.__key() == other.__key() and self._ring == other._ring
         else:
             return NotImplemented
 
@@ -189,16 +188,16 @@ class AbstractMatrix:
         the abstract matrix is defined. Default is left multiplication, i.e., scalar * self, otherwise
         right multiplication is used, i.e., self * scalar.
         """
-        if scalar not in self.__ring.elements:
+        if scalar not in self._ring.elements:
             raise ValueError(f"{scalar} is not one of the matrix algebra elements")
         array = self.copy().array
         for i in range(self.nrows):
             for j in range(self.ncols):
                 if left:
-                    array[i, j] = self.__ring.mult(scalar, array[i, j])  # scalar * self
+                    array[i, j] = self._ring.mult(scalar, array[i, j])  # scalar * self
                 else:
-                    array[i, j] = self.__ring.mult(array[i, j], scalar)  # self * scalar
-        return AbstractMatrix(array, self.__ring)
+                    array[i, j] = self._ring.mult(array[i, j], scalar)  # self * scalar
+        return AbstractMatrix(array, self._ring)
 
     def minor(self, i, j):
         """Returns the i,j_th minor of the matrix"""
@@ -210,7 +209,7 @@ class AbstractMatrix:
                 raise ValueError(f"{j} is not a valid column index")
         else:
             raise ValueError(f"{i} is not a valid row index")
-        return AbstractMatrix(arr2, self.__ring)
+        return AbstractMatrix(arr2, self._ring)
 
     def determinant(self):
         """Returns the determinant of a square abstract matrix."""
@@ -236,7 +235,7 @@ class AbstractMatrix:
 
     def cofactor_matrix(self):
         """Returns the cofactor matrix of an abstract matrix"""
-        cof = AbstractMatrix.zeros(self.shape, self.__ring)
+        cof = AbstractMatrix.zeros(self.shape, self._ring)
         for i in range(self.nrows):
             for j in range(self.ncols):
                 det = self.minor(i, j).determinant()

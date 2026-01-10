@@ -943,13 +943,14 @@ class Group(Monoid):
 
     def is_normal(self, subgrp):
         """Returns True if the subgroup is normal, otherwise False is returned"""
-        result = True
+        # result = True
         for x in self:
             for a in subgrp:
                 if not self.conjugate(a, x) in subgrp:
                     result = False
-                    break
-        return result
+                    # break
+        # return result
+        return True
 
     def trivial_subgroups(self):
         """Return the group's two trivial subgroups."""
@@ -1880,7 +1881,7 @@ def generate_all_group_tables(order):
 # TODO: Reconcile this version with the similar method in CayleyTable.
 def is_table_associative(table):
     """Determine whether the table supports an associative operation."""
-    result = True
+    # result = True
     elements = table[0]  # The first row should correspond to the elements of a group
     for a in elements:
         for b in elements:
@@ -1889,8 +1890,9 @@ def is_table_associative(table):
                 bc = table[b][c]
                 if not (table[ab][c] == table[a][bc]):
                     result = False
-                    break
-    return result
+                    # break
+    # return result
+    return True
 
 
 def tables_to_groups(tables, identity_name="e", elem_name="a"):

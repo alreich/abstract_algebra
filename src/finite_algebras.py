@@ -9,24 +9,26 @@
 @version:  0.1.0
 """
 
-import copy
-import collections
-from functools import reduce
-import itertools as it
 import json
-import numpy as np
-import scipy.sparse as sp
 import os
-import pprint as pp
 import re
 
+import numpy as np
+import scipy.sparse as sp
+import itertools as it
+
+from pprint import pprint
+from functools import reduce
+from abc import ABC
 from sympy.ntheory import isprime
+from copy import deepcopy
+from collections import Counter
+
+# Modules defined with this module
 from my_math import divisors, relative_primes
 from cayley_table import CayleyTable
 from permutations import Perm
 from abstract_matrix import AbstractMatrix
-from abc import ABC
-
 
 class FiniteOperator:
     """A callable class that implements a binary operation based on a multiplication
@@ -141,12 +143,12 @@ class FiniteAlgebra(ABC):
         if new_name:
             name = new_name
         else:
-            name = copy.deepcopy(self.name)
+            name = deepcopy(self.name)
 
         if new_description:
             desc = new_description
         else:
-            desc = copy.deepcopy(self.description)
+            desc = deepcopy(self.description)
 
         if len(new_elements) != 0:
             if all(map(lambda x: isinstance(x, str), new_elements)):
@@ -157,15 +159,15 @@ class FiniteAlgebra(ABC):
             else:
                 raise ValueError(f"All elements must be strings.")
         else:
-            elems = copy.deepcopy(self.elements)
+            elems = deepcopy(self.elements)
 
         if isinstance(self, Ring):
             return make_finite_algebra(name, desc, elems,
-                                       copy.deepcopy(self.table.tolist()),
-                                       copy.deepcopy(self.mult_table.tolist()))
+                                       deepcopy(self.table.tolist()),
+                                       deepcopy(self.mult_table.tolist()))
         else:
             return make_finite_algebra(name, desc, elems,
-                                       copy.deepcopy(self.table.tolist()))
+                                       deepcopy(self.table.tolist()))
 
     @property
     def elements(self):
@@ -638,10 +640,10 @@ class Magma(FiniteAlgebra):
             if size <= max_size:  # Don't print table if too large
                 if use_table_names:
                     print(f"Cayley Table (showing names):")
-                    pp.pprint(self.table.to_list_with_names(self.elements))
+                    pprint(self.table.to_list_with_names(self.elements))
                 else:
                     print(f"Cayley Table (showing indices):")
-                    pp.pprint(self.table.tolist())
+                    pprint(self.table.tolist())
             else:
                 print(f"{self.__class__.__name__} order is {size} > {max_size}, so the table is not output.")
         return None
@@ -1051,10 +1053,10 @@ class Group(Monoid):
             if size <= max_size:
                 if use_table_names:
                     print(f"Cayley Table (showing names):")
-                    pp.pprint(self.table.to_list_with_names(self.elements))
+                    pprint(self.table.to_list_with_names(self.elements))
                 else:
                     print(f"Cayley Table (showing indices):")
-                    pp.pprint(self.table.tolist())
+                    pprint(self.table.tolist())
             else:
                 print(f"{self.__class__.__name__} order is {size} > {max_size}, so no table is printed.")
         return str(self)
@@ -1572,10 +1574,10 @@ class Ring(Group):
             if size <= max_size:
                 if use_table_names:
                     print(f"Multiplicative Cayley Table (showing names):")
-                    pp.pprint(self._ring_mult_table.to_list_with_names(self.elements))
+                    pprint(self._ring_mult_table.to_list_with_names(self.elements))
                 else:
                     print(f"Multiplicative Cayley Table (showing indices):")
-                    pp.pprint(self.mult_table.tolist())
+                    pprint(self.mult_table.tolist())
             else:
                 print(f"{self.__class__.__name__} order is {size} > {max_size}, so the mult. table is not printed.")
 
@@ -2754,7 +2756,7 @@ def index_table_from_name_table(elements, name_table):
 
 def get_duplicates(lst):
     """Return a list of the duplicate items in the input list."""
-    return [item for item, count in collections.Counter(lst).items() if count > 1]
+    return [item for item, count in Counter(lst).items() if count > 1]
 
 
 def yes_or_no(true_or_false):

@@ -84,29 +84,32 @@ class CayleyTable:
         """Returns True or False, depending on whether the table supports an associative
         binary operation."""
         indices = range(len(self._table))
-        result = True
+        # result = True
         for a in indices:
             for b in indices:
                 for c in indices:
                     ab = self._table[a][b]
                     bc = self._table[b][c]
                     if not (self._table[ab][c] == self._table[a][bc]):
-                        result = False
-                        break
-        return result
+                        # result = False
+                        # break
+                        return False
+        # return result
+        return True
 
     def is_commutative(self):
         """Returns True or False, depending on whether the table supports a commutative
         binary operation."""
         n = self._table.shape[0]
-        result = True
+        # result = True
         # Loop over the table's upper off-diagonal elements
         for a in range(n):
             for b in range(a + 1, n):
                 if self._table[a][b] != self._table[b][a]:
-                    result = False
-                    break
-        return result
+                    # result = False
+                    # break
+                    return False
+        return True
 
     def distributes_over(self, other, verbose=False):
         """This method determines whether this CayleyTable distributes over an
@@ -118,7 +121,7 @@ class CayleyTable:
         if n != m:
             raise ValueError(f"{n} != {m}, but table sizes must be the same.")
         else:
-            is_distributive = True
+            # is_distributive = True
             for a in range(n):
                 for b in range(n):
                     for c in range(n):
@@ -129,29 +132,36 @@ class CayleyTable:
                             if verbose:
                                 print(f"\na = {a}; b = {b}; c = {c}")
                                 print(f"{a} x {other_bc} != {ab} + {ac}")
-                            is_distributive = False
-                            break
-        return is_distributive
+                            # is_distributive = False
+                            # break
+                            return False
+            return True
+        # return is_distributive
+
 
     def left_identity(self):
         """Returns the table's left identity element, if it exists, otherwise None is returned."""
         indices = range(len(self._table))
-        lid = None
+        # lid = None
         for x in indices:
             if all(self._table[x][y] == y for y in indices):
-                lid = x
-                break
-        return lid
+                # lid = x
+                # break
+                return x
+        # return lid
+        return None
 
     def right_identity(self):
         """Returns the table's right identity element, if it exists, otherwise None is returned."""
         indices = range(len(self._table))
-        rid = None
+        # rid = None
         for x in indices:
             if all(self._table[y][x] == y for y in indices):
-                rid = x
-                break
-        return rid
+                # rid = x
+                # break
+                return x
+        # return rid
+        return None
 
     def identity(self):
         """Returns the table's identity element, if it exists, otherwise None is returned."""
@@ -195,14 +205,18 @@ class CayleyTable:
         if self.is_associative():
             if self.identity() is not None:
                 if self.has_inverses():
-                    result = "Group"
+                    # result = "Group"
+                    return "Group"
                 else:
-                    result = "Monoid"
+                    # result = "Monoid"
+                    return "Monoid"
             else:
-                result = "Semigroup"
+                # result = "Semigroup"
+                return "Semigroup"
         else:
-            result = "Magma"
-        return result
+            # result = "Magma"
+            return "Magma"
+        # return result
 
     def about(self, printout=False):
         """Printout information about the CayleyTable: order, associativity,

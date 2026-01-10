@@ -1,0 +1,143 @@
+quasigroups
+
+From Wikipedia: https://en.wikipedia.org/wiki/Quasigroup#Latin_squares
+
+Each list, below, is a row of the table.
+
+<table class="wikitable" style="text-align:center;font-weight:bold;width:275px;height:275px;outline:2px solid;">
+<caption>A Latin square, the unbordered multiplication table for a quasigroup whose 10 elements are the digits 0–9.
+</caption>
+<tbody><tr>
+<td>0</td>
+<td>4</td>
+<td>8</td>
+<td>2</td>
+<td>3</td>
+<td>9</td>
+<td>6</td>
+<td>7</td>
+<td>1</td>
+<td>5
+</td></tr>
+<tr>
+<td>3</td>
+<td>6</td>
+<td>2</td>
+<td>8</td>
+<td>7</td>
+<td>1</td>
+<td>9</td>
+<td>5</td>
+<td>0</td>
+<td>4
+</td></tr>
+<tr>
+<td>8</td>
+<td>9</td>
+<td>3</td>
+<td>1</td>
+<td>0</td>
+<td>6</td>
+<td>4</td>
+<td>2</td>
+<td>5</td>
+<td>7
+</td></tr>
+<tr>
+<td>1</td>
+<td>7</td>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>8</td>
+<td>0</td>
+<td>3</td>
+<td>2</td>
+<td>9
+</td></tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>9</td>
+<td>0</td>
+<td>6</td>
+<td>7</td>
+<td>5</td>
+<td>8</td>
+<td>4</td>
+<td>3
+</td></tr>
+<tr>
+<td>5</td>
+<td>2</td>
+<td>7</td>
+<td>4</td>
+<td>9</td>
+<td>3</td>
+<td>1</td>
+<td>0</td>
+<td>8</td>
+<td>6
+</td></tr>
+<tr>
+<td>4</td>
+<td>3</td>
+<td>0</td>
+<td>6</td>
+<td>1</td>
+<td>5</td>
+<td>2</td>
+<td>9</td>
+<td>7</td>
+<td>8
+</td></tr>
+<tr>
+<td>9</td>
+<td>8</td>
+<td>5</td>
+<td>7</td>
+<td>2</td>
+<td>0</td>
+<td>3</td>
+<td>4</td>
+<td>6</td>
+<td>1
+</td></tr>
+<tr>
+<td>7</td>
+<td>0</td>
+<td>1</td>
+<td>9</td>
+<td>5</td>
+<td>4</td>
+<td>8</td>
+<td>6</td>
+<td>3</td>
+<td>2
+</td></tr>
+<tr>
+<td>6</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>8</td>
+<td>2</td>
+<td>7</td>
+<td>1</td>
+<td>9</td>
+<td>0
+</td></tr></tbody></table>
+
+Or, by another copy method:
+
+0	4	8	2	3	9	6	7	1	5
+3	6	2	8	7	1	9	5	0	4
+8	9	3	1	0	6	4	2	5	7
+1	7	6	5	4	8	0	3	2	9
+2	1	9	0	6	7	5	8	4	3
+5	2	7	4	9	3	1	0	8	6
+4	3	0	6	1	5	2	9	7	8
+9	8	5	7	2	0	3	4	6	1
+7	0	1	9	5	4	8	6	3	2
+6	5	4	3	8	2	7	1	9	0
+

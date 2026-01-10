@@ -319,7 +319,7 @@ class Magma(FiniteAlgebra):
             for _ in range(n - 1):
                 result = result * self
         else:
-            raise ValueError(f"n = {n}, but the power must be a positive integer.")
+            raise ValueError(f"Error: n = {n}. Power must be a positive integer.")
         return result
 
     def element_to_power(self, elem, n, left_associative=True):
@@ -337,7 +337,7 @@ class Magma(FiniteAlgebra):
                     if self.has_identity():  # Or, raise an exception if no identity exists
                         result = self.identity
                     else:
-                        raise ValueError(f"n = {n}. But, {self.name} does not have an identity element.")
+                        raise ValueError(f"Error: n = {n}. {self.name} does not have an identity element.")
                 elif n > 0:
                     for _ in range(n - 1):
                         if left_associative:
@@ -348,11 +348,11 @@ class Magma(FiniteAlgebra):
                     if self.has_inverses():
                         result = self.inv(self.element_to_power(elem, abs(n), left_associative))
                     else:
-                        raise ValueError(f"n = {n}. But, {self.name} does not have inverses.")
+                        raise ValueError(f"Error: n = {n}. But, {self.name} does not have inverses.")
             else:
-                raise ValueError(f"n = {n}. The power must be an integer.")
+                raise ValueError(f"Error: n = {n}. The power must be an integer.")
         else:
-            raise ValueError(f"{elem} is not an element of {self.name}.")
+            raise ValueError(f"Error: {elem} is not an element of {self.name}.")
         return result
 
     def reorder_elements(self, reordered_elements):

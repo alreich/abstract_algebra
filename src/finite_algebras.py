@@ -545,21 +545,24 @@ class Magma(FiniteAlgebra):
             return None
 
     def is_division_algebra(self, verbose=False):
-        """Return True if, for every a & b in the algebra, there is an x and y in the algebra
-        such that ax=b and ya=b. Otherwise, return False.  If False is returned, and you need to
-        see why, set verbose to True and look for 'fail' in the output."""
+        """Return True if, for every a & b in the algebra, there are unique x and y in the algebra
+        such that ax=b and ya=b. Otherwise, return False. Set verbose to True to see intermediate
+        calculations."""
         if verbose:
             print(f"\n{self}\n")
         result = True
         elems = self.elements
+        n_sqr = self.order ** 2
+        count = 0  # number of successes
         for ab in it.product(elems, elems):
+            a = ab[0]
+            b = ab[1]
             ab_ok = False
             for xy in it.product(elems, elems):
-                a = ab[0]
-                b = ab[1]
                 x = xy[0]
                 y = xy[1]
                 if self.op(a, x) == b and self.op(y, a) == b:
+                    count += 1
                     if verbose:
                         print(f"{ab} & {xy}")
                     ab_ok = True
@@ -568,7 +571,19 @@ class Magma(FiniteAlgebra):
                 result = False
                 if verbose:
                     print(f"{ab} fail")
-        return result
+        if verbose:
+            print(f"Number of successes, {count}, should equal {n_sqr}")
+        if result:
+            if count == n_sqr:
+                return True
+            elif count > n_sqr:
+                if verbose:
+                    print(f"Count of {count} > {n_sqr} means some cancellations are not unique.")
+                return False
+            else:
+                raise Exception(f"A True result with count {count} < {n_sqr} means something went wrong.")
+        else:
+            return False
 
     def _element_pairs_where_table_equals(self, cayley_table, elem_name):
         """Utility function that returns all pairs of elements where the cayley_table entries
@@ -947,8 +962,9 @@ class Group(Monoid):
         for x in self:
             for a in subgrp:
                 if not self.conjugate(a, x) in subgrp:
-                    result = False
+                    # result = False
                     # break
+                    return False
         # return result
         return True
 
@@ -1889,8 +1905,9 @@ def is_table_associative(table):
                 ab = table[a][b]
                 bc = table[b][c]
                 if not (table[ab][c] == table[a][bc]):
-                    result = False
+                    # result = False
                     # break
+                    return False
     # return result
     return True
 

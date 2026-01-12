@@ -15,5 +15,6 @@
   "sd16_semidihedral_group.json",
   "a5_alternating_group_on_5_letters.json",
   "field_of_order_2.json",
-  "quasigroup.json"
+  "quasigroup.json",
+  "ip_loop.json"
 ]

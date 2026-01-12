@@ -4,7 +4,7 @@
 """
 
 import numpy as np
-
+import itertools as it
 
 class CayleyTable:
     """
@@ -138,6 +138,46 @@ class CayleyTable:
             return True
         # return is_distributive
 
+    def has_cancellation(self, verbose=False):
+        """Return True if, for every a & b in the algebra, there are unique x and y in the algebra
+        such that ax=b and ya=b. Otherwise, return False. Set verbose to True to see intermediate
+        calculations."""
+        result = True
+        n = self.table.shape[0]  # Number of elements represented by table
+        n_sqr = n ** 2
+        elems = list(range(n))  # The indices of the elements
+        count = 0  # number of successes
+        for ab in it.product(elems, elems):
+            a = ab[0]
+            b = ab[1]
+            ab_ok = False
+            for xy in it.product(elems, elems):
+                x = xy[0]
+                y = xy[1]
+                # if self.op(a, x) == b and self.op(y, a) == b:
+                if int(self[a, x]) == b and int(self[y, a]) == b:
+                    count += 1
+                    if verbose:
+                        print(f"{ab} & {xy}")
+                    ab_ok = True
+                    # break
+            if not ab_ok:
+                result = False
+                if verbose:
+                    print(f"{ab} fail")
+        if verbose:
+            print(f"Number of successes, {count}, should equal {n_sqr}")
+        if result:
+            if count == n_sqr:
+                return True
+            elif count > n_sqr:
+                if verbose:
+                    print(f"Count of {count} > {n_sqr} means some cancellations are not unique.")
+                return False
+            else:
+                raise Exception(f"A True result with count {count} < {n_sqr} means something went wrong.")
+        else:
+            return False
 
     def left_identity(self):
         """Returns the table's left identity element, if it exists, otherwise None is returned."""

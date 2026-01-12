@@ -216,6 +216,12 @@ class FiniteAlgebra(ABC):
         """Returns True if the algebra is abelian; returns False otherwise."""
         return self.is_commutative()
 
+    def has_cancellation(self, verbose=False):
+        """Return True if, for every a & b in the algebra, there are unique x and y in the algebra
+        such that ax=b and ya=b. Otherwise, return False. Set verbose to True to see intermediate
+        calculations."""
+        return self.table.has_cancellation(verbose)
+
     def has_inverses(self):
         """Returns True if every element in the algebra has an inverse that is also in the algebra;
         returns False otherwise."""
@@ -544,46 +550,46 @@ class Magma(FiniteAlgebra):
                 print(f"The Center of {self} is not closed.")
             return None
 
-    def is_division_algebra(self, verbose=False):
-        """Return True if, for every a & b in the algebra, there are unique x and y in the algebra
-        such that ax=b and ya=b. Otherwise, return False. Set verbose to True to see intermediate
-        calculations."""
-        if verbose:
-            print(f"\n{self}\n")
-        result = True
-        elems = self.elements
-        n_sqr = self.order ** 2
-        count = 0  # number of successes
-        for ab in it.product(elems, elems):
-            a = ab[0]
-            b = ab[1]
-            ab_ok = False
-            for xy in it.product(elems, elems):
-                x = xy[0]
-                y = xy[1]
-                if self.op(a, x) == b and self.op(y, a) == b:
-                    count += 1
-                    if verbose:
-                        print(f"{ab} & {xy}")
-                    ab_ok = True
-                    break
-            if not ab_ok:
-                result = False
-                if verbose:
-                    print(f"{ab} fail")
-        if verbose:
-            print(f"Number of successes, {count}, should equal {n_sqr}")
-        if result:
-            if count == n_sqr:
-                return True
-            elif count > n_sqr:
-                if verbose:
-                    print(f"Count of {count} > {n_sqr} means some cancellations are not unique.")
-                return False
-            else:
-                raise Exception(f"A True result with count {count} < {n_sqr} means something went wrong.")
-        else:
-            return False
+    # def is_division_algebra(self, verbose=False):
+    #     """Return True if, for every a & b in the algebra, there are unique x and y in the algebra
+    #     such that ax=b and ya=b. Otherwise, return False. Set verbose to True to see intermediate
+    #     calculations."""
+    #     if verbose:
+    #         print(f"\n{self}\n")
+    #     result = True
+    #     elems = self.elements
+    #     n_sqr = self.order ** 2
+    #     count = 0  # number of successes
+    #     for ab in it.product(elems, elems):
+    #         a = ab[0]
+    #         b = ab[1]
+    #         ab_ok = False
+    #         for xy in it.product(elems, elems):
+    #             x = xy[0]
+    #             y = xy[1]
+    #             if self.op(a, x) == b and self.op(y, a) == b:
+    #                 count += 1
+    #                 if verbose:
+    #                     print(f"{ab} & {xy}")
+    #                 ab_ok = True
+    #                 # break
+    #         if not ab_ok:
+    #             result = False
+    #             if verbose:
+    #                 print(f"{ab} fail")
+    #     if verbose:
+    #         print(f"Number of successes, {count}, should equal {n_sqr}")
+    #     if result:
+    #         if count == n_sqr:
+    #             return True
+    #         elif count > n_sqr:
+    #             if verbose:
+    #                 print(f"Count of {count} > {n_sqr} means some cancellations are not unique.")
+    #             return False
+    #         else:
+    #             raise Exception(f"A True result with count {count} < {n_sqr} means something went wrong.")
+    #     else:
+    #         return False
 
     def _element_pairs_where_table_equals(self, cayley_table, elem_name):
         """Utility function that returns all pairs of elements where the cayley_table entries
@@ -674,6 +680,26 @@ class Magma(FiniteAlgebra):
 
     def div(self, x, y):
         raise NotImplementedError(f"{self.__class__.__name__} div cannot be implemented.")
+
+
+# =============
+#  Quasigroup
+# =============
+
+class Quasigroup(Magma):
+
+    def __init__(self, name, description, elements, table):
+        super().__init__(name, description, elements, table)
+
+
+# =============
+#     Loop
+# =============
+
+class Loop(Quasigroup):
+
+    def __init__(self, name, description, elements, table):
+        super().__init__(name, description, elements, table)
 
 
 # =============
@@ -2713,7 +2739,12 @@ def make_finite_algebra(*args):
         else:
             return Semigroup(name, desc, elems, table, check_inputs=False)
     else:
-        return Magma(name, desc, elems, table)
+        if table.has_cancellation():
+            if table.identity() is not None:
+                return Loop(name, desc, elems, table)
+            return Quasigroup(name, desc, elems, table)
+        else:
+            return Magma(name, desc, elems, table)
 
 
 # ==========

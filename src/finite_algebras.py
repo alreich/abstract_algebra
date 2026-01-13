@@ -227,6 +227,17 @@ class FiniteAlgebra(ABC):
         returns False otherwise."""
         return self._table.has_inverses()
 
+    def create_inverse_lookup_dict(self):
+        """Returns a dictionary that maps each of the algebra's elements to its inverse element."""
+        if self.has_identity():
+            # row_indices, col_indices = np.where(self.table.table == self.table.identity())
+            # return {self.elements[elem_index]: self.elements[elem_inv_index]
+            #         for (elem_index, elem_inv_index)
+            #         in zip(row_indices, col_indices)}
+            return self.table.inverse_lookup_dict(self.table.identity(), self.elements)
+        else:
+            return None
+
     def inv(self, element):
         """Return the inverse of an element"""
         if self.has_inverses():
@@ -621,8 +632,8 @@ class Magma(FiniteAlgebra):
     # This 'about' method differs from the one in Groups in that it does not print out
     # as much detailed information about elements.
     # TODO: Combine the 'about' method, below, with the one in Groups.
-    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
-              show_generators=False):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True,
+              show_elements=True, show_generators=False):
         """Prints out information about the algebra. Tables larger than
         max_size are not printed out."""
         print(f"\n** {self.__class__.__name__} **")
@@ -655,6 +666,7 @@ class Magma(FiniteAlgebra):
                     print(f"Generators: {gens_sorted}")
         if show_elements:
             print(f"Elements: {self.elements}")
+        print(f"Has Cancellation? {yes_or_no(self.has_cancellation())}")
         print(f"Has Inverses? {yes_or_no(self.has_inverses())}")
         size = len(self.elements)
         if show_tables:
@@ -927,11 +939,11 @@ class Group(Monoid):
         super().__init__(name, description, elements, table, check_inputs)
         if check_inputs:
             if self.table.has_inverses():
-                self._inverses = self._create_inverse_lookup_dict()
+                self._inverses = self.create_inverse_lookup_dict()
             else:
                 raise ValueError("CHECK INPUTS: Table has insufficient inverses")
         else:
-            self._inverses = self._create_inverse_lookup_dict()
+            self._inverses = self.create_inverse_lookup_dict()
 
     def __truediv__(self, normal_subgroup):
         """Return the quotient group based on a given normal subgroup.
@@ -940,12 +952,13 @@ class Group(Monoid):
         one of the subgroup's cosets."""
         return self.quotient_group(normal_subgroup)
 
-    def _create_inverse_lookup_dict(self):
-        """Returns a dictionary that maps each of the algebra's elements to its inverse element."""
-        row_indices, col_indices = np.where(self.table.table == self.table.identity())
-        return {self.elements[elem_index]: self.elements[elem_inv_index]
-                for (elem_index, elem_inv_index)
-                in zip(row_indices, col_indices)}
+    # def create_inverse_lookup_dict(self):
+    #     """Returns a dictionary that maps each of the algebra's elements to its inverse element.
+    #     This method is typically only used when initializing an algebra."""
+    #     row_indices, col_indices = np.where(self.table.table == self.table.identity())
+    #     return {self.elements[elem_index]: self.elements[elem_inv_index]
+    #             for (elem_index, elem_inv_index)
+    #             in zip(row_indices, col_indices)}
 
     def inverse_mapping(self):
         """Returns a dictionary that maps each element to its inverse."""

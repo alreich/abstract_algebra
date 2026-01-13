@@ -228,8 +228,9 @@ class CayleyTable:
         else:
             return False
 
-    def inverse_lookup_dict(self, identity):
-        elements = range(len(self._table))
+    def inverse_lookup_dict(self, identity, elements=None):
+        if elements is None:
+            elements = range(len(self._table))
         row_indices, col_indices = np.where(self._table == identity)
         return {elements[elem_index]: elements[elem_inv_index]
                 for (elem_index, elem_inv_index)

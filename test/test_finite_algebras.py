@@ -11,9 +11,28 @@ from finite_algebras import *
 class TestMagma(TestCase):
 
     def setUp(self) -> None:
+
         self.rps = Magma('RPS', "Rock, Paper, Scissors",
                          ['r', 'p', 's'],
                          [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+
+        self.qg = make_finite_algebra("Latin_Sqr",
+                                      "Latin Square. A division algebra (AKA Quasigroup)",
+                                      ["a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9"],
+                                      [[0, 4, 8, 2, 3, 9, 6, 7, 1, 5],
+                                       [3, 6, 2, 8, 7, 1, 9, 5, 0, 4],
+                                       [8, 9, 3, 1, 0, 6, 4, 2, 5, 7],
+                                       [1, 7, 6, 5, 4, 8, 0, 3, 2, 9],
+                                       [2, 1, 9, 0, 6, 7, 5, 8, 4, 3],
+                                       [5, 2, 7, 4, 9, 3, 1, 0, 8, 6],
+                                       [4, 3, 0, 6, 1, 5, 2, 9, 7, 8],
+                                       [9, 8, 5, 7, 2, 0, 3, 4, 6, 1],
+                                       [7, 0, 1, 9, 5, 4, 8, 6, 3, 2],
+                                       [6, 5, 4, 3, 8, 2, 7, 1, 9, 0]])
+
+    def test_has_cancellation(self):
+        self.assertFalse(self.rps.has_cancellation())
+        self.assertTrue(self.qg.has_cancellation())
 
     def test_elements(self):
         self.assertEqual(self.rps.elements, ('r', 'p', 's'))

@@ -254,9 +254,14 @@ class CayleyTable:
             else:
                 # result = "Semigroup"
                 return "Semigroup"
-        else:
-            # result = "Magma"
-            return "Magma"
+        else:  # It's a Magma, but what kind?
+            if self.has_cancellation():
+                if self.identity() is not None:
+                    return "Loop"
+                else:
+                    return "Quasigroup"
+            else:
+                return "Magma"
         # return result
 
     def about(self, printout=False):
@@ -268,27 +273,28 @@ class CayleyTable:
         co = str(self.is_commutative())
         lid = str(self.left_identity())
         rid = str(self.right_identity())
+        can = str(self.has_cancellation())
         ident = str(self.identity())
         invs = str(self.has_inverses())
         alg = self.type_of_algebra()
         if printout:
-            print("  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?  Algebra?")
-            print('-' * 100)
-            print(f"{n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}} {alg :>{10}}")
+            print("  Order  Associative?  Commutative?  Left Id?  Right Id? Cancel? Identity?  Inverses?  Algebra?")
+            print('-' * 105)
+            print(f"{n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {can :>{9}} {ident :>{10}} {invs :>{10}} {alg :>{10}}")
             return None
         else:
-            return n, ass, co, lid, rid, ident, invs, alg
+            return n, ass, co, lid, rid, can, ident, invs, alg
 
 
 # Utility
 
 def about_tables(list_of_cayley_tables):
-    print("   Table  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?  Algebra?")
-    print('-' * 100)
+    print("   Table  Order  Associative?  Commutative?  Left Id?  Right Id? Cancel?  Identity?  Inverses?  Algebra?")
+    print('-' * 105)
     for tbl in list_of_cayley_tables:
         i = list_of_cayley_tables.index(tbl) + 1
-        n, ass, co, lid, rid, ident, invs, alg = tbl.about()
-        print(f"{i :>{6}} {n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {ident :>{10}} {invs :>{10}} {alg :>{10}}")
+        n, ass, co, lid, rid, can, ident, invs, alg = tbl.about()
+        print(f"{i :>{6}} {n :>{6}} {ass :>{11}} {co :>{12}} {lid :>{12}} {rid :>{9}} {can :>{9}} {ident :>{10}} {invs :>{10}} {alg :>{10}}")
 
 
 # END OF FILE

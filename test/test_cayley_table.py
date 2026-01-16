@@ -4,7 +4,7 @@
 """
 
 from unittest import TestCase
-from cayley_table import CayleyTable
+from cayley_table import CayleyTable, about_tables
 
 
 class TestCayleyTable(TestCase):
@@ -92,7 +92,19 @@ class TestCayleyTable(TestCase):
                       [0, 4, 2, 0, 4, 2],
                       [0, 5, 4, 3, 2, 1]]
 
-        test_arrays = [self.tbl1, self.tbl2, self.tbl3, self.tbl4, self.tbl5]
+        # Quasigroup
+        self.tbl9 = [[0, 4, 8, 2, 3, 9, 6, 7, 1, 5],
+                     [3, 6, 2, 8, 7, 1, 9, 5, 0, 4],
+                     [8, 9, 3, 1, 0, 6, 4, 2, 5, 7],
+                     [1, 7, 6, 5, 4, 8, 0, 3, 2, 9],
+                     [2, 1, 9, 0, 6, 7, 5, 8, 4, 3],
+                     [5, 2, 7, 4, 9, 3, 1, 0, 8, 6],
+                     [4, 3, 0, 6, 1, 5, 2, 9, 7, 8],
+                     [9, 8, 5, 7, 2, 0, 3, 4, 6, 1],
+                     [7, 0, 1, 9, 5, 4, 8, 6, 3, 2],
+                     [6, 5, 4, 3, 8, 2, 7, 1, 9, 0]]
+
+        test_arrays = [self.tbl1, self.tbl2, self.tbl3, self.tbl4, self.tbl5, self.tbl9]
 
         test_arrays_add = [self.tbl6a, self.tbl7a, self.tbl8a]
         test_arrays_mult = [self.tbl6m, self.tbl7m, self.tbl8m]
@@ -104,14 +116,14 @@ class TestCayleyTable(TestCase):
 
     # ABOUT TEST_TABLES:
     #
-    #    Table  Order  Associative?  Commutative?  Left Id?  Right Id?  Identity?  Inverses?
-    # -------------------------------------------------------------------------------------
-    #      1      3       False         True         None      None       None      False
-    #      2      6        True        False            0         0          0       True
-    #      3      4        True         True            0         0          0       True
-    #      4      8        True         True            0         0          0       True
-    #      5      6        True        False         None         0       None      False
-
+    #    Table  Order  Associative?  Commutative?  Left Id?  Right Id? Cancel?  Identity?  Inverses?  Algebra?
+    # ---------------------------------------------------------------------------------------------------------
+    #      1      3       False         True         None      None     False       None      False      Magma
+    #      2      6        True        False            0         0      True          0       True      Group
+    #      3      4        True         True            0         0      True          0       True      Group
+    #      4      8        True         True            0         0      True          0       True      Group
+    #      5      6        True        False         None         0     False       None      False  Semigroup
+    #      6     10       False        False         None      None      True       None      False Quasigroup
     # NOTE: Creating an inverse_lookup_dict requires that the index, "id", of the identity
     # element be provided.
 
@@ -127,31 +139,31 @@ class TestCayleyTable(TestCase):
 
     def test_table_order(self):
         result = [tbl.order for tbl in self.all_tables]
-        self.assertEqual(result, [3, 6, 4, 8, 6, 4, 4, 6, 4, 4, 6])
+        self.assertEqual(result, [3, 6, 4, 8, 6, 10, 4, 4, 6, 4, 4, 6])
 
     def test_table_associative(self):
         result = [tbl.is_associative() for tbl in self.all_tables]
-        self.assertEqual(result, [False, True, True, True, True, True, True, True, True, True, True])
+        self.assertEqual(result, [False, True, True, True, True, False, True, True, True, True, True, True])
 
     def test_table_commutative(self):
         result = [tbl.is_commutative() for tbl in self.all_tables]
-        self.assertEqual(result, [True, False, True, True, False, True, True, True, True, False, True])
+        self.assertEqual(result, [True, False, True, True, False, False, True, True, True, True, False, True])
 
     def test_table_left_id(self):
         result = [tbl.left_identity() for tbl in self.test_tables]
-        self.assertEqual(result, [None, 0, 0, 0, None])
+        self.assertEqual(result, [None, 0, 0, 0, None, None])
 
     def test_table_right_id(self):
         result = [tbl.right_identity() for tbl in self.test_tables]
-        self.assertEqual(result, [None, 0, 0, 0, 0])
+        self.assertEqual(result, [None, 0, 0, 0, 0, None])
 
     def test_table_identity(self):
         result = [tbl.identity() for tbl in self.test_tables]
-        self.assertEqual(result, [None, 0, 0, 0, None])
+        self.assertEqual(result, [None, 0, 0, 0, None, None])
 
     def test_table_has_inverses(self):
         result = [tbl.has_inverses() for tbl in self.test_tables]
-        self.assertEqual(result, [False, True, True, True, False])
+        self.assertEqual(result, [False, True, True, True, False, False])
 
     def test_cayley_table_to_str(self):
         result = str(CayleyTable(self.tbl3))
@@ -180,5 +192,5 @@ class TestCayleyTable(TestCase):
         result = [a.distributes_over(m) for (m, a) in zip(self.test_tables_mult, self.test_tables_add)]
         self.assertEqual(result, [False, False, False])
 
-    # def test_about_tables(self):
-    #     about_tables(self.test_tables)
+    def test_about_tables(self):
+        about_tables(self.test_tables)

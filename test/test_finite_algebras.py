@@ -12,9 +12,12 @@ class TestMagma(TestCase):
 
     def setUp(self) -> None:
 
-        self.rps = Magma('RPS', "Rock, Paper, Scissors",
-                         ['r', 'p', 's'],
-                         [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
+        self.rps = make_finite_algebra('RPS',
+                                       "Rock, Paper, Scissors",
+                                       ['r', 'p', 's'],
+                                       [[0, 1, 0],
+                                        [1, 1, 2],
+                                        [0, 2, 2]])
 
         self.qg = make_finite_algebra("Latin_Sqr",
                                       "Latin Square. A division algebra (AKA Quasigroup)",
@@ -30,9 +33,31 @@ class TestMagma(TestCase):
                                        [7, 0, 1, 9, 5, 4, 8, 6, 3, 2],
                                        [6, 5, 4, 3, 8, 2, 7, 1, 9, 0]])
 
+        self.ip_loop = make_finite_algebra("IP_Loop",
+                                           "IP loop of small order",
+                                           ["0", "1", "2", "3", "4", "5", "6"],
+                                           [[0, 1, 2, 3, 4, 5, 6],
+                                            [1, 2, 0, 5, 6, 4, 3],
+                                            [2, 0, 1, 6, 5, 3, 4],
+                                            [3, 6, 5, 4, 0, 1, 2],
+                                            [4, 5, 6, 0, 3, 2, 1],
+                                            [5, 3, 4, 2, 1, 6, 0],
+                                            [6, 4, 3, 1, 2, 0, 5]])
+
+    def test_make_instance(self):
+        self.assertTrue(isinstance(self.rps, Magma))
+        self.assertTrue(isinstance(self.qg, Quasigroup))
+        self.assertTrue(isinstance(self.ip_loop, Loop))
+
     def test_has_cancellation(self):
         self.assertFalse(self.rps.has_cancellation())
         self.assertTrue(self.qg.has_cancellation())
+        self.assertTrue(self.ip_loop.has_cancellation())
+
+    def test_has_identity(self):
+        self.assertFalse(self.rps.has_identity())
+        self.assertFalse(self.qg.has_identity())
+        self.assertTrue(self.ip_loop.has_identity())
 
     def test_elements(self):
         self.assertEqual(self.rps.elements, ('r', 'p', 's'))
@@ -66,8 +91,10 @@ class TestMagma(TestCase):
 
     def test_identity(self):
         self.assertIsNone(self.rps.identity)
+        self.assertIsNone(self.qg.identity)
+        self.assertEqual(self.ip_loop.identity, '0')
 
-    def test_make_finite_algebra_1(self):
+    def test_equal_algebras(self):
         rps2 = make_finite_algebra('RPS', "Rock, Paper, Scissors",
                                    ['r', 'p', 's'], [[0, 1, 0], [1, 1, 2], [0, 2, 2]])
         self.assertEqual(rps2, self.rps)
@@ -86,10 +113,10 @@ class TestSemigroup(TestCase):
                                   ['a', 'b', 'c', 'd', 'e', 'f'], self.ex141_tbl)
 
     def test_rps_is_associative(self):
-        self.assertEqual(self.ex141_sg.is_associative(), True)
+        self.assertTrue(self.ex141_sg.is_associative())
 
     def test_rps_is_not_commutative(self):
-        self.assertEqual(self.ex141_sg.is_commutative(), False)
+        self.assertFalse(self.ex141_sg.is_commutative())
 
     def test_rps_has_no_identity(self):
         self.assertIsNone(self.ex141_sg.identity)

@@ -387,13 +387,13 @@ class Magma(FiniteAlgebra):
         else:
             raise ValueError(f"There are {len(reordered_elements)} reordered elements.  There should be {n}.")
 
-    def _element_mappings(self, other):
+    def make_element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this algebra's elements to all
         possible permutations of other's elements.  The orders of self and other must
         be equal."""
         return [dict(zip(self.elements, perm)) for perm in it.permutations(other.elements)]
 
-    def _isomorphic_mapping(self, other, mapping):
+    def is_isomorphic_mapping(self, other, mapping):
         """Returns True if the input mapping from this algebra to the other algebra is isomorphic."""
         return all([mapping[self.op(x, y)] == other.op(mapping[x], mapping[y])
                     for x in self.elements for y in self.elements])
@@ -402,9 +402,9 @@ class Magma(FiniteAlgebra):
         """If there is a mapping from elements of this algebra to the other algebra's elements,
         return it; otherwise return False."""
         if (self.__class__.__name__ == other.__class__.__name__) and (self.order == other.order):
-            maps = self._element_mappings(other)
+            maps = self.make_element_mappings(other)
             for mp in maps:
-                if self._isomorphic_mapping(other, mp):
+                if self.is_isomorphic_mapping(other, mp):
                     return mp
             return False
         else:
@@ -903,23 +903,22 @@ class Monoid(Semigroup):
     # Monoid Isomorphisms
     # ---------------------
 
-    def _element_mappings(self, other):
+    def make_element_mappings(self, other):
         """Returns a list of mappings (dictionaries) of this algebra's elements to all possible permutations
         of other's elements, where the identity of this algebra is always mapped to the identity of other."""
         if self.order == other.order:
-            # Identities map to identities, so remove them
+
+            # Temporarily & non-destructively remove identities from lists of elements
             id0 = self.identity
             id1 = other.identity
-            # elems0 = self.elements.copy()
             elems0copy = tuple(self.elements)
-            # elems1 = other.elements.copy()
             elems1copy = tuple(other.elements)
-            # elems0.remove(id0)
             list(elems0copy).remove(id0)
-            # elems1.remove(id1)
             list(elems1copy).remove(id1)
+
             # Compute all possible mappings
             mappings = [dict(zip(elems0copy, perm)) for perm in it.permutations(elems1copy)]
+
             # Add the identities back in
             for mapping in mappings:
                 mapping[id0] = id1

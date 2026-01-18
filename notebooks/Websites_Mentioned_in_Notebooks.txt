@@ -1,0 +1,238 @@
+"Why Study Semigroups" by John M. Howie (http://www.thebookshelf.auckland.ac.nz/docs/Maths/PDF2/mathschron016-001.pdf)
+The commutative, non-associative Magma, Rock (r), Paper (p), Scissors (s) game (https://en.wikipedia.org/wiki/Commutative_magma)
+Commutative Magma (https://en.wikipedia.org/wiki/Commutative_magma)
+Quasigroup (https://en.wikipedia.org/wiki/Quasigroup#Latin_squares)
+"Counting loops with the inverse property" by Asif Ali & John Slaney (http://www.quasigroups.eu/contents/download/2008/16_2.pdf)
+"Groupoids and Smarandache Groupoids" (https://arxiv.org/ftp/math/papers/0304/0304490.pdf) by W. B. Vasantha Kandasamy
+D3 -- (https://en.wikipedia.org/wiki/Dihedral_group_of_order_6)
+Example 6 (http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html)
+"Field with four elements" (https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements)
+Georgi, Howard (2018), "Lie algebras in particle physics: from isospin to unified theories", CRC Press, [Open Access] (https://www.taylorfrancis.com/books/oa-mono/10.1201/9780429499210/lie-algebras-particle-physics-howard-georgi?context=ubx&refId=1530fefc-3778-48ae-99ec-cba2935af2fb)
+Huang, Jiaqi (2012), "Lie Groups and their applications to Particle Physics: A Tutorial for Undergraduate Physics Majors" (arXiv:2012.00834v1](https://arxiv.org/abs/2012.00834)
+Laplace expansion algorithm (https://en.wikipedia.org/wiki/Laplace_expansion)
+[Baez 2001] "The Octonions", Baez, John C., Bull. Amer. Math. Soc. 39 (2002), 145-205. (https://www.ams.org/journals/bull/2002-39-02/S0273-0979-01-00934-X/S0273-0979-01-00934-X.pdf)
+[Schafer 1966] "An Introduction to Nonassociative Algebras", Schafer, R. D., Academic Press, 1966. [or see the 1961 version](https://www.gutenberg.org/ebooks/25156)
+The [Cayley-Dickson construction (https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction)
+
+55_cayley_dickson_OLD.ipynb:    "> Let $F_n$ be a finite field of order $n$, where $n \\in \\mathbb{Z}^+$ and $n > 1$ is a [Gaussian prime](https://mathworld.wolfram.com/GaussianPrime.html) (e.g., 3, 7, 11, 19, 23, 31, 43, ...),\n",
+55_cayley_dickson_OLD.ipynb:    "* [Python code for octonion and sedenion multiplication](https://www.johndcook.com/blog/2018/07/09/octonioin-multiplication/) - John D Cook blog\n",
+55_cayley_dickson_OLD.ipynb:    "* [The Octonions](https://web.archive.org/web/20180216125124/http://math.ucr.edu:80/home/baez/octonions/) - The Wayback Machine\n",
+55_cayley_dickson_OLD.ipynb:    "* [Algebra over a field](https://en.wikipedia.org/wiki/Algebra_over_a_field) - Wikipedia\n",
+55_cayley_dickson_OLD.ipynb:    "* [Cayley-Dickson construction](https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction) - Wikipedia\n",
+55_cayley_dickson_OLD.ipynb:    "* [Cayley-Dickson algebra](https://encyclopediaofmath.org/wiki/Cayley-Dickson_algebra) - Encyclopedia of Math\n",
+55_cayley_dickson_OLD.ipynb:    "* [What comes after the ducentiquinquagintasexions?](https://english.stackexchange.com/questions/234607/what-comes-after-the-ducentiquinquagintasexions) - StackExchange\n",
+55_cayley_dickson_OLD.ipynb:    "* [\"Equivalence in a Class of Division Algebras of Order 16\"](https://core.ac.uk/reader/82141950) by R. D. Schafer\n",
+55_cayley_dickson_OLD.ipynb:    "* [\"A Stroll Through the Gaussian Primes\"](https://maa.org/sites/default/files/pdf/upload_library/22/Chauvenet/Gethner.pdf), Gethner, Wagon, and Wick, The American Mathematical Monthly, 1998.\n",
+55_cayley_dickson_OLD.ipynb:    "* [\"Equivalence in a Class of Division Algebras of Order 16\"](https://core.ac.uk/reader/82141950) by R. D. Schafer\n",
+55_cayley_dickson_OLD.ipynb:    "* [\"Cayley-Dickson Algebras and Loops\"](https://www.hilarispublisher.com/open-access/cayleydickson-algebras-and-loops-1736-4337-1-101.pdf), Culbert, C., Journal of Generalized Lie Theory and Applications Vol. 1 (2007), No. 1, 1–17\n",
+55_cayley_dickson_OLD.ipynb:    "* [\"On Automorphisms and Derivations of Cayley-Dickson Algebras\"](https://www.sciencedirect.com/science/article/pii/0021869390902219), Eakin, P. & Sathaye A., Journal of Algebra 129, 263-278 (1990)"
+55_cayley_dickson.ipynb:    "* [Baez 2001] \"The Octonions\", Baez, John C., Bull. Amer. Math. Soc. 39 (2002), 145-205. ([PDF](https://www.ams.org/journals/bull/2002-39-02/S0273-0979-01-00934-X/S0273-0979-01-00934-X.pdf))\n",
+55_cayley_dickson.ipynb:    "* [Schafer 1966] \"An Introduction to Nonassociative Algebras\", Schafer, R. D., Academic Press, 1966. ([or see the 1961 version](https://www.gutenberg.org/ebooks/25156))"
+55_cayley_dickson.ipynb:    "The [Cayley-Dickson construction](https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction) begins with a <i>base</i> algebra, $A$, usually a ring or field, from which another algebra, $\\mathscr{C}(A)$, is derived, with compound elements, identical to those found in the direct product of $A$ with itself. And, like direct products, addition is defined element-wise, but multiplication is defined **similar to complex number multiplication**, as described in Definition 1, below. The description is \"simplified\" because it does not use conjugation anywhere. Conjugation is defined and used in the more general definitions that follow this one.\n",
+55_cayley_dickson.ipynb:    "> Let $F_n$ be a finite field of order $n$, where $n \\in \\mathbb{Z}^+$ and $n > 1$ is a [Gaussian prime](https://mathworld.wolfram.com/GaussianPrime.html) (e.g., 3, 7, 11, 19, 23, 31, 43, ...),\n",
+55_cayley_dickson.ipynb:    "* [Python code for octonion and sedenion multiplication](https://www.johndcook.com/blog/2018/07/09/octonioin-multiplication/) - John D Cook blog\n",
+55_cayley_dickson.ipynb:    "* [The Octonions](https://web.archive.org/web/20180216125124/http://math.ucr.edu:80/home/baez/octonions/) - The Wayback Machine\n",
+55_cayley_dickson.ipynb:    "* [Algebra over a field](https://en.wikipedia.org/wiki/Algebra_over_a_field) - Wikipedia\n",
+55_cayley_dickson.ipynb:    "* [Cayley-Dickson construction](https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction) - Wikipedia\n",
+55_cayley_dickson.ipynb:    "* [Cayley-Dickson algebra](https://encyclopediaofmath.org/wiki/Cayley-Dickson_algebra) - Encyclopedia of Math\n",
+55_cayley_dickson.ipynb:    "* [What comes after the ducentiquinquagintasexions?](https://english.stackexchange.com/questions/234607/what-comes-after-the-ducentiquinquagintasexions) - StackExchange\n",
+55_cayley_dickson.ipynb:    "* [\"Equivalence in a Class of Division Algebras of Order 16\"](https://core.ac.uk/reader/82141950) by R. D. Schafer\n",
+55_cayley_dickson.ipynb:    "* [\"A Stroll Through the Gaussian Primes\"](https://maa.org/sites/default/files/pdf/upload_library/22/Chauvenet/Gethner.pdf), Gethner, Wagon, and Wick, The American Mathematical Monthly, 1998.\n",
+55_cayley_dickson.ipynb:    "* [\"Equivalence in a Class of Division Algebras of Order 16\"](https://core.ac.uk/reader/82141950) by R. D. Schafer\n",
+55_cayley_dickson.ipynb:    "* [\"Cayley-Dickson Algebras and Loops\"](https://www.hilarispublisher.com/open-access/cayleydickson-algebras-and-loops-1736-4337-1-101.pdf), Culbert, C., Journal of Generalized Lie Theory and Applications Vol. 1 (2007), No. 1, 1–17\n",
+55_cayley_dickson.ipynb:    "* [\"On Automorphisms and Derivations of Cayley-Dickson Algebras\"](https://www.sciencedirect.com/science/article/pii/0021869390902219), Eakin, P. & Sathaye A., Journal of Algebra 129, 263-278 (1990)"
+90_resources.ipynb:    "* [Carter 2009] <i>\"[Visual Group Theory](https://bookstore.ams.org/clrm-32)\"</i>, Carter, N.C., 2009, Mathematical Association of America"
+90_resources.ipynb:    "* [Classification of Groups of Order n ≤ 8 (PDF)](http://www2.lawrence.edu/fast/corrys/Math300/8Groups.pdf)\n",
+90_resources.ipynb:    "* [Groupoids and Smarandache Groupoids](https://arxiv.org/ftp/math/papers/0304/0304490.pdf) by W. B. Vasantha Kandasamy"
+90_resources.ipynb:    "* [Group Explorer](https://nathancarter.github.io/group-explorer/index.html) -- Visualization software for the abstract algebra classroom\n",
+90_resources.ipynb:    "* [Groupprops, The Group Properties Wiki (beta)](https://groupprops.subwiki.org/wiki/Main_Page)\n",
+90_resources.ipynb:    "* [GroupNames](https://people.maths.bris.ac.uk/~matyd/GroupNames/index.html) -- \"A database, under construction, of names, extensions, properties and character tables of finite groups of small order.\"\n",
+90_resources.ipynb:    "* [GAP](https://www.gap-system.org/#:~:text=What%20is%20GAP%3F,data%20libraries%20of%20algebraic%20objects.) -- \"Groups, Algorithms, Programming - a System for Computational Discrete Algebra\"\n",
+90_resources.ipynb:    "* [Groups of small order](http://www.math.ucsd.edu/~atparris/small_groups.html): Compiled by John Pedersen, Dept of Mathematics, University of South Florida\n",
+90_resources.ipynb:    "* [List of small groups](https://en.wikipedia.org/wiki/List_of_small_groups): Finite groups of small order up to group isomorphism\n",
+90_resources.ipynb:    "  * [Wikipedia](https://en.wikipedia.org/wiki/Klein_four-group)\n",
+90_resources.ipynb:    "  * [Group Explorer](https://github.com/nathancarter/group-explorer/blob/master/groups/V_4.group)\n",
+90_resources.ipynb:    "  * [Wikipedia](https://en.wikipedia.org/wiki/Cyclic_group)\n",
+90_resources.ipynb:    "  * [Z4, cyclic group of order 4](https://github.com/nathancarter/group-explorer/blob/master/groups/Z_4.group)\n",
+90_resources.ipynb:    "  * [Symmetric group on 3 letters](https://github.com/nathancarter/group-explorer/blob/master/groups/S_3.group). Another name for this group is <i>\"Dihedral group on 3 vertices\"</i>\n",
+90_resources.ipynb:    "* [\"Rings and Fields\"](http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/index.html), John O'Connor & Edmund Robertson, School of Math. & Stat., Univ. of St Andrews, Scotland\n",
+90_resources.ipynb:    "* [SACK](https://github.com/johnkerl/sack) A simple abstract-algebra calculator. Includes some elementary group routines."
+90_resources.ipynb:    "* [\"3 Ways to Add Images to Your Jupyter Notebook\"](https://www.base64-image.de/)"
+complex_OLD.ipynb:    "NOTE: The primes of the form $4k+3$ are known as [Gaussian primes](https://mathworld.wolfram.com/GaussianPrime.html) (3, 7, 11, 19, 23, 31, 43, ...).  Also, see [OEIS A002145](https://oeis.org/A002145)."
+complex_OLD.ipynb:    "<b>Even though $\\mathbb{R}$ can be replaced by finite field $\\mathbb{F_n}$, where n is its order, and the arithmetic operations, described above, can be performed.  For the <u>finite</u> algebras tested here, not all of the resulting algebras of abstract complex \"numbers\" are Fields. Some will be Rings. Only the algebras where the order, $n$ of the generating field, $\\mathbb{F_n}$, is a [Gaussian prime](https://mathworld.wolfram.com/GaussianPrime.html) (n = 3, 7, 11, 19, 23, 31, ...) become fields themselves.</b>\n",
+complex_OLD.ipynb:    "NOTE: The sequence 3, 7, 11, 19, 23, 31,... are primes of the form 4n + 3, also known as <b>Gaussian primes</b> (sequence [A002145](https://oeis.org/A002145) in the [OEIS](https://en.wikipedia.org/wiki/On-Line_Encyclopedia_of_Integer_Sequences)).  [Also see Wikipedia](https://en.wikipedia.org/wiki/Dirichlet%27s_theorem_on_arithmetic_progressions)"
+complex_OLD.ipynb:    "* <i>\"Introduction to finite fields\"</i>, from David Forney's course 6.451 (principles of digital communication) at MIT. [(PDF online)](https://web.stanford.edu/~marykw/classes/CS250_W19/readings/Forney_Introduction_to_Finite_Fields.pdf)\n",
+complex_OLD.ipynb:    "* <i>\"Galois: A performant NumPy extension for Galois fields\"</i>, Hostetter, M. (2020). ([Computer software](https://galois.readthedocs.io/en/v0.0.21/index.html))\n",
+complex_OLD.ipynb:    "* <i>\"Algebra over a field\"</i>, [Wikipedia](https://en.wikipedia.org/wiki/Algebra_over_a_field)\n",
+complex_OLD.ipynb:    "* <i>\"Definitions of a Linear Associative Algebra by Independent Postulates\"</i> by Leonard Eugene Dickson, Transactions of the American Mathematical Society, 1903. [(PDF online)](https://www.ams.org/journals/tran/1903-004-01/S0002-9947-1903-1500620-0/S0002-9947-1903-1500620-0.pdf)\n"
+complex_v2_OLD.ipynb:    "<b>Even though $\\mathbb{R}$ can be replaced by finite field $\\mathbb{F_n}$, where n is its order, and the arithmetic operations, described above, can be performed.  For the <u>finite</u> algebras tested here, not all of the resulting algebras of abstract complex \"numbers\" are Fields. Some will be Rings. Only the algebras where the order, $n$ of the generating field, $\\mathbb{F_n}$, is a [Gaussian prime](https://mathworld.wolfram.com/GaussianPrime.html) (n = 3, 7, 11, 19, 23, 31, ...) become fields themselves.</b>\n",
+complex_v2_OLD.ipynb:    "NOTE: The sequence 3, 7, 11, 19, 23, 31,... are primes of the form 4n + 3, also known as <b>Gaussian primes</b> (sequence [A002145](https://oeis.org/A002145) in the [OEIS](https://en.wikipedia.org/wiki/On-Line_Encyclopedia_of_Integer_Sequences)).  [Also see Wikipedia](https://en.wikipedia.org/wiki/Dirichlet%27s_theorem_on_arithmetic_progressions)"
+complex_v2_OLD.ipynb:    "* <i>\"Introduction to finite fields\"</i>, from David Forney's course 6.451 (principles of digital communication) at MIT. [(PDF online)](https://web.stanford.edu/~marykw/classes/CS250_W19/readings/Forney_Introduction_to_Finite_Fields.pdf)\n",
+complex_v2_OLD.ipynb:    "* <i>\"Galois: A performant NumPy extension for Galois fields\"</i>, Hostetter, M. (2020). ([Computer software](https://galois.readthedocs.io/en/v0.0.21/index.html))\n",
+complex_v2_OLD.ipynb:    "* <i>\"Algebra over a field\"</i>, [Wikipedia](https://en.wikipedia.org/wiki/Algebra_over_a_field)\n",
+complex_v2_OLD.ipynb:    "* <i>\"Definitions of a Linear Associative Algebra by Independent Postulates\"</i> by Leonard Eugene Dickson, Transactions of the American Mathematical Society, 1903. [(PDF online)](https://www.ams.org/journals/tran/1903-004-01/S0002-9947-1903-1500620-0/S0002-9947-1903-1500620-0.pdf)\n"
+guide.ipynb:    "**NOTE**: The type of table required here is known as a [Cayley Table](https://en.wikipedia.org/wiki/Cayley_table).  All of the properties of a finite algebra can be derived from its Cayley Table.  For this reason, this module includes a ``CayleyTable`` class for storing the table and methods associated with it."
+guide.ipynb:    "See https://en.wikipedia.org/wiki/Commutative_magma\n",
+guide.ipynb:    "Reference: [Groupoids and Smarandache Groupoids](https://arxiv.org/ftp/math/papers/0304/0304490.pdf) by W. B. Vasantha Kandasamy"
+guide.ipynb:    "See Example 6 in this reference: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html"
+guide.ipynb:       "'Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html',\n",
+guide.ipynb:    "    'Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html',\n",
+guide.ipynb:      "Description: Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+guide.ipynb:       "'Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html',\n",
+guide.ipynb:    "The function, ``generate_algebra_mod_n``, is based on [example 2 here](http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html) and in [Wikipedia here](https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements).  The $+$ and $\\times$ operations are the usual integer addition and multiplication modulo the order (n), resp.\n",
+guide.ipynb:    "**Reference**: See Wikipedia: [\"Field with four elements\"](https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements)"
+guide.ipynb:    "The ``div`` method, for example, can be used to construct the \"Division\" table shown in the Wikipedia entry, [\"Field with four elements\"](https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements):"
+guide.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+guide.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+guide.ipynb:    "* <b>Book</b>: [\"Visual Group Theory\" by Nathan Carter](https://bookstore.ams.org/clrm-32)\n",
+guide.ipynb:    "* [Group Explorer](https://nathancarter.github.io/group-explorer/index.html) -- Visualization software for the abstract algebra classroom\n",
+guide.ipynb:    "* [Groupprops, The Group Properties Wiki (beta)](https://groupprops.subwiki.org/wiki/Main_Page)\n",
+guide.ipynb:    "* [GroupNames](https://people.maths.bris.ac.uk/~matyd/GroupNames/index.html) -- \"A database, under construction, of names, extensions, properties and character tables of finite groups of small order.\"\n",
+guide.ipynb:    "* [GAP](https://www.gap-system.org/#:~:text=What%20is%20GAP%3F,data%20libraries%20of%20algebraic%20objects.) -- \"Groups, Algorithms, Programming - a System for Computational Discrete Algebra\"\n",
+guide.ipynb:    "* [Groups of small order](http://www.math.ucsd.edu/~atparris/small_groups.html): Compiled by John Pedersen, Dept of Mathematics, University of South Florida\n",
+guide.ipynb:    "* [List of small groups](https://en.wikipedia.org/wiki/List_of_small_groups): Finite groups of small order up to group isomorphism\n",
+guide.ipynb:    "* [Classification of Groups of Order n ≤ 8 (PDF)](http://www2.lawrence.edu/fast/corrys/Math300/8Groups.pdf)\n",
+guide.ipynb:    "* [Subgroups of Order 4 (PDF)](http://newton.uor.edu/facultyfolder/beery/abstract_algebra/08_SbgrpsOrder4.pdf)\n",
+guide.ipynb:    "  * [Wikipedia](https://en.wikipedia.org/wiki/Klein_four-group)\n",
+guide.ipynb:    "  * [Group Explorer](https://github.com/nathancarter/group-explorer/blob/master/groups/V_4.group)\n",
+guide.ipynb:    "  * [Wikipedia](https://en.wikipedia.org/wiki/Cyclic_group)\n",
+guide.ipynb:    "  * [Z4, cyclic group of order 4](https://github.com/nathancarter/group-explorer/blob/master/groups/Z_4.group)\n",
+guide.ipynb:    "  * [Symmetric group on 3 letters](https://github.com/nathancarter/group-explorer/blob/master/groups/S_3.group). Another name for this group is <i>\"Dihedral group on 3 vertices\"</i>\n",
+guide.ipynb:    "* [Groupoids and Smarandache Groupoids](https://arxiv.org/ftp/math/papers/0304/0304490.pdf) by W. B. Vasantha Kandasamy\n",
+guide.ipynb:    "* [\"Rings and Fields\"](http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/index.html), John O'Connor & Edmund Robertson, School of Math. & Stat., Univ. of St Andrews, Scotland"
+my_math.ipynb:    "These are fairly standard functions that are not in Python's standard math libraries, [math](https://docs.python.org/3/library/math.html) and [cmath](https://docs.python.org/3/library/cmath.html).\n",
+my_math.ipynb:    "Some of the functionality here is available in other large math-related packages like, [NumPy](https://numpy.org/), [SymPy](https://docs.sympy.org/), and [SciPy](https://scipy.org/), but are here to reduce the dependency on such large packages for just one or two functions."
+NEW_00_intro.ipynb:    "<center>The Rock-Paper-Scissors Game (See https://en.wikipedia.org/wiki/Rock_paper_scissors)</center>"
+README.ipynb:    "$ git clone https://github.com/alreich/abstract_algebra.git"
+README.ipynb:    "See full documentation at <i>ReadTheDocs</i>: [https://abstract-algebra.readthedocs.io/](https://abstract-algebra.readthedocs.io/en/latest/index.html)"
+README.ipynb:    "The following small, [finite field with four elements](https://en.wikipedia.org/wiki/Finite_field#Field_with_four_elements) comes from Wikipedia."
+scratchwork01-subalgebras.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork01-subalgebras.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork01-subalgebras.ipynb:      "Description: Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork02-misc_properties.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork02-misc_properties.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork02-misc_properties.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork02-misc_properties.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork02-misc_properties.ipynb:      "Description: https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork02-misc_properties.ipynb:    "See https://en.wikipedia.org/wiki/Cancellation_property\n",
+scratchwork02-misc_properties.ipynb:    "and https://math.stackexchange.com/questions/4008196/defining-loops-why-is-divisibility-and-identitiy-implying-invertibility\n",
+scratchwork02-misc_properties.ipynb:    "and [\"Why Study Semigroups?\" by John M. Howie](http://www.thebookshelf.auckland.ac.nz/docs/Maths/PDF2/mathschron016-001.pdf)"
+scratchwork03-check_dot_product.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork03-check_dot_product.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork04-Cosets.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork04-Cosets.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork05-A5_Group.ipynb:    "[Source: Group Explorer](https://github.com/nathancarter/group-explorer/blob/master/groups/A_5.group)"
+scratchwork05-A5_Group.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork05-A5_Group.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork06-commutators.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork06-commutators.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork06-commutators.ipynb:      "Description: Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork07-Units_of_a_Ring.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork07-Units_of_a_Ring.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork08-Direct_Product_of_Rings.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork08-Direct_Product_of_Rings.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork09-not_a_Group.ipynb:    "For documentation on the items below see https://abstract-algebra.readthedocs.io by Alfred J. Reich"
+scratchwork10_words.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork10_words.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork11-field_of_order_2.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork11-field_of_order_2.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork12-Relative_Primes_Groups.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork12-Relative_Primes_Groups.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork13-Polynomials_in_SymPy_NumPy.ipynb:    "[SymPy documentation](https://docs.sympy.org/latest/index.html)\n",
+scratchwork13-Polynomials_in_SymPy_NumPy.ipynb:    "* [Polynomial Manipulation](https://docs.sympy.org/latest/modules/polys/index.html)"
+Scratchwork14-Groups_S3_Z3_and_D4.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+Scratchwork14-Groups_S3_Z3_and_D4.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+Scratchwork14-Groups_S3_Z3_and_D4.ipynb:    "https://cas.umw.edu/math/files/2011/09/honors_brown.pdf"
+scratchwork15-Regular_Representation_v1.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork15-Regular_Representation_v1.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork15-Regular_Representation_v2.ipynb:    "* Georgi, Howard (2018), <i>\"Lie algebras in particle physics: from isospin to unified theories\"</i>, CRC Press, [Open Access](https://www.taylorfrancis.com/books/oa-mono/10.1201/9780429499210/lie-algebras-particle-physics-howard-georgi?context=ubx&refId=1530fefc-3778-48ae-99ec-cba2935af2fb)\n",
+scratchwork15-Regular_Representation_v2.ipynb:    "* Huang, Jiaqi (2012), <i>\"Lie Groups and their applications to Particle Physics: A Tutorial for Undergraduate Physics Majors\"</i>, [arXiv:2012.00834v1](https://arxiv.org/abs/2012.00834)"
+scratchwork15-Regular_Representation_v2.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork15-Regular_Representation_v2.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork15-Regular_Representation_v2.ipynb:    "The module, [scipy.sparse](https://docs.scipy.org/doc/scipy/reference/sparse.html#), supports 7 different sparse matrix formats. The examples, below, use each one of the 7 to convert an existing regular representation mapping to one that contains sparse matrices."
+scratchwork16_abstract_matrices_2x2_matrix_algebra-Version2.ipynb:    "The purpose here is to try to generate an algebra based on 2x2 abstract matrices over a small field, such as [a four-element field](https://en.wikipedia.org/wiki/Field_(mathematics)#A_field_with_four_elements), F4."
+scratchwork16_abstract_matrices_2x2_matrix_algebra-Version2.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork16_abstract_matrices_2x2_matrix_algebra-Version2.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork16_abstract_matrices_2x2_matrix_algebra.ipynb:    "The purpose here is to try to generate an algebra based on 2x2 abstract matrices over a small field, such as [a four-element field](https://en.wikipedia.org/wiki/Field_(mathematics)#A_field_with_four_elements), F4."
+scratchwork16_abstract_matrices_2x2_matrix_algebra.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork16_abstract_matrices_2x2_matrix_algebra.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork17_more_abstract_matrices.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork17_more_abstract_matrices.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork18_groupoids.ipynb:    "1. Kandasamy, W. B. Vasantha, \"Groupoids and Smarandache Groupoids\", 2003, https://arxiv.org/abs/math/0304490\n",
+scratchwork18_groupoids.ipynb:    "1. Reich, Alfred J., Abstract Algebra (github.com), https://github.com/alreich/abstract_algebra"
+scratchwork19_algebra_equality.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork19_algebra_equality.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork23_abstract_complex_algebras_OLD.ipynb:    "* <i>\"Algebra over a field\"</i>, [Wikipedia](https://en.wikipedia.org/wiki/Algebra_over_a_field)\n",
+scratchwork23_abstract_complex_algebras_OLD.ipynb:    "* <i>\"Definitions of a Linear Associative Algebra by Independent Postulates\"</i> by Leonard Eugene Dickson, Transactions of the American Mathematical Society, 1903. [(PDF online)](https://www.ams.org/journals/tran/1903-004-01/S0002-9947-1903-1500620-0/S0002-9947-1903-1500620-0.pdf)\n"
+scratchwork24_cayley_dickson_alg.ipynb:    "The [Cayley-Dickson construction](https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction) begins with a <i>base</i> algebra, $A$, usually a ring or field, from which another algebra, $\\mathscr{C}(A)$, is derived, with compound elements, identical to those found in the direct product of $A$ with itself, and, like direct products, addition is defined element-wise, but multiplication is defined similar to complex number multiplication, as described in definition 1, below.\n",
+scratchwork24_cayley_dickson_alg.ipynb:    "* Schafer, R. D., \"An Introduction to Nonassociative Algebras\", Academic Press, 1966. ([or see this 1961 version](https://www.gutenberg.org/ebooks/25156))\n",
+scratchwork24_cayley_dickson_alg.ipynb:    "* [Python code for octonion and sedenion multiplication](https://www.johndcook.com/blog/2018/07/09/octonioin-multiplication/) - John D Cook blog\n",
+scratchwork24_cayley_dickson_alg.ipynb:    "* [The Octonions](https://web.archive.org/web/20180216125124/http://math.ucr.edu:80/home/baez/octonions/) - The Wayback Machine\n",
+scratchwork24_cayley_dickson_alg.ipynb:    "* [Algebra over a field](https://en.wikipedia.org/wiki/Algebra_over_a_field) - Wikipedia\n",
+scratchwork24_cayley_dickson_alg.ipynb:    "* [Cayley-Dickson construction](https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction) - Wikipedia\n",
+scratchwork24_cayley_dickson_alg.ipynb:    "* [Cayley-Dickson algebra](https://encyclopediaofmath.org/wiki/Cayley-Dickson_algebra) - Encyclopedia of Math\n",
+scratchwork24_cayley_dickson_alg.ipynb:    "* [What comes after the ducentiquinquagintasexions?](https://english.stackexchange.com/questions/234607/what-comes-after-the-ducentiquinquagintasexions) - StackExchange\n",
+scratchwork24_cayley_dickson_alg.ipynb:    "* [\"Equivalence in a Class of Division Algebras of Order 16\"](https://core.ac.uk/reader/82141950) by R. D. Schafer"
+scratchwork24b_cayley_dickson_alg.ipynb:    "NOTE: The primes of the form $4k+3$ are known as [Gaussian primes](https://mathworld.wolfram.com/GaussianPrime.html) (3, 7, 11, 19, 23, 31, 43, ...).  Also, see [OEIS A002145](https://oeis.org/A002145)."
+scratchwork24b_cayley_dickson_alg.ipynb:    "* [Cayley Dickson algebra implementation in python](https://github.com/thoppe/Cayley-Dickson/blob/master/src/cayley_dickson.py) - github repo\n",
+scratchwork24b_cayley_dickson_alg.ipynb:    "* [Python code for octonion and sedenion multiplication](https://www.johndcook.com/blog/2018/07/09/octonioin-multiplication/) - John D Cook blog\n",
+scratchwork24b_cayley_dickson_alg.ipynb:    "* [The Octonions](https://web.archive.org/web/20180216125124/http://math.ucr.edu:80/home/baez/octonions/) - The Wayback Machine\n",
+scratchwork24b_cayley_dickson_alg.ipynb:    "* [Algebra over a field](https://en.wikipedia.org/wiki/Algebra_over_a_field) - Wikipedia\n",
+scratchwork24b_cayley_dickson_alg.ipynb:    "* [Cayley-Dickson construction](https://en.wikipedia.org/wiki/Cayley%E2%80%93Dickson_construction) - Wikipedia\n",
+scratchwork24b_cayley_dickson_alg.ipynb:    "* [Cayley-Dickson algebra](https://encyclopediaofmath.org/wiki/Cayley-Dickson_algebra) - Encyclopedia of Math\n",
+scratchwork24b_cayley_dickson_alg.ipynb:    "* [What comes after the ducentiquinquagintasexions?](https://english.stackexchange.com/questions/234607/what-comes-after-the-ducentiquinquagintasexions) - StackExchange\n",
+scratchwork24b_cayley_dickson_alg.ipynb:    "* [\"Equivalence in a Class of Division Algebras of Order 16\"](https://core.ac.uk/reader/82141950) by R. D. Schafer"
+scratchwork27_centers.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork27_centers.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork29_Jacobi_identity.ipynb:    "* [Jacobi Identity page at Wikipedia](https://en.wikipedia.org/wiki/Jacobi_identity)\n",
+scratchwork29_Jacobi_identity.ipynb:    "* [Jacobi Identity page at Groupprops](https://groupprops.subwiki.org/wiki/Jacobi_identity)"
+scratchwork30_gaussian_integers.ipynb:    "> -- [Wikipedia](https://en.wikipedia.org/wiki/Gaussian_integer)"
+scratchwork30_gaussian_integers.ipynb:    "* [The Gaussian Integers](https://kconrad.math.uconn.edu/blurbs/ugradnumthy/Zinotes.pdf) by Keith Conrad\n",
+scratchwork30_gaussian_integers.ipynb:    "* [Gaussian Prime](https://mathworld.wolfram.com/GaussianPrime.html) - Wolfram\n",
+scratchwork30_gaussian_integers.ipynb:    "* [1.13: The Gaussian Integers](https://math.libretexts.org/Bookshelves/Combinatorics_and_Discrete_Mathematics/Elementary_Number_Theory_(Barrus_and_Clark)/01%3A_Chapters/1.13%3A_The_Gaussian_Integers) in [Elementary Number Theory](https://math.libretexts.org/Bookshelves/Combinatorics_and_Discrete_Mathematics/Elementary_Number_Theory_(Barrus_and_Clark)) by Barrus and Clark\n",
+scratchwork30_gaussian_integers.ipynb:    "* [Gaussian Integers and Rings of Algebraic Integers](https://www.math.uci.edu/~ndonalds/math180b/6gaussian.pdf) in lecture notes by Neil Donaldson\n",
+scratchwork30_gaussian_integers.ipynb:    "* [Gaussian integer -- Wikipedia](https://en.wikipedia.org/wiki/Gaussian_integer)\n",
+scratchwork30_gaussian_integers.ipynb:    "  * [divmod](https://docs.python.org/3/library/functions.html#divmod) - implements the division theorem for Python integers or floats\n",
+scratchwork30_gaussian_integers.ipynb:    "  * [Emulating Numeric Types](https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types)\n",
+scratchwork30_gaussian_integers.ipynb:    "  * [cmath — Mathematical functions for complex numbers](https://docs.python.org/3/library/cmath.html)\n",
+scratchwork30_gaussian_integers.ipynb:    "  * [math — Mathematical functions](https://docs.python.org/3/library/math.html)\n",
+scratchwork30_gaussian_integers.ipynb:    "  * [Python standard operators](https://docs.python.org/3/library/operator.html)"
+scratchwork30_gaussian_integers.ipynb:    "The source code, along with this Jupyter notebook and others, can be found on Github: https://github.com/alreich/abstract_algebra"
+scratchwork30_gaussian_integers.ipynb:    "The following examples of **Gaussian primes** are from [Wolfram](https://mathworld.wolfram.com/GaussianPrime.html)."
+scratchwork31_gaussian_rationals.ipynb:    "* [Python Fractions - Rational Numbers](https://docs.python.org/3/library/fractions.html)\n",
+scratchwork31_gaussian_rationals.ipynb:    "* [Irreducible fractions](https://mathworld.wolfram.com/IrreducibleFraction.html) - Wolfram"
+scratchwork31_gaussian_rationals.ipynb:    "A ``Qi`` has only two fields, ``real`` and ``imag``; both are rational numbers, implemented here in the form of ``Fractions`` using the [Python fractions module](https://docs.python.org/3/library/fractions.html).\n",
+scratchwork31_gaussian_rationals.ipynb:    "The source code, along with this Jupyter notebook and others, can be found on Github: https://github.com/alreich/abstract_algebra"
+scratchwork35_octonion_mult_Cook.ipynb:    "Examples from blog posts by [John D. Cook](https://www.johndcook.com/blog/services-2/)"
+scratchwork35_octonion_mult_Cook.ipynb:    "## How far is xy from yx on average for quaternions? [5 July 2018](https://www.johndcook.com/blog/2018/07/05/quaternion-multiplication/)"
+scratchwork35_octonion_mult_Cook.ipynb:    "## Weakening the requirements of a group [8 July 2018](https://www.johndcook.com/blog/2018/07/08/weak-groups/)"
+scratchwork35_octonion_mult_Cook.ipynb:    "## Python code for octonion and sedenion multiplication [9 July 2018](https://www.johndcook.com/blog/2018/07/09/octonioin-multiplication/)"
+scratchwork35_octonion_mult_Cook.ipynb:    "## Refactored code for division algebras [10 July 2018](https://www.johndcook.com/blog/2018/07/10/cayley-dickson/)"
+scratchwork36_semidihedral_group_16.ipynb:    "1. [\"Groups of Order 16\"](https://kconrad.math.uconn.edu/blurbs/grouptheory/group16.pdf) by Keith Conrad\n",
+scratchwork36_semidihedral_group_16.ipynb:    "1. [\"Generalized Quaternions\"](https://kconrad.math.uconn.edu/blurbs/grouptheory/genquat.pdf) by Keith Conrad\n",
+scratchwork36_semidihedral_group_16.ipynb:    "1. [SD16](https://people.maths.bris.ac.uk/%7Ematyd/GroupNames/1/SD16.html) at [GroupNames](https://people.maths.bris.ac.uk/%7Ematyd/GroupNames/index.html)\n",
+scratchwork36_semidihedral_group_16.ipynb:    "1. [Question & Answers on Math.StackExchange](https://math.stackexchange.com/questions/1310507/normal-subgroups-of-the-semidihedral-group-of-order-16)\n",
+scratchwork36_semidihedral_group_16.ipynb:    "1. [Linear representation theory of semidihedral group:SD16](https://groupprops.subwiki.org/wiki/Linear_representation_theory_of_semidihedral_group:SD16) at [Groupprops](https://groupprops.subwiki.org/wiki/Main_Page)\n",
+scratchwork36_semidihedral_group_16.ipynb:    "1. \"The integer group determinants for the semidihedral group of order 16\" [arXiv:2304.04379v1](https://arxiv.org/abs/2304.04379)"
+scratchwork36_semidihedral_group_16.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork36_semidihedral_group_16.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork39_quasigroups.ipynb:    "In Wikipedia, this is called a **Quasigroup**. (https://en.wikipedia.org/wiki/Quasigroup#Algebra)\n",
+scratchwork39_quasigroups.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork39_quasigroups.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork39_quasigroups.ipynb:    "The following example is a **Latin Square** from Wikipedia: https://en.wikipedia.org/wiki/Quasigroup#Latin_squares"
+scratchwork39_quasigroups.ipynb:    "* https://math.stackexchange.com/questions/1241601/looking-for-examples-of-finite-loops-and-monoids\n",
+scratchwork39_quasigroups.ipynb:    "* https://math.stackexchange.com/questions/619891/examples-of-loops-which-have-two-sided-inverses/768168#768168"
+scratchwork39_quasigroups.ipynb:    "* *\"Bol loops of small order\"*, https://ericmoorhouse.org/pub/bol/\n",
+scratchwork39_quasigroups.ipynb:    "* *\"Smarandache Loops\"*, W. B. Visantha Kandasamy, https://arxiv.org/ftp/math/papers/0307/0307028.pdf\n",
+scratchwork39_quasigroups.ipynb:    "* *\"Counting loops with the inverse property\"*, Asif Ali & John Slaney, http://www.quasigroups.eu/contents/download/2008/16_2.pdf\n",
+scratchwork39_quasigroups.ipynb:    "* *\"An Abelian Loop for Non-Composite Numbers\"*, Raghavendra N. Bhat, https://arxiv.org/pdf/2110.14716"
+scratchwork40_isomorphisms-v2.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork40_isomorphisms-v2.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+scratchwork40_isomorphisms.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+scratchwork40_isomorphisms.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",
+simple00.ipynb:    "*\"Named after the 19th-century British mathematician Arthur Cayley, a Cayley table describes the structure of a finite group by arranging all the possible products of all the group's elements in a square table reminiscent of an addition or multiplication table. Many properties of a group – such as whether or not it is abelian, which elements are inverses of which elements, and the size and contents of the group's center – can be discovered from its Cayley table.\"* [Wikipedia](https://en.wikipedia.org/wiki/Cayley_table)"
+simple10.ipynb:    "*\"Named after the 19th-century British mathematician Arthur Cayley, a Cayley table describes the structure of a finite group by arranging all the possible products of all the group's elements in a square table reminiscent of an addition or multiplication table. Many properties of a group – such as whether or not it is abelian, which elements are inverses of which elements, and the size and contents of the group's center – can be discovered from its Cayley table.\"* [Wikipedia](https://en.wikipedia.org/wiki/Cayley_table)"
+simple20.ipynb:    "*\"Named after the 19th-century British mathematician Arthur Cayley, a Cayley table describes the structure of a finite group by arranging all the possible products of all the group's elements in a square table reminiscent of an addition or multiplication table. Many properties of a group – such as whether or not it is abelian, which elements are inverses of which elements, and the size and contents of the group's center – can be discovered from its Cayley table.\"* [Wikipedia](https://en.wikipedia.org/wiki/Cayley_table)"
+simple30.ipynb:    "*\"Named after the 19th-century British mathematician Arthur Cayley, a Cayley table describes the structure of a finite group by arranging all the possible products of all the group's elements in a square table reminiscent of an addition or multiplication table. Many properties of a group – such as whether or not it is abelian, which elements are inverses of which elements, and the size and contents of the group's center – can be discovered from its Cayley table.\"* [Wikipedia](https://en.wikipedia.org/wiki/Cayley_table)"
+testing_finite_algebras.ipynb:      "1: D3 -- https://en.wikipedia.org/wiki/Dihedral_group_of_order_6\n",
+testing_finite_algebras.ipynb:      "12: Ex6 -- Example 6: http://www-groups.mcs.st-andrews.ac.uk/~john/MT4517/Lectures/L3.html\n",

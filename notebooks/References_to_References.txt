@@ -1,0 +1,28 @@
+00_definitions.ipynb:    "**[NOTE: Need good references for divisibility and cancellation]**"
+40_reg_rep.ipynb:    "## References"
+55_cayley_dickson_OLD.ipynb:    "## References"
+55_cayley_dickson.ipynb:    "## References"
+complex_OLD.ipynb:    "## References"
+complex_OLD.ipynb:    "I'm still looking for relevant references, but for now, this section serves as a place for references that might. be related to this topic:\n",
+complex_v2_OLD.ipynb:    "## References"
+complex_v2_OLD.ipynb:    "I'm still looking for relevant references, but for now, this section serves as a place for references that might. be related to this topic:\n",
+misc.ipynb:    "## References"
+scratchwork15-Regular_Representation_v2.ipynb:    "## References"
+scratchwork18_groupoids.ipynb:    "## References"
+scratchwork23_abstract_complex_algebras_OLD.ipynb:    "## References"
+scratchwork23_abstract_complex_algebras_OLD.ipynb:    "I'm still looking for relevant references, but for now, this section serves as a place for references that might. be related to this topic:\n",
+scratchwork29_Jacobi_identity.ipynb:    "## References"
+scratchwork30_gaussian_integers.ipynb:    "## References"
+scratchwork31_gaussian_rationals.ipynb:    "## References"
+scratchwork35_octonion_mult_Cook.ipynb:    "    NOTE: In several of references an additional quantity is included in the calculation\n",
+scratchwork39_quasigroups.ipynb:    "Some references found in the link, above:\n",
+simple10.ipynb:      " |      list of weak references to the object (if defined)\n",
+simple10.ipynb:      " |      list of weak references to the object (if defined)\n",
+simple20.ipynb:      " |      list of weak references to the object (if defined)\n",
+simple20.ipynb:      " |      list of weak references to the object (if defined)\n",
+simple20.ipynb:      " |      list of weak references to the object (if defined)\n",
+simple20.ipynb:      " |      list of weak references to the object (if defined)\n",
+simple30.ipynb:      " |      list of weak references to the object\n",
+simple30.ipynb:      " |      list of weak references to the object\n",
+simple30.ipynb:      " |      list of weak references to the object\n",
+simple30.ipynb:      " |      list of weak references to the object\n",

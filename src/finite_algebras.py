@@ -24,7 +24,7 @@ from sympy.ntheory import isprime
 from copy import deepcopy
 from collections import Counter
 
-# Modules defined with this module
+# Modules defined in this project
 from my_math import divisors, relative_primes
 from cayley_table import CayleyTable
 from permutations import Perm

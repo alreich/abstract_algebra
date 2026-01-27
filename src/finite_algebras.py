@@ -1507,6 +1507,12 @@ class Ring(Group):
         """Another way to get the multiplicative identity element"""
         return self._mult_identity
 
+    @property
+    def minus_one(self):
+        """Return the Ring's 'minus one' element. That is, the additive
+        inverse of its multiplicative identity element."""
+        return self.inv(self.mult_identity)
+
     def has_mult_identity(self):
         """A convenience function that returns True or False, depending on whether the algebra
         has a multiplicative identity element, in addition to its additive identity element."""
@@ -1604,6 +1610,30 @@ class Ring(Group):
         zero_product_pairs = self.element_pairs_where_product_equals(self.identity)
         # return [pair for pair in zero_product_pairs if not self.identity in pair]
         return [pair for pair in zero_product_pairs if self.identity not in pair]
+
+    def square_root_mapping(self):
+        """Return a dictionary where the keys are ring's elements and the values
+        are the ring elements' square roots. Some elements may have no square
+        roots, and some may have one or more square roots."""
+        # The indices of elements with square roots are on the
+        # diagonal of the multiplicative Cayley table.
+        diag = self.mult_table.table.diagonal().tolist()
+        elems_with_sqr_roots = set([self[elem] for elem in diag])
+        # Create a dict with the necessary keys and empty lists
+        result = {key: list() for key in elems_with_sqr_roots}
+        for index in range(self.order):  # Populate the dict's empty lists
+            key = self[diag[index]]
+            val = self[index]
+            result[key].append(val)
+        return result
+
+    def square_roots(self, elem_name):
+        """Return a list of the square roots of elem_name. If the list is empty, there are none."""
+        mapping = self.square_root_mapping()
+        sqr_roots = list()
+        if elem_name in mapping:
+            sqr_roots = mapping[elem_name]
+        return sqr_roots
 
     def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
               show_conjugates=False, show_generators=False):

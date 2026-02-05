@@ -27,6 +27,7 @@ from collections import Counter
 # Modules defined in this project
 from my_math import divisors, relative_primes
 from cayley_table import CayleyTable
+# from notebooks.scratchwork24b_cayley_dickson_alg import elem
 from permutations import Perm
 from abstract_matrix import AbstractMatrix
 
@@ -2792,6 +2793,42 @@ def make_finite_algebra(*args):
 # ==========
 # Utilities
 # ==========
+
+def generate_algebra_from_element_dict(gen_elem_dict, binop, max_iter=100):
+    """Given...
+
+    (1) gen_elem_dict: a dictionary of generator elements, where the keys
+    are unique string names of the elements, and the values are the actual element
+    objects (e.g., numbers, matrices, etc.), and
+
+    (2) binop: a binary operation that combines the two element values into a new value,
+
+    This function uses binop to combine the input elements, and combinations of those,
+    with each other repeatedly, until no new elements are generated, and then returns
+    the resulting finite algebra, assuming this happens before the max_iter number of
+    iterations is reached.
+    """
+    counter = 0
+    elem_dict = dict(gen_elem_dict)  # shallow copy of input dict
+    while counter < max_iter:
+        new_dict = dict()
+        elem_values = elem_dict.values()
+        for key1 in elem_dict:
+            for key2 in elem_dict:
+                prod = binop(elem_dict[key1], elem_dict[key2])
+                if not any([np.array_equal(prod, arr) for arr in elem_values]):
+                    new_dict[key1 + key2] = prod
+        counter += 1
+        if not new_dict:
+            break
+        else:
+            elem_dict = dict(list(elem_dict.items()) + list(new_dict.items()))
+    else:
+        print(f"WARNING: Maximum number of iterations reached: {max_iter}")
+        print("         The resulting algebra may be incomplete.")
+        print("         Try increasing max_iter.")
+    print(f"Generated algebra order, {len(elem_dict)}, in {counter} iterations.")
+    return elem_dict
 
 
 def delete_row_col(np_arr, row, col):

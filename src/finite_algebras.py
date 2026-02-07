@@ -2801,22 +2801,33 @@ def np_arr_to_tuple(arr: np.ndarray) -> tuple:
     """
     return tuple([tuple(row) for row in arr.tolist()])
 
-def generate_algebra_from_element_dict(gen_elem_dict, bin_op, elem_eq, make_key,
-                                       name, description, max_iter=100):
+def generate_algebra_from_element_dict(gen_elem_dict,
+                                       bin_op,
+                                       elem_eq,
+                                       make_key,
+                                       make_elem_key,
+                                       name="Whatever",
+                                       description="Created from a set of generators",
+                                       max_iter=100):
     """Return an algebra, an element mapping, and iteration counter, given...
 
     (1) gen_elem_dict: a dictionary of generator elements, where the keys
     are unique string names of the elements, and the values are the actual element
     objects (e.g., numbers, matrices, etc.),
 
-    (2) binop: a binary operation that combines the two element values into a new value,
+    (2) bin_op: a binary operation that combines the two element values into a new value,
 
     (3) elem_eq: a binary operation that returns True if the two element values are equal,
 
     (4) make_key: a function that takes a generator element and returns an immutable object
         to be used as a dictionary key.
 
-    This function uses binop to combine the input elements, and combinations of those,
+    (5) make_elem_name: a function of three arguments, where the first two arguments
+        are assumed to be element keys (str), and the third is assumed to be an element
+        that is the product of the elements corresponding to the two keys. The function
+        must return a string that can be used as a key for the product.
+
+    This function uses bin_op to combine the input elements, and combinations of those,
     with each other, repeatedly, until no new elements are generated, and then returns
     the resulting finite algebra, assuming this happens before the max_iter number of
     iterations is reached.
@@ -2839,7 +2850,9 @@ def generate_algebra_from_element_dict(gen_elem_dict, bin_op, elem_eq, make_key,
                 prod = bin_op(elem_dict[key1], elem_dict[key2])
                 if not (any([elem_eq(prod, arr) for arr in elem_values]) or
                         any([elem_eq(prod, arr) for arr in new_dict.values()])):
-                    new_dict[key1 + key2] = prod
+                    prod_key = make_elem_key(key1, key2, prod)
+                    new_dict[prod_key] = prod
+                    # new_dict[key1 + key2] = prod
         if not new_dict:
             break
         else:

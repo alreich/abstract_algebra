@@ -1117,6 +1117,11 @@ class Group(Monoid):
                 print(f"{self.__class__.__name__} order is {size} > {max_size}, so no table is printed.")
         return str(self)
 
+# ##########################################################################
+# The following functions are not Group methods, even though some of them
+# have argument names that sound like they're groups, and descriptions that
+# refer to groups.
+# ##########################################################################
 
 def partition_into_isomorphic_lists(list_of_groups):
     """Partition the list of groups into sub-lists of groups that are isomorphic to each other.
@@ -1257,6 +1262,27 @@ def about_subalgebras(alg):
     about_isomorphic_partitions(alg, partitions)
     return partitions
 
+def find_isomorphic_subalgebra(algebra, partitions):
+    """Given an algebra and the partitions output by the method
+    about_subalgebras that was applied to a different algebra,
+    find an algebra in the partitions that is isomorphic to the
+    given algebra, if one exists. If one is found, return the
+    isomorphism (dict) along with the algebra found in the partition.
+    Otherwise, return False."""
+    iso_grp = None
+    iso = False
+    n = algebra.order
+    for part in partitions:
+        if part[0].order == n :
+            print(f"Checking: {part[0].name}")
+            iso = algebra.isomorphic(part[0])
+            if iso:
+                iso_grp = part[0]
+                break
+    if iso:
+        return iso, iso_grp
+    else:
+        return False
 
 # def left_cosets(group, subgroup):
 #     """Returns an iterator that returns lists of left cosets."""

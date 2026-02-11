@@ -10,8 +10,8 @@ The function, make_finite_algebra, is the recommended way to create any finite a
 
 .. autofunction:: finite_algebras.make_finite_algebra
 
-Operator
---------
+FiniteOperator
+--------------
 
 The FiniteOperator is a callable class that implements the binary operators used by the various algebras supported here. This class is automatically created whenever an algebra is created.
 
@@ -22,7 +22,9 @@ The FiniteOperator is a callable class that implements the binary operators used
 FiniteAlgebra
 -------------
 
-This is the top-level class of all algebras here. NOT INTENDED TO BE INSTANTIATED.
+.. This is the top-level class of all algebras here. NOT INTENDED TO BE INSTANTIATED.
+
+This is the top-level class for all algebras that have a single set of elements (Magma, Quasigroup, Loop, Semigroup, Monoid, Group, Ring, Field). NOT INTENDED TO BE INSTANTIATED.
 
 .. autoclass:: finite_algebras.FiniteAlgebra
     :members:
@@ -30,21 +32,39 @@ This is the top-level class of all algebras here. NOT INTENDED TO BE INSTANTIATE
     :undoc-members:
     :show-inheritance:
 
-SingleElementSetAlgebra
------------------------
-
-This is the top-level class for all algebras that have a single set of elements and a single binary operation (Magma, Semigroup, Monoid, Group). NOT INTENDED TO BE INSTANTIATED.
-
-.. autoclass:: finite_algebras.SingleElementSetAlgebra
-    :members:
-    :inherited-members:
-    :undoc-members:
-    :show-inheritance:
+.. SingleElementSetAlgebra
+.. -----------------------
+..
+.. This is the top-level class for all algebras that have a single set of elements and a single binary operation (Magma, Semigroup, Monoid, Group). NOT INTENDED TO BE INSTANTIATED.
+..
+.. .. autoclass:: finite_algebras.SingleElementSetAlgebra
+..     :members:
+..     :inherited-members:
+..     :undoc-members:
+..     :show-inheritance:
 
 Magma
 -----
 
 .. autoclass:: finite_algebras.Magma
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
+
+Quasigroup
+----------
+
+.. autoclass:: finite_algebras.Quasigroup
+    :members:
+    :inherited-members:
+    :undoc-members:
+    :show-inheritance:
+
+Loop
+----
+
+.. autoclass:: finite_algebras.Loop
     :members:
     :inherited-members:
     :undoc-members:

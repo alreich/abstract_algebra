@@ -1,0 +1,250 @@
+class FiniteOperator:
+    def __init__(self, elements, identity, table):
+    def __call__(self, *args):
+    def _binary_operation(self, elem1, elem2):
+    def _op(self, *args):
+# class FiniteAlgebra:
+#     def __init__(self, name: str, description: str):
+class FiniteAlgebra(ABC):
+    def __init__(self, name, description, elements, table):
+    def __contains__(self, element):
+    def __getitem__(self, index):
+    def __repr__(self):
+    def __str__(self):
+    def copy_algebra(self, new_elements=(), new_name=False, new_description=False):
+    def elements(self):
+    def element_map(self):
+    def table(self):
+    def identity(self):
+    def has_identity(self):
+    def order(self):
+    def is_associative(self):
+    def is_commutative(self):
+    def is_abelian(self):
+    def has_cancellation(self, verbose=False):
+    def has_inverses(self):
+    def create_inverse_lookup_dict(self):
+    def inv(self, element):
+    def to_dict(self, include_classname=False):
+    def dumps(self):
+    def dump(self, json_filename):
+class Magma(FiniteAlgebra):
+    def __init__(self, name, description, elements, table):
+    def _key(self):
+    def __hash__(self):
+    def __eq__(self, other):
+    def direct_product_delimiter(self, delimiter=None):
+    def __mul__(self, other):  # Direct Product of two Magmas
+    def __pow__(self, n, modulo=None):
+    def element_to_power(self, elem, n, left_associative=True):
+    def reorder_elements(self, reordered_elements):
+    def make_element_mappings(self, other):
+    def is_isomorphic_mapping(self, other, mapping):
+    def isomorphic(self, other):
+    def closure(self, subset_of_elements, include_inverses):
+    def closed_subsets_of_elements(self, divisors_only, include_inverses):
+    def subalgebra_from_elements(self, closed_subset_of_elements, name="No name", desc="No description"):
+    def proper_subalgebras(self, divisors_only=True, include_inverses=True):
+    def generates(self, set_of_elems):
+    def generators(self, start_of_range=1):
+    def is_cyclic(self):
+    def center(self):
+    def center_algebra(self, verbose=False):
+    # def is_division_algebra(self, verbose=False):
+    def _element_pairs_where_table_equals(self, cayley_table, elem_name):
+    def element_pairs_where_sum_equals(self, elem_name):
+    def left_cosets(self, subalgebra):
+    def right_cosets(self, subalgebra):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True,
+    def sub(self, x, y):
+    def mult(self, x, y):
+    def div(self, x, y):
+class Quasigroup(Magma):
+    def __init__(self, name, description, elements, table):
+class Loop(Quasigroup):
+    def __init__(self, name, description, elements, table):
+class Semigroup(Magma):
+    def __init__(self, name, description, elements, table, check_inputs=True):
+    def is_regular(self):
+    def weak_inverses(self):
+class Monoid(Semigroup):
+    def __init__(self, name, description, elements, table, check_inputs=True):
+    def element_order(self, element) -> int:
+        def order_aux(elem, prod, order):
+    def units(self, return_names=True):
+    def units_subgroup(self):
+    def regular_representation(self, sparse=""):
+        def V(elem):
+        def vector_to_tuple(vec):
+        def Vinv(vec):
+        def element_to_array(elem):
+        def array_to_tuple(arr):
+        def array_to_element(arr):
+    def verify_regular_representation(self, elem_to_arr, arr_to_elem):
+    def make_element_mappings(self, other):
+class Group(Monoid):
+    def __init__(self, name, description, elements, table, check_inputs=True):
+    def __truediv__(self, normal_subgroup):
+    # def create_inverse_lookup_dict(self):
+    def inverse_mapping(self):
+    def inv(self, element):
+    def sub(self, x, y):
+    def conjugate(self, a, g):
+    def commutator(self, a, b):
+    def commutators(self):
+    def commutator_subalgebra(self):
+    def is_normal(self, subgrp):
+    def trivial_subgroups(self):
+    def subgroups(self):
+    def unique_proper_subgroups(self, subgroups=None):
+    def quotient_group(self, subgroup):
+        def index_of_coset(elem, _cosets):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
+def partition_into_isomorphic_lists(list_of_groups):
+    def iso_and_not_iso(gp, gps):
+    def aux(result, remainder):
+def about_isomorphic_partition(alg, part):
+def are_n(n):
+def add_s(string, n):
+def about_isomorphic_partitions(alg, partitions):
+def about_subalgebras(alg):
+def find_isomorphic_subalgebra(algebra, partitions):
+# def left_cosets(group, subgroup):
+# def right_cosets(group, subgroup):
+def generate_cyclic_group(order, elem_name='', name=None, description=None, zfill=False):
+# def generate_symmetric_group(n, name=None, description=None, base=1):
+def generate_symmetric_group(n, name=None, description=None, alternating=False):
+def generate_powerset_group(n, name=None, description=None):
+def generate_commutative_monoid(order, elem_name='a', name=None, description=None):
+def generate_relative_primes_group(n, name=None, description=None):
+class Ring(Group):
+    def __init__(self, name, description, elements, table, table2, check_inputs=True,
+    def __repr__(self):
+    def __mul__(self, other):  # Direct Product of two Rings
+    def _key(self):
+    def __hash__(self):
+    def __eq__(self, other):
+    def add_identity(self):
+    def zero(self):
+    def mult_identity(self):
+    def one(self):
+    def minus_one(self):
+    def has_mult_identity(self):
+    def add_table(self):
+    def mult_table(self):
+    def add(self, *args):
+    def mult(self, *args):
+    def element_to_power(self, elem, n, left_associative=True):
+    def mult_is_commutative(self):
+    def extract_additive_algebra(self):
+    def extract_multiplicative_algebra(self):
+    def zero_divisors(self):
+    def units(self, return_names=True, verbose=False):
+    def commutator(self, a, b):
+    def element_pairs_where_product_equals(self, elem_name):
+    def zero_divisor_pairs(self):
+    def square_root_mapping(self):
+    def square_roots(self, elem_name):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
+    def sqr(self):  # My original version of the Cayley-Dickson construction/algebra
+    def split_element(self, element):
+    def is_gaussian_prime(self, elem):
+    def scalar_mult(self, scalar_name, elem_name):
+    def elem_conj(self, elem):
+    def conjugates(self):
+    def conj(self, elem):
+    def norm(self, elem):
+    def make_cayley_dickson_algebra(self, mu=None, version=1):
+def generate_powerset_ring(n, name=None, description=None):
+def _no_conflict(p1, p2):
+def _no_conflicts(items):
+def _filter_out_conflicts(perms, perm, n):
+def generate_all_group_tables(order):
+def is_table_associative(table):
+def tables_to_groups(tables, identity_name="e", elem_name="a"):
+def get_integer_form(elem_list):
+def get_int_forms(ref_group, isomorphisms):
+def is_field(add_id, elements, table):
+class Field(Ring):
+    def __init__(self, name, description, elements, table, table2, check_inputs=True, mult_sub_grp=None,
+    def mult_abelian_subgroup(self):
+    def mult_inv(self, element):
+    def div(self, x, y):
+    def element_to_power(self, elem, n, left_associative=True):
+def generate_algebra_mod_n(n, elem_name='', name=None, description=None):
+def generate_nxn_matrix_algebra(ring, element_name_prefix='a'):
+def r2_scalar_mult(scalar_name, elem_name, algebra, delimiter=":"):
+def r2_negate(elem_name, algebra, delimiter=":"):
+def r2_conjugate(elem_name, algebra, delimiter=":"):
+def r2_sqr_abs_val(elem_name, algebra, alg_sqr, delimiter=':'):
+def r2_inverse(elem_name, algebra, alg_sqr, delimiter=':'):
+class Element:
+    def __init__(self, name, algebra):
+    def name(self):
+    def algebra(self):
+    def can_add(self):
+    def can_subtract(self):
+    def can_multiply(self):
+    def can_divide(self):
+    def __str__(self):
+    def __repr__(self):
+    def __add__(self, other):
+    def __sub__(self, other):
+    def __neg__(self):
+    def __mul__(self, other):
+    def __truediv__(self, other):
+    def __pow__(self, n):
+    def __key(self):
+    def __hash__(self):
+    def __eq__(self, other):
+# def element_map(algebra):
+class InfixNotation:
+    def __init__(self, algebra):
+    def __enter__(self):
+    def __exit__(self, _type, value, traceback):
+def module_sv_mult(ring):
+    def sv_mult(s, v):
+def module_dot_product(ring, vec1, vec2):
+class FiniteCompositeAlgebra(ABC):
+    def __init__(self, name: str, description: str):
+class Module(FiniteCompositeAlgebra):
+    def __init__(self, name, description, ring, group, operator):
+    def __repr__(self):
+    def vector_add(self, v1, v2):
+    def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
+class VectorSpace(Module):
+    def __init__(self, name, description, field, group, operator):
+class NDimensionalModule(Module):
+    def __init__(self, ring, n, check_input_conditions=True):
+    def dimensions(self):
+    def origin(self):
+    def dot_product(self, u, v):
+class NDimensionalVectorSpace(VectorSpace):
+    def __init__(self, field, n, check_input_conditions=True):
+    def dimensions(self):
+    def origin(self):
+    def dot_product(self, u, v):
+def check_module_conditions(ring: Ring, group: Group, sv_mult, verbose=False):
+def check_scaling_by_one(ring, group, sv_mult, verbose=False):
+def check_dist_of_scalars_over_vec_add(ring, group, sv_mult, verbose=False):
+def check_dist_of_vec_over_scalar_add(ring, group, sv_mult, verbose=False):
+def check_associativity(ring, group, sv_mult, verbose=False):
+def make_finite_algebra(*args):
+def np_arr_to_tuple(arr: np.ndarray) -> tuple:
+def generate_algebra_from_element_dict(gen_elem_dict,
+def delete_row_col(np_arr, row, col):
+def unpack_components(finalg):
+def make_cayley_table(table, elements):
+# def make_cayley_table(table, elements):
+def index_table_from_name_table(elements, name_table):
+def get_duplicates(lst):
+def yes_or_no(true_or_false):
+def symm_diff_of_two_lists_of_lists (list1, list2):
+def same_lists_of_lists(list_of_lists1, list_of_lists2):
+def powerset(iterable):
+def make_table_from_xml(table_string):
+class Examples:
+    def __init__(self, algebras_dir, filenames_json='examples.json'):
+    def __len__(self):
+    def __getitem__(self, index):
+    def about(self):

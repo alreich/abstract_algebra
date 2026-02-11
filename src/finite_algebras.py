@@ -2209,53 +2209,53 @@ def generate_nxn_matrix_algebra(ring, element_name_prefix='a'):
 # Utilities for constructing Cayley-Dickson algebras (i.e., Squared Rings & Fields)
 # ==================================================================================
 
-def r2_scalar_mult(scalar_name, elem_name, algebra, delimiter=":"):
-    """ Scalar multiplication. 'a' * 'c:d' = 'a*c:a*d'
-    Example: scalar_mult('2', '1:2', F3) ==> '2:1'
-    """
-    components = elem_name.split(delimiter)
-    return delimiter.join(map(lambda x: algebra.mult(scalar_name, x), components))
-
-
-def r2_negate(elem_name, algebra, delimiter=":"):
-    """ Negation:  -'a:b' = '-a:-b'
-    Example: negate('1:2', F3) ==> '2:1'
-    """
-    components = elem_name.split(delimiter)
-    return delimiter.join(map(lambda x: algebra.inv(x), components))
-
-
-def r2_conjugate(elem_name, algebra, delimiter=":"):
-    """ Conjugation: conj('a:b') = 'a:-b'
-    Example: conjugate('0:1', F3) ==> '0:2'
-    """
-    components = elem_name.split(delimiter)
-    head = components[0]
-    tail = components[1:]
-    tail_negated = list(map(lambda x: algebra.inv(x), tail))
-    new_components = list(head) + tail_negated
-    return delimiter.join(new_components)
-
-
-def r2_sqr_abs_val(elem_name, algebra, alg_sqr, delimiter=':'):
-    """Squared Absolute Value: 'a:b'^2 = 'a:b' * conj('a:b')
-    Example: sqr_abs_val('1:2', F3, F3sqr) ==> '2'
-    """
-    val = alg_sqr.mult(elem_name, r2_conjugate(elem_name, algebra, delimiter))
-    comp = val.split(delimiter)
-    return comp[0]
-
-
-# NOTE: The inverse function below is just for comparison/verification.
-# The Field method, mult_inv, is the better way to compute the inverse of an element.
-def r2_inverse(elem_name, algebra, alg_sqr, delimiter=':'):
-    """ Inversion: inv('a:b') = conj('a:b') / sqr_abs_val('a:b')
-    Only works for Fields, not Rings.
-    Example: inverse('1:1', F3, F3sqr) ==> '2:1'
-    """
-    absvalsqr = r2_sqr_abs_val(elem_name, algebra, alg_sqr, delimiter)
-    absvalsqrinv = algebra.mult_inv(absvalsqr)
-    return r2_scalar_mult(absvalsqrinv, r2_conjugate(elem_name, algebra, delimiter), algebra)
+# def r2_scalar_mult(scalar_name, elem_name, algebra, delimiter=":"):
+#     """ Scalar multiplication. 'a' * 'c:d' = 'a*c:a*d'
+#     Example: scalar_mult('2', '1:2', F3) ==> '2:1'
+#     """
+#     components = elem_name.split(delimiter)
+#     return delimiter.join(map(lambda x: algebra.mult(scalar_name, x), components))
+#
+#
+# def r2_negate(elem_name, algebra, delimiter=":"):
+#     """ Negation:  -'a:b' = '-a:-b'
+#     Example: negate('1:2', F3) ==> '2:1'
+#     """
+#     components = elem_name.split(delimiter)
+#     return delimiter.join(map(lambda x: algebra.inv(x), components))
+#
+#
+# def r2_conjugate(elem_name, algebra, delimiter=":"):
+#     """ Conjugation: conj('a:b') = 'a:-b'
+#     Example: conjugate('0:1', F3) ==> '0:2'
+#     """
+#     components = elem_name.split(delimiter)
+#     head = components[0]
+#     tail = components[1:]
+#     tail_negated = list(map(lambda x: algebra.inv(x), tail))
+#     new_components = list(head) + tail_negated
+#     return delimiter.join(new_components)
+#
+#
+# def r2_sqr_abs_val(elem_name, algebra, alg_sqr, delimiter=':'):
+#     """Squared Absolute Value: 'a:b'^2 = 'a:b' * conj('a:b')
+#     Example: sqr_abs_val('1:2', F3, F3sqr) ==> '2'
+#     """
+#     val = alg_sqr.mult(elem_name, r2_conjugate(elem_name, algebra, delimiter))
+#     comp = val.split(delimiter)
+#     return comp[0]
+#
+#
+# # NOTE: The inverse function below is just for comparison/verification.
+# # The Field method, mult_inv, is the better way to compute the inverse of an element.
+# def r2_inverse(elem_name, algebra, alg_sqr, delimiter=':'):
+#     """ Inversion: inv('a:b') = conj('a:b') / sqr_abs_val('a:b')
+#     Only works for Fields, not Rings.
+#     Example: inverse('1:1', F3, F3sqr) ==> '2:1'
+#     """
+#     absvalsqr = r2_sqr_abs_val(elem_name, algebra, alg_sqr, delimiter)
+#     absvalsqrinv = algebra.mult_inv(absvalsqr)
+#     return r2_scalar_mult(absvalsqrinv, r2_conjugate(elem_name, algebra, delimiter), algebra)
 
 
 # ==============

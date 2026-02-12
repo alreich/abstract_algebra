@@ -1,3 +1,6 @@
+This doc was created using the following command in the docs folder:
+grep -E "class [A-Z]|    def |def " finite_algebras.py > ../misc/classes_methods_20260211.txt
+
 class FiniteOperator:
     def __init__(self, elements, identity, table):
     def __call__(self, *args):

@@ -3,8 +3,8 @@
 API Reference
 =============
 
-Primary Algebra Constructors
-----------------------------
+The Primary Algebra Constructor
+-------------------------------
 
 The function, make_finite_algebra, is the recommended way to create any finite algebra. It analyzes the input and returns the appropriate finite algebra: Group, Ring, Field, VectorSpace, Module, Monoid, Semigroup, or Magma.
 
@@ -13,7 +13,7 @@ The function, make_finite_algebra, is the recommended way to create any finite a
 FiniteOperator
 --------------
 
-The FiniteOperator is a callable class that implements the binary operators used by the various algebras supported here. This class is automatically created whenever an algebra is created.
+The FiniteOperator is a callable class that implements the binary operators used by the various algebras supported here. This class is automatically created whenever an algebra is created. It is based on the algebra's Cayley table.
 
 .. autoclass:: finite_algebras.FiniteOperator
     :members:
@@ -115,10 +115,10 @@ Field
     :undoc-members:
     :show-inheritance:
 
-Elements as Objects
--------------------
+Support for Infix Notation
+--------------------------
 
-The Element class and the Algebra context manager provide a way to use math operators (+, -, *, /, **) at the element-level.
+The Element class, together with the context manager class, InfixNotation, provide a way to use infix operators (+, -, *, /, **) on an algebra's "elements".
 
 .. autoclass:: finite_algebras.Element
     :members:
@@ -135,7 +135,7 @@ The Element class and the Algebra context manager provide a way to use math oper
 MultipleElementSetAlgebra
 -------------------------
 
-This is the top-level class for all algebras that are constructed from more than one single element set algebras (Modules, VectorSpaces). NOT INTENDED TO BE INSTANTIATED.
+This is the top-level class for all algebras that are constructed from two sets of elements, scalars and vectors (Modules, VectorSpaces). NOT INTENDED TO BE INSTANTIATED.
 
 .. autoclass:: finite_algebras.MultipleElementSetAlgebra
     :members:

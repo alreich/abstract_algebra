@@ -685,14 +685,14 @@ class Magma(FiniteAlgebra):
     # The following three methods (sub, mult, & div) are stubbed out here to eliminate
     # warnings from the Element class regarding them not being defined for Magma.
 
-    def sub(self, x, y):
-        raise NotImplementedError(f"{self.__class__.__name__} sub cannot be implemented.")
-
-    def mult(self, x, y):
-        raise NotImplementedError(f"{self.__class__.__name__} mult cannot be implemented.")
-
-    def div(self, x, y):
-        raise NotImplementedError(f"{self.__class__.__name__} div cannot be implemented.")
+    # def sub(self, x, y):
+    #     raise NotImplementedError(f"{self.__class__.__name__} sub cannot be implemented.")
+    #
+    # def mult(self, x, y):
+    #     raise NotImplementedError(f"{self.__class__.__name__} mult cannot be implemented.")
+    #
+    # def div(self, x, y):
+    #     raise NotImplementedError(f"{self.__class__.__name__} div cannot be implemented.")
 
 
 # =============
@@ -2269,21 +2269,23 @@ class Element:
 
     def __init__(self, name, algebra):
 
-        self._can_add = False
-        self._can_subtract = False
-        self._can_multiply = False
-        self._can_divide = False
+        self._algebra = algebra
 
-        if isinstance(algebra, Magma):
-            self._algebra = algebra
-            self._can_add = True
-            self._can_subtract = self._algebra.has_inverses()
-            if isinstance(algebra, Ring):
-                self._can_multiply = True
-                if isinstance(algebra, Field):
-                    self._can_divide = True
-        else:
-            raise ValueError(f"algebra must be a FiniteAlgebra")
+        # self._can_add = False
+        # self._can_subtract = False
+        # self._can_multiply = False
+        # self._can_divide = False
+
+        # if isinstance(algebra, Magma):
+        #     self._algebra = algebra
+        #     self._can_add = True
+        #     self._can_subtract = self._algebra.has_inverses()
+        #     if isinstance(algebra, Ring):
+        #         self._can_multiply = True
+        #         if isinstance(algebra, Field):
+        #             self._can_divide = True
+        # else:
+        #     raise ValueError(f"algebra must be a FiniteAlgebra")
 
         if isinstance(name, str):
             if name in self._algebra:
@@ -2303,25 +2305,25 @@ class Element:
         """Return the algebra associated with this Element."""
         return self._algebra
 
-    @property
-    def can_add(self):
-        """Return True if this Element supports addition."""
-        return True
-
-    @property
-    def can_subtract(self):
-        """Return True if this Element supports subtraction."""
-        return self._can_subtract
-
-    @property
-    def can_multiply(self):
-        """Return True if this Element supports multiplication."""
-        return self._can_multiply
-
-    @property
-    def can_divide(self):
-        """Return True if this Element supports division."""
-        return self._can_divide
+    # @property
+    # def can_add(self):
+    #     """Return True if this Element supports addition."""
+    #     return True
+    #
+    # @property
+    # def can_subtract(self):
+    #     """Return True if this Element supports subtraction."""
+    #     return self._can_subtract
+    #
+    # @property
+    # def can_multiply(self):
+    #     """Return True if this Element supports multiplication."""
+    #     return self._can_multiply
+    #
+    # @property
+    # def can_divide(self):
+    #     """Return True if this Element supports division."""
+    #     return self._can_divide
 
     def __str__(self):
         return self._name
@@ -2334,27 +2336,31 @@ class Element:
         return Element(elem, self._algebra)
 
     def __sub__(self, other):
-        if self._can_subtract:
+        # if self._can_subtract:
+        if hasattr(self._algebra, 'sub'):
             elem = self._algebra.sub(self._name, other.name)
             return Element(elem, self._algebra)
         else:
             raise ValueError(f"{self._algebra.name} does not support subtraction")
 
     def __neg__(self):
-        if self._can_subtract:
+        # if self._can_subtract:
+        if hasattr(self._algebra, 'inv'):
             elem = self._algebra.inv(self._name)
             return Element(elem, self._algebra)
         return None
 
     def __mul__(self, other):
-        if self._can_multiply:
+        # if self._can_multiply:
+        if hasattr(self._algebra, 'mult'):
             elem = self._algebra.mult(self._name, other.name)
             return Element(elem, self._algebra)
         else:
             raise ValueError(f"{self._algebra.name} does not support multiplication")
 
     def __truediv__(self, other):
-        if self._can_divide:
+        # if self._can_divide:
+        if hasattr(self._algebra, 'div'):
             elem = self._algebra.div(self._name, other.name)
             return Element(elem, self._algebra)
         else:

@@ -508,7 +508,10 @@ class Magma(FiniteAlgebra):
     def generators(self, start_of_range=1):
         """If the algebra is cyclic, then a list of individual elements that each
         generate the algebra is returned; otherwise, a list of lists of elements,
-        is returned, where each sublist generates the algebra."""
+        is returned, where each sublist generates the algebra. This method looks
+        for the smallest sets of elements that can generate the group. It stops
+        looking once it finds all small sets of elements of a given size.
+        """
         gens = list()
         n = None  # define n outside the scope of the loop below
         for k in range(start_of_range, self.order):

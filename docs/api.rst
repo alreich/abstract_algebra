@@ -3,8 +3,8 @@
 API Reference
 =============
 
-The Primary Algebra Constructor
--------------------------------
+The Recommended Algebra Constructor
+-----------------------------------
 
 The function, make_finite_algebra, is the recommended way to create any finite algebra. It analyzes the input and returns the appropriate finite algebra: Group, Ring, Field, VectorSpace, Module, Monoid, Semigroup, or Magma.
 
@@ -22,9 +22,7 @@ The FiniteOperator is a callable class that implements the binary operators used
 FiniteAlgebra
 -------------
 
-.. This is the top-level class of all algebras here. NOT INTENDED TO BE INSTANTIATED.
-
-This is the top-level class for all algebras that have a single set of elements (Magma, Quasigroup, Loop, Semigroup, Monoid, Group, Ring, Field). NOT INTENDED TO BE INSTANTIATED.
+This is the top-level class for all algebras that have a single set of elements (Magma, Quasigroup, Loop, Semigroup, Monoid, Group, Ring, Field). It is an abstract base class (ABC) and is NOT INTENDED TO BE INSTANTIATED.
 
 .. autoclass:: finite_algebras.FiniteAlgebra
     :members:
@@ -32,19 +30,10 @@ This is the top-level class for all algebras that have a single set of elements 
     :undoc-members:
     :show-inheritance:
 
-.. SingleElementSetAlgebra
-.. -----------------------
-..
-.. This is the top-level class for all algebras that have a single set of elements and a single binary operation (Magma, Semigroup, Monoid, Group). NOT INTENDED TO BE INSTANTIATED.
-..
-.. .. autoclass:: finite_algebras.SingleElementSetAlgebra
-..     :members:
-..     :inherited-members:
-..     :undoc-members:
-..     :show-inheritance:
-
 Magma
 -----
+
+A Magma is a set of elements with a closed, binary operation.
 
 .. autoclass:: finite_algebras.Magma
     :members:
@@ -55,6 +44,8 @@ Magma
 Quasigroup
 ----------
 
+A Quasigroup is a Magma that has the cancellation property.
+
 .. autoclass:: finite_algebras.Quasigroup
     :members:
     :inherited-members:
@@ -63,6 +54,8 @@ Quasigroup
 
 Loop
 ----
+
+A Loop is a Quasigroup with an identity element.
 
 .. autoclass:: finite_algebras.Loop
     :members:

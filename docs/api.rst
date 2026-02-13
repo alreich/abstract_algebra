@@ -140,7 +140,7 @@ FiniteCompositeAlgebra
 
 This is the top-level class for all algebras that are constructed from two sets of elements, scalars and vectors (Modules, VectorSpaces). NOT INTENDED TO BE INSTANTIATED.
 
-.. autoclass:: finite_algebras.MultipleElementSetAlgebra
+.. autoclass:: finite_algebras.FiniteCompositeAlgebra
     :members:
     :inherited-members:
     :undoc-members:
@@ -204,8 +204,8 @@ Algebra Generators
 .. autofunction:: finite_algebras.generate_commutative_monoid
 .. autofunction:: finite_algebras.generate_powerset_ring
 .. autofunction:: finite_algebras.generate_algebra_mod_n
-.. autofunction:: generate_nxn_matrix_algebra
-.. autofunction:: generate_algebra_from_element_dict
+.. autofunction:: finite_algebras.generate_nxn_matrix_algebra
+.. autofunction:: finite_algebras.generate_algebra_from_element_dict
 
 Cayley Table
 ------------
@@ -238,6 +238,8 @@ Examples
 Miscellaneous Functions and Utilities
 -------------------------------------
 
+The functions here are listed in alphabetical order by module and name
+
 .. autofunction:: cayley_table.about_tables
 .. autofunction:: finite_algebras._filter_out_conflicts
 .. autofunction:: finite_algebras._no_conflict
@@ -261,7 +263,6 @@ Miscellaneous Functions and Utilities
 .. autofunction:: finite_algebras.is_field
 .. autofunction:: finite_algebras.is_table_associative
 .. autofunction:: finite_algebras.make_cayley_table
-.. autofunction:: finite_algebras.make_finite_algebra
 .. autofunction:: finite_algebras.make_table_from_xml
 .. autofunction:: finite_algebras.module_dot_product
 .. autofunction:: finite_algebras.module_sv_mult

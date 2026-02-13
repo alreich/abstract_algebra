@@ -12,10 +12,12 @@ class Perm:
 
     @property
     def mapping(self):
+        """Returns the tuple that defines the permutation."""
         return self._mapping
 
     @property
     def size(self):
+        """Returns the size of the permutation."""
         return self._size
 
     @property
@@ -64,8 +66,12 @@ class Perm:
         return inversions % 2 == 0
 
     def show(self):  # Just for testing
-        return f"<{self._mapping}, {self._size}, {self._is_even}>"
+        """Just for testing. Prints the permutation, its size, and whether it is even (True or False)."""
+        even = self.is_even  # call is_even before trying to display its value
+        return f"<{self._mapping}, {self._size}, {even}>"
 
     @property
     def parity(self):
+        """A convenience method. Returns the string 'Even" or "Odd", depending on whether the permutation
+        is even or odd."""
         return "Even" if self.is_even else "Odd"

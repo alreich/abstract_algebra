@@ -243,6 +243,7 @@ class CayleyTable:
         return index_pairs
 
     def type_of_algebra(self):
+        """Returns a string name of the algebra defined by the table."""
         if self.is_associative():
             if self.identity() is not None:
                 if self.has_inverses():
@@ -289,6 +290,7 @@ class CayleyTable:
 # Utility
 
 def about_tables(list_of_cayley_tables):
+    """Prints out information about a list of CayleyTables."""
     print("   Table  Order  Associative?  Commutative?  Left Id?  Right Id? Cancel?  Identity?  Inverses?  Algebra?")
     print('-' * 105)
     for tbl in list_of_cayley_tables:

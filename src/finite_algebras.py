@@ -1440,7 +1440,7 @@ class Ring(Group):
     """A Ring is a commutative Group with an 'addition' operator, along with an
     associative 'multiplication' operator, where multiplication distributes over
     addition.  The operator inherited from Group becomes 'addition', while
-    'multiplication' is defined by table2."""
+    'multiplication' is defined by a second Cayley table, table2."""
 
     def __init__(self, name, description, elements, table, table2, check_inputs=True,
                  conjugate_mapping=None):
@@ -2522,13 +2522,16 @@ class NDimensionalModule(Module):
 
     @property
     def dimensions(self):
+        """Returns the dimension of the Module's vectors."""
         return self._dimensions
 
     @property
     def origin(self):
+        """Returns the origin element, a vector, of the Module."""
         return self.vector.identity
 
     def dot_product(self, u, v):
+        """Computes and returns the dot-product of two Module vectors."""
         return module_dot_product(self, u, v)
 
 
@@ -2552,13 +2555,16 @@ class NDimensionalVectorSpace(VectorSpace):
 
     @property
     def dimensions(self):
+        """Returns the dimension of the VectorSpace's vectors."""
         return self._dimensions
 
     @property
     def origin(self):
+        """Returns the origin element, a vector, of the VectorSpace."""
         return self.vector.identity
 
     def dot_product(self, u, v):
+        """Computes and returns the dot-product of two VectorSpace vectors."""
         return module_dot_product(self, u, v)
 
 

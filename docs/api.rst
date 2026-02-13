@@ -235,8 +235,8 @@ Examples
     :members:
     :undoc-members:
 
-Misc Utilities
---------------
+Miscellaneous Functions and Utilities
+-------------------------------------
 
 .. autofunction:: cayley_table.about_tables
 .. autofunction:: finite_algebras._filter_out_conflicts

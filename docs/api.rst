@@ -6,7 +6,7 @@ API Reference
 The Recommended Algebra Constructor
 -----------------------------------
 
-The function, make_finite_algebra, is the recommended way to create any finite algebra. It analyzes the input and returns the appropriate finite algebra: Group, Ring, Field, VectorSpace, Module, Monoid, Semigroup, or Magma.
+The function, make_finite_algebra, is the recommended way to create any finite algebra. It analyzes the input and returns the appropriate finite algebra: Group, Ring, Field, VectorSpace, Module, Monoid, Semigroup, Quasigroup, Loop, or Magma.
 
 .. autofunction:: finite_algebras.make_finite_algebra
 

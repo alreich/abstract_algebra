@@ -1,19 +1,19 @@
-Groups, Monoids, Semigroups, & Magmas
-=====================================
+Groups, Monoids, Semigroups, Quasigroups, Loops, & Magmas
+=========================================================
 
 This section provides numerous examples of finite algebra creation and
 manipulation, specifically, for algebras with only one set of elements
-and one binary operation: Groups, Monoids, Semigroups, and Magmas. See
-the previous section, “Definitions”, for definitions of these algebraic
-structures.
+and one binary operation: Groups, Monoids, Semigroups, Quasigroups,
+Loops, and Magmas. See the previous section, “Definitions”, for
+definitions of these algebraic structures.
 
-Internal Representation of Groups, Monoids, Semigroups, & Magmas
-----------------------------------------------------------------
+Representation of a FiniteAlgebra with only one Operation
+---------------------------------------------------------
 
 Internally, a ``FiniteAlgebra`` can take several different forms. For
 algebras that have only one set of elements and one binary operation,
-such as Groups, Monoids, Semigroups, and Magmas, the internal
-representation is as shown below.
+such as Groups, Monoids, Semigroups, Quasigroups, Loops, & Magmas, the
+internal representation is as shown below.
 
 -  **name**: (``str``) A short name for the algebra;
 -  **description**: (``str``) Any additional, useful information about
@@ -141,7 +141,7 @@ unique ID of the algebra instance:
 
 .. parsed-literal::
 
-    <Group:Z3, ID:5093531600>
+    <Group:Z3, ID:4770219408>
 
 
 The ``about`` method prints information about an algebra. Set
@@ -158,13 +158,13 @@ element names (``str``) rather than element positions (``int``).
     
     ** Group **
     Name: Z3
-    Instance ID: 5093531600
+    Instance ID: 4770219408
     Description: Cyclic group of order 3
     Order: 3
     Identity: 'e'
     Commutative? Yes
     Cyclic?: Yes
-    Generators: ['a', 'a^2']
+    Generators: ['a^2', 'a']
     Elements:
        Index   Name   Inverse  Order
           0     'e'     'e'       1
@@ -178,7 +178,7 @@ element names (``str``) rather than element positions (``int``).
 
 .. parsed-literal::
 
-    '<Group:Z3, ID:5093531600>'
+    '<Group:Z3, ID:4770219408>'
 
 
 
@@ -290,8 +290,8 @@ computed by ``op('b', 'a', g.inv('b'))``, instead of
 Note, however, that for more than two arguments, the binary operation is
 performed left-to-right. That is,
 :math:`b \cdot a \cdot b^{-1} \equiv (b \cdot a) \cdot b^{-1}`. This
-really only matters for Magmas, though, since all of the other algebras
-supported here are associative.
+matters for non-associative algebras, such as Magmas, Quasigroups, and
+Loops.
 
 For the example Group, Z3, created above, we have that
 :math:`a \circ a = a^2` and this is verified below.
@@ -326,13 +326,13 @@ below
 
 
 
-The operations depicted in the two examples, above, can also be done
-using the context manager, **Algebra**, using with-as syntax, as shown
-below. The target, **z**, of the context manager is a dictionary where
-the keys are the names (str) of the algebra’s elements, and the values
-are **Element** objects that can be used in infix-base arithmetic
-expressions. So, for example, ``z['a']`` retrieves the Element object
-that corresponds to the element named ‘a’.
+The operations depicted in the two examples, above, can also be
+accomplished using the context manager, **InfixNotation**, using with-as
+syntax, as shown below. The target, **z**, of the context manager is a
+dictionary where the keys are the names (str) of the algebra’s elements,
+and the values are **Element** objects that can be used in infix-base
+arithmetic expressions. So, for example, ``z['a']`` retrieves the
+Element object that corresponds to the element named ‘a’.
 
 .. code:: ipython3
 
@@ -349,9 +349,9 @@ that corresponds to the element named ‘a’.
     e
 
 
-If only one argument is given to the binary operation, then that
-argument is simply returned; unless it is not a valid element of the
-algebra, in which case an exception is raised.
+If only one argument is given to an algebra’s binary operation, ``op``,
+then that argument is simply returned; unless it is not a valid element
+of the algebra, in which case an exception is raised.
 
 .. code:: ipython3
 
@@ -489,7 +489,7 @@ commutative.
     
     ** Magma **
     Name: RPS
-    Instance ID: 4703604080
+    Instance ID: 4806207408
     Description: Rock, Paper, Scissors Magma
     Order: 3
     Identity: None
@@ -497,6 +497,7 @@ commutative.
     Commutative? Yes
     Cyclic?: No
     Elements: ('r', 'p', 's')
+    Has Cancellation? No
     Has Inverses? No
     Cayley Table (showing indices):
     [[0, 1, 0], [1, 1, 2], [0, 2, 2]]
@@ -573,7 +574,7 @@ Magma with Identity Element
     
     ** Magma **
     Name: Whatever
-    Instance ID: 5092915024
+    Instance ID: 4806044048
     Description: Magma with Identity
     Order: 3
     Identity: e
@@ -582,9 +583,200 @@ Magma with Identity Element
     Cyclic?: Yes
     Generators: ['b']
     Elements: ('e', 'a', 'b')
+    Has Cancellation? No
     Has Inverses? No
     Cayley Table (showing indices):
     [[0, 1, 2], [1, 0, 1], [2, 2, 1]]
+
+
+Quasigroup
+~~~~~~~~~~
+
+Magmas can sometimes possess the property of **cancellation** that
+appears similar to the ability to perform *division*, but is really far
+from it. Nevertheless, such algebras are said to **have division**.
+
+A Magma, :math:`M = \langle S, \circ \rangle` has the **Cancellation
+Property** if :math:`\forall a,b \in S, \exists !\ x,y \in S` such that
+:math:`a \circ x = b` and :math:`y \circ a = b`.
+
+(Note that, in the definition, above, :math:`x` and :math:`y` must exist
+*uniquely*.)
+
+A Magma with the cancellation property is called a **Quasigroup** or
+**division Magma**.
+
+**Quasigroup Example**
+
+The following description and example of a Quasigroup are from
+Wikipedia: *“The multiplication table of a finite quasigroup is a Latin
+square: an n × n table filled with n different symbols in such a way
+that each symbol occurs exactly once in each row and exactly once in
+each column.”* (https://en.wikipedia.org/wiki/Quasigroup#Latin_squares)
+
+.. code:: ipython3
+
+    >>> latin_sqr = make_finite_algebra('Latin_Sqr',
+                                        'Latin Square. A division algebra (AKA Quasigroup)',
+                                        ('a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9'),
+                                        [[0, 4, 8, 2, 3, 9, 6, 7, 1, 5], 
+                                         [3, 6, 2, 8, 7, 1, 9, 5, 0, 4], 
+                                         [8, 9, 3, 1, 0, 6, 4, 2, 5, 7], 
+                                         [1, 7, 6, 5, 4, 8, 0, 3, 2, 9], 
+                                         [2, 1, 9, 0, 6, 7, 5, 8, 4, 3], 
+                                         [5, 2, 7, 4, 9, 3, 1, 0, 8, 6], 
+                                         [4, 3, 0, 6, 1, 5, 2, 9, 7, 8], 
+                                         [9, 8, 5, 7, 2, 0, 3, 4, 6, 1], 
+                                         [7, 0, 1, 9, 5, 4, 8, 6, 3, 2], 
+                                         [6, 5, 4, 3, 8, 2, 7, 1, 9, 0]])
+    
+    >>> latin_sqr.about()
+
+
+.. parsed-literal::
+
+    
+    ** Quasigroup **
+    Name: Latin_Sqr
+    Instance ID: 4806207744
+    Description: Latin Square. A division algebra (AKA Quasigroup)
+    Order: 10
+    Identity: None
+    Associative? No
+    Commutative? No
+    Cyclic?: Yes
+    Generators: ['a3', 'a8', 'a9', 'a5', 'a1', 'a7', 'a4', 'a2', 'a6']
+    Elements: ('a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9')
+    Has Cancellation? Yes
+    Has Inverses? No
+    Cayley Table (showing indices):
+    [[0, 4, 8, 2, 3, 9, 6, 7, 1, 5],
+     [3, 6, 2, 8, 7, 1, 9, 5, 0, 4],
+     [8, 9, 3, 1, 0, 6, 4, 2, 5, 7],
+     [1, 7, 6, 5, 4, 8, 0, 3, 2, 9],
+     [2, 1, 9, 0, 6, 7, 5, 8, 4, 3],
+     [5, 2, 7, 4, 9, 3, 1, 0, 8, 6],
+     [4, 3, 0, 6, 1, 5, 2, 9, 7, 8],
+     [9, 8, 5, 7, 2, 0, 3, 4, 6, 1],
+     [7, 0, 1, 9, 5, 4, 8, 6, 3, 2],
+     [6, 5, 4, 3, 8, 2, 7, 1, 9, 0]]
+
+
+The method ``is_division_algebra`` tests for the cancellation property,
+as shown below.
+
+.. code:: ipython3
+
+    latin_sqr.has_cancellation()
+
+
+
+
+.. parsed-literal::
+
+    True
+
+
+
+.. code:: ipython3
+
+    latin_sqr.is_associative()
+
+
+
+
+.. parsed-literal::
+
+    False
+
+
+
+Loops
+~~~~~
+
+A **Loop** is a Quasigroup with an identity element.
+
+The following example is from *“Counting loops with the inverse
+property”* by Asif Ali & John Slaney
+(http://www.quasigroups.eu/contents/download/2008/16_2.pdf)
+
+.. code:: ipython3
+
+    >>> ip_loop = make_finite_algebra('IP_Loop',
+                                      'IP loop of small order',
+                                      ('0', '1', '2', '3', '4', '5', '6'),
+                                      [[0, 1, 2, 3, 4, 5, 6], 
+                                       [1, 2, 0, 5, 6, 4, 3], 
+                                       [2, 0, 1, 6, 5, 3, 4], 
+                                       [3, 6, 5, 4, 0, 1, 2], 
+                                       [4, 5, 6, 0, 3, 2, 1], 
+                                       [5, 3, 4, 2, 1, 6, 0], 
+                                       [6, 4, 3, 1, 2, 0, 5]])
+    >>> ip_loop.about()
+
+
+.. parsed-literal::
+
+    
+    ** Loop **
+    Name: IP_Loop
+    Instance ID: 4806208080
+    Description: IP loop of small order
+    Order: 7
+    Identity: 0
+    Associative? No
+    Commutative? No
+    Cyclic?: No
+    Elements: ('0', '1', '2', '3', '4', '5', '6')
+    Has Cancellation? Yes
+    Has Inverses? Yes
+    Cayley Table (showing indices):
+    [[0, 1, 2, 3, 4, 5, 6],
+     [1, 2, 0, 5, 6, 4, 3],
+     [2, 0, 1, 6, 5, 3, 4],
+     [3, 6, 5, 4, 0, 1, 2],
+     [4, 5, 6, 0, 3, 2, 1],
+     [5, 3, 4, 2, 1, 6, 0],
+     [6, 4, 3, 1, 2, 0, 5]]
+
+
+.. code:: ipython3
+
+    ip_loop.has_cancellation()
+
+
+
+
+.. parsed-literal::
+
+    True
+
+
+
+.. code:: ipython3
+
+    ip_loop.identity
+
+
+
+
+.. parsed-literal::
+
+    '0'
+
+
+
+.. code:: ipython3
+
+    ip_loop.is_associative()
+
+
+
+
+.. parsed-literal::
+
+    False
+
 
 
 Semigroup
@@ -621,7 +813,7 @@ B. Vasantha Kandasamy
     
     ** Semigroup **
     Name: Example 1.4.1
-    Instance ID: 5093531936
+    Instance ID: 4806208416
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Identity: None
@@ -629,6 +821,7 @@ B. Vasantha Kandasamy
     Commutative? No
     Cyclic?: No
     Elements: ('a', 'b', 'c', 'd', 'e', 'f')
+    Has Cancellation? No
     Has Inverses? No
     Cayley Table (showing indices):
     [[0, 3, 0, 3, 0, 3],
@@ -707,7 +900,9 @@ the collections of 3 generators.
     generators(start_of_range=1) method of finite_algebras.Semigroup instance
         If the algebra is cyclic, then a list of individual elements that each
         generate the algebra is returned; otherwise, a list of lists of elements,
-        is returned, where each sublist generates the algebra.
+        is returned, where each sublist generates the algebra. This method looks
+        for the smallest sets of elements that can generate the group. It stops
+        looking once it finds all small sets of elements of a given size.
     
 
 
@@ -748,13 +943,13 @@ the collections of 3 generators.
 
 .. parsed-literal::
 
-    sg.closure('a', 'b', 'c') = ['d', 'f', 'a', 'e', 'b', 'c']
-    sg.closure('a', 'b', 'f') = ['d', 'f', 'a', 'e', 'b', 'c']
-    sg.closure('a', 'e', 'f') = ['d', 'f', 'a', 'e', 'b', 'c']
-    sg.closure('b', 'c', 'd') = ['d', 'f', 'a', 'e', 'b', 'c']
-    sg.closure('b', 'd', 'f') = ['d', 'f', 'a', 'e', 'b', 'c']
-    sg.closure('c', 'd', 'e') = ['d', 'f', 'a', 'e', 'b', 'c']
-    sg.closure('d', 'e', 'f') = ['d', 'f', 'a', 'e', 'b', 'c']
+    sg.closure('a', 'b', 'c') = ['a', 'd', 'b', 'c', 'e', 'f']
+    sg.closure('a', 'b', 'f') = ['a', 'd', 'b', 'c', 'e', 'f']
+    sg.closure('a', 'e', 'f') = ['a', 'd', 'f', 'c', 'e', 'b']
+    sg.closure('b', 'c', 'd') = ['a', 'd', 'b', 'c', 'e', 'f']
+    sg.closure('b', 'd', 'f') = ['a', 'd', 'b', 'c', 'e', 'f']
+    sg.closure('c', 'd', 'e') = ['a', 'd', 'b', 'c', 'e', 'f']
+    sg.closure('d', 'e', 'f') = ['a', 'd', 'f', 'c', 'e', 'b']
 
 
 Monoid
@@ -781,7 +976,7 @@ such that, for all :math:`a \in S, a \circ e = e \circ a = a`
     
     ** Monoid **
     Name: M4
-    Instance ID: 5093532608
+    Instance ID: 4806209088
     Description: Example of a commutative monoid
     Order: 4
     Identity: b
@@ -789,6 +984,7 @@ such that, for all :math:`a \in S, a \circ e = e \circ a = a`
     Commutative? Yes
     Cyclic?: No
     Elements: ('a', 'b', 'c', 'd')
+    Has Cancellation? No
     Has Inverses? No
     Cayley Table (showing names):
     [['a', 'a', 'a', 'a'],
@@ -1112,7 +1308,7 @@ Products and Isomorphisms.
     
     ** Group **
     Name: Z2
-    Instance ID: 5093615488
+    Instance ID: 4806191584
     Description: Autogenerated cyclic Group of order 2
     Order: 2
     Identity: '0'
@@ -1131,7 +1327,7 @@ Products and Isomorphisms.
 
 .. parsed-literal::
 
-    '<Group:Z2, ID:5093615488>'
+    '<Group:Z2, ID:4806191584>'
 
 
 
@@ -1158,7 +1354,7 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
     
     ** Group **
     Name: S3
-    Instance ID: 5093644848
+    Instance ID: 4805983216
     Description: Autogenerated symmetric Group on 3 elements
     Order: 6
     Identity: '(0, 1, 2)'
@@ -1185,7 +1381,7 @@ The symmetric group, based on the permutations of n elements, (1, 2, 3,
 
 .. parsed-literal::
 
-    '<Group:S3, ID:5093644848>'
+    '<Group:S3, ID:4805983216>'
 
 
 
@@ -1215,7 +1411,7 @@ values of n.
     
     ** Group **
     Name: PS3
-    Instance ID: 5093665488
+    Instance ID: 4808233296
     Description: Autogenerated Group on the powerset of 3 elements, with symmetric difference operator
     Order: 8
     Identity: '{}'
@@ -1246,7 +1442,7 @@ values of n.
 
 .. parsed-literal::
 
-    '<Group:PS3, ID:5093665488>'
+    '<Group:PS3, ID:4808233296>'
 
 
 
@@ -1270,7 +1466,7 @@ multiplication modulo the desired order.
     
     ** Monoid **
     Name: M7
-    Instance ID: 5094118160
+    Instance ID: 4808410448
     Description: Autogenerated commutative Monoid of order 7
     Order: 7
     Identity: a1
@@ -1278,6 +1474,7 @@ multiplication modulo the desired order.
     Commutative? Yes
     Cyclic?: No
     Elements: ('a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6')
+    Has Cancellation? No
     Has Inverses? No
     Cayley Table (showing indices):
     [[0, 0, 0, 0, 0, 0, 0],
@@ -1310,7 +1507,7 @@ Direct Product of Multiple Groups
     
     ** Group **
     Name: Z2_x_Z2_x_Z2
-    Instance ID: 5093684304
+    Instance ID: 4806504016
     Description: Direct product of Z2_x_Z2 & Z2
     Order: 8
     Identity: '0:0:0'
@@ -1341,7 +1538,7 @@ Direct Product of Multiple Groups
 
 .. parsed-literal::
 
-    '<Group:Z2_x_Z2_x_Z2, ID:5093684304>'
+    '<Group:Z2_x_Z2_x_Z2, ID:4806504016>'
 
 
 
@@ -1379,7 +1576,7 @@ Direct Product of Monoids
     
     ** Monoid **
     Name: M3_x_M3
-    Instance ID: 5093615792
+    Instance ID: 4806191888
     Description: Direct product of M3 & M3
     Order: 9
     Identity: a1:a1
@@ -1387,6 +1584,7 @@ Direct Product of Monoids
     Commutative? Yes
     Cyclic?: No
     Elements: ('a0:a0', 'a0:a1', 'a0:a2', 'a1:a0', 'a1:a1', 'a1:a2', 'a2:a0', 'a2:a1', 'a2:a2')
+    Has Cancellation? No
     Has Inverses? No
     Cayley Table (showing indices):
     [[0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -1525,13 +1723,13 @@ Example: Proper Subgroups
     
     ** Group **
     Name: Z8
-    Instance ID: 5094262736
+    Instance ID: 4806306432
     Description: Autogenerated cyclic Group of order 8
     Order: 8
     Identity: '0'
     Commutative? Yes
     Cyclic?: Yes
-    Generators: ['1', '5', '7', '3']
+    Generators: ['7', '5', '1', '3']
     Elements:
        Index   Name   Inverse  Order
           0     '0'     '0'       1
@@ -1557,7 +1755,7 @@ Example: Proper Subgroups
 
 .. parsed-literal::
 
-    '<Group:Z8, ID:5094262736>'
+    '<Group:Z8, ID:4806306432>'
 
 
 
@@ -1574,7 +1772,23 @@ Example: Proper Subgroups
     
     ** Group **
     Name: Z8_subalgebra_0
-    Instance ID: 5093630352
+    Instance ID: 4806642832
+    Description: Subalgebra of: Autogenerated cyclic Group of order 8
+    Order: 2
+    Identity: '0'
+    Commutative? Yes
+    Cyclic?: Yes
+    Generators: ['4']
+    Elements:
+       Index   Name   Inverse  Order
+          0     '0'     '0'       1
+          1     '4'     '4'       2
+    Cayley Table (showing indices):
+    [[0, 1], [1, 0]]
+    
+    ** Group **
+    Name: Z8_subalgebra_1
+    Instance ID: 4806645520
     Description: Subalgebra of: Autogenerated cyclic Group of order 8
     Order: 4
     Identity: '0'
@@ -1589,22 +1803,6 @@ Example: Proper Subgroups
           3     '6'     '2'       4
     Cayley Table (showing indices):
     [[0, 1, 2, 3], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 1, 2]]
-    
-    ** Group **
-    Name: Z8_subalgebra_1
-    Instance ID: 5093630128
-    Description: Subalgebra of: Autogenerated cyclic Group of order 8
-    Order: 2
-    Identity: '0'
-    Commutative? Yes
-    Cyclic?: Yes
-    Generators: ['4']
-    Elements:
-       Index   Name   Inverse  Order
-          0     '0'     '0'       1
-          1     '4'     '4'       2
-    Cayley Table (showing indices):
-    [[0, 1], [1, 0]]
 
 
 Normal Subgroups
@@ -1655,27 +1853,27 @@ was created earlier.
 .. parsed-literal::
 
     
-    Subalgebras of <Group:PS3, ID:5093665488>
+    Subalgebras of <Group:PS3, ID:4808233296>
       There are 2 unique proper subalgebras, up to isomorphism, out of 14 total subalgebras.
       as shown by the partitions below:
     
     7 Isomorphic Commutative Normal Groups of order 2 with identity '{}':
-          Group: PS3_subalgebra_0: ('{}', '{0, 1}')
-          Group: PS3_subalgebra_4: ('{}', '{0, 1, 2}')
-          Group: PS3_subalgebra_5: ('{}', '{1}')
-          Group: PS3_subalgebra_7: ('{}', '{0, 2}')
-          Group: PS3_subalgebra_8: ('{}', '{1, 2}')
-          Group: PS3_subalgebra_10: ('{}', '{0}')
-          Group: PS3_subalgebra_13: ('{}', '{2}')
+          Group: PS3_subalgebra_0: ('{}', '{2}')
+          Group: PS3_subalgebra_2: ('{}', '{0, 2}')
+          Group: PS3_subalgebra_4: ('{}', '{0, 1}')
+          Group: PS3_subalgebra_5: ('{}', '{1, 2}')
+          Group: PS3_subalgebra_7: ('{}', '{1}')
+          Group: PS3_subalgebra_12: ('{}', '{0, 1, 2}')
+          Group: PS3_subalgebra_13: ('{}', '{0}')
     
     7 Isomorphic Commutative Normal Groups of order 4 with identity '{}':
-          Group: PS3_subalgebra_1: ('{}', '{0}', '{1, 2}', '{0, 1, 2}')
-          Group: PS3_subalgebra_2: ('{}', '{0}', '{2}', '{0, 2}')
+          Group: PS3_subalgebra_1: ('{}', '{0}', '{1}', '{0, 1}')
           Group: PS3_subalgebra_3: ('{}', '{1}', '{0, 2}', '{0, 1, 2}')
-          Group: PS3_subalgebra_6: ('{}', '{0, 1}', '{0, 2}', '{1, 2}')
-          Group: PS3_subalgebra_9: ('{}', '{0}', '{1}', '{0, 1}')
+          Group: PS3_subalgebra_6: ('{}', '{2}', '{0, 1}', '{0, 1, 2}')
+          Group: PS3_subalgebra_8: ('{}', '{0}', '{2}', '{0, 2}')
+          Group: PS3_subalgebra_9: ('{}', '{0}', '{1, 2}', '{0, 1, 2}')
+          Group: PS3_subalgebra_10: ('{}', '{0, 1}', '{0, 2}', '{1, 2}')
           Group: PS3_subalgebra_11: ('{}', '{1}', '{2}', '{1, 2}')
-          Group: PS3_subalgebra_12: ('{}', '{2}', '{0, 1}', '{0, 1, 2}')
     
 
 
@@ -1694,7 +1892,7 @@ Recall the Semigroup example from above:
     
     ** Semigroup **
     Name: Example 1.4.1
-    Instance ID: 5093531936
+    Instance ID: 4806208416
     Description: See: Groupoids and Smarandache Groupoids by W. B. Vasantha Kandasamy
     Order: 6
     Identity: None
@@ -1702,6 +1900,7 @@ Recall the Semigroup example from above:
     Commutative? No
     Cyclic?: No
     Elements: ('a', 'b', 'c', 'd', 'e', 'f')
+    Has Cancellation? No
     Has Inverses? No
     Cayley Table (showing indices):
     [[0, 3, 0, 3, 0, 3],
@@ -1741,27 +1940,27 @@ example:
 .. parsed-literal::
 
     
-    Subalgebras of <Semigroup:Example 1.4.1, ID:5093531936>
+    Subalgebras of <Semigroup:Example 1.4.1, ID:4806208416>
       There are 4 unique proper subalgebras, up to isomorphism, out of 10 total subalgebras.
       as shown by the partitions below:
     
-    3 Isomorphic Commutative Groups of order 2:
-          Group: Example 1.4.1_subalgebra_0: ('c', 'f') with identity 'c'
-          Group: Example 1.4.1_subalgebra_7: ('a', 'd') with identity 'a'
-          Group: Example 1.4.1_subalgebra_8: ('b', 'e') with identity 'e'
-    
     3 Isomorphic Semigroups of order 4:
-          Semigroup: Example 1.4.1_subalgebra_1: ('b', 'c', 'e', 'f')
-          Semigroup: Example 1.4.1_subalgebra_2: ('a', 'c', 'd', 'f')
-          Semigroup: Example 1.4.1_subalgebra_6: ('a', 'b', 'd', 'e')
+          Semigroup: Example 1.4.1_subalgebra_0: ('b', 'c', 'e', 'f')
+          Semigroup: Example 1.4.1_subalgebra_3: ('a', 'b', 'd', 'e')
+          Semigroup: Example 1.4.1_subalgebra_5: ('a', 'c', 'd', 'f')
     
     3 Isomorphic Semigroups of order 2:
-          Semigroup: Example 1.4.1_subalgebra_3: ('c', 'e')
-          Semigroup: Example 1.4.1_subalgebra_4: ('a', 'e')
-          Semigroup: Example 1.4.1_subalgebra_5: ('a', 'c')
+          Semigroup: Example 1.4.1_subalgebra_1: ('a', 'c')
+          Semigroup: Example 1.4.1_subalgebra_6: ('c', 'e')
+          Semigroup: Example 1.4.1_subalgebra_9: ('a', 'e')
     
     1 Semigroup of order 3:
-          Semigroup: Example 1.4.1_subalgebra_9: ('a', 'c', 'e')
+          Semigroup: Example 1.4.1_subalgebra_2: ('a', 'c', 'e')
+    
+    3 Isomorphic Commutative Groups of order 2:
+          Group: Example 1.4.1_subalgebra_4: ('b', 'e') with identity 'e'
+          Group: Example 1.4.1_subalgebra_7: ('c', 'f') with identity 'c'
+          Group: Example 1.4.1_subalgebra_8: ('a', 'd') with identity 'a'
     
 
 
@@ -1784,7 +1983,7 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     ======================================================================
                                Example Algebras
     ----------------------------------------------------------------------
-      17 example algebras are available.
+      19 example algebras are available.
       Use "Examples[INDEX]" to retrieve a specific example,
       where INDEX is the first number on each line below:
     ----------------------------------------------------------------------
@@ -1805,6 +2004,8 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     14: SD16 -- Semidihedral group of order 16
     15: A5 -- Alternating group on 5 letters
     16: F2 -- Field with 2 elements from paper: 236w06fields.pdf
+    17: Latin_Sqr -- Latin Square. A division algebra (AKA Quasigroup)
+    18: IP_Loop -- IP loop of small order
     ======================================================================
 
 
@@ -1821,7 +2022,7 @@ default list, see the file, ‘examples.json’, in the algebras directory.
     
     ** Group **
     Name: Pinter29
-    Instance ID: 5094390864
+    Instance ID: 4808044176
     Description: Non-abelian group, p.29, 'A Book of Abstract Algebra' by Charles C. Pinter
     Order: 6
     Identity: 'I'
@@ -1848,6 +2049,6 @@ default list, see the file, ‘examples.json’, in the algebras directory.
 
 .. parsed-literal::
 
-    '<Group:Pinter29, ID:5094390864>'
+    '<Group:Pinter29, ID:4808044176>'
 
 

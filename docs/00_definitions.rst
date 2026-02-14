@@ -1,29 +1,45 @@
 Definitions
 ===========
 
-The structure and properties of the class hierarchy of the
-``finite_algebra`` module are based on the following definitions.
+The structure of the class hierarchy of the ``finite_algebra`` module is
+depicted in the figure below.
+
+.. figure:: ../docs/_static/class_hierarchy_v2.png
+   :alt: Class Hierarchy Figure
+
+   Class Hierarchy Figure
+
+The next several sections provide mathematical definitions of the
+algebraic structures depicted in solid boxes in the figure above.
 
 Groups, Rings, Fields, etc.
 ---------------------------
 
 The following list of algebraic structures is ordered such that each
-successive structure builds on the previous one. The class hierarchy of
+successive structure builds on a previous one. The class hierarchy of
 the ``finite_algebra`` module is modeled on this progression.
 
 -  **Magma** – :math:`\langle S, \circ \rangle`, where :math:`S` is a
-   set and :math:`\circ` is a binary operation,
+   set and :math:`\circ` is a closed binary operation,
    :math:`\circ: S \times S \to S`
+
+-  **Quasigroup** - a Magma where for each :math:`a, b` in :math:`S`
+   there exists unique :math:`x, y` in :math:`S` such that
+   :math:`a \circ x = b` and :math:`y \circ a = b` :math:`^*`
+
+-  **Loop** - a Quasigroup with identity element:
+   :math:`\exists \ e \in S`, such that, for all
+   :math:`a \in S, a \circ e = e \circ a = a`
 
 -  **Semigroup** – an associative Magma:
    :math:`\forall a,b,c \in S \Rightarrow a \circ (b \circ c) = (a \circ b) \circ c`
 
 -  **Monoid** – a Semigroup with identity element:
-   :math:`\exists e \in S`, such that, for all
+   :math:`\exists \ e \in S`, such that, for all
    :math:`a \in S, a \circ e = e \circ a = a`
 
 -  **Group** – a Monoid with inverse elements:
-   :math:`\forall a \in S, \exists a^{-1} \in S`, such that,
+   :math:`\forall a \in S, \exists \ a^{-1} \in S`, such that,
    :math:`a \circ a^{-1} = a^{-1} \circ a = e`
 
 -  **Ring** – :math:`\langle S, +, \cdot \rangle`, where
@@ -34,6 +50,10 @@ the ``finite_algebra`` module is modeled on this progression.
 -  **Field** – a Ring :math:`\langle S, +, \cdot \rangle`, where
    :math:`\langle S\setminus{\{0\}}, \cdot \rangle` is an abelian
    Group\ :math:`^{\dagger\dagger}`
+
+:math:`^*` The property possessed by the Quasigroup is referred to in
+multiple ways: *division*, or *latin square*, or *cancellation*
+property.
 
 :math:`^\dagger` An algebra is *abelian* (or *commutative*) for a binary
 operation, :math:`\circ`, if :math:`a \circ b = b \circ a` for all
@@ -150,29 +170,26 @@ a **Ring**, :math:`R`.
 
 For examples, see the section **“Vector Spaces and Modules”**.
 
-Class Hierarchy
----------------
-
-.. figure:: ../docs/_static/class_hierarchy_sm_v2.png
-   :alt: Abstract Algebra Class Hierarchy
-
-   Abstract Algebra Class Hierarchy
+More on the Class Hierarchy
+---------------------------
 
 Note that, a Field is also a Ring, and a Group, and a Monoid, and so on,
-since the hierarchy of subclasses of a ``SingleElementSetAlgebra``
-extend from each other, as shown above. A similar situation holds for a
-``MultipleElementSetAlgebra``: a VectorSpace is a Module. And, since
-inheritance “flows” against the arrows of the figure above, a method
-that may be usually associated with a particular class might actually be
-defined in its parent class, or one of its ancestor classes.
+since the hierarchy of subclasses of a the ``FiniteAlgebra`` class
+extend from each other, as shown in the figure above. A similar
+situation holds for the ``FiniteCompositeAlgebra`` class: a VectorSpace
+is a Module. And, since inheritance “flows” along the arrows in the
+figure, a method that may be usually associated with a particular class
+might actually be defined in its parent class, or one of its ancestor
+classes.
 
 For example, the method, ``is_commutative``, answers a question we often
 ask of Groups, but to answer it only requires that there be a binary
 operation that can be used to check it. So, ``is_commutative`` is
 defined for Magma. But, since Magma methods and properties are inherited
 by all classes that extend from Magma (from Semigroup to Field),
-``is_commutative`` applies to them also. Similar for ``is_associative``,
-``identity``, ``inv``, ``center``, ``isomorphic``, etc.
+``is_commutative`` applies to all them also. Same for
+``is_associative``, ``identity``, ``inv``, ``center``, ``isomorphic``,
+etc.
 
 Another example is given by *units*, which are usually associated with
 Rings. But the only property an algebra requires to be able to identify
@@ -190,21 +207,18 @@ Direct Products
 ---------------
 
 This section provides the usual definition of a direct product for
-Magmas through Fields, plus an alternative definition for Rings &
-Fields, referred to here as “squaring” the Ring or Field. By squaring a
-field, of the right order, one can obtain another field, unlike taking a
-direct product of a field with itself, which always yields a ring. More
-on this below in the subsection, “Squaring a Field to Obtain a Field”.
+Magmas through Fields, plus a related definition for Rings & Fields,
+known as the Cayley-Dickson construction.
 
 Like Vector Spaces, Direct Products involve the combination of possibly
 different algebras, with different sets of elements and different binary
-operations. As previously noted, in many algebra texts, the notation
-used to describe multiplication (or addition) in one component algebra
-is the same as the notation used for the other component algebra.
-Readers are expected to know that the two implicitely refer to different
-operations. For a computer program, however, the difference in operators
-must be made explicit. For that reason, care is taken in the definitions
-below to not conflate the operations.
+operations. In many algebra texts, the notation used to describe
+multiplication (or addition) in one component algebra is the same as the
+notation used for the other component algebra. Readers are expected to
+know, implicitely, that the same two symbols or notational styles refer
+to different operations. For a computer program, however, the difference
+in operators must be made explicit. For that reason, care is taken in
+the definitions below to not conflate the operations.
 
 If :math:`G = \langle S, + \rangle` and
 :math:`H = \langle T, \oplus \rangle` are two Groups, then their
@@ -227,12 +241,12 @@ where
    :math:`(s, t), (s', t') \in U`
 -  :math:`(s, t) \bullet (s', t') = (s \cdot s', t \odot t')`
 
-Since the only requirement needed to form a direct product is that there
-be two *algebras*, each with its own set of elements and binary
-operation(s), the direct product definition works for any
-``SingleElementSetAlgebra`` (Magma through Field). So, if ``G`` and
-``H`` are two *SingleElementSetAlgebras*, then their direct product can
-be obtained by multiplying the two objects using Python’s multiplication
+The only requirement needed to form a direct product is that there be
+two finite algebras, each with its own set of elements and binary
+operation. That is, the direct product definition works for any
+``FiniteAlgebra`` (Magma through Field). So, if ``G`` and ``H`` are each
+instances of ``FiniteAlgebra``, then their direct product can be
+obtained by multiplying the two instances using Python’s multiplication
 operator, ``G * H``.
 
 Cayley-Dickson Algebras
@@ -240,7 +254,7 @@ Cayley-Dickson Algebras
 
 An opportunity to define an alternative type of direct product presents
 itself when we consider the direct product of a ring,
-:math:`A = \langle S, +, \cdot \rangle`, with itself, which produces a
+:math:`A = \langle S, +, \cdot \rangle`, with *itself*, which produces a
 Cayley-Dickson Algebra (CDA), denoted here as :math:`\mathscr{C}(A)`. In
 this case, addition is defined the same as for the usual direct product,
 but multiplication is defined to be similar to that used for complex
@@ -257,8 +271,8 @@ Center
 
 The **center** of an algebra is usually defined for Groups, however
 since the definition only requires a set and a binary operation, it has
-been extended here to apply to Magmas, and so applies to all
-*SingleElementSetAlgebras*.
+been extended here to apply to Magmas, and so applies to all finite
+algebras.
 
 The **center** of a Magma is the subset of elements of the Magma that
 commute with every element in the Magma.

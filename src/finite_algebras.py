@@ -1068,7 +1068,7 @@ class Group(Monoid):
         coset_elems = tuple("~" + elem for elem in elems)
         return make_finite_algebra(name, desc, coset_elems, table)
 
-    # This 'about' method differs from the one in SingleElementSetAlgebra in that it prints out
+    # This 'about' method differs from the one in FiniteAlgebra in that it prints out
     # more detailed information about elements.
     # TODO: It would be nice to combine the two someday.
     def about(self, max_size=12, max_gens=2, use_table_names=False, show_tables=True, show_elements=True,
@@ -1257,7 +1257,7 @@ def about_isomorphic_partitions(alg, partitions):
 
 def about_subalgebras(alg):
     """A convenience function that finds and summarizes all proper subalgebras
-    of the input SingleElementSetAlgebra.  The list of isomorphic partitions is
+    of the input FiniteAlgebra.  The list of isomorphic partitions is
     returned and a summary of it is printed out.
     """
     alg_subs = alg.proper_subalgebras()
@@ -2662,22 +2662,22 @@ def make_finite_algebra(*args):
 
     If only 1 input argument, then it must either be a string or a Python
     dictionary.  If it's a string, then it must be a path to a JSON file
-    that defines a SingleElementSetAlgebra (i.e., Magma, Semigroup, Monoid,
+    that defines a FiniteAlgebra (i.e., Magma, Semigroup, Monoid,
     Group, Ring, or Field), as described below for the first five arguments.
     If it's a Python dictionary, then it must be the dictionary version of
     such a JSON file. (No JSON or dictionary formats are defined for
-    MultipleElementSetAlgebras.)
+    FiniteCompositeAlgebras.)
 
     Otherwise, the first argument should always be the name (str) of the
     algebra and the second argument should be a description (str) of the
     algebra.
 
     The remaining arguments depend on whether the algebra being constructed
-    is a SingleElementSetAlgebra (i.e, Magma, Semigroup, Monoid, Group,
-    Ring, or Field) or a MultipleElementSetAlgebra (i.e., Module or Vector
+    is a FiniteAlgebra (i.e, Magma, Semigroup, Monoid, Group,
+    Ring, or Field) or a FiniteCompositeAlgebra (i.e., Module or Vector
     Space).
 
-    If constructing a SingleElementSetAlgebra:
+    If constructing a FiniteAlgebra:
 
     The third argument should be a list of element names (str).
 
@@ -2695,7 +2695,7 @@ def make_finite_algebra(*args):
     constructed, and it should also be a table with structure similar to
     the fourth argument.
 
-    If constructing a MultipleElementSetAlgebra:
+    If constructing a FiniteCompositeAlgebra:
 
     The third argument should be a Ring or Field (the "scalars").
 
@@ -2928,7 +2928,7 @@ def delete_row_col(np_arr, row, col):
 
 
 def unpack_components(finalg):
-    """A convenience function. It unpacks a SingleElementSetAlgebra
+    """A convenience function. It unpacks a FiniteAlgebra
     and returns its components: name, description, elements, and
     table(s) (in list form).
     """
@@ -2944,7 +2944,7 @@ def unpack_components(finalg):
         else:
             return name, description, elements, table_as_list
     else:
-        raise ValueError(f"{finalg} is not a SingleElementSetAlgebra.")
+        raise ValueError(f"{finalg} is not a FiniteAlgebra.")
 
 
 def make_cayley_table(table, elements):

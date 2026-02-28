@@ -1,8 +1,23 @@
 Definitions
 ===========
 
-The structure of the class hierarchy of the ``finite_algebra`` module is
-depicted in the figure below.
+This section provides mathematical definitions of the types of algebras
+modeled by Python classes in the ``finite_algebra`` module, such as
+groups, rings, fields, etc.
+
+And, in the same way that a square is also a rectangle, and a rectangle
+is also a polygon, the algebras here follow a hierarchy that starts with
+an algebra with very few properties (Magma) on down to an algebra rich
+in properties (Field). Within the hierarchy, inheritance of properties
+and functionality flows along the arrows from class (*parent*) to
+subclass (*child*), so that each algebra inherits all of the properties
+of its parent class, in addition to new properties it possesses and
+passes on to its child classes.
+
+The hierarchy is depicted in the figure, below.
+
+Finite Algebra Hierarchy
+------------------------
 
 .. figure:: ../docs/_static/class_hierarchy_v2.png
    :alt: Class Hierarchy Figure
@@ -11,6 +26,87 @@ depicted in the figure below.
 
 The next several sections provide mathematical definitions of the
 algebraic structures depicted in solid boxes in the figure above.
+
+But first, a brief note about notation.
+
+Notation
+--------
+
+:math:`a, b, c, x, y, \alpha, \beta, \gamma, \dots` : Lowercase Latin
+(Roman) or Greek letters are used to denote **algebraic elements**.
+
+:math:`F, G, R, S, V \dots` : Uppercase Latin (Roman) or Greek letters
+are used to denote **sets** and **finite algebras**.
+
+:math:`\mathscr{V}, \mathscr{M}, \dots` : Uppercase script letters are
+used to denote **finite composite algebras**.
+
+**NOTE**: In many algebra texts, the binary operations of algebras are
+often referred to as “multiplication” and/or “addition”, even when the
+abstract algebraic elements are clearly **not numbers**. Also, the
+characters, :math:`\times`, :math:`+`, :math:`0`, and :math:`1`, are
+often used as symbols that represent abstract operators and identity
+elements.
+
+:math:`\times, +, \cdot, \circ, \oplus, \otimes, \dots` denote **binary
+operators**. Also, juxtaposition is often used for the “multiplication”
+of two algebraic elements, when it is clear from context that
+multiplication is intended (:math:`ab = a \times b`).
+
+:math:`\times` is an overloaded binary operator, so the meaning of
+:math:`X \times Y` depends on :math:`X` and :math:`Y`: If :math:`X, Y`
+are **elements of an algebra**, then :math:`\times` is
+**“multiplication”**. If :math:`X, Y` are **elements of a set**, then
+:math:`X \times Y` denotes the **cross product** of the sets. If
+:math:`X, Y` are **algebras**, then :math:`X \times Y` denotes their
+**direct product**.
+
+:math:`e, 0, 1` denote **abstract identity elements**. :math:`0` or
+:math:`1` are typically used when the abstract binary operations are
+referred to as *addition* or *multiplication*, along with abstract
+binary operators, :math:`+` and :math:`\times`, respectively.
+
+:math:`=, \equiv, \cong` denote, respectively, *equal*, *equivalent*,
+and *isomorphic*.
+
+:math:`\in, \subseteq, \subset` denote, respectively, *member of* a set,
+*subset of* a set, and *proper subset of* a set.
+
+:math:`\setminus, \bigtriangleup` denote, respectively, *set
+difference*, and *set symmetric difference*.
+
+:math:`\exists, \forall` denote, respectively, *there exists*, and *for
+all*.
+
+:math:`\to, \Rightarrow` denote, respectively, *maps to*, and *implies*.
+
+:math:`\langle \dots \rangle` : Angle brackets enclose an algebra’s
+high-level components: set(s), component algebra(s), and operator(s).
+For example, a finite algebra is composed of a set and one or two binary
+operators, such as, :math:`G = \langle V, \oplus \rangle` and
+:math:`F = \langle S, +, \cdot \rangle`. A finite composite algebra is
+composed of two finite algebras and a binary operator, such as,
+:math:`\mathscr{V} = \langle G, F, \circ \rangle`. This particular
+notation is specific to this document, not to abstract algebra in
+general.
+
+And, finally…
+~~~~~~~~~~~~~
+
+This final comment addresses what might might be regarded as an
+**overuse of operator symbols** in this document:
+
+In many algebra texts, the notation used to describe binary operations,
+such as *multiplication* or *addition*, in one algebra is the same as
+the notation used for another, different algebra. Readers are expected
+to know that the two implicitely refer to different operations. For a
+computer program, however, the difference in operators must be made
+explicit. For that reason, care is taken in this document to not
+conflate the operations of different algebras.
+
+For anything else, see the `“Glossary of mathematical
+notation” <https://en.wikipedia.org/wiki/Glossary_of_mathematical_symbols>`__
+on Wikipedia.
 
 Groups, Rings, Fields, etc.
 ---------------------------
@@ -23,9 +119,9 @@ the ``finite_algebra`` module is modeled on this progression.
    set and :math:`\circ` is a closed binary operation,
    :math:`\circ: S \times S \to S`
 
--  **Quasigroup** - a Magma where for each :math:`a, b` in :math:`S`
-   there exists unique :math:`x, y` in :math:`S` such that
-   :math:`a \circ x = b` and :math:`y \circ a = b` :math:`^*`
+-  **Quasigroup** - a Magma where for each :math:`a, b \in S`,
+   :math:`\exists` unique :math:`x, y \in S` such that
+   :math:`a \circ x = y \circ a = b` :math:`^*`
 
 -  **Loop** - a Quasigroup with identity element:
    :math:`\exists \ e \in S`, such that, for all
@@ -133,14 +229,7 @@ Vector Spaces and Modules
 
 Each type of algebra, described above, has only one set of elements.
 Vector Space and Modules, however, are hybrids of two algebras, each
-with their own set of elements, called *scalars* and *vectors*. In many
-algebra texts, the notation used to describe *multiplication* (or
-*addition*) in one component algebra is the same as the notation used
-for the other component algebra. Readers are expected to know that the
-two implicitely refer to different operations. For a computer program,
-however, the difference in operators must be made explicit. For that
-reason, care is taken in the definitions below to not conflate the
-scalar-scalar, vector-vector, and scalar-vector operations.
+with their own set of elements, called *scalars* and *vectors*.
 
 A **Vector Space**, :math:`\mathscr{V} = \langle G, F, \circ \rangle`,
 consists of the following:
@@ -212,13 +301,7 @@ known as the Cayley-Dickson construction.
 
 Like Vector Spaces, Direct Products involve the combination of possibly
 different algebras, with different sets of elements and different binary
-operations. In many algebra texts, the notation used to describe
-multiplication (or addition) in one component algebra is the same as the
-notation used for the other component algebra. Readers are expected to
-know, implicitely, that the same two symbols or notational styles refer
-to different operations. For a computer program, however, the difference
-in operators must be made explicit. For that reason, care is taken in
-the definitions below to not conflate the operations.
+operations.
 
 If :math:`G = \langle S, + \rangle` and
 :math:`H = \langle T, \oplus \rangle` are two Groups, then their

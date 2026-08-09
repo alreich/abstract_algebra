@@ -1,3 +1,9 @@
+# **NOTICE** This repository has been superseded by another repository: finalg
+
+See https://github.com/alreich/finalg
+
+Substantial structural changes were made to this repository, resulting in the **finalg** module, which carries on where this repository left off.
+
 # Abstract Algebra
 
 This is an implementation of **Finite Algebras** in Python: Groups, Rings, Fields, Vector Spaces, Modules, Monoids, Semigroups, Magmas (Groupoids), regular (matrix) representations, abstract matrices, and Cayley-Dickson algebras.
